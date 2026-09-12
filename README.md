@@ -66,9 +66,33 @@ Capabilities:
 - Collaboration recommendations
 - Communication assistance
 
-## Connection Algorithm Principles
+---
 
-Candidate matching considers:
+# Product Philosophy
+
+The platform is a scientific facilitation infrastructure, not a social network.
+
+It does not optimize for:
+
+- Followers
+- Likes
+- Artificial rankings
+- Engagement noise
+
+It optimizes for:
+
+- Relevant discovery
+- Trusted identity
+- High-quality introductions
+- Successful scientific collaboration
+
+---
+
+# Connection Intelligence Model
+
+The connection engine is designed to reduce friction without creating overload.
+
+## Matching Signals
 
 - Research topic similarity
 - Publication similarity
@@ -77,29 +101,241 @@ Candidate matching considers:
 - Geographic and institutional context
 - Trust signals
 
-The system minimizes noise through:
+## Connection Quality Model
 
-- Smart request limits
-- Trust scoring
-- AI pre-screening
-- User availability settings
+```
+Match Quality
++
+Intent Compatibility
++
+Trust Level
+-
+Spam Risk
+=
+Connection Value
+```
 
-## Trust Model
+## Connection Flow
 
-Trust is used for reliability, not competition.
+```
+Discovery
 
-Signals include:
+↓
 
-- Institution verification
-- ORCID connection
-- Publication verification
-- Profile completeness
-- Healthy communication behavior
+Scientific Match Analysis
 
-## Long-Term Competitive Advantage
+↓
 
-The core moat is a Scientific Knowledge Graph connecting:
+Introduction Request
 
-Researcher ↔ Publication ↔ Lab ↔ Institution ↔ Opportunity ↔ Project
+↓
 
-The goal is to become an intelligence layer for medical research collaboration.
+Private Conversation
+
+↓
+
+Potential Collaboration
+```
+
+The system uses controlled introductions instead of unrestricted messaging.
+
+---
+
+# Scientific Knowledge Graph
+
+The long-term competitive advantage is a knowledge graph connecting:
+
+```
+Researcher
+    ↔
+Publication
+    ↔
+Research Topic
+    ↔
+Disease
+    ↔
+Method
+    ↔
+Laboratory
+    ↔
+Institution
+    ↔
+Opportunity
+    ↔
+Project
+```
+
+This enables discovery beyond keyword search.
+
+---
+
+# AI Architecture
+
+Main AI services:
+
+## Scientific Profile Intelligence
+
+Transforms:
+
+- Publications
+- CVs
+- ORCID data
+- Research history
+
+into structured scientific identity.
+
+## Semantic Discovery
+
+Uses:
+
+- Embeddings
+- Vector search
+- Knowledge graph expansion
+
+for contextual search.
+
+## Matching Engine
+
+Ranking factors:
+
+- Scientific similarity
+- Graph relationships
+- Research intent
+- Trust signals
+- Recency
+
+## AI Research Assistant
+
+Provides:
+
+- Opportunity analysis
+- Collaboration explanations
+- Research summaries
+- Introduction assistance
+
+---
+
+# Security & Privacy Principles
+
+Privacy is part of the product architecture.
+
+## Data Levels
+
+- Public scientific information
+- Verified scientific information
+- Controlled contact information
+- Private communication data
+
+Principles:
+
+- User-controlled visibility
+- No selling private data
+- Explainable AI recommendations
+- Secure private communication
+
+---
+
+# Business Model
+
+## Free Layer
+
+For researchers:
+
+- Scientific profile
+- Discovery
+- Basic matching
+- Opportunity access
+
+## Premium Researcher Layer
+
+Advanced capabilities:
+
+- AI analysis
+- Career intelligence
+- Advanced matching
+- Application assistance
+
+## Institutional Layer
+
+For:
+
+- Universities
+- Hospitals
+- Research centers
+- Pharmaceutical companies
+
+Capabilities:
+
+- Talent discovery
+- Research analytics
+- Collaboration mapping
+
+---
+
+# Go-To-Market Strategy
+
+Initial strategy:
+
+Build scientific intelligence before building a social network.
+
+Starting focus:
+
+- Oncology
+- Immunology
+- Clinical research
+
+Reason:
+
+- High research activity
+- Large funding ecosystem
+- Strong collaboration need
+
+---
+
+# Product Roadmap
+
+## Phase 1 — Foundation
+
+- Scientific profiles
+- Authentication
+- Basic discovery
+
+## Phase 2 — Intelligence
+
+- Semantic search
+- AI matching
+- Opportunity intelligence
+
+## Phase 3 — Network
+
+- Scientific introductions
+- Private communication
+- Lab platforms
+
+## Phase 4 — Global Infrastructure
+
+- Institutional dashboards
+- Research analytics
+- Scientific knowledge graph expansion
+
+---
+
+# Engineering Direction
+
+Architecture direction:
+
+- Next.js
+- TypeScript
+- PostgreSQL
+- Prisma
+- Vector search
+- Knowledge graph layer
+- AI services
+- Secure APIs
+
+Development principles:
+
+- Modular architecture
+- Explainable AI
+- Privacy by design
+- Measurable product value
