@@ -1,3 +1,5 @@
+import styles from "./page.module.css";
+
 const fields = [
   { label: "Full name", value: "Dr. Sarah Williams" },
   { label: "Headline", value: "Clinical Researcher · Translational Oncology" },
@@ -16,12 +18,12 @@ export default function EditProfilePage() {
         <p className="lede">Only information that affects trust, discovery, matching, or connection quality belongs here.</p>
       </header>
 
-      <form className="editorCard">
-        <section className="editorSection">
+      <form className={styles.editorCard}>
+        <section className={styles.editorSection}>
           <span className="sectionLabel">Identity</span>
-          <div className="editorGrid">
+          <div className={styles.editorGrid}>
             {fields.map((field) => (
-              <label className="fieldGroup" key={field.label}>
+              <label className={styles.fieldGroup} key={field.label}>
                 <span>{field.label}</span>
                 <input defaultValue={field.value} />
               </label>
@@ -29,15 +31,15 @@ export default function EditProfilePage() {
           </div>
         </section>
 
-        <section className="editorSection">
+        <section className={styles.editorSection}>
           <span className="sectionLabel">Research summary</span>
-          <label className="fieldGroup">
+          <label className={styles.fieldGroup}>
             <span>Summary</span>
             <textarea defaultValue="Researcher focused on translational oncology, immune-based therapies, and clinically actionable biomarkers." rows={5} />
           </label>
         </section>
 
-        <section className="editorSection editorSplit">
+        <section className={`${styles.editorSection} ${styles.editorSplit}`}>
           <div>
             <span className="sectionLabel">Availability</span>
             <select defaultValue="SELECTIVE">
@@ -49,14 +51,14 @@ export default function EditProfilePage() {
           </div>
           <div>
             <span className="sectionLabel">ORCID</span>
-            <div className="sourceBox">
+            <div className={styles.sourceBox}>
               <strong>0000-0002-1825-0097</strong>
               <span>Connected source · editable through sync settings</span>
             </div>
           </div>
         </section>
 
-        <footer className="editorActions">
+        <footer className={styles.editorActions}>
           <span>Changes that affect matching should be versioned and auditable.</span>
           <button className="primaryButton" type="submit">Save changes</button>
         </footer>
