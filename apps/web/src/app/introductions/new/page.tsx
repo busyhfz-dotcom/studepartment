@@ -1,9 +1,14 @@
+import Link from "next/link";
+import { researcherPreviews } from "@/lib/scientific-data";
 import styles from "./page.module.css";
 
-export default function NewIntroductionPage() {
+export default async function NewIntroductionPage({ searchParams }: { searchParams: Promise<{ researcher?: string }> }) {
+  const { researcher: researcherId } = await searchParams;
+  const researcher = researcherPreviews.find((item) => item.id === researcherId) ?? researcherPreviews[0];
+
   return (
     <main className={`shell ${styles.shell}`}>
-      <a className="backLink" href="/discover">← Back to discovery</a>
+      <Link className="backLink" href={`/researchers/${researcher.id}`}>← Back to scientific profile</Link>
       <header className={styles.header}>
         <span className="eyebrow">Scientific Introduction</span>
         <h1>Review the context before you contact someone.</h1>
@@ -13,17 +18,15 @@ export default function NewIntroductionPage() {
       <section className={styles.previewCard}>
         <div className={styles.personBlock}>
           <span className="sectionLabel">Recipient</span>
-          <h2>Dr. Michael Chen</h2>
-          <p>Computational Oncologist · Karolinska Institutet</p>
-          <span className={styles.availability}>Open to collaboration</span>
+          <h2>{researcher.name}</h2>
+          <p>{researcher.title} · {researcher.institution}</p>
+          <span className={styles.availability}>Open to {researcher.openTo[0].toLowerCase()}</span>
         </div>
 
         <div className={styles.contextBlock}>
           <span className="sectionLabel">Why this introduction is relevant</span>
           <ul>
-            <li>Shared focus on pancreatic cancer</li>
-            <li>Complementary clinical and imaging expertise</li>
-            <li>Compatible collaboration intent</li>
+            {researcher.match.reasons.map((reason) => <li key={reason}>{reason}</li>)}
           </ul>
         </div>
       </section>
@@ -45,7 +48,7 @@ export default function NewIntroductionPage() {
           <span>Short context</span>
           <textarea
             rows={6}
-            defaultValue="I am working on translational oncology and clinically actionable biomarkers. Your work in computational imaging overlaps with a pancreatic cancer project I am developing, and I would like to explore whether our methods could complement each other."
+            defaultValue={`I am working in translational oncology and clinically actionable biomarkers. Your work at ${researcher.institution} overlaps with my current research direction, and I would like to explore whether our expertise could complement each other.`}
           />
         </label>
 
@@ -55,7 +58,7 @@ export default function NewIntroductionPage() {
         </div>
 
         <div className={styles.actions}>
-          <a className="secondary" href="/discover">Cancel</a>
+          <Link className="secondary" href={`/researchers/${researcher.id}`}>Cancel</Link>
           <button className="primaryButton" type="button">Send introduction request</button>
         </div>
       </section>
