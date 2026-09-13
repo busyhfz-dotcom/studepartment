@@ -1,6 +1,8 @@
-import { db } from "@studepartment/db";
+import { getDb } from "@studepartment/db";
 
 export async function getResearcherProfileByUserId(userId: string) {
+  const db = getDb();
+
   return db.researcherProfile.findUnique({
     where: { userId },
     include: {
@@ -29,6 +31,8 @@ export async function updateResearcherAvailability(
   userId: string,
   availabilityMode: "OPEN" | "SELECTIVE" | "QUIET" | "CLOSED",
 ) {
+  const db = getDb();
+
   return db.researcherProfile.update({
     where: { userId },
     data: { availabilityMode },
