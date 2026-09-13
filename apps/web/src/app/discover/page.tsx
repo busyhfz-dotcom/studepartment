@@ -57,7 +57,7 @@ export default function DiscoverPage() {
         </div>
 
         <div className={styles.resultList}>
-          {people.map((person) => (
+          {people.map((person, index) => (
             <article className={styles.resultCard} key={person.name}>
               <div className={styles.resultIdentity}>
                 <span className={styles.matchLabel}>{person.match}</span>
@@ -73,7 +73,7 @@ export default function DiscoverPage() {
               </div>
               <div className={styles.resultActions}>
                 <a className="secondary" href="/profile">View scientific profile</a>
-                <button className="primaryButton" type="button">Review introduction</button>
+                <a className="primaryButton" href={index === 0 ? "/introductions/new" : "/profile"}>Review introduction</a>
               </div>
             </article>
           ))}
