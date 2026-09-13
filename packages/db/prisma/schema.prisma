@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  RESEARCHER
+  PROFESSOR
+  LAB_ADMIN
+  INSTITUTION_ADMIN
+}
+
+enum OrganizationType {
+  UNIVERSITY
+  HOSPITAL
+  RESEARCH_INSTITUTE
+  COMPANY
+  FOUNDATION
+}
+
+enum OpportunityType {
+  PHD
+  POSTDOC
+  FELLOWSHIP
+  GRANT
+  COLLABORATION
+  RESEARCH_ASSISTANTSHIP
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  ARCHIVED
+}
+
+enum ConnectionPurpose {
+  RESEARCH_DISCUSSION
+  COLLABORATION
+  MENTORSHIP
+  POSITION_INQUIRY
+  GRANT_PARTNERSHIP
+  CLINICAL_PROJECT
+}
+
+model User {
+  id         String            @id @default(cuid())
+  email      String            @unique
+  role       UserRole
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  researcher ResearcherProfile?
+}
+
+model ResearcherProfile {
+  id             String                 @id @default(cuid())
+  userId         String?                @unique
+  fullName       String
+  headline       String?
+  bio            String?
+  countryCode    String?
+  city           String?
+  careerStage    String?
+  orcid          String?                @unique
+  verified       Boolean                @default(false)
+  profilePublic  Boolean                @default(true)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  user           User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  affiliations   ResearcherAffiliation[]
+  topics         ResearcherTopic[]
+  publications   ResearcherPublication[]
+  labMemberships LabMember[]
+  sentRequests   ConnectionRequest[]    @relation("SentConnectionRequests")
+  receivedRequests ConnectionRequest[]  @relation("ReceivedConnectionRequests")
+}
+
+model Organization {
+  id            String                  @id @default(cuid())
+  name          String
+  normalizedName String
+  type          OrganizationType
+  countryCode   String?
+  website       String?
+  verified      Boolean                 @default(false)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+  affiliations  ResearcherAffiliation[]
+  labs          Laboratory[]
+  opportunities Opportunity[]
+
+  @@index([normalizedName])
+}
+
+model ResearcherAffiliation {
+  id             String            @id @default(cuid())
+  researcherId   String
+  organizationId String
+  title          String?
+  startDate      DateTime?
+  endDate        DateTime?
+  current        Boolean           @default(true)
+  researcher     ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([researcherId])
+  @@index([organizationId])
+}
+
+model ResearchTopic {
+  id        String            @id @default(cuid())
+  name      String
+  slug      String            @unique
+  parentId  String?
+  meshId    String?
+  parent    ResearchTopic?    @relation("TopicHierarchy", fields: [parentId], references: [id])
+  children  ResearchTopic[]   @relation("TopicHierarchy")
+  researchers ResearcherTopic[]
+}
+
+model ResearcherTopic {
+  researcherId String
+  topicId      String
+  weight       Float          @default(1)
+  researcher   ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  topic        ResearchTopic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([researcherId, topicId])
+}
+
+model Publication {
+  id              String                  @id @default(cuid())
+  title           String
+  abstract        String?
+  doi             String?                 @unique
+  pmid            String?                 @unique
+  journal         String?
+  publicationDate DateTime?
+  citationCount   Int                     @default(0)
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  authors         ResearcherPublication[]
+}
+
+model ResearcherPublication {
+  researcherId String
+  publicationId String
+  authorOrder   Int?
+  researcher    ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  publication   Publication       @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+
+  @@id([researcherId, publicationId])
+}
+
+model Laboratory {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  website        String?
+  verified       Boolean      @default(false)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  members        LabMember[]
+
+  @@index([organizationId])
+}
+
+model LabMember {
+  laboratoryId String
+  researcherId String
+  role         String?
+  laboratory   Laboratory        @relation(fields: [laboratoryId], references: [id], onDelete: Cascade)
+  researcher   ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+
+  @@id([laboratoryId, researcherId])
+}
+
+model Opportunity {
+  id             String          @id @default(cuid())
+  organizationId String
+  type           OpportunityType
+  title          String
+  description    String?
+  deadline       DateTime?
+  sourceUrl      String
+  lastVerifiedAt DateTime?
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, type])
+  @@index([deadline])
+}
+
+model ConnectionRequest {
+  id          String            @id @default(cuid())
+  senderId    String
+  receiverId  String
+  purpose     ConnectionPurpose
+  context     String?
+  status      ConnectionStatus  @default(PENDING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  sender      ResearcherProfile @relation("SentConnectionRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    ResearcherProfile @relation("ReceivedConnectionRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([receiverId, status])
+  @@index([senderId, status])
+}
