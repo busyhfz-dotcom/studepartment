@@ -1,33 +1,11 @@
+import Link from "next/link";
 import styles from "./page.module.css";
-
-const people = [
-  {
-    name: "Dr. Michael Chen",
-    headline: "Computational Oncologist",
-    institution: "Karolinska Institutet",
-    match: "Strong alignment",
-    reasons: ["Pancreatic cancer", "Medical imaging", "Open to collaboration"],
-  },
-  {
-    name: "Prof. Elena Rossi",
-    headline: "Professor of Translational Oncology",
-    institution: "University of Milan",
-    match: "Relevant",
-    reasons: ["Tumor biomarkers", "Clinical trials", "Selective availability"],
-  },
-  {
-    name: "Dr. Amir Haddad",
-    headline: "Biomedical AI Researcher",
-    institution: "INSERM",
-    match: "Complementary expertise",
-    reasons: ["Deep learning", "Pathology imaging", "Grant collaboration"],
-  },
-];
+import { researcherPreviews } from "@/lib/scientific-data";
 
 export default function DiscoverPage() {
   return (
     <main className={`shell ${styles.discoverShell}`}>
-      <a className="backLink" href="/">← Studepartment</a>
+      <Link className="backLink" href="/">← Studepartment</Link>
       <header className={styles.discoverHeader}>
         <span className="eyebrow">Scientific Discovery · v0.3</span>
         <h1>Find a small number of people worth knowing.</h1>
@@ -37,11 +15,11 @@ export default function DiscoverPage() {
       <section className={styles.searchPanel}>
         <label className={styles.searchField}>
           <span>What are you trying to find?</span>
-          <input defaultValue="Researchers working on AI-assisted pancreatic cancer diagnosis in Europe" />
+          <input defaultValue="Researchers working on translational oncology and biomarkers in Europe" />
         </label>
         <div className={styles.filterRow}>
           <button type="button">Topic · Oncology</button>
-          <button type="button">Method · AI / Imaging</button>
+          <button type="button">Method · Translational</button>
           <button type="button">Region · Europe</button>
           <button type="button">Availability · Open / Selective</button>
         </div>
@@ -51,29 +29,29 @@ export default function DiscoverPage() {
         <div className={styles.resultHeading}>
           <div>
             <span className="sectionLabel">Best current matches</span>
-            <h2>3 researchers</h2>
+            <h2>{researcherPreviews.length} researchers</h2>
           </div>
           <p>Results are intentionally capped and ordered by scientific relevance, intent compatibility, and confidence.</p>
         </div>
 
         <div className={styles.resultList}>
-          {people.map((person, index) => (
-            <article className={styles.resultCard} key={person.name}>
+          {researcherPreviews.map((person, index) => (
+            <article className={styles.resultCard} key={person.id}>
               <div className={styles.resultIdentity}>
-                <span className={styles.matchLabel}>{person.match}</span>
+                <span className={styles.matchLabel}>{person.match.level} alignment</span>
                 <h3>{person.name}</h3>
-                <strong>{person.headline}</strong>
-                <p>{person.institution}</p>
+                <strong>{person.title}</strong>
+                <p>{person.institution} · {person.location}</p>
               </div>
               <div className={styles.reasonBlock}>
                 <span className="sectionLabel">Why this result</span>
                 <ul className="cleanList">
-                  {person.reasons.map((reason) => <li key={reason}>✓ {reason}</li>)}
+                  {person.match.reasons.map((reason) => <li key={reason}>✓ {reason}</li>)}
                 </ul>
               </div>
               <div className={styles.resultActions}>
-                <a className="secondary" href="/profile">View scientific profile</a>
-                <a className="primaryButton" href={index === 0 ? "/introductions/new" : "/profile"}>Review introduction</a>
+                <Link className="secondary" href={`/researchers/${person.id}`}>View scientific profile</Link>
+                <Link className="primaryButton" href={index === 0 ? `/introductions/new?researcher=${person.id}` : `/researchers/${person.id}`}>Review introduction</Link>
               </div>
             </article>
           ))}
