@@ -1,0 +1,14 @@
+{
+  "name": "studepartment",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.15.1",
+  "scripts": {
+    "dev": "pnpm --filter @studepartment/web dev",
+    "build": "pnpm --filter @studepartment/web build",
+    "lint": "pnpm --filter @studepartment/web lint",
+    "typecheck": "pnpm --filter @studepartment/web typecheck",
+    "db:generate": "pnpm --filter @studepartment/db generate",
+    "db:migrate": "pnpm --filter @studepartment/db migrate"
+  }
+}
