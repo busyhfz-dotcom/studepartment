@@ -47,6 +47,116 @@ const fixtureRepository: ResearcherRepository = {
   },
 };
 
-// This boundary intentionally keeps route handlers independent from fixture data.
-// A Prisma-backed implementation can replace this repository without changing API contracts.
-export const researcherRepository: ResearcherRepository = fixtureRepository;
+function mapAvailability(value: "OPEN" | "SELECTIVE" | "QUIET" | "CLOSED"):
+  ProfileResponse["availability"] {
+  return value.toLowerCase() as ProfileResponse["availability"];
+}
+
+function formatCollaborationGoal(value: string) {
+  return value
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+const prismaRepository: ResearcherRepository = {
+  async getCurrentProfile() {
+    const { db } = await import("@studepartment/db");
+
+    // Until authentication is connected, the first public seeded profile acts as
+    // the current development identity. Auth will replace this selector with userId.
+    const profile = await db.researcherProfile.findFirst({
+      where: { profilePublic: true },
+      orderBy: { createdAt: "asc" },
+      include: {
+        affiliations: {
+          where: { current: true },
+          include: { organization: true },
+          orderBy: { startDate: "desc" },
+          take: 1,
+        },
+        topics: {
+          include: { topic: true },
+          orderBy: { weight: "desc" },
+        },
+        methods: {
+          include: { method: true },
+        },
+        publications: {
+          select: { publicationId: true },
+          take: 1,
+        },
+      },
+    });
+
+    if (!profile) return fixtureRepository.getCurrentProfile();
+
+    return {
+      id: profile.id,
+      fullName: profile.fullName,
+      headline: profile.headline ?? "Medical researcher",
+      institution: profile.affiliations[0]?.organization.name ?? "Independent researcher",
+      careerStage: profile.careerStage ?? "Researcher",
+      availability: mapAvailability(profile.availabilityMode),
+      researchInterests: profile.topics.map(({ topic }) => topic.name),
+      methods: profile.methods.map(({ method }) => method.name),
+      collaborationGoals: profile.collaborationGoals.map(formatCollaborationGoal),
+      verification: [
+        { label: "Institution", verified: Boolean(profile.affiliations[0]?.organization.verified) },
+        { label: "ORCID", verified: Boolean(profile.orcid) },
+        { label: "Publications", verified: profile.publications.length > 0 },
+        { label: "Profile", verified: profile.verified },
+      ],
+    };
+  },
+
+  async discoverResearchers() {
+    const { db } = await import("@studepartment/db");
+
+    const researchers = await db.researcherProfile.findMany({
+      where: { profilePublic: true },
+      orderBy: [{ verified: "desc" }, { updatedAt: "desc" }],
+      take: 20,
+      include: {
+        affiliations: {
+          where: { current: true },
+          include: { organization: true },
+          take: 1,
+        },
+        topics: {
+          include: { topic: true },
+          orderBy: { weight: "desc" },
+          take: 3,
+        },
+      },
+    });
+
+    if (researchers.length === 0) return fixtureRepository.discoverResearchers();
+
+    return researchers.map((researcher) => {
+      const topicReasons = researcher.topics.map(({ topic }) => topic.name);
+      const availabilityReason =
+        researcher.availabilityMode === "OPEN"
+          ? "Open to scientific introductions"
+          : researcher.availabilityMode === "SELECTIVE"
+            ? "Selective availability"
+            : "Availability controlled by recipient";
+
+      return {
+        id: researcher.id,
+        fullName: researcher.fullName,
+        headline: researcher.headline ?? "Medical researcher",
+        institution: researcher.affiliations[0]?.organization.name ?? "Independent researcher",
+        alignment: "relevant" as const,
+        reasons: [...topicReasons, availabilityReason].slice(0, 3),
+        availability: mapAvailability(researcher.availabilityMode),
+        confidence: researcher.verified ? "high" as const : "medium" as const,
+      };
+    });
+  },
+};
+
+export const researcherRepository: ResearcherRepository = process.env.DATABASE_URL
+  ? prismaRepository
+  : fixtureRepository;
