@@ -23,15 +23,16 @@ export default function HomePage() {
           Studepartment is a privacy-first intelligence layer for medical and biomedical research discovery, matching, and trusted introductions.
         </p>
         <div className="actions">
-          <a className="primary" href="#principles">Explore the product</a>
-          <a className="secondary" href="#architecture">See how it works</a>
+          <a className="primary" href="/onboarding">Build scientific identity</a>
+          <a className="secondary" href="/discover">Try discovery</a>
+          <a className="secondary" href="/profile">View profile</a>
         </div>
       </section>
 
       <section className="grid" id="principles">
-        {pillars.map((pillar) => (
+        {pillars.map((pillar, index) => (
           <article className="card" key={pillar.title}>
-            <span className="cardIndex">0{pillars.indexOf(pillar) + 1}</span>
+            <span className="cardIndex">0{index + 1}</span>
             <h2>{pillar.title}</h2>
             <p>{pillar.description}</p>
           </article>
