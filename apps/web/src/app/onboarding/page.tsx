@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const steps = [
   {
     number: "01",
@@ -29,7 +31,7 @@ export default function OnboardingPage() {
   return (
     <main className="shell onboardingShell">
       <header className="onboardingHeader">
-        <a className="backLink" href="/">← Studepartment</a>
+        <Link className="backLink" href="/">← Studepartment</Link>
         <span className="eyebrow">Scientific Identity · v0.2</span>
         <h1>Build a useful profile without building another social profile.</h1>
         <p className="lede">
@@ -69,7 +71,7 @@ export default function OnboardingPage() {
 
       <div className="onboardingFooter">
         <p>Your availability and collaboration preferences remain editable at any time.</p>
-        <a className="primaryButton" href="/profile">Preview scientific profile</a>
+        <Link className="primaryButton" href="/profile">Preview scientific profile</Link>
       </div>
     </main>
   );
