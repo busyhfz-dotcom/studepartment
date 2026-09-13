@@ -49,3 +49,31 @@ export type OpportunityResult = {
   reasons: string[];
   gaps: string[];
 };
+
+export type IntroductionPurpose =
+  | "research-discussion"
+  | "collaboration"
+  | "mentorship"
+  | "position-inquiry"
+  | "grant-partnership"
+  | "clinical-project";
+
+export type ScientificIntroductionPreview = {
+  sender: {
+    id: string;
+    fullName: string;
+    headline: string;
+    institution: string;
+    verified: boolean;
+  };
+  receiver: {
+    id: string;
+    fullName: string;
+    availability: "open" | "selective" | "quiet" | "closed";
+  };
+  purpose: IntroductionPurpose;
+  relevance: "strong" | "relevant" | "weak";
+  reasons: string[];
+  requestAllowed: boolean;
+  blockReason?: string;
+};
