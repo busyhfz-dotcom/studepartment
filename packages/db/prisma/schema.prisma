@@ -48,51 +48,76 @@ enum ConnectionPurpose {
   CLINICAL_PROJECT
 }
 
+enum AvailabilityMode {
+  OPEN
+  SELECTIVE
+  QUIET
+  CLOSED
+}
+
+enum CollaborationGoal {
+  RESEARCH_COLLABORATION
+  MENTORSHIP
+  STUDENT_SUPERVISION
+  CLINICAL_PROJECT
+  GRANT_PARTNERSHIP
+  POSITION_OPPORTUNITIES
+}
+
+enum ProficiencyLevel {
+  LEARNING
+  WORKING
+  ADVANCED
+}
+
 model User {
-  id         String            @id @default(cuid())
-  email      String            @unique
+  id         String             @id @default(cuid())
+  email      String             @unique
   role       UserRole
-  createdAt  DateTime          @default(now())
-  updatedAt  DateTime          @updatedAt
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
   researcher ResearcherProfile?
 }
 
 model ResearcherProfile {
-  id             String                 @id @default(cuid())
-  userId         String?                @unique
-  fullName       String
-  headline       String?
-  bio            String?
-  countryCode    String?
-  city           String?
-  careerStage    String?
-  orcid          String?                @unique
-  verified       Boolean                @default(false)
-  profilePublic  Boolean                @default(true)
-  createdAt      DateTime               @default(now())
-  updatedAt      DateTime               @updatedAt
-  user           User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
-  affiliations   ResearcherAffiliation[]
-  topics         ResearcherTopic[]
-  publications   ResearcherPublication[]
-  labMemberships LabMember[]
-  sentRequests   ConnectionRequest[]    @relation("SentConnectionRequests")
-  receivedRequests ConnectionRequest[]  @relation("ReceivedConnectionRequests")
+  id               String                 @id @default(cuid())
+  userId           String?                @unique
+  fullName         String
+  headline         String?
+  bio              String?
+  countryCode      String?
+  city             String?
+  careerStage      String?
+  orcid            String?                @unique
+  verified         Boolean                @default(false)
+  profilePublic    Boolean                @default(true)
+  availabilityMode AvailabilityMode       @default(SELECTIVE)
+  collaborationGoals CollaborationGoal[]
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  user             User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  affiliations     ResearcherAffiliation[]
+  topics           ResearcherTopic[]
+  methods          ResearcherMethod[]
+  publications     ResearcherPublication[]
+  labMemberships   LabMember[]
+  sentRequests     ConnectionRequest[]    @relation("SentConnectionRequests")
+  receivedRequests ConnectionRequest[]    @relation("ReceivedConnectionRequests")
 }
 
 model Organization {
-  id            String                  @id @default(cuid())
-  name          String
+  id             String                  @id @default(cuid())
+  name           String
   normalizedName String
-  type          OrganizationType
-  countryCode   String?
-  website       String?
-  verified      Boolean                 @default(false)
-  createdAt     DateTime                @default(now())
-  updatedAt     DateTime                @updatedAt
-  affiliations  ResearcherAffiliation[]
-  labs          Laboratory[]
-  opportunities Opportunity[]
+  type           OrganizationType
+  countryCode    String?
+  website        String?
+  verified       Boolean                 @default(false)
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  affiliations   ResearcherAffiliation[]
+  labs           Laboratory[]
+  opportunities  Opportunity[]
 
   @@index([normalizedName])
 }
@@ -113,24 +138,41 @@ model ResearcherAffiliation {
 }
 
 model ResearchTopic {
-  id        String            @id @default(cuid())
-  name      String
-  slug      String            @unique
-  parentId  String?
-  meshId    String?
-  parent    ResearchTopic?    @relation("TopicHierarchy", fields: [parentId], references: [id])
-  children  ResearchTopic[]   @relation("TopicHierarchy")
+  id          String            @id @default(cuid())
+  name        String
+  slug        String            @unique
+  parentId    String?
+  meshId      String?
+  parent      ResearchTopic?    @relation("TopicHierarchy", fields: [parentId], references: [id])
+  children    ResearchTopic[]   @relation("TopicHierarchy")
   researchers ResearcherTopic[]
 }
 
 model ResearcherTopic {
   researcherId String
   topicId      String
-  weight       Float          @default(1)
+  weight       Float             @default(1)
   researcher   ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
   topic        ResearchTopic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   @@id([researcherId, topicId])
+}
+
+model ResearchMethod {
+  id          String             @id @default(cuid())
+  name        String
+  slug        String             @unique
+  researchers ResearcherMethod[]
+}
+
+model ResearcherMethod {
+  researcherId String
+  methodId     String
+  proficiency  ProficiencyLevel @default(WORKING)
+  researcher   ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  method       ResearchMethod     @relation(fields: [methodId], references: [id], onDelete: Cascade)
+
+  @@id([researcherId, methodId])
 }
 
 model Publication {
@@ -148,7 +190,7 @@ model Publication {
 }
 
 model ResearcherPublication {
-  researcherId String
+  researcherId  String
   publicationId String
   authorOrder   Int?
   researcher    ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
@@ -196,16 +238,16 @@ model Opportunity {
 }
 
 model ConnectionRequest {
-  id          String            @id @default(cuid())
-  senderId    String
-  receiverId  String
-  purpose     ConnectionPurpose
-  context     String?
-  status      ConnectionStatus  @default(PENDING)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  sender      ResearcherProfile @relation("SentConnectionRequests", fields: [senderId], references: [id], onDelete: Cascade)
-  receiver    ResearcherProfile @relation("ReceivedConnectionRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+  id         String            @id @default(cuid())
+  senderId   String
+  receiverId String
+  purpose    ConnectionPurpose
+  context    String?
+  status     ConnectionStatus  @default(PENDING)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  sender     ResearcherProfile @relation("SentConnectionRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   ResearcherProfile @relation("ReceivedConnectionRequests", fields: [receiverId], references: [id], onDelete: Cascade)
 
   @@index([receiverId, status])
   @@index([senderId, status])
