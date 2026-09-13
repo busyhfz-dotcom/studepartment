@@ -1,6 +1,35 @@
-import { db } from "../src/client";
+import { getDb } from "../src/client";
+
+const db = getDb();
+
+async function upsertTaxonomy() {
+  const topics = [
+    ["oncology", "Oncology"],
+    ["cancer-immunotherapy", "Cancer Immunotherapy"],
+    ["biomarkers", "Biomarkers"],
+    ["clinical-trials", "Clinical Trials"],
+    ["computational-oncology", "Computational Oncology"],
+  ] as const;
+
+  const methods = [
+    ["clinical-trial-design", "Clinical trial design"],
+    ["translational-research", "Translational research"],
+    ["biomarker-analysis", "Biomarker analysis"],
+    ["machine-learning", "Machine learning"],
+  ] as const;
+
+  for (const [slug, name] of topics) {
+    await db.researchTopic.upsert({ where: { slug }, update: { name }, create: { slug, name } });
+  }
+
+  for (const [slug, name] of methods) {
+    await db.researchMethod.upsert({ where: { slug }, update: { name }, create: { slug, name } });
+  }
+}
 
 async function main() {
+  await upsertTaxonomy();
+
   const oxford = await db.organization.upsert({
     where: { id: "org-oxford" },
     update: {},
@@ -27,37 +56,6 @@ async function main() {
     },
   });
 
-  const topicNames = [
-    ["oncology", "Oncology"],
-    ["cancer-immunotherapy", "Cancer Immunotherapy"],
-    ["biomarkers", "Biomarkers"],
-    ["clinical-trials", "Clinical Trials"],
-    ["computational-oncology", "Computational Oncology"],
-  ] as const;
-
-  for (const [slug, name] of topicNames) {
-    await db.researchTopic.upsert({
-      where: { slug },
-      update: { name },
-      create: { slug, name },
-    });
-  }
-
-  const methodNames = [
-    ["clinical-trial-design", "Clinical trial design"],
-    ["translational-research", "Translational research"],
-    ["biomarker-analysis", "Biomarker analysis"],
-    ["machine-learning", "Machine learning"],
-  ] as const;
-
-  for (const [slug, name] of methodNames) {
-    await db.researchMethod.upsert({
-      where: { slug },
-      update: { name },
-      create: { slug, name },
-    });
-  }
-
   const sarah = await db.researcherProfile.upsert({
     where: { id: "researcher-sarah-williams" },
     update: {},
@@ -72,18 +70,6 @@ async function main() {
       verified: true,
       availabilityMode: "SELECTIVE",
       collaborationGoals: ["RESEARCH_COLLABORATION", "CLINICAL_PROJECT", "GRANT_PARTNERSHIP"],
-    },
-  });
-
-  await db.researcherAffiliation.upsert({
-    where: { id: "aff-sarah-oxford" },
-    update: {},
-    create: {
-      id: "aff-sarah-oxford",
-      researcherId: sarah.id,
-      organizationId: oxford.id,
-      title: "Clinical Researcher",
-      current: true,
     },
   });
 
@@ -103,22 +89,28 @@ async function main() {
     },
   });
 
-  await db.researcherAffiliation.upsert({
-    where: { id: "aff-michael-karolinska" },
-    update: {},
-    create: {
-      id: "aff-michael-karolinska",
-      researcherId: michael.id,
-      organizationId: karolinska.id,
-      title: "Associate Professor",
-      current: true,
-    },
-  });
+  await Promise.all([
+    db.researcherAffiliation.upsert({
+      where: { id: "aff-sarah-oxford" },
+      update: {},
+      create: { id: "aff-sarah-oxford", researcherId: sarah.id, organizationId: oxford.id, title: "Clinical Researcher" },
+    }),
+    db.researcherAffiliation.upsert({
+      where: { id: "aff-michael-karolinska" },
+      update: {},
+      create: { id: "aff-michael-karolinska", researcherId: michael.id, organizationId: karolinska.id, title: "Associate Professor" },
+    }),
+  ]);
 
-  const oncology = await db.researchTopic.findUniqueOrThrow({ where: { slug: "oncology" } });
-  const immunotherapy = await db.researchTopic.findUniqueOrThrow({ where: { slug: "cancer-immunotherapy" } });
-  const biomarkers = await db.researchTopic.findUniqueOrThrow({ where: { slug: "biomarkers" } });
-  const computational = await db.researchTopic.findUniqueOrThrow({ where: { slug: "computational-oncology" } });
+  const [oncology, immunotherapy, biomarkers, computational, translational, biomarkerAnalysis, machineLearning] = await Promise.all([
+    db.researchTopic.findUniqueOrThrow({ where: { slug: "oncology" } }),
+    db.researchTopic.findUniqueOrThrow({ where: { slug: "cancer-immunotherapy" } }),
+    db.researchTopic.findUniqueOrThrow({ where: { slug: "biomarkers" } }),
+    db.researchTopic.findUniqueOrThrow({ where: { slug: "computational-oncology" } }),
+    db.researchMethod.findUniqueOrThrow({ where: { slug: "translational-research" } }),
+    db.researchMethod.findUniqueOrThrow({ where: { slug: "biomarker-analysis" } }),
+    db.researchMethod.findUniqueOrThrow({ where: { slug: "machine-learning" } }),
+  ]);
 
   await db.researcherTopic.createMany({
     data: [
@@ -131,10 +123,6 @@ async function main() {
     skipDuplicates: true,
   });
 
-  const translational = await db.researchMethod.findUniqueOrThrow({ where: { slug: "translational-research" } });
-  const biomarkerAnalysis = await db.researchMethod.findUniqueOrThrow({ where: { slug: "biomarker-analysis" } });
-  const machineLearning = await db.researchMethod.findUniqueOrThrow({ where: { slug: "machine-learning" } });
-
   await db.researcherMethod.createMany({
     data: [
       { researcherId: sarah.id, methodId: translational.id, proficiency: "ADVANCED" },
@@ -146,11 +134,10 @@ async function main() {
 }
 
 main()
-  .then(async () => {
-    await db.$disconnect();
-  })
-  .catch(async (error) => {
+  .catch((error) => {
     console.error(error);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
     await db.$disconnect();
-    process.exit(1);
   });
