@@ -62,7 +62,8 @@ function formatCollaborationGoal(value: string) {
 
 const prismaRepository: ResearcherRepository = {
   async getCurrentProfile() {
-    const { db } = await import("@studepartment/db");
+    const { getDb } = await import("@studepartment/db");
+    const db = getDb();
 
     // Until authentication is connected, the first public seeded profile acts as
     // the current development identity. Auth will replace this selector with userId.
@@ -112,7 +113,8 @@ const prismaRepository: ResearcherRepository = {
   },
 
   async discoverResearchers() {
-    const { db } = await import("@studepartment/db");
+    const { getDb } = await import("@studepartment/db");
+    const db = getDb();
 
     const researchers = await db.researcherProfile.findMany({
       where: { profilePublic: true },
