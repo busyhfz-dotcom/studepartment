@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ScientificProfileCard } from "@/components/scientific/scientific-profile-card";
 import type { ScientificIdentity } from "@/features/scientific-identity/types";
 
@@ -26,7 +27,7 @@ const demoIdentity: ScientificIdentity = {
 export default function ProfilePage() {
   return (
     <main className="shell profileShell">
-      <a className="backLink" href="/">← Studepartment</a>
+      <Link className="backLink" href="/">← Studepartment</Link>
       <ScientificProfileCard identity={demoIdentity} />
     </main>
   );
