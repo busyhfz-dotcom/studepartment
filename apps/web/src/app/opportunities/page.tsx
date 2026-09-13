@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./page.module.css";
 
 const opportunities = [
@@ -26,7 +27,7 @@ const opportunities = [
 export default function OpportunitiesPage() {
   return (
     <main className={`shell ${styles.shell}`}>
-      <a className="backLink" href="/">← Studepartment</a>
+      <Link className="backLink" href="/">← Studepartment</Link>
       <header className={styles.header}>
         <span className="eyebrow">Opportunity Intelligence · v0.4</span>
         <h1>Know what deserves your application time.</h1>
