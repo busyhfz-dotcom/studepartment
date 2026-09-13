@@ -25,6 +25,7 @@ export default function HomePage() {
         <div className="actions">
           <a className="primary" href="/onboarding">Build scientific identity</a>
           <a className="secondary" href="/discover">Try discovery</a>
+          <a className="secondary" href="/opportunities">Explore opportunities</a>
           <a className="secondary" href="/profile">View profile</a>
         </div>
       </section>
