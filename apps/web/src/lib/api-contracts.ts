@@ -42,11 +42,20 @@ export type ProfileCompleteness = {
   note: "Guidance only — not a reputation or researcher ranking score.";
 };
 
+export type OrganizationOption = {
+  id: string;
+  name: string;
+  type: string;
+  countryCode: string | null;
+  verified: boolean;
+};
+
 export type ProfileResponse = {
   id: string;
   fullName: string;
   headline: string;
   institution: string;
+  organizationId?: string | null;
   careerStage: string;
   availability: "open" | "selective" | "quiet" | "closed";
   researchInterests: string[];
@@ -71,6 +80,7 @@ export type ProfileUpdateInput = {
   city?: string | null;
   countryCode?: string | null;
   careerStage?: string | null;
+  organizationId?: string | null;
   orcid?: string | null;
   profilePublic?: boolean;
   availability?: ProfileResponse["availability"];

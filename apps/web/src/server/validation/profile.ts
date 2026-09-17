@@ -11,6 +11,7 @@ const allowedKeys = new Set([
   "city",
   "countryCode",
   "careerStage",
+  "organizationId",
   "orcid",
   "profilePublic",
   "availability",
@@ -30,6 +31,7 @@ const collaborationGoals = new Set<CollaborationGoalValue>([
 
 const availabilityValues = new Set(["open", "selective", "quiet", "closed"] as const);
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const idPattern = /^[A-Za-z0-9_-]+$/;
 
 export class ProfileValidationError extends Error {
   readonly code = "INVALID_PROFILE_UPDATE";
@@ -75,7 +77,7 @@ function slugList(value: unknown, field: string): string[] | undefined {
     throw new ProfileValidationError(`${field} must be an array with at most 20 values.`);
   }
 
-  const normalized = Array.from(
+  return Array.from(
     new Set(
       value.map((item) => {
         if (typeof item !== "string") {
@@ -89,8 +91,6 @@ function slugList(value: unknown, field: string): string[] | undefined {
       }),
     ),
   );
-
-  return normalized;
 }
 
 export function parseProfileUpdateInput(value: unknown): ProfileUpdateInput {
@@ -106,7 +106,7 @@ export function parseProfileUpdateInput(value: unknown): ProfileUpdateInput {
   const result: ProfileUpdateInput = {};
 
   const fullName = optionalString(object.fullName, "fullName", 160, { requiredWhenPresent: true });
-  if (fullName !== undefined) result.fullName = fullName;
+  if (fullName !== undefined && fullName !== null) result.fullName = fullName;
 
   const headline = optionalString(object.headline, "headline", 220, { nullable: true });
   if (headline !== undefined) result.headline = headline;
@@ -127,6 +127,20 @@ export function parseProfileUpdateInput(value: unknown): ProfileUpdateInput {
       result.countryCode = object.countryCode.trim().toUpperCase();
     } else {
       throw new ProfileValidationError("countryCode must be a two-letter ISO country code.");
+    }
+  }
+
+  if (object.organizationId !== undefined) {
+    if (object.organizationId === null || object.organizationId === "") {
+      result.organizationId = null;
+    } else if (
+      typeof object.organizationId === "string" &&
+      object.organizationId.length <= 128 &&
+      idPattern.test(object.organizationId)
+    ) {
+      result.organizationId = object.organizationId;
+    } else {
+      throw new ProfileValidationError("organizationId is invalid.");
     }
   }
 

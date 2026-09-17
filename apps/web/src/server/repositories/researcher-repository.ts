@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { getDb } from "@studepartment/db";
+import { getDb, type Prisma } from "@studepartment/db";
 import type {
   CollaborationGoalValue,
   ProfileResponse,
@@ -16,10 +16,7 @@ export type ResearcherRepository = {
 };
 
 export class ResearcherRepositoryError extends Error {
-  constructor(
-    readonly code: string,
-    message: string,
-  ) {
+  constructor(readonly code: string, message: string) {
     super(message);
     this.name = "ResearcherRepositoryError";
   }
@@ -47,8 +44,7 @@ function mapAlignment(level: "Strong" | "Good" | "Exploratory"): ResearcherDisco
   return "complementary";
 }
 
-function mapAvailability(value: "OPEN" | "SELECTIVE" | "QUIET" | "CLOSED"):
-  ProfileResponse["availability"] {
+function mapAvailability(value: "OPEN" | "SELECTIVE" | "QUIET" | "CLOSED"): ProfileResponse["availability"] {
   return value.toLowerCase() as ProfileResponse["availability"];
 }
 
@@ -69,6 +65,7 @@ const fixtureProfile: ProfileResponse = {
   fullName: currentResearcher.name,
   headline: `${currentResearcher.title} · Translational Oncology`,
   institution: currentResearcher.institution,
+  organizationId: "org-oxford",
   careerStage: "Early-career researcher",
   availability: "selective",
   researchInterests: currentResearcher.topics,
@@ -95,7 +92,6 @@ const fixtureRepository: ResearcherRepository = {
   async getProfileForUser() {
     return fixtureProfile;
   },
-
   async updateProfileForUser(_userId, input) {
     const next: ProfileResponse = {
       ...fixtureProfile,
@@ -105,6 +101,7 @@ const fixtureRepository: ResearcherRepository = {
       ...(input.city !== undefined ? { city: input.city } : {}),
       ...(input.countryCode !== undefined ? { countryCode: input.countryCode } : {}),
       ...(input.careerStage !== undefined ? { careerStage: input.careerStage ?? "Researcher" } : {}),
+      ...(input.organizationId !== undefined ? { organizationId: input.organizationId } : {}),
       ...(input.orcid !== undefined ? { orcid: input.orcid } : {}),
       ...(input.profilePublic !== undefined ? { profilePublic: input.profilePublic } : {}),
       ...(input.availability !== undefined ? { availability: input.availability } : {}),
@@ -117,7 +114,6 @@ const fixtureRepository: ResearcherRepository = {
     next.completeness = calculateProfileCompleteness(next);
     return next;
   },
-
   async discoverResearchers() {
     return researcherPreviews.map((researcher) => ({
       id: researcher.id,
@@ -134,10 +130,7 @@ const fixtureRepository: ResearcherRepository = {
 
 async function loadProfileByUserId(userId: string) {
   const db = getDb();
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: { id: true, name: true, email: true },
-  });
+  const user = await db.user.findUnique({ where: { id: userId }, select: { id: true, name: true, email: true } });
   if (!user) return null;
 
   await db.researcherProfile.upsert({
@@ -160,21 +153,10 @@ async function loadProfileByUserId(userId: string) {
         orderBy: { startDate: "desc" },
         take: 1,
       },
-      topics: {
-        include: { topic: true },
-        orderBy: { weight: "desc" },
-      },
-      methods: {
-        include: { method: true },
-      },
-      publications: {
-        select: { publicationId: true },
-        take: 1,
-      },
-      evidence: {
-        where: { status: "VERIFIED" },
-        select: { sourceType: true, fieldPath: true },
-      },
+      topics: { include: { topic: true }, orderBy: { weight: "desc" } },
+      methods: { include: { method: true } },
+      publications: { select: { publicationId: true }, take: 1 },
+      evidence: { where: { status: "VERIFIED" }, select: { sourceType: true, fieldPath: true } },
     },
   });
 }
@@ -192,6 +174,7 @@ function mapLoadedProfile(profile: LoadedProfile): ProfileResponse {
     fullName: profile.fullName,
     headline: profile.headline ?? "Medical researcher",
     institution: affiliation?.organization.name ?? "Independent researcher",
+    organizationId: affiliation?.organizationId ?? null,
     careerStage: profile.careerStage ?? "Researcher",
     availability: mapAvailability(profile.availabilityMode),
     researchInterests: profile.topics.map(({ topic }) => topic.name),
@@ -212,9 +195,37 @@ function mapLoadedProfile(profile: LoadedProfile): ProfileResponse {
     topicSlugs: profile.topics.map(({ topic }) => topic.slug),
     methodSlugs: profile.methods.map(({ method }) => method.slug),
   };
-
   result.completeness = calculateProfileCompleteness(result);
   return result;
+}
+
+async function replaceAffiliation(
+  tx: Prisma.TransactionClient,
+  researcherId: string,
+  organizationId: string | null,
+  title: string | null | undefined,
+) {
+  const current = await tx.researcherAffiliation.findFirst({
+    where: { researcherId, current: true },
+    orderBy: { startDate: "desc" },
+  });
+  if (current?.organizationId === organizationId) {
+    if (current && title !== undefined) {
+      await tx.researcherAffiliation.update({ where: { id: current.id }, data: { title } });
+    }
+    return;
+  }
+  await tx.researcherAffiliation.updateMany({
+    where: { researcherId, current: true },
+    data: { current: false, endDate: new Date() },
+  });
+  if (organizationId) {
+    const organization = await tx.organization.findUnique({ where: { id: organizationId }, select: { id: true } });
+    if (!organization) throw new ResearcherRepositoryError("UNKNOWN_ORGANIZATION", "Selected organization does not exist.");
+    await tx.researcherAffiliation.create({
+      data: { researcherId, organizationId, title: title ?? undefined, current: true, startDate: new Date() },
+    });
+  }
 }
 
 const prismaRepository: ResearcherRepository = {
@@ -226,70 +237,42 @@ const prismaRepository: ResearcherRepository = {
   async updateProfileForUser(userId, input) {
     const db = getDb();
     const current = await loadProfileByUserId(userId);
-    if (!current) {
-      throw new ResearcherRepositoryError("USER_NOT_FOUND", "Authenticated user no longer exists.");
-    }
+    if (!current) throw new ResearcherRepositoryError("USER_NOT_FOUND", "Authenticated user no longer exists.");
 
     await db.$transaction(async (tx) => {
       if (input.orcid) {
-        const existing = await tx.researcherProfile.findUnique({
-          where: { orcid: input.orcid },
-          select: { id: true },
-        });
+        const existing = await tx.researcherProfile.findUnique({ where: { orcid: input.orcid }, select: { id: true } });
         if (existing && existing.id !== current.id) {
-          throw new ResearcherRepositoryError(
-            "ORCID_ALREADY_CONNECTED",
-            "That ORCID iD is already connected to another scientific identity.",
-          );
+          throw new ResearcherRepositoryError("ORCID_ALREADY_CONNECTED", "That ORCID iD is already connected to another scientific identity.");
         }
       }
 
+      if (input.organizationId !== undefined) {
+        await replaceAffiliation(tx, current.id, input.organizationId, input.careerStage);
+      }
+
       if (input.topicSlugs !== undefined) {
-        const topics = await tx.researchTopic.findMany({
-          where: { slug: { in: input.topicSlugs } },
-          select: { id: true, slug: true },
-        });
+        const topics = await tx.researchTopic.findMany({ where: { slug: { in: input.topicSlugs } }, select: { id: true, slug: true } });
         const found = new Set(topics.map((topic) => topic.slug));
         const missing = input.topicSlugs.filter((slug) => !found.has(slug));
-        if (missing.length > 0) {
-          throw new ResearcherRepositoryError(
-            "UNKNOWN_RESEARCH_TOPIC",
-            `Unknown research topic: ${missing.join(", ")}.`,
-          );
-        }
+        if (missing.length) throw new ResearcherRepositoryError("UNKNOWN_RESEARCH_TOPIC", `Unknown research topic: ${missing.join(", ")}.`);
         await tx.researcherTopic.deleteMany({ where: { researcherId: current.id } });
-        if (topics.length > 0) {
+        if (topics.length) {
           await tx.researcherTopic.createMany({
-            data: topics.map((topic, index) => ({
-              researcherId: current.id,
-              topicId: topic.id,
-              weight: Math.max(0.5, 1 - index * 0.05),
-            })),
+            data: topics.map((topic, index) => ({ researcherId: current.id, topicId: topic.id, weight: Math.max(0.5, 1 - index * 0.05) })),
           });
         }
       }
 
       if (input.methodSlugs !== undefined) {
-        const methods = await tx.researchMethod.findMany({
-          where: { slug: { in: input.methodSlugs } },
-          select: { id: true, slug: true },
-        });
+        const methods = await tx.researchMethod.findMany({ where: { slug: { in: input.methodSlugs } }, select: { id: true, slug: true } });
         const found = new Set(methods.map((method) => method.slug));
         const missing = input.methodSlugs.filter((slug) => !found.has(slug));
-        if (missing.length > 0) {
-          throw new ResearcherRepositoryError(
-            "UNKNOWN_RESEARCH_METHOD",
-            `Unknown research method: ${missing.join(", ")}.`,
-          );
-        }
+        if (missing.length) throw new ResearcherRepositoryError("UNKNOWN_RESEARCH_METHOD", `Unknown research method: ${missing.join(", ")}.`);
         await tx.researcherMethod.deleteMany({ where: { researcherId: current.id } });
-        if (methods.length > 0) {
+        if (methods.length) {
           await tx.researcherMethod.createMany({
-            data: methods.map((method) => ({
-              researcherId: current.id,
-              methodId: method.id,
-              proficiency: "WORKING",
-            })),
+            data: methods.map((method) => ({ researcherId: current.id, methodId: method.id, proficiency: "WORKING" })),
           });
         }
       }
@@ -305,9 +288,7 @@ const prismaRepository: ResearcherRepository = {
           ...(input.careerStage !== undefined ? { careerStage: input.careerStage } : {}),
           ...(input.orcid !== undefined ? { orcid: input.orcid } : {}),
           ...(input.profilePublic !== undefined ? { profilePublic: input.profilePublic } : {}),
-          ...(input.availability !== undefined
-            ? { availabilityMode: availabilityToDb[input.availability] }
-            : {}),
+          ...(input.availability !== undefined ? { availabilityMode: availabilityToDb[input.availability] } : {}),
           ...(input.collaborationGoals !== undefined
             ? { collaborationGoals: input.collaborationGoals.map((goal) => collaborationGoalToDb[goal]) }
             : {}),
@@ -316,21 +297,13 @@ const prismaRepository: ResearcherRepository = {
 
       if (input.orcid !== undefined) {
         await tx.evidenceRecord.updateMany({
-          where: {
-            researcherId: current.id,
-            fieldPath: "orcid",
-            status: "VERIFIED",
-          },
+          where: { researcherId: current.id, fieldPath: "orcid", status: "VERIFIED" },
           data: { status: "STALE" },
         });
       }
 
-      const changedFields: Array<[string, unknown]> = [];
-      for (const [key, value] of Object.entries(input)) {
-        if (value !== undefined) changedFields.push([key, value]);
-      }
-
-      if (changedFields.length > 0) {
+      const changedFields = Object.entries(input).filter(([, value]) => value !== undefined);
+      if (changedFields.length) {
         await tx.evidenceRecord.createMany({
           data: changedFields.map(([fieldPath, value]) => ({
             researcherId: current.id,
@@ -346,9 +319,7 @@ const prismaRepository: ResearcherRepository = {
     });
 
     const updated = await loadProfileByUserId(userId);
-    if (!updated) {
-      throw new ResearcherRepositoryError("PROFILE_NOT_FOUND", "Scientific profile could not be reloaded.");
-    }
+    if (!updated) throw new ResearcherRepositoryError("PROFILE_NOT_FOUND", "Scientific profile could not be reloaded.");
     return mapLoadedProfile(updated);
   },
 
@@ -359,47 +330,28 @@ const prismaRepository: ResearcherRepository = {
       orderBy: [{ verified: "desc" }, { updatedAt: "desc" }],
       take: 20,
       include: {
-        affiliations: {
-          where: { current: true },
-          include: { organization: true },
-          take: 1,
-        },
-        topics: {
-          include: { topic: true },
-          orderBy: { weight: "desc" },
-          take: 3,
-        },
+        affiliations: { where: { current: true }, include: { organization: true }, take: 1 },
+        topics: { include: { topic: true }, orderBy: { weight: "desc" }, take: 3 },
       },
     });
-
-    if (researchers.length === 0) return fixtureRepository.discoverResearchers();
-
-    return researchers.map((researcher) => {
-      const topicReasons = researcher.topics.map(({ topic }) => topic.name);
-      const availabilityReason =
-        researcher.availabilityMode === "OPEN"
-          ? "Open to scientific introductions"
-          : researcher.availabilityMode === "SELECTIVE"
-            ? "Selective availability"
-            : "Availability controlled by recipient";
-
-      return {
-        id: researcher.id,
-        fullName: researcher.fullName,
-        headline: researcher.headline ?? "Medical researcher",
-        institution: researcher.affiliations[0]?.organization.name ?? "Independent researcher",
-        alignment: "relevant" as const,
-        reasons: [...topicReasons, availabilityReason].slice(0, 3),
-        availability: mapAvailability(researcher.availabilityMode),
-        confidence: researcher.verified ? "high" as const : "medium" as const,
-      };
-    });
+    if (!researchers.length) return fixtureRepository.discoverResearchers();
+    return researchers.map((researcher) => ({
+      id: researcher.id,
+      fullName: researcher.fullName,
+      headline: researcher.headline ?? "Medical researcher",
+      institution: researcher.affiliations[0]?.organization.name ?? "Independent researcher",
+      alignment: "relevant" as const,
+      reasons: [
+        ...researcher.topics.map(({ topic }) => topic.name),
+        researcher.availabilityMode === "OPEN" ? "Open to scientific introductions" : "Availability controlled by recipient",
+      ].slice(0, 3),
+      availability: mapAvailability(researcher.availabilityMode),
+      confidence: researcher.verified ? "high" as const : "medium" as const,
+    }));
   },
 };
 
-export const researcherRepository: ResearcherRepository = process.env.DATABASE_URL
-  ? prismaRepository
-  : fixtureRepository;
+export const researcherRepository: ResearcherRepository = process.env.DATABASE_URL ? prismaRepository : fixtureRepository;
 
 export function collaborationGoalValueFromLabel(label: string): CollaborationGoalValue | null {
   const normalized = label.trim().toLowerCase().replaceAll(" ", "-");

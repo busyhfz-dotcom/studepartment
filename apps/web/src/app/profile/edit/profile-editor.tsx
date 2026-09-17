@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState, type FormEvent } from "react";
 import type {
   CollaborationGoalValue,
+  OrganizationOption,
   ProfileResponse,
   ProfileUpdateInput,
 } from "@/lib/api-contracts";
@@ -44,7 +45,13 @@ function checkedValues(form: FormData, key: string) {
   return form.getAll(key).map(String);
 }
 
-export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
+export function ProfileEditor({
+  profile,
+  organizations,
+}: {
+  profile: ProfileResponse;
+  organizations: OrganizationOption[];
+}) {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -69,6 +76,7 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
       city: String(form.get("city") ?? "") || null,
       countryCode: String(form.get("countryCode") ?? "") || null,
       careerStage: String(form.get("careerStage") ?? "") || null,
+      organizationId: String(form.get("organizationId") ?? "") || null,
       orcid: String(form.get("orcid") ?? "") || null,
       availability: String(form.get("availability") ?? "selective") as ProfileResponse["availability"],
       profilePublic: form.get("profilePublic") === "on",
@@ -115,8 +123,19 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
             <input name="headline" defaultValue={profile.headline} maxLength={220} />
           </label>
           <label className={styles.fieldGroup}>
-            <span>Career stage</span>
+            <span>Career stage / title</span>
             <input name="careerStage" defaultValue={profile.careerStage} maxLength={120} />
+          </label>
+          <label className={styles.fieldGroup}>
+            <span>Current institution</span>
+            <select name="organizationId" defaultValue={profile.organizationId ?? ""}>
+              <option value="">Independent / not listed</option>
+              {organizations.map((organization) => (
+                <option value={organization.id} key={organization.id}>
+                  {organization.name}{organization.verified ? " · verified" : ""}
+                </option>
+              ))}
+            </select>
           </label>
           <label className={styles.fieldGroup}>
             <span>City</span>

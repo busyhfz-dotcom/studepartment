@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { listOrganizationOptions } from "@/server/repositories/organization-repository";
 import { researcherRepository } from "@/server/repositories/researcher-repository";
-import { ProfileEditor } from "../profile/edit/profile-editor";
+import { OnboardingWizard } from "./onboarding-wizard";
 
 export default async function OnboardingPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/auth/sign-in?callbackUrl=/onboarding");
 
-  const profile = await researcherRepository.getProfileForUser(user.id);
+  const [profile, organizations] = await Promise.all([
+    researcherRepository.getProfileForUser(user.id),
+    listOrganizationOptions(),
+  ]);
   if (!profile) redirect("/auth/sign-in");
 
   return (
@@ -18,21 +22,10 @@ export default async function OnboardingPage() {
         <span className="eyebrow">Scientific Identity · v1 onboarding</span>
         <h1>Build the minimum identity needed for useful scientific discovery.</h1>
         <p className="lede">
-          Add only data that improves scientific context, trust, matching, opportunity analysis, or the quality of introductions. You can change visibility and availability at any time.
+          Four focused steps capture scientific context, research focus, collaboration intent, and visibility without turning onboarding into a long social-profile form.
         </p>
       </header>
-
-      <section className="orcidPanel">
-        <div>
-          <span className="eyebrow">Verification model</span>
-          <h2>Your claims and verified external records are kept separate.</h2>
-          <p>
-            An ORCID iD entered here is stored as a researcher assertion. It becomes a verified source only after the authorized ORCID import flow confirms ownership and records provenance.
-          </p>
-        </div>
-      </section>
-
-      <ProfileEditor profile={profile} />
+      <OnboardingWizard profile={profile} organizations={organizations} />
     </main>
   );
 }
