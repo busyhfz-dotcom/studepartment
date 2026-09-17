@@ -9,6 +9,7 @@
     "lint": "pnpm --filter @studepartment/web lint",
     "typecheck": "pnpm --filter @studepartment/web typecheck",
     "db:generate": "pnpm --filter @studepartment/db generate",
-    "db:migrate": "pnpm --filter @studepartment/db migrate"
+    "db:migrate": "pnpm --filter @studepartment/db migrate",
+    "db:migrate:deploy": "pnpm --filter @studepartment/db migrate:deploy"
   }
 }

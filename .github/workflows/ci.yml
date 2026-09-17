@@ -8,8 +8,22 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: studepartment
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d studepartment"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/studepartment
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/studepartment?schema=public
       BETTER_AUTH_SECRET: ci-only-secret-ci-only-secret-ci-only-secret
       BETTER_AUTH_URL: http://localhost:3000
     steps:
@@ -22,6 +36,8 @@ jobs:
           node-version: 22
       - run: pnpm install --no-frozen-lockfile
       - run: pnpm db:generate
+      - name: Validate migrations on fresh PostgreSQL
+        run: pnpm db:migrate:deploy
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm build
