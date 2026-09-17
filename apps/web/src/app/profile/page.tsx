@@ -5,11 +5,26 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import { researcherRepository } from "@/server/repositories/researcher-repository";
 import styles from "./profile.module.css";
 
-export default async function ProfilePage() {
+const orcidMessages: Record<string, { text: string; error?: boolean }> = {
+  connected: { text: "ORCID ownership verified. The scientific identity now carries an explicit verified ORCID provenance signal." },
+  denied: { text: "ORCID authorization was cancelled. No profile data or verification state was changed.", error: true },
+  "invalid-state": { text: "ORCID verification could not be completed because the authorization state was invalid or expired. Try again from profile settings.", error: true },
+  conflict: { text: "That ORCID iD is already connected to another scientific identity. No change was made.", error: true },
+  error: { text: "ORCID verification failed. No verification state was changed.", error: true },
+};
+
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ orcid?: string }>;
+}) {
   const user = await getCurrentUser();
   if (!user) redirect("/auth/sign-in?callbackUrl=/profile");
 
-  const profile = await researcherRepository.getProfileForUser(user.id);
+  const [{ orcid }, profile] = await Promise.all([
+    searchParams,
+    researcherRepository.getProfileForUser(user.id),
+  ]);
   if (!profile) redirect("/onboarding");
 
   const identity = {
@@ -26,6 +41,7 @@ export default async function ProfilePage() {
     availabilityMode: profile.availability,
     verification: profile.verification,
   };
+  const orcidMessage = orcid ? orcidMessages[orcid] : undefined;
 
   return (
     <main className="shell profileShell">
@@ -33,6 +49,12 @@ export default async function ProfilePage() {
         <Link className="backLink" href="/">← Studepartment</Link>
         <Link className="primaryButton" href="/profile/edit">Edit scientific identity</Link>
       </div>
+
+      {orcidMessage ? (
+        <p className={`${styles.notice} ${orcidMessage.error ? styles.noticeError : ""}`} role="status">
+          {orcidMessage.text}
+        </p>
+      ) : null}
 
       <ScientificProfileCard identity={identity} />
 
