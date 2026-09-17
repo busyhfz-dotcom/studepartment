@@ -4,15 +4,13 @@ import type {
   CollaborationGoalValue,
   ProfileResponse,
   ProfileUpdateInput,
-  ResearcherDiscoveryResult,
 } from "@/lib/api-contracts";
-import { currentResearcher, researcherPreviews } from "@/lib/scientific-data";
+import { currentResearcher } from "@/lib/scientific-data";
 import { calculateProfileCompleteness } from "@/features/scientific-identity/completeness";
 
 export type ResearcherRepository = {
   getProfileForUser(userId: string): Promise<ProfileResponse | null>;
   updateProfileForUser(userId: string, input: ProfileUpdateInput): Promise<ProfileResponse>;
-  discoverResearchers(): Promise<ResearcherDiscoveryResult[]>;
 };
 
 export class ResearcherRepositoryError extends Error {
@@ -37,12 +35,6 @@ const collaborationGoalToDb = {
   "grant-partnership": "GRANT_PARTNERSHIP",
   "position-opportunities": "POSITION_OPPORTUNITIES",
 } as const;
-
-function mapAlignment(level: "Strong" | "Good" | "Exploratory"): ResearcherDiscoveryResult["alignment"] {
-  if (level === "Strong") return "strong";
-  if (level === "Good") return "relevant";
-  return "complementary";
-}
 
 function mapAvailability(value: "OPEN" | "SELECTIVE" | "QUIET" | "CLOSED"): ProfileResponse["availability"] {
   return value.toLowerCase() as ProfileResponse["availability"];
@@ -92,6 +84,7 @@ const fixtureRepository: ResearcherRepository = {
   async getProfileForUser() {
     return fixtureProfile;
   },
+
   async updateProfileForUser(_userId, input) {
     const next: ProfileResponse = {
       ...fixtureProfile,
@@ -113,18 +106,6 @@ const fixtureRepository: ResearcherRepository = {
     };
     next.completeness = calculateProfileCompleteness(next);
     return next;
-  },
-  async discoverResearchers() {
-    return researcherPreviews.map((researcher) => ({
-      id: researcher.id,
-      fullName: researcher.name,
-      headline: researcher.title,
-      institution: researcher.institution,
-      alignment: mapAlignment(researcher.match.level),
-      reasons: researcher.match.reasons,
-      availability: researcher.openTo.length > 0 ? "open" : "selective",
-      confidence: researcher.verified ? "high" : "medium",
-    }));
   },
 };
 
@@ -209,19 +190,24 @@ async function replaceAffiliation(
     where: { researcherId, current: true },
     orderBy: { startDate: "desc" },
   });
+
   if (current?.organizationId === organizationId) {
     if (current && title !== undefined) {
       await tx.researcherAffiliation.update({ where: { id: current.id }, data: { title } });
     }
     return;
   }
+
   await tx.researcherAffiliation.updateMany({
     where: { researcherId, current: true },
     data: { current: false, endDate: new Date() },
   });
+
   if (organizationId) {
     const organization = await tx.organization.findUnique({ where: { id: organizationId }, select: { id: true } });
-    if (!organization) throw new ResearcherRepositoryError("UNKNOWN_ORGANIZATION", "Selected organization does not exist.");
+    if (!organization) {
+      throw new ResearcherRepositoryError("UNKNOWN_ORGANIZATION", "Selected organization does not exist.");
+    }
     await tx.researcherAffiliation.create({
       data: { researcherId, organizationId, title: title ?? undefined, current: true, startDate: new Date() },
     });
@@ -237,13 +223,18 @@ const prismaRepository: ResearcherRepository = {
   async updateProfileForUser(userId, input) {
     const db = getDb();
     const current = await loadProfileByUserId(userId);
-    if (!current) throw new ResearcherRepositoryError("USER_NOT_FOUND", "Authenticated user no longer exists.");
+    if (!current) {
+      throw new ResearcherRepositoryError("USER_NOT_FOUND", "Authenticated user no longer exists.");
+    }
 
     await db.$transaction(async (tx) => {
       if (input.orcid) {
         const existing = await tx.researcherProfile.findUnique({ where: { orcid: input.orcid }, select: { id: true } });
         if (existing && existing.id !== current.id) {
-          throw new ResearcherRepositoryError("ORCID_ALREADY_CONNECTED", "That ORCID iD is already connected to another scientific identity.");
+          throw new ResearcherRepositoryError(
+            "ORCID_ALREADY_CONNECTED",
+            "That ORCID iD is already connected to another scientific identity.",
+          );
         }
       }
 
@@ -252,23 +243,37 @@ const prismaRepository: ResearcherRepository = {
       }
 
       if (input.topicSlugs !== undefined) {
-        const topics = await tx.researchTopic.findMany({ where: { slug: { in: input.topicSlugs } }, select: { id: true, slug: true } });
+        const topics = await tx.researchTopic.findMany({
+          where: { slug: { in: input.topicSlugs } },
+          select: { id: true, slug: true },
+        });
         const found = new Set(topics.map((topic) => topic.slug));
         const missing = input.topicSlugs.filter((slug) => !found.has(slug));
-        if (missing.length) throw new ResearcherRepositoryError("UNKNOWN_RESEARCH_TOPIC", `Unknown research topic: ${missing.join(", ")}.`);
+        if (missing.length) {
+          throw new ResearcherRepositoryError("UNKNOWN_RESEARCH_TOPIC", `Unknown research topic: ${missing.join(", ")}.`);
+        }
         await tx.researcherTopic.deleteMany({ where: { researcherId: current.id } });
         if (topics.length) {
           await tx.researcherTopic.createMany({
-            data: topics.map((topic, index) => ({ researcherId: current.id, topicId: topic.id, weight: Math.max(0.5, 1 - index * 0.05) })),
+            data: topics.map((topic, index) => ({
+              researcherId: current.id,
+              topicId: topic.id,
+              weight: Math.max(0.5, 1 - index * 0.05),
+            })),
           });
         }
       }
 
       if (input.methodSlugs !== undefined) {
-        const methods = await tx.researchMethod.findMany({ where: { slug: { in: input.methodSlugs } }, select: { id: true, slug: true } });
+        const methods = await tx.researchMethod.findMany({
+          where: { slug: { in: input.methodSlugs } },
+          select: { id: true, slug: true },
+        });
         const found = new Set(methods.map((method) => method.slug));
         const missing = input.methodSlugs.filter((slug) => !found.has(slug));
-        if (missing.length) throw new ResearcherRepositoryError("UNKNOWN_RESEARCH_METHOD", `Unknown research method: ${missing.join(", ")}.`);
+        if (missing.length) {
+          throw new ResearcherRepositoryError("UNKNOWN_RESEARCH_METHOD", `Unknown research method: ${missing.join(", ")}.`);
+        }
         await tx.researcherMethod.deleteMany({ where: { researcherId: current.id } });
         if (methods.length) {
           await tx.researcherMethod.createMany({
@@ -319,39 +324,16 @@ const prismaRepository: ResearcherRepository = {
     });
 
     const updated = await loadProfileByUserId(userId);
-    if (!updated) throw new ResearcherRepositoryError("PROFILE_NOT_FOUND", "Scientific profile could not be reloaded.");
+    if (!updated) {
+      throw new ResearcherRepositoryError("PROFILE_NOT_FOUND", "Scientific profile could not be reloaded.");
+    }
     return mapLoadedProfile(updated);
-  },
-
-  async discoverResearchers() {
-    const db = getDb();
-    const researchers = await db.researcherProfile.findMany({
-      where: { profilePublic: true },
-      orderBy: [{ verified: "desc" }, { updatedAt: "desc" }],
-      take: 20,
-      include: {
-        affiliations: { where: { current: true }, include: { organization: true }, take: 1 },
-        topics: { include: { topic: true }, orderBy: { weight: "desc" }, take: 3 },
-      },
-    });
-    if (!researchers.length) return fixtureRepository.discoverResearchers();
-    return researchers.map((researcher) => ({
-      id: researcher.id,
-      fullName: researcher.fullName,
-      headline: researcher.headline ?? "Medical researcher",
-      institution: researcher.affiliations[0]?.organization.name ?? "Independent researcher",
-      alignment: "relevant" as const,
-      reasons: [
-        ...researcher.topics.map(({ topic }) => topic.name),
-        researcher.availabilityMode === "OPEN" ? "Open to scientific introductions" : "Availability controlled by recipient",
-      ].slice(0, 3),
-      availability: mapAvailability(researcher.availabilityMode),
-      confidence: researcher.verified ? "high" as const : "medium" as const,
-    }));
   },
 };
 
-export const researcherRepository: ResearcherRepository = process.env.DATABASE_URL ? prismaRepository : fixtureRepository;
+export const researcherRepository: ResearcherRepository = process.env.DATABASE_URL
+  ? prismaRepository
+  : fixtureRepository;
 
 export function collaborationGoalValueFromLabel(label: string): CollaborationGoalValue | null {
   const normalized = label.trim().toLowerCase().replaceAll(" ", "-");

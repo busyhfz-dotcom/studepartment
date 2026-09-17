@@ -11,15 +11,50 @@ export type ApiError = {
   };
 };
 
+export type DiscoveryAvailability = "open" | "selective" | "quiet" | "closed";
+
+export type ResearcherDiscoveryQuery = {
+  text: string;
+  topicSlugs: string[];
+  methodSlugs: string[];
+  countryCodes: string[];
+  careerStages: string[];
+  availability: DiscoveryAvailability[];
+  limit: number;
+};
+
+export type DiscoveryScoreBreakdown = {
+  text: number;
+  topics: number;
+  methods: number;
+  geography: number;
+  availability: number;
+  trust: number;
+};
+
 export type ResearcherDiscoveryResult = {
   id: string;
   fullName: string;
   headline: string;
   institution: string;
+  location: string;
+  careerStage: string;
+  researchInterests: string[];
+  methods: string[];
   alignment: "strong" | "relevant" | "complementary";
   reasons: string[];
-  availability: "open" | "selective" | "quiet" | "closed";
+  availability: DiscoveryAvailability;
   confidence: "high" | "medium" | "low";
+  verifiedSignals: string[];
+  score: number;
+  scoreBreakdown: DiscoveryScoreBreakdown;
+};
+
+export type ResearcherDiscoveryResponse = {
+  query: ResearcherDiscoveryQuery;
+  results: ResearcherDiscoveryResult[];
+  totalConsidered: number;
+  cappedAt: number;
 };
 
 export type CollaborationGoalValue =
@@ -57,7 +92,7 @@ export type ProfileResponse = {
   institution: string;
   organizationId?: string | null;
   careerStage: string;
-  availability: "open" | "selective" | "quiet" | "closed";
+  availability: DiscoveryAvailability;
   researchInterests: string[];
   methods: string[];
   collaborationGoals: string[];
@@ -123,7 +158,7 @@ export type ScientificIntroductionPreview = {
   receiver: {
     id: string;
     fullName: string;
-    availability: "open" | "selective" | "quiet" | "closed";
+    availability: DiscoveryAvailability;
   };
   purpose: IntroductionPurpose;
   relevance: "strong" | "relevant" | "weak";
