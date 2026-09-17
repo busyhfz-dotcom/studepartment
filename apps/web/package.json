@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@better-auth/prisma-adapter": "1.7.5",
     "@studepartment/db": "workspace:*",
+    "better-auth": "1.7.5",
     "next": "16.3.3",
     "react": "19.3.0",
     "react-dom": "19.3.0"

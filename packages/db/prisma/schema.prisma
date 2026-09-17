@@ -70,13 +70,80 @@ enum ProficiencyLevel {
   ADVANCED
 }
 
+enum EvidenceSourceType {
+  USER_ENTRY
+  ORCID
+  PUBMED
+  INSTITUTIONAL_EMAIL
+  INSTITUTIONAL_DIRECTORY
+  MANUAL_REVIEW
+}
+
+enum EvidenceStatus {
+  ASSERTED
+  VERIFIED
+  DISPUTED
+  STALE
+}
+
 model User {
-  id         String             @id @default(cuid())
-  email      String             @unique
-  role       UserRole
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
-  researcher ResearcherProfile?
+  id             String           @id @default(cuid())
+  name           String           @default("")
+  email          String           @unique
+  emailVerified  Boolean          @default(false)
+  image           String?
+  role            UserRole         @default(RESEARCHER)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  researcher      ResearcherProfile?
+  sessions        Session[]
+  accounts        Account[]
+  evidenceActions EvidenceRecord[] @relation("EvidenceActor")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                     String    @id @default(cuid())
+  userId                 String
+  accountId              String
+  providerId             String
+  accessToken            String?
+  refreshToken           String?
+  idToken                String?
+  accessTokenExpiresAt   DateTime?
+  refreshTokenExpiresAt  DateTime?
+  scope                   String?
+  password                String?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
 }
 
 model ResearcherProfile {
@@ -103,6 +170,29 @@ model ResearcherProfile {
   labMemberships     LabMember[]
   sentRequests       ConnectionRequest[]     @relation("SentConnectionRequests")
   receivedRequests   ConnectionRequest[]     @relation("ReceivedConnectionRequests")
+  evidence           EvidenceRecord[]
+}
+
+model EvidenceRecord {
+  id               String             @id @default(cuid())
+  researcherId     String
+  actorUserId      String?
+  sourceType       EvidenceSourceType
+  sourceRecordId   String?
+  sourceUrl        String?
+  fieldPath        String
+  valueFingerprint String?
+  confidence       Float?
+  status           EvidenceStatus     @default(ASSERTED)
+  observedAt       DateTime           @default(now())
+  verifiedAt       DateTime?
+  metadata         Json?
+  researcher       ResearcherProfile  @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  actor             User?              @relation("EvidenceActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([researcherId, fieldPath])
+  @@index([sourceType, sourceRecordId])
+  @@index([status, observedAt])
 }
 
 model Organization {
