@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Studepartment",
-  description: "Scientific intelligence for medical research discovery and collaboration.",
+  title: {
+    default: "Studepartment · Medical Research Intelligence",
+    template: "%s · Studepartment",
+  },
+  description: "Privacy-first scientific intelligence for medical research discovery, opportunity analysis, and trusted collaboration.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

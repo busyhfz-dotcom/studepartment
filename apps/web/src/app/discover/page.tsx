@@ -1,24 +1,27 @@
-import Link from "next/link";
+import { ProductShell } from "@/components/shell/product-shell";
 import { DiscoveryExplorer } from "./discovery-explorer";
 import styles from "./page.module.css";
 
 export default function DiscoverPage() {
   return (
-    <main className={`shell ${styles.discoverShell}`}>
-      <div className={styles.pageChrome}>
-        <Link className="backLink" href="/">← Studepartment</Link>
-        <span className={styles.versionPill}>Discovery v0.3</span>
+    <ProductShell>
+      <div className={styles.discoverShell}>
+        <div className={styles.pageChrome}>
+          <div>
+            <span className="eyebrow">Scientific Discovery</span>
+            <span className={styles.versionPill}>Discovery v0.3</span>
+          </div>
+        </div>
+
+        <header className={styles.discoverHeader}>
+          <h1>Find the few researchers who fit the work.</h1>
+          <p className="lede">
+            Search by scientific intent, methods, geography, and collaboration context. Results stay deliberately small and explain their reasoning.
+          </p>
+        </header>
+
+        <DiscoveryExplorer />
       </div>
-
-      <header className={styles.discoverHeader}>
-        <span className="eyebrow">Scientific Discovery</span>
-        <h1>Find the few researchers who fit the work.</h1>
-        <p className="lede">
-          Search by scientific intent, methods, geography, and collaboration context. Results stay deliberately small and explain their reasoning.
-        </p>
-      </header>
-
-      <DiscoveryExplorer />
-    </main>
+    </ProductShell>
   );
 }
