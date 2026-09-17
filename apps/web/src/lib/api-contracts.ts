@@ -12,6 +12,7 @@ export type ApiError = {
 };
 
 export type DiscoveryAvailability = "open" | "selective" | "quiet" | "closed";
+export type DiscoveryRetrievalMode = "structured-lexical" | "hybrid";
 
 export type ResearcherDiscoveryQuery = {
   text: string;
@@ -30,6 +31,7 @@ export type DiscoveryScoreBreakdown = {
   geography: number;
   availability: number;
   trust: number;
+  semantic?: number;
 };
 
 export type ResearcherDiscoveryResult = {
@@ -55,6 +57,7 @@ export type ResearcherDiscoveryResponse = {
   results: ResearcherDiscoveryResult[];
   totalConsidered: number;
   cappedAt: number;
+  retrievalMode?: DiscoveryRetrievalMode;
 };
 
 export type InstitutionalEntityType = "laboratory" | "institution";
@@ -82,6 +85,7 @@ export type InstitutionalDiscoveryScoreBreakdown = {
   geography: number;
   activity: number;
   trust: number;
+  semantic?: number;
 };
 
 export type InstitutionalDiscoveryResult = {
@@ -110,7 +114,7 @@ export type InstitutionalDiscoveryResponse = {
   results: InstitutionalDiscoveryResult[];
   totalConsidered: number;
   cappedAt: number;
-  retrievalMode: "structured-lexical";
+  retrievalMode: DiscoveryRetrievalMode;
 };
 
 export type CollaborationGoalValue =
