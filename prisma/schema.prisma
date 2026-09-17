@@ -1,0 +1,292 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  RESEARCHER
+  INSTITUTION_ADMIN
+  PLATFORM_ADMIN
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  LIMITED
+  PRIVATE
+}
+
+enum OpportunityType {
+  PHD
+  POSTDOC
+  FELLOWSHIP
+  GRANT
+  COLLABORATION
+  RESEARCH_ROLE
+}
+
+enum OpportunityStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+enum IntroductionStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+}
+
+enum EntityKind {
+  RESEARCHER
+  LAB
+  INSTITUTION
+  OPPORTUNITY
+  PUBLICATION
+}
+
+model User {
+  id             String      @id @default(cuid())
+  email          String      @unique
+  role           UserRole    @default(RESEARCHER)
+  displayName    String?
+  researcherId   String?     @unique
+  researcher     Researcher? @relation(fields: [researcherId], references: [id], onDelete: SetNull)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  savedOpportunities SavedOpportunity[]
+  introductionRequests IntroductionRequest[] @relation("IntroductionRequester")
+  auditEvents AuditEvent[]
+}
+
+model Researcher {
+  id                 String             @id @default(cuid())
+  slug               String             @unique
+  firstName          String
+  lastName           String
+  headline           String
+  bio                String
+  city               String?
+  country            String?
+  orcid              String?            @unique
+  avatarUrl          String?
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  visibility         ProfileVisibility  @default(PUBLIC)
+  collaborationOpen  Boolean            @default(true)
+  institutionId      String?
+  institution        Institution?       @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+  labId              String?
+  lab                Lab?               @relation(fields: [labId], references: [id], onDelete: SetNull)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user              User?
+  topics            ResearcherTopic[]
+  publications      PublicationAuthor[]
+  introductionsSent IntroductionRequest[] @relation("ResearcherRequester")
+  introductionsReceived IntroductionRequest[] @relation("ResearcherRecipient")
+
+  @@index([lastName, firstName])
+  @@index([institutionId])
+}
+
+model Institution {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  shortName   String?
+  city        String?
+  country     String?
+  website     String?
+  description String?
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  researchers  Researcher[]
+  labs         Lab[]
+  opportunities Opportunity[]
+}
+
+model Lab {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  description   String?
+  website       String?
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  researchers Researcher[]
+  opportunities Opportunity[]
+
+  @@index([institutionId])
+}
+
+model ResearchTopic {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  researchers  ResearcherTopic[]
+  opportunities OpportunityTopic[]
+  publications PublicationTopic[]
+}
+
+model ResearcherTopic {
+  researcherId String
+  topicId      String
+  expertise    Int      @default(3)
+  researcher   Researcher    @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  topic        ResearchTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([researcherId, topicId])
+  @@index([topicId])
+}
+
+model Publication {
+  id          String   @id @default(cuid())
+  doi         String?  @unique
+  title       String
+  abstract    String?
+  journal     String?
+  publishedAt DateTime?
+  url         String?
+  createdAt   DateTime @default(now())
+
+  authors PublicationAuthor[]
+  topics  PublicationTopic[]
+}
+
+model PublicationAuthor {
+  publicationId String
+  researcherId  String
+  authorOrder   Int
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  researcher    Researcher  @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+
+  @@id([publicationId, researcherId])
+  @@index([researcherId])
+}
+
+model PublicationTopic {
+  publicationId String
+  topicId       String
+  publication   Publication   @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  topic         ResearchTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([publicationId, topicId])
+  @@index([topicId])
+}
+
+model Opportunity {
+  id            String            @id @default(cuid())
+  slug          String            @unique
+  title         String
+  summary       String
+  description   String
+  type          OpportunityType
+  status        OpportunityStatus @default(OPEN)
+  city          String?
+  country       String?
+  remote        Boolean           @default(false)
+  fundingLabel  String?
+  applicationUrl String?
+  deadline      DateTime?
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  labId         String?
+  lab           Lab? @relation(fields: [labId], references: [id], onDelete: SetNull)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  topics OpportunityTopic[]
+  savedBy SavedOpportunity[]
+
+  @@index([status, type])
+  @@index([deadline])
+  @@index([institutionId])
+}
+
+model OpportunityTopic {
+  opportunityId String
+  topicId       String
+  importance    Int @default(3)
+  opportunity   Opportunity   @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  topic         ResearchTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([opportunityId, topicId])
+  @@index([topicId])
+}
+
+model SavedOpportunity {
+  userId        String
+  opportunityId String
+  createdAt     DateTime @default(now())
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@id([userId, opportunityId])
+}
+
+model IntroductionRequest {
+  id                    String             @id @default(cuid())
+  userId                String
+  requesterResearcherId String
+  recipientResearcherId String
+  message               String
+  context               String?
+  status                IntroductionStatus @default(PENDING)
+  createdAt             DateTime           @default(now())
+  respondedAt           DateTime?
+  user                   User       @relation("IntroductionRequester", fields: [userId], references: [id], onDelete: Cascade)
+  requester              Researcher @relation("ResearcherRequester", fields: [requesterResearcherId], references: [id], onDelete: Cascade)
+  recipient              Researcher @relation("ResearcherRecipient", fields: [recipientResearcherId], references: [id], onDelete: Cascade)
+
+  @@index([recipientResearcherId, status])
+  @@index([userId, createdAt])
+}
+
+model SemanticDocument {
+  id         String     @id @default(cuid())
+  entityKind EntityKind
+  entityId   String
+  text       String
+  embedding  Float[]
+  model      String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@unique([entityKind, entityId])
+  @@index([entityKind])
+}
+
+model AuditEvent {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String?
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+}
