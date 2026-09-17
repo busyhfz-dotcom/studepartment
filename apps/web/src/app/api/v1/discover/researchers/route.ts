@@ -1,12 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, ResearcherDiscoveryResponse } from "@/lib/api-contracts";
+import { rerankResearcherDiscovery } from "@/server/discovery/hybrid-rerank";
 import { discoverResearchers } from "@/server/discovery/researcher-discovery";
 import { parseResearcherDiscoveryQuery } from "@/server/discovery/query";
 
 export async function GET(request: NextRequest) {
   try {
     const query = parseResearcherDiscoveryQuery(request.nextUrl.searchParams);
-    const discovery = await discoverResearchers(query);
+    const structured = await discoverResearchers(query);
+    const discovery = await rerankResearcherDiscovery(structured);
     const body: ApiSuccess<ResearcherDiscoveryResponse> = { success: true, data: discovery };
     return NextResponse.json(body, {
       headers: {
