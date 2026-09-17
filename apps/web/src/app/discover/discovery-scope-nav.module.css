@@ -1,0 +1,60 @@
+.scopeNav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 30px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.scopeLink {
+  display: grid;
+  gap: 4px;
+  min-height: 68px;
+  padding: 13px 14px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  color: var(--muted);
+  transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.scopeLink:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.scopeLink span {
+  color: inherit;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.scopeLink small {
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.active {
+  border-color: var(--line);
+  color: var(--text);
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(25, 33, 31, .05);
+}
+
+.active span::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 7px;
+  border-radius: 999px;
+  background: var(--accent-strong);
+  vertical-align: 1px;
+}
+
+@media (max-width: 680px) {
+  .scopeNav { grid-template-columns: 1fr; }
+  .scopeLink { min-height: 0; }
+}

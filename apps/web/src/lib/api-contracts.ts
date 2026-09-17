@@ -57,6 +57,62 @@ export type ResearcherDiscoveryResponse = {
   cappedAt: number;
 };
 
+export type InstitutionalEntityType = "laboratory" | "institution";
+export type InstitutionalOrganizationType =
+  | "university"
+  | "hospital"
+  | "research-institute"
+  | "company"
+  | "foundation";
+
+export type InstitutionalDiscoveryQuery = {
+  entityType: InstitutionalEntityType;
+  text: string;
+  topicSlugs: string[];
+  methodSlugs: string[];
+  countryCodes: string[];
+  organizationTypes: InstitutionalOrganizationType[];
+  limit: number;
+};
+
+export type InstitutionalDiscoveryScoreBreakdown = {
+  text: number;
+  topics: number;
+  methods: number;
+  geography: number;
+  activity: number;
+  trust: number;
+};
+
+export type InstitutionalDiscoveryResult = {
+  id: string;
+  entityType: InstitutionalEntityType;
+  name: string;
+  organizationName?: string;
+  organizationType: InstitutionalOrganizationType;
+  description: string;
+  location: string;
+  countryCode: string;
+  website?: string | null;
+  verified: boolean;
+  activeResearcherCount: number;
+  labCount: number;
+  researchInterests: string[];
+  methods: string[];
+  confidence: "high" | "medium" | "low";
+  reasons: string[];
+  score: number;
+  scoreBreakdown: InstitutionalDiscoveryScoreBreakdown;
+};
+
+export type InstitutionalDiscoveryResponse = {
+  query: InstitutionalDiscoveryQuery;
+  results: InstitutionalDiscoveryResult[];
+  totalConsidered: number;
+  cappedAt: number;
+  retrievalMode: "structured-lexical";
+};
+
 export type CollaborationGoalValue =
   | "research-collaboration"
   | "mentorship"
