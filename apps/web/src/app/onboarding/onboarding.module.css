@@ -1,0 +1,29 @@
+.wizard { overflow: hidden; margin-top: 30px; border: 1px solid var(--line); border-radius: 28px; background: var(--surface); box-shadow: var(--shadow); }
+.progress { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); }
+.progress button { display: flex; gap: 9px; align-items: center; padding: 17px 18px; border: 0; border-right: 1px solid var(--line); color: var(--muted); background: transparent; text-align: left; font: inherit; font-size: 12px; font-weight: 800; }
+.progress button:last-child { border-right: 0; }
+.progress button span { opacity: .55; font-variant-numeric: tabular-nums; }
+.progress .activeStep { color: var(--text); background: rgba(29,112,92,.07); }
+.stage { padding: clamp(26px, 5vw, 52px); }
+.stack { display: grid; gap: 20px; }
+.stack h2 { margin: 0; max-width: 760px; font-size: clamp(28px, 4vw, 46px); letter-spacing: -.045em; line-height: 1.05; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid label,.fullField { display: grid; gap: 8px; color: var(--muted); font-size: 13px; font-weight: 800; }
+.grid input,.grid select,.fullField input,.fullField select { width: 100%; padding: 13px 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.72); color: var(--text); font: inherit; }
+.fullField { max-width: 620px; }
+.fullField small { font-weight: 500; line-height: 1.5; }
+.choiceColumns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.choiceColumns > div { display: grid; align-content: start; gap: 10px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; }
+.choiceColumns h3 { margin: 0 0 6px; }
+.choiceColumns button,.choices button { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.56); color: var(--text); text-align: left; font: inherit; cursor: pointer; }
+.choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.choiceColumns .selected,.choices .selected { border-color: rgba(29,112,92,.55); background: rgba(29,112,92,.1); box-shadow: inset 0 0 0 1px rgba(29,112,92,.12); }
+.visibility { display: flex; gap: 12px; max-width: 620px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.58); }
+.visibility input { margin-top: 4px; accent-color: var(--accent); }
+.visibility span { display: grid; gap: 5px; }
+.visibility small { color: var(--muted); line-height: 1.45; }
+.error { margin: 22px 0 0; padding: 12px 14px; border-radius: 12px; color: #9f2f2f; background: rgba(159,47,47,.06); font-size: 13px; font-weight: 700; }
+.actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 32px; padding-top: 22px; border-top: 1px solid var(--line); }
+.actions button:disabled { opacity: .5; }
+@media (max-width: 800px) { .progress { grid-template-columns: 1fr 1fr; } .grid,.choiceColumns { grid-template-columns: 1fr; } .choices { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .progress,.choices { grid-template-columns: 1fr; } }

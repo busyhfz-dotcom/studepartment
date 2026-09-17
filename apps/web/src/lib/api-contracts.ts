@@ -22,17 +22,71 @@ export type ResearcherDiscoveryResult = {
   confidence: "high" | "medium" | "low";
 };
 
+export type CollaborationGoalValue =
+  | "research-collaboration"
+  | "mentorship"
+  | "student-supervision"
+  | "clinical-project"
+  | "grant-partnership"
+  | "position-opportunities";
+
+export type ProfileCompleteness = {
+  percent: number;
+  completed: number;
+  total: number;
+  dimensions: Array<{
+    key: string;
+    label: string;
+    complete: boolean;
+  }>;
+  note: "Guidance only — not a reputation or researcher ranking score.";
+};
+
+export type OrganizationOption = {
+  id: string;
+  name: string;
+  type: string;
+  countryCode: string | null;
+  verified: boolean;
+};
+
 export type ProfileResponse = {
   id: string;
   fullName: string;
   headline: string;
   institution: string;
+  organizationId?: string | null;
   careerStage: string;
   availability: "open" | "selective" | "quiet" | "closed";
   researchInterests: string[];
   methods: string[];
   collaborationGoals: string[];
   verification: Array<{ label: string; verified: boolean }>;
+  bio?: string | null;
+  city?: string | null;
+  countryCode?: string | null;
+  location?: string;
+  orcid?: string | null;
+  profilePublic?: boolean;
+  topicSlugs?: string[];
+  methodSlugs?: string[];
+  completeness?: ProfileCompleteness;
+};
+
+export type ProfileUpdateInput = {
+  fullName?: string;
+  headline?: string | null;
+  bio?: string | null;
+  city?: string | null;
+  countryCode?: string | null;
+  careerStage?: string | null;
+  organizationId?: string | null;
+  orcid?: string | null;
+  profilePublic?: boolean;
+  availability?: ProfileResponse["availability"];
+  collaborationGoals?: CollaborationGoalValue[];
+  topicSlugs?: string[];
+  methodSlugs?: string[];
 };
 
 export type OpportunityResult = {

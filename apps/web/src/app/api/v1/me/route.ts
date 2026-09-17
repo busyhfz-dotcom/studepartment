@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { anonymousSessionProvider } from "@/server/auth/current-user";
+import { getCurrentUser } from "@/server/auth/current-user";
 
 export async function GET() {
-  const user = await anonymousSessionProvider.getCurrentUser();
+  const user = await getCurrentUser();
 
   if (!user) {
     return NextResponse.json(

@@ -1,3 +1,7 @@
+import { getDb } from "@studepartment/db";
+import { headers } from "next/headers";
+import { auth } from "./auth";
+
 export type AccountRole =
   | "STUDENT"
   | "RESEARCHER"
@@ -14,23 +18,47 @@ export interface SessionProvider {
   getCurrentUser(): Promise<CurrentUser | null>;
 }
 
+export class AuthenticationRequiredError extends Error {
+  readonly code = "AUTHENTICATION_REQUIRED";
+
+  constructor() {
+    super("Authentication required.");
+    this.name = "AuthenticationRequiredError";
+  }
+}
+
 /**
- * Temporary unauthenticated provider.
+ * Production session provider backed by Better Auth.
  *
- * Product code should depend on SessionProvider / CurrentUser rather than a
- * concrete authentication library. A production session provider can then be
- * introduced without coupling repositories to provider-specific session types.
+ * Session identity is resolved to the canonical User row before product code
+ * receives a CurrentUser. This prevents client supplied researcher/profile ids
+ * from becoming an authorization primitive.
  */
-export const anonymousSessionProvider: SessionProvider = {
+export const betterAuthSessionProvider: SessionProvider = {
   async getCurrentUser() {
-    return null;
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user?.id) return null;
+
+    const user = await getDb().user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true, role: true },
+    });
+
+    if (!user) return null;
+    return { id: user.id, role: user.role };
   },
 };
 
-export async function requireCurrentUser(provider: SessionProvider): Promise<CurrentUser> {
+export async function getCurrentUser(
+  provider: SessionProvider = betterAuthSessionProvider,
+): Promise<CurrentUser | null> {
+  return provider.getCurrentUser();
+}
+
+export async function requireCurrentUser(
+  provider: SessionProvider = betterAuthSessionProvider,
+): Promise<CurrentUser> {
   const user = await provider.getCurrentUser();
-  if (!user) {
-    throw new Error("Authentication required.");
-  }
+  if (!user) throw new AuthenticationRequiredError();
   return user;
 }
