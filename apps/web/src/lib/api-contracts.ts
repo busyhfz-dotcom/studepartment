@@ -22,6 +22,26 @@ export type ResearcherDiscoveryResult = {
   confidence: "high" | "medium" | "low";
 };
 
+export type CollaborationGoalValue =
+  | "research-collaboration"
+  | "mentorship"
+  | "student-supervision"
+  | "clinical-project"
+  | "grant-partnership"
+  | "position-opportunities";
+
+export type ProfileCompleteness = {
+  percent: number;
+  completed: number;
+  total: number;
+  dimensions: Array<{
+    key: string;
+    label: string;
+    complete: boolean;
+  }>;
+  note: "Guidance only — not a reputation or researcher ranking score.";
+};
+
 export type ProfileResponse = {
   id: string;
   fullName: string;
@@ -33,6 +53,30 @@ export type ProfileResponse = {
   methods: string[];
   collaborationGoals: string[];
   verification: Array<{ label: string; verified: boolean }>;
+  bio?: string | null;
+  city?: string | null;
+  countryCode?: string | null;
+  location?: string;
+  orcid?: string | null;
+  profilePublic?: boolean;
+  topicSlugs?: string[];
+  methodSlugs?: string[];
+  completeness?: ProfileCompleteness;
+};
+
+export type ProfileUpdateInput = {
+  fullName?: string;
+  headline?: string | null;
+  bio?: string | null;
+  city?: string | null;
+  countryCode?: string | null;
+  careerStage?: string | null;
+  orcid?: string | null;
+  profilePublic?: boolean;
+  availability?: ProfileResponse["availability"];
+  collaborationGoals?: CollaborationGoalValue[];
+  topicSlugs?: string[];
+  methodSlugs?: string[];
 };
 
 export type OpportunityResult = {

@@ -20,13 +20,36 @@
   background: rgba(255,255,255,.72);
   font: inherit;
 }
+.fieldGroup input:focus,
+.fieldGroup textarea:focus,
+.editorSection select:focus {
+  outline: 2px solid rgba(29, 112, 92, .16);
+  border-color: rgba(29, 112, 92, .55);
+}
 .fieldGroup textarea { resize: vertical; line-height: 1.55; }
 .editorSplit { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.sourceBox { display: grid; gap: 6px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.65); }
-.sourceBox span { color: var(--muted); font-size: 13px; }
+.sectionHelp,.sourceNotice { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.choiceColumns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 18px; }
+.choiceGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+.choiceGroup { display: grid; gap: 10px; min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 16px; }
+.choiceGroup legend { padding: 0 7px; color: var(--text); font-weight: 800; }
+.checkRow,.visibilityToggle { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.checkRow { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); background: rgba(255,255,255,.52); }
+.checkRow input,.visibilityToggle input { margin-top: 3px; accent-color: var(--accent); }
+.visibilityToggle { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.6); }
+.visibilityToggle span { display: grid; gap: 5px; }
+.visibilityToggle small { color: var(--muted); line-height: 1.45; }
 .editorActions { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 24px 32px; }
-.editorActions span { max-width: 620px; color: var(--muted); font-size: 13px; }
+.editorActions > div { max-width: 680px; }
+.editorActions span { color: var(--muted); font-size: 13px; }
+.editorActions button:disabled { opacity: .6; cursor: wait; }
+.errorMessage,.successMessage { margin: 8px 0 0; font-size: 13px; font-weight: 700; }
+.errorMessage { color: #9f2f2f; }
+.successMessage { color: #176b55; }
+@media (max-width: 900px) {
+  .choiceGrid { grid-template-columns: 1fr 1fr; }
+}
 @media (max-width: 760px) {
-  .editorGrid,.editorSplit { grid-template-columns: 1fr; }
+  .editorGrid,.editorSplit,.choiceColumns,.choiceGrid { grid-template-columns: 1fr; }
   .editorActions { align-items: stretch; flex-direction: column; }
 }
