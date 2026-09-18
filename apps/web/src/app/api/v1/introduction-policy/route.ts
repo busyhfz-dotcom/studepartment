@@ -2,6 +2,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, IntroductionPolicyResponse, IntroductionPurpose } from "@/lib/api-contracts";
 import { getIntroductionPolicy, updateIntroductionPolicy } from "@/server/introductions/engine";
 import { introductionErrorResponse } from "@/server/introductions/http";
+import {
+  consumeClientRateLimit,
+  RateLimitExceededError,
+  rateLimitErrorResponse,
+} from "@/server/security/rate-limit";
 
 const purposes = new Set<IntroductionPurpose>([
   "research-discussion",
@@ -18,12 +23,14 @@ export async function GET() {
     const body: ApiSuccess<IntroductionPolicyResponse> = { success: true, data };
     return NextResponse.json(body, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
+    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     return introductionErrorResponse(error);
   }
 }
 
 export async function PATCH(request: NextRequest) {
   try {
+    await consumeClientRateLimit(request, "introductions:policy", { windowSeconds: 3600, max: 30 });
     const raw = await request.json() as Record<string, unknown>;
     const allowedPurposes = Array.isArray(raw.allowedPurposes)
       ? raw.allowedPurposes.filter(
