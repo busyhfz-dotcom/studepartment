@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { getDb } from "@studepartment/db";
+import { getDb, type Prisma } from "@studepartment/db";
 
 export type OpportunityIngestionSource = {
   type: "INSTITUTIONAL_CAREERS" | "FUNDER" | "LAB_WEBSITE" | "RESEARCH_NETWORK" | "MANUAL" | "IMPORT";
@@ -246,13 +246,13 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
           status: batch.source.verified ? "VERIFIED" : "ASSERTED",
           observedAt,
           publishedAt,
-          metadata: record.metadata ?? undefined,
+          metadata: record.metadata ? record.metadata as Prisma.InputJsonValue : undefined,
         },
         update: {
           observedAt,
           sourceUrl: record.sourceUrl,
           status: batch.source.verified ? "VERIFIED" : "ASSERTED",
-          metadata: record.metadata ?? undefined,
+          metadata: record.metadata ? record.metadata as Prisma.InputJsonValue : undefined,
         },
       });
 
