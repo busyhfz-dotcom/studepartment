@@ -126,7 +126,8 @@ export async function POST(request: NextRequest) {
       !sourceTypes.has(rawSource.type as OpportunityIngestionSource["type"]) ||
       typeof rawSource.name !== "string" ||
       !Array.isArray(raw.records) ||
-      raw.records.length > 100
+      raw.records.length > 100 ||
+      (raw.completeSnapshot === true && raw.records.length === 0)
     ) {
       const body: ApiError = {
         success: false,
