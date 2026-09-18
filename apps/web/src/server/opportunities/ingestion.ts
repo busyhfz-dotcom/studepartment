@@ -126,11 +126,15 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
     const eligibleCountryCodes = Array.from(new Set((record.eligibleCountryCodes ?? []).map((value) => value.toUpperCase().slice(0, 2)).filter(Boolean))).slice(0, 32);
 
     await db.$transaction(async (tx) => {
+      const organizationCountry = record.organization.countryCode?.toUpperCase().slice(0, 2) || null;
       let organization = await tx.organization.findFirst({
         where: {
           normalizedName: normalizedOrganizationName,
-          countryCode: record.organization.countryCode?.toUpperCase().slice(0, 2) || null,
+          ...(organizationCountry
+            ? { OR: [{ countryCode: organizationCountry }, { countryCode: null }] }
+            : {}),
         },
+        orderBy: { verified: "desc" },
       });
 
       if (!organization) {
@@ -139,7 +143,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
             name: record.organization.name.trim(),
             normalizedName: normalizedOrganizationName,
             type: record.organization.type,
-            countryCode: record.organization.countryCode?.toUpperCase().slice(0, 2) || null,
+            countryCode: organizationCountry,
             website: record.organization.website ?? null,
           },
         });
@@ -178,7 +182,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
           sourceKey: key,
           sourceUrl: record.sourceUrl,
           publishedAt,
-          lastVerifiedAt: observedAt,
+          lastVerifiedAt: batch.source.verified ? observedAt : null,
           eligibleCareerStages,
           eligibleCountryCodes,
         },
@@ -198,7 +202,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
           sourceUrl: record.sourceUrl,
           publishedAt,
           lastSeenAt: observedAt,
-          lastVerifiedAt: observedAt,
+          lastVerifiedAt: batch.source.verified ? observedAt : undefined,
           eligibleCareerStages,
           eligibleCountryCodes,
         },
