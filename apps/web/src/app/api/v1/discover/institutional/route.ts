@@ -3,9 +3,15 @@ import type { ApiError, ApiSuccess, InstitutionalDiscoveryResponse } from "@/lib
 import { rerankInstitutionalDiscovery } from "@/server/discovery/hybrid-rerank";
 import { discoverInstitutionalEntities } from "@/server/discovery/institutional-discovery";
 import { parseInstitutionalDiscoveryQuery } from "@/server/discovery/query";
+import {
+  consumeClientRateLimit,
+  RateLimitExceededError,
+  rateLimitErrorResponse,
+} from "@/server/security/rate-limit";
 
 export async function GET(request: NextRequest) {
   try {
+    await consumeClientRateLimit(request, "discovery:institutional", { windowSeconds: 60, max: 120 });
     const query = parseInstitutionalDiscoveryQuery(request.nextUrl.searchParams);
     const structured = await discoverInstitutionalEntities(query);
     const discovery = await rerankInstitutionalDiscovery(structured);
@@ -16,6 +22,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     console.error("Institutional discovery failed", error);
     const body: ApiError = {
       success: false,
