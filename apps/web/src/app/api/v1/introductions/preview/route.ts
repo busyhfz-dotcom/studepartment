@@ -1,30 +1,33 @@
-import { NextResponse } from "next/server";
-import type { ApiSuccess, ScientificIntroductionPreview } from "@/lib/api-contracts";
+import { NextResponse, type NextRequest } from "next/server";
+import type { ApiError, ApiSuccess, IntroductionPurpose, ScientificIntroductionPreview } from "@/lib/api-contracts";
+import { previewIntroduction } from "@/server/introductions/engine";
+import { introductionErrorResponse } from "@/server/introductions/http";
 
-const preview: ScientificIntroductionPreview = {
-  sender: {
-    id: "demo-researcher",
-    fullName: "Dr. Sarah Williams",
-    headline: "Clinical Researcher · Translational Oncology",
-    institution: "University of Oxford",
-    verified: true,
-  },
-  receiver: {
-    id: "michael-chen",
-    fullName: "Dr. Michael Chen",
-    availability: "open",
-  },
-  purpose: "collaboration",
-  relevance: "strong",
-  reasons: [
-    "Shared focus on pancreatic cancer",
-    "Complementary clinical and imaging expertise",
-    "Recipient is currently open to collaboration",
-  ],
-  requestAllowed: true,
-};
+const purposes = new Set<IntroductionPurpose>([
+  "research-discussion",
+  "collaboration",
+  "mentorship",
+  "position-inquiry",
+  "grant-partnership",
+  "clinical-project",
+]);
 
-export async function GET() {
-  const body: ApiSuccess<ScientificIntroductionPreview> = { success: true, data: preview };
-  return NextResponse.json(body);
+export async function GET(request: NextRequest) {
+  const receiverId = (request.nextUrl.searchParams.get("researcher") ?? "").trim();
+  const purposeValue = request.nextUrl.searchParams.get("purpose") ?? "collaboration";
+  if (!receiverId || !purposes.has(purposeValue as IntroductionPurpose)) {
+    const body: ApiError = {
+      success: false,
+      error: { code: "INVALID_PREVIEW_REQUEST", message: "Researcher and valid purpose are required." },
+    };
+    return NextResponse.json(body, { status: 400 });
+  }
+
+  try {
+    const data = await previewIntroduction(receiverId, purposeValue as IntroductionPurpose);
+    const body: ApiSuccess<ScientificIntroductionPreview> = { success: true, data };
+    return NextResponse.json(body, { headers: { "Cache-Control": "private, no-store" } });
+  } catch (error) {
+    return introductionErrorResponse(error);
+  }
 }
