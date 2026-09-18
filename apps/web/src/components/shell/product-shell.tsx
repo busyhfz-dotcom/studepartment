@@ -6,7 +6,7 @@ import { useState, type ReactNode } from "react";
 import { SystemStatus } from "./system-status";
 import styles from "./product-shell.module.css";
 
-type IconName = "overview" | "discover" | "opportunity" | "introduction" | "identity" | "graph";
+type IconName = "overview" | "discover" | "opportunity" | "introduction" | "identity" | "graph" | "assistant";
 
 type NavItem = {
   href: string;
@@ -18,6 +18,7 @@ type NavItem = {
 const workspaceItems: NavItem[] = [
   { href: "/", label: "Overview", description: "Research workspace", icon: "overview" },
   { href: "/discover", label: "Discovery", description: "Find scientific matches", icon: "discover" },
+  { href: "/assistant", label: "Research assistant", description: "Grounded evidence reasoning", icon: "assistant" },
   { href: "/opportunities", label: "Opportunities", description: "Positions and funding", icon: "opportunity" },
   { href: "/introductions", label: "Introductions", description: "Controlled outreach", icon: "introduction" },
 ];
@@ -29,6 +30,7 @@ const identityItems: NavItem[] = [
 
 const pageNames: Array<[string, string]> = [
   ["/discover", "Scientific Discovery"],
+  ["/assistant", "Research Assistant"],
   ["/opportunities", "Opportunity Intelligence"],
   ["/introductions", "Scientific Introductions"],
   ["/graph", "Scientific Evidence Graph"],
@@ -83,6 +85,12 @@ function Icon({ name }: { name: IconName }) {
         <circle cx="5" cy="17" r="2.5" />
         <circle cx="19" cy="17" r="2.5" />
         <path d="m10.7 7.2-4.4 7.6M13.3 7.2l4.4 7.6M7.5 17h9" />
+      </>
+    ),
+    assistant: (
+      <>
+        <path d="M5 5.5A2.5 2.5 0 0 1 7.5 3h9A2.5 2.5 0 0 1 19 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5v-8" />
+        <path d="M8 8h8M8 11h5" />
       </>
     ),
   };
@@ -152,7 +160,7 @@ export function ProductShell({ children }: { children: ReactNode }) {
               <small>Explainable AI · Controlled access</small>
             </div>
           </div>
-          <div className={styles.version}>Platform · v1.0 readiness</div>
+          <div className={styles.version}>Platform · v1.3 intelligence</div>
         </div>
       </aside>
 
