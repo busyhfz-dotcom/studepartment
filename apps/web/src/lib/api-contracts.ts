@@ -333,3 +333,45 @@ export type IntroductionPolicyResponse = {
   cooldownDays: number;
   maxInboundPerDay: number;
 };
+
+
+export type PublicationEvidenceLevelValue =
+  | "manual-asserted"
+  | "orcid-asserted"
+  | "pubmed-corroborated";
+
+export type PublicationRecord = {
+  id: string;
+  title: string;
+  journal?: string;
+  publicationDate?: string;
+  publicationType?: string;
+  doi?: string;
+  pmid?: string;
+  pmcid?: string;
+  sourceUrl?: string;
+  authorNames: string[];
+  evidenceLevel: PublicationEvidenceLevelValue;
+  evidenceSources: Array<"ORCID" | "PubMed" | "Manual">;
+  lastObservedAt: string;
+};
+
+export type PublicationListResponse = {
+  publications: PublicationRecord[];
+  total: number;
+  orcid?: string;
+  orcidVerified: boolean;
+};
+
+export type PublicationSyncResult = {
+  orcid: string;
+  observedAt: string;
+  orcidWorksSeen: number;
+  publicationsCreated: number;
+  publicationsUpdated: number;
+  relationshipsCreated: number;
+  pubmedCorroborated: number;
+  orcidOnly: number;
+  staleRelationships: number;
+  warnings: string[];
+};
