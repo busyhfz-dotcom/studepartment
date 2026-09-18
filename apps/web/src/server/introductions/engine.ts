@@ -91,7 +91,11 @@ export class InvalidIntroductionError extends Error {
 }
 
 function normalize(value: string) {
-  return value.toLocaleLowerCase("en").normalize("NFKC");
+  return value
+    .toLocaleLowerCase("en")
+    .normalize("NFKC")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function currentInstitution(profile: {
@@ -336,8 +340,8 @@ export async function createIntroduction(input: CreateIntroductionInput) {
       createdAt: { gte: new Date(Date.now() - 7 * 86_400_000) },
     },
   });
-  if (reused >= 2) {
-    throw new IntroductionBlockedError("This exact context has been reused in multiple recent requests. Personalize the introduction before sending.");
+  if (reused >= 1) {
+    throw new IntroductionBlockedError("This exact context was used in another recent request. Personalize the introduction before sending.");
   }
 
   const expiresAt = new Date(Date.now() + 14 * 86_400_000);
