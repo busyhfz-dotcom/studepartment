@@ -437,3 +437,88 @@ export type ScientificGraphNeighborhoodResponse = {
     opportunities: number;
   };
 };
+
+
+export type OrganizationAccessRoleValue = "viewer" | "analyst" | "admin";
+
+export type InstitutionalWorkspaceAccess = {
+  organizationId: string;
+  organizationName: string;
+  organizationType: InstitutionalOrganizationType;
+  countryCode?: string;
+  verified: boolean;
+  role: OrganizationAccessRoleValue;
+};
+
+export type InstitutionalAccessListResponse = {
+  accesses: InstitutionalWorkspaceAccess[];
+};
+
+export type InstitutionalCapabilitySignal = {
+  id: string;
+  name: string;
+  slug: string;
+  researcherCount: number;
+  share: number;
+};
+
+export type InstitutionalOpportunityTypeSignal = {
+  type: OpportunityTypeValue;
+  count: number;
+};
+
+export type InstitutionalLabSignal = {
+  id: string;
+  name: string;
+  verified: boolean;
+  publicMemberCount: number;
+  website?: string;
+};
+
+export type InstitutionalIntelligenceResponse = {
+  organization: {
+    id: string;
+    name: string;
+    type: InstitutionalOrganizationType;
+    countryCode?: string;
+    website?: string;
+    verified: boolean;
+  };
+  accessRole: OrganizationAccessRoleValue;
+  generatedAt: string;
+  population: {
+    publicResearchers: number;
+    verifiedResearchers: number;
+    laboratories: number;
+    activeOpportunities: number;
+    activePublications: number;
+    corroboratedPublications: number;
+  };
+  availability: {
+    open: number;
+    selective: number;
+    quiet: number;
+    closed: number;
+  };
+  capabilities: {
+    topics: InstitutionalCapabilitySignal[];
+    methods: InstitutionalCapabilitySignal[];
+  };
+  opportunities: {
+    active: number;
+    closingWithin30Days: number;
+    sourceVerified: number;
+    byType: InstitutionalOpportunityTypeSignal[];
+  };
+  labs: InstitutionalLabSignal[];
+  evidence: {
+    organizationVerified: boolean;
+    sourceVerifiedOpportunities: number;
+    corroboratedPublications: number;
+    provenanceRecords: number;
+  };
+  privacy: {
+    population: "public-researcher-only";
+    note: string;
+  };
+};
