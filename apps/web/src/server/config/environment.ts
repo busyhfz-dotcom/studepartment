@@ -19,8 +19,10 @@ export class EnvironmentConfigurationError extends Error {
 
 function deploymentEnvironment(): DeploymentEnvironment {
   const raw = process.env.DEPLOYMENT_ENV?.trim().toLowerCase();
-  if (raw === "test" || raw === "ci" || raw === "staging" || raw === "production") return raw;
-  return "development";
+  if (raw === "test" || raw === "ci" || raw === "staging" || raw === "production" || raw === "development") {
+    return raw;
+  }
+  return process.env.NODE_ENV === "production" ? "production" : "development";
 }
 
 function required(name: string, issues: string[]) {
