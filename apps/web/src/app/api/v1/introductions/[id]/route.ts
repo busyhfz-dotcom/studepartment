@@ -2,6 +2,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, IntroductionAction } from "@/lib/api-contracts";
 import { actOnIntroduction } from "@/server/introductions/engine";
 import { introductionErrorResponse } from "@/server/introductions/http";
+import {
+  consumeClientRateLimit,
+  RateLimitExceededError,
+  rateLimitErrorResponse,
+} from "@/server/security/rate-limit";
 
 const actions = new Set<IntroductionAction>(["accept", "decline", "withdraw"]);
 
@@ -10,6 +15,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    await consumeClientRateLimit(request, "introductions:action", { windowSeconds: 600, max: 60 });
     const { id } = await params;
     const raw = await request.json() as Record<string, unknown>;
     if (typeof raw.action !== "string" || !actions.has(raw.action as IntroductionAction)) {
@@ -23,6 +29,7 @@ export async function PATCH(
     const body: ApiSuccess<typeof data> = { success: true, data };
     return NextResponse.json(body);
   } catch (error) {
+    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     return introductionErrorResponse(error);
   }
 }
