@@ -44,4 +44,16 @@ const assistant = await fetch(baseUrl + "/api/v1/assistant/research", {
 });
 assert.equal(assistant.status, 401, "anonymous Research Assistant must return 401");
 
+const accountExport = await fetch(baseUrl + "/api/v1/account/export", {
+  headers: { Accept: "application/json" },
+  cache: "no-store",
+});
+assert.equal(accountExport.status, 401, "anonymous account export must return 401");
+
+const feedback = await fetch(baseUrl + "/api/v1/feedback", {
+  headers: { Accept: "application/json" },
+  cache: "no-store",
+});
+assert.equal(feedback.status, 401, "anonymous feedback read must return 401");
+
 console.log("Deployment smoke checks passed for " + baseUrl);
