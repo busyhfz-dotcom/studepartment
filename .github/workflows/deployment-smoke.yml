@@ -1,0 +1,33 @@
+name: Deployment Smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "HTTPS staging or production base URL"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SMOKE_BASE_URL: ${{ inputs.base_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Require HTTPS target
+        shell: bash
+        run: |
+          case "$SMOKE_BASE_URL" in
+            https://*) ;;
+            *) echo "Deployment smoke requires an https:// URL"; exit 1 ;;
+          esac
+      - name: Run non-destructive deployment smoke
+        run: node apps/web/scripts/smoke-deployed.mjs
