@@ -32,6 +32,37 @@ enum OpportunityType {
   RESEARCH_ASSISTANTSHIP
 }
 
+enum OpportunitySourceType {
+  INSTITUTIONAL_CAREERS
+  FUNDER
+  LAB_WEBSITE
+  RESEARCH_NETWORK
+  MANUAL
+  IMPORT
+}
+
+enum OpportunityStatus {
+  ACTIVE
+  CLOSED
+  EXPIRED
+  STALE
+}
+
+enum OpportunityDeadlinePrecision {
+  EXACT
+  DATE_ONLY
+  MONTH_ONLY
+  ROLLING
+  UNKNOWN
+}
+
+enum OpportunityProvenanceStatus {
+  ASSERTED
+  VERIFIED
+  STALE
+  DISPUTED
+}
+
 enum ConnectionStatus {
   PENDING
   ACCEPTED
@@ -228,14 +259,15 @@ model ResearcherAffiliation {
 }
 
 model ResearchTopic {
-  id          String             @id @default(cuid())
-  name        String
-  slug        String             @unique
-  parentId    String?
-  meshId      String?
-  parent      ResearchTopic?     @relation("TopicHierarchy", fields: [parentId], references: [id])
-  children    ResearchTopic[]    @relation("TopicHierarchy")
-  researchers ResearcherTopic[]
+  id            String             @id @default(cuid())
+  name          String
+  slug          String             @unique
+  parentId      String?
+  meshId        String?
+  parent        ResearchTopic?     @relation("TopicHierarchy", fields: [parentId], references: [id])
+  children      ResearchTopic[]    @relation("TopicHierarchy")
+  researchers   ResearcherTopic[]
+  opportunities OpportunityTopic[]
 }
 
 model ResearcherTopic {
@@ -249,10 +281,11 @@ model ResearcherTopic {
 }
 
 model ResearchMethod {
-  id          String             @id @default(cuid())
-  name        String
-  slug        String             @unique
-  researchers ResearcherMethod[]
+  id            String              @id @default(cuid())
+  name          String
+  slug          String              @unique
+  researchers   ResearcherMethod[]
+  opportunities OpportunityMethod[]
 }
 
 model ResearcherMethod {
@@ -313,18 +346,81 @@ model LabMember {
 }
 
 model Opportunity {
-  id             String          @id @default(cuid())
-  organizationId String
-  type           OpportunityType
-  title          String
-  description    String?
-  deadline       DateTime?
-  sourceUrl      String
-  lastVerifiedAt DateTime?
-  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id                     String                       @id @default(cuid())
+  organizationId         String
+  type                   OpportunityType
+  status                 OpportunityStatus            @default(ACTIVE)
+  title                  String
+  description            String?
+  city                   String?
+  countryCode            String?
+  applicationUrl         String?
+  deadline               DateTime?
+  deadlineRaw            String?
+  deadlinePrecision      OpportunityDeadlinePrecision @default(UNKNOWN)
+  deadlineTimezone       String?
+  sourceType             OpportunitySourceType        @default(MANUAL)
+  sourceName             String
+  sourceRecordId         String
+  sourceKey              String                       @unique
+  sourceUrl              String
+  publishedAt            DateTime?
+  firstSeenAt            DateTime                     @default(now())
+  lastSeenAt             DateTime                     @default(now())
+  lastVerifiedAt         DateTime?
+  eligibleCareerStages   String[]                     @default([])
+  eligibleCountryCodes   String[]                     @default([])
+  createdAt              DateTime                     @default(now())
+  updatedAt              DateTime                     @updatedAt
+  organization           Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  topics                 OpportunityTopic[]
+  methods                OpportunityMethod[]
+  provenance             OpportunityProvenance[]
 
   @@index([organizationId, type])
-  @@index([deadline])
+  @@index([status, deadline])
+  @@index([sourceType, sourceName])
+  @@index([lastSeenAt])
+}
+
+model OpportunityTopic {
+  opportunityId String
+  topicId       String
+  weight        Float        @default(1)
+  opportunity   Opportunity  @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  topic         ResearchTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([opportunityId, topicId])
+  @@index([topicId])
+}
+
+model OpportunityMethod {
+  opportunityId String
+  methodId      String
+  opportunity   Opportunity   @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  method        ResearchMethod @relation(fields: [methodId], references: [id], onDelete: Cascade)
+
+  @@id([opportunityId, methodId])
+  @@index([methodId])
+}
+
+model OpportunityProvenance {
+  id                 String                      @id @default(cuid())
+  opportunityId      String
+  sourceType         OpportunitySourceType
+  sourceName         String
+  sourceRecordId     String
+  sourceUrl          String
+  contentFingerprint String
+  status             OpportunityProvenanceStatus @default(ASSERTED)
+  observedAt         DateTime                    @default(now())
+  publishedAt        DateTime?
+  metadata           Json?
+  opportunity        Opportunity                 @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([opportunityId, contentFingerprint])
+  @@index([sourceType, sourceName, sourceRecordId])
+  @@index([status, observedAt])
 }
 
 model ConnectionRequest {
