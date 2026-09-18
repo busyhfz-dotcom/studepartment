@@ -102,7 +102,15 @@ async function main() {
     }),
   ]);
 
-  const [oncology, immunotherapy, biomarkers, computational, translational, biomarkerAnalysis, machineLearning] = await Promise.all([
+  const [
+    oncology,
+    immunotherapy,
+    biomarkers,
+    computational,
+    translational,
+    biomarkerAnalysis,
+    machineLearning,
+  ] = await Promise.all([
     db.researchTopic.findUniqueOrThrow({ where: { slug: "oncology" } }),
     db.researchTopic.findUniqueOrThrow({ where: { slug: "cancer-immunotherapy" } }),
     db.researchTopic.findUniqueOrThrow({ where: { slug: "biomarkers" } }),
@@ -131,6 +139,86 @@ async function main() {
     ],
     skipDuplicates: true,
   });
+
+  const observedAt = new Date();
+  const kiOpportunity = await db.opportunity.upsert({
+    where: { sourceKey: "IMPORT:studepartment-seed:ki-postdoc-immunotherapy" },
+    update: { lastSeenAt: observedAt, lastVerifiedAt: observedAt },
+    create: {
+      organizationId: karolinska.id,
+      type: "POSTDOC",
+      status: "ACTIVE",
+      title: "Postdoctoral Researcher · Translational Cancer Immunology",
+      description: "Seed opportunity demonstrating source-aware matching across cancer immunotherapy and biomarker research.",
+      city: "Stockholm",
+      countryCode: "SE",
+      deadline: new Date("2026-10-15T23:59:59.999Z"),
+      deadlineRaw: "2026-10-15",
+      deadlinePrecision: "DATE_ONLY",
+      sourceType: "IMPORT",
+      sourceName: "Studepartment seed",
+      sourceRecordId: "ki-postdoc-immunotherapy",
+      sourceKey: "IMPORT:studepartment-seed:ki-postdoc-immunotherapy",
+      sourceUrl: "https://example.org/opportunities/ki-postdoc-immunotherapy",
+      applicationUrl: "https://example.org/opportunities/ki-postdoc-immunotherapy/apply",
+      lastVerifiedAt: observedAt,
+      eligibleCareerStages: ["early-career-researcher", "postdoc"],
+    },
+  });
+
+  const oxfordOpportunity = await db.opportunity.upsert({
+    where: { sourceKey: "IMPORT:studepartment-seed:oxford-fellowship-oncology" },
+    update: { lastSeenAt: observedAt, lastVerifiedAt: observedAt },
+    create: {
+      organizationId: oxford.id,
+      type: "FELLOWSHIP",
+      status: "ACTIVE",
+      title: "Early Career Fellowship · Precision Oncology",
+      description: "Seed fellowship demonstrating separate scientific relevance and published eligibility evaluation.",
+      city: "Oxford",
+      countryCode: "GB",
+      deadline: new Date("2026-11-03T23:59:59.999Z"),
+      deadlineRaw: "2026-11-03",
+      deadlinePrecision: "DATE_ONLY",
+      sourceType: "IMPORT",
+      sourceName: "Studepartment seed",
+      sourceRecordId: "oxford-fellowship-oncology",
+      sourceKey: "IMPORT:studepartment-seed:oxford-fellowship-oncology",
+      sourceUrl: "https://example.org/opportunities/oxford-fellowship-oncology",
+      applicationUrl: "https://example.org/opportunities/oxford-fellowship-oncology/apply",
+      lastVerifiedAt: observedAt,
+      eligibleCareerStages: ["early-career-researcher"],
+      eligibleCountryCodes: ["GB"],
+    },
+  });
+
+  await Promise.all([
+    db.opportunityTopic.upsert({
+      where: { opportunityId_topicId: { opportunityId: kiOpportunity.id, topicId: immunotherapy.id } },
+      update: { weight: 1 },
+      create: { opportunityId: kiOpportunity.id, topicId: immunotherapy.id, weight: 1 },
+    }),
+    db.opportunityTopic.upsert({
+      where: { opportunityId_topicId: { opportunityId: kiOpportunity.id, topicId: biomarkers.id } },
+      update: { weight: 0.9 },
+      create: { opportunityId: kiOpportunity.id, topicId: biomarkers.id, weight: 0.9 },
+    }),
+    db.opportunityMethod.upsert({
+      where: { opportunityId_methodId: { opportunityId: kiOpportunity.id, methodId: translational.id } },
+      update: {},
+      create: { opportunityId: kiOpportunity.id, methodId: translational.id },
+    }),
+    db.opportunityTopic.upsert({
+      where: { opportunityId_topicId: { opportunityId: oxfordOpportunity.id, topicId: oncology.id } },
+      update: { weight: 1 },
+      create: { opportunityId: oxfordOpportunity.id, topicId: oncology.id, weight: 1 },
+    }),
+    db.opportunityMethod.upsert({
+      where: { opportunityId_methodId: { opportunityId: oxfordOpportunity.id, methodId: biomarkerAnalysis.id } },
+      update: {},
+      create: { opportunityId: oxfordOpportunity.id, methodId: biomarkerAnalysis.id },
+    }),
+  ]);
 }
 
 main()
