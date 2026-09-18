@@ -471,3 +471,43 @@ export type SaveOpportunityInput = {
   alertLeadDays?: number;
   notes?: string | null;
 };
+
+
+export type ResearchAssistantTarget = {
+  type: "institution" | "researcher" | "opportunity";
+  id: string;
+};
+
+export type ResearchAssistantRequest = {
+  question: string;
+  target?: ResearchAssistantTarget;
+};
+
+export type ResearchAssistantCitation = {
+  id: string;
+  type: "identity" | "researcher" | "institution" | "laboratory" | "opportunity" | "publication";
+  label: string;
+  detail: string;
+  href?: string;
+  evidence: "verified" | "corroborated" | "source-backed" | "asserted";
+};
+
+export type ResearchAssistantResponse = {
+  answer: string;
+  citations: ResearchAssistantCitation[];
+  referencedCitationIds: string[];
+  model: string;
+  generatedAt: string;
+  target?: ResearchAssistantTarget;
+  limitations: string[];
+};
+
+export type InstitutionFitSnapshot = {
+  organizationId: string;
+  organizationName: string;
+  sharedTopics: string[];
+  sharedMethods: string[];
+  matchingOpportunityCount: number;
+  reasons: string[];
+  gaps: string[];
+};
