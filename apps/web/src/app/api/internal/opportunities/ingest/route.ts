@@ -7,6 +7,11 @@ import {
   type OpportunityIngestionRecord,
   type OpportunityIngestionSource,
 } from "@/server/opportunities/ingestion";
+import {
+  consumeRateLimit,
+  RateLimitExceededError,
+  rateLimitErrorResponse,
+} from "@/server/security/rate-limit";
 
 const sourceTypes = new Set<OpportunityIngestionSource["type"]>([
   "INSTITUTIONAL_CAREERS",
@@ -118,6 +123,7 @@ export async function POST(request: NextRequest) {
   if (!secureEqual(authorization.slice(7), configuredToken)) return unauthorized();
 
   try {
+    await consumeRateLimit("opportunities:ingest", "token:" + configuredToken, { windowSeconds: 60, max: 30 });
     const raw = await request.json() as Record<string, unknown>;
     const rawSource = raw.source as Record<string, unknown> | undefined;
     if (
@@ -159,6 +165,7 @@ export async function POST(request: NextRequest) {
     const body: ApiSuccess<typeof data> = { success: true, data };
     return NextResponse.json(body);
   } catch (error) {
+    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     console.error("Opportunity ingestion failed", error);
     const body: ApiError = {
       success: false,
