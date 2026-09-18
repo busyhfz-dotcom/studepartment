@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import type {
   ApiError,
@@ -216,6 +217,7 @@ export function InstitutionalExplorer({ entityType }: { entityType: Institutiona
                     <span>Trust</span>
                     <strong>{result.verified ? "Verified" : title(result.confidence)}</strong>
                   </div>
+                  {!laboratory ? <Link href={"/institutions/" + result.id}>Institution intelligence ↗</Link> : null}
                   {result.website ? <a href={result.website} rel="noreferrer" target="_blank">Visit source website ↗</a> : null}
                 </aside>
               </article>
