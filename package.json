@@ -15,5 +15,11 @@
     "env:check": "pnpm --filter @studepartment/web env:check",
     "smoke:runtime": "pnpm --filter @studepartment/web smoke:runtime",
     "db:migrate:status": "pnpm --filter @studepartment/db exec prisma migrate status"
+  },
+  "pnpm": {
+    "overrides": {
+      "deepmerge-ts": "8.0.2",
+      "mysql2": "3.24.4"
+    }
   }
 }
