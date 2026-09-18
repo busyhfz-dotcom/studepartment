@@ -128,6 +128,25 @@ enum EvidenceStatus {
   STALE
 }
 
+enum PublicationSourceType {
+  ORCID
+  PUBMED
+  MANUAL
+}
+
+enum PublicationProvenanceStatus {
+  ASSERTED
+  VERIFIED
+  STALE
+  DISPUTED
+}
+
+enum PublicationEvidenceLevel {
+  MANUAL_ASSERTED
+  ORCID_ASSERTED
+  PUBMED_CORROBORATED
+}
+
 model User {
   id             String           @id @default(cuid())
   name           String           @default("")
@@ -209,6 +228,7 @@ model ResearcherProfile {
   topics             ResearcherTopic[]
   methods            ResearcherMethod[]
   publications       ResearcherPublication[]
+  publicationEvidence PublicationProvenance[]
   labMemberships     LabMember[]
   sentRequests       ConnectionRequest[]     @relation("SentConnectionRequests")
   receivedRequests   ConnectionRequest[]     @relation("ReceivedConnectionRequests")
@@ -312,27 +332,67 @@ model ResearcherMethod {
 }
 
 model Publication {
-  id              String                  @id @default(cuid())
-  title           String
-  abstract        String?
-  doi             String?                 @unique
-  pmid            String?                 @unique
-  journal         String?
-  publicationDate DateTime?
-  citationCount   Int                     @default(0)
-  createdAt       DateTime                @default(now())
-  updatedAt       DateTime                @updatedAt
-  authors         ResearcherPublication[]
+  id                  String                  @id @default(cuid())
+  canonicalKey        String                  @unique
+  title               String
+  abstract            String?
+  doi                 String?                 @unique
+  pmid                String?                 @unique
+  pmcid               String?                 @unique
+  journal             String?
+  publicationDate     DateTime?
+  publicationType     String?
+  volume              String?
+  issue               String?
+  pages               String?
+  sourceUrl           String?
+  authorNames         String[]                @default([])
+  citationCount       Int                     @default(0)
+  firstSeenAt         DateTime                @default(now())
+  lastVerifiedAt      DateTime?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  researchers         ResearcherPublication[]
+  provenance          PublicationProvenance[]
+
+  @@index([publicationDate])
+  @@index([lastVerifiedAt])
 }
 
 model ResearcherPublication {
-  researcherId  String
-  publicationId String
-  authorOrder   Int?
-  researcher    ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
-  publication   Publication       @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  researcherId   String
+  publicationId  String
+  authorOrder    Int?
+  sourceType     PublicationSourceType    @default(MANUAL)
+  evidenceLevel  PublicationEvidenceLevel @default(MANUAL_ASSERTED)
+  lastObservedAt DateTime                 @default(now())
+  active         Boolean                  @default(true)
+  researcher     ResearcherProfile        @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  publication    Publication              @relation(fields: [publicationId], references: [id], onDelete: Cascade)
 
   @@id([researcherId, publicationId])
+  @@index([researcherId, evidenceLevel])
+}
+
+model PublicationProvenance {
+  id                 String                       @id @default(cuid())
+  evidenceKey        String                       @unique
+  publicationId      String
+  researcherId       String?
+  sourceType         PublicationSourceType
+  sourceRecordId     String
+  sourceUrl          String?
+  contentFingerprint String
+  status             PublicationProvenanceStatus  @default(ASSERTED)
+  observedAt         DateTime                     @default(now())
+  verifiedAt         DateTime?
+  metadata           Json?
+  publication        Publication                  @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  researcher         ResearcherProfile?           @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+
+  @@index([publicationId, sourceType])
+  @@index([researcherId, sourceType, observedAt])
+  @@index([status, observedAt])
 }
 
 model Laboratory {
