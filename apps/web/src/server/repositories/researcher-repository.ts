@@ -136,7 +136,7 @@ async function loadProfileByUserId(userId: string) {
       },
       topics: { include: { topic: true }, orderBy: { weight: "desc" } },
       methods: { include: { method: true } },
-      publications: { select: { publicationId: true }, take: 1 },
+      publications: { where: { active: true }, select: { publicationId: true }, take: 1 },
       evidence: { where: { status: "VERIFIED" }, select: { sourceType: true, fieldPath: true } },
     },
   });
