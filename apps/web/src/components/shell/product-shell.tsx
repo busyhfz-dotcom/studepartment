@@ -18,7 +18,7 @@ const workspaceItems: NavItem[] = [
   { href: "/", label: "Overview", description: "Research workspace", icon: "overview" },
   { href: "/discover", label: "Discovery", description: "Find scientific matches", icon: "discover" },
   { href: "/opportunities", label: "Opportunities", description: "Positions and funding", icon: "opportunity" },
-  { href: "/introductions/new", label: "Introductions", description: "Controlled outreach", icon: "introduction" },
+  { href: "/introductions", label: "Introductions", description: "Controlled outreach", icon: "introduction" },
 ];
 
 const identityItems: NavItem[] = [
@@ -141,7 +141,7 @@ export function ProductShell({ children }: { children: ReactNode }) {
               <small>Explainable AI · Controlled access</small>
             </div>
           </div>
-          <div className={styles.version}>Platform foundation · v0.3</div>
+          <div className={styles.version}>Platform foundation · v0.7</div>
         </div>
       </aside>
 
