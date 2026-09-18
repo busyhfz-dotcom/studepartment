@@ -23,7 +23,24 @@ export function SavedOpportunityWorkspace() {
   }
 
   useEffect(() => {
-    void load().catch((e: unknown) => setError(e instanceof Error ? e.message : "Unable to load saved opportunities."));
+    let active = true;
+    void fetch("/api/v1/opportunities/saved", { cache: "no-store" })
+      .then(async (response) => {
+        const body = (await response.json()) as Response;
+        if (!response.ok || !body.success) {
+          throw new Error(body.success ? "Unable to load saved opportunities." : body.error.message);
+        }
+        return body.data;
+      })
+      .then((next) => {
+        if (active) setData(next);
+      })
+      .catch((e: unknown) => {
+        if (active) setError(e instanceof Error ? e.message : "Unable to load saved opportunities.");
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   async function remove(opportunityId: string) {
