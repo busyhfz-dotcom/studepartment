@@ -6,6 +6,11 @@ import {
   ScientificGraphIdentityRequiredError,
   ScientificGraphNotFoundError,
 } from "@/server/graph/scientific-graph";
+import {
+  consumeClientRateLimit,
+  RateLimitExceededError,
+  rateLimitErrorResponse,
+} from "@/server/security/rate-limit";
 
 function apiError(status: number, code: string, message: string) {
   const body: ApiError = { success: false, error: { code, message } };
@@ -14,11 +19,13 @@ function apiError(status: number, code: string, message: string) {
 
 export async function GET(request: NextRequest) {
   try {
+    await consumeClientRateLimit(request, "graph:read", { windowSeconds: 60, max: 90 });
     const researcherId = request.nextUrl.searchParams.get("researcher")?.trim() || undefined;
     const data = await buildScientificGraph(researcherId);
     const body: ApiSuccess<ScientificGraphNeighborhoodResponse> = { success: true, data };
     return NextResponse.json(body, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
+    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     if (error instanceof ScientificGraphIdentityRequiredError) {
       return apiError(401, error.code, error.message);
     }

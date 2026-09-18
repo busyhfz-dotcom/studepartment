@@ -1,6 +1,6 @@
 {
   "name": "studepartment",
-  "version": "0.1.0",
+  "version": "1.0.0-rc.1",
   "private": true,
   "packageManager": "pnpm@10.15.1",
   "scripts": {
@@ -11,6 +11,15 @@
     "db:generate": "pnpm --filter @studepartment/db generate",
     "db:migrate": "pnpm --filter @studepartment/db migrate",
     "db:migrate:deploy": "pnpm --filter @studepartment/db migrate:deploy",
-    "discovery:index": "pnpm --filter @studepartment/db discovery:index"
+    "discovery:index": "pnpm --filter @studepartment/db discovery:index",
+    "env:check": "pnpm --filter @studepartment/web env:check",
+    "smoke:runtime": "pnpm --filter @studepartment/web smoke:runtime",
+    "db:migrate:status": "pnpm --filter @studepartment/db exec prisma migrate status"
+  },
+  "pnpm": {
+    "overrides": {
+      "deepmerge-ts": "8.0.2",
+      "mysql2": "3.24.4"
+    }
   }
 }

@@ -6,9 +6,9 @@ It is designed to help researchers discover the right people, laboratories, inst
 
 ## Current status
 
-`v0.1.0 — Foundation`
+`v1.0.0-rc.1 — Production Readiness Candidate`
 
-The repository currently contains the initial product documentation, web application shell, scientific identity UI, database schema, and CI foundation.
+The canonical product now includes Scientific Identity, hybrid discovery, opportunity intelligence, controlled introductions, ORCID/PubMed publication evidence, the Scientific Evidence Graph, persistent abuse controls, health/readiness endpoints, security headers/CSP, and production runtime smoke validation.
 
 ## Core product principles
 
@@ -73,16 +73,20 @@ pnpm dev
 Validation:
 
 ```bash
+pnpm env:check
 pnpm lint
 pnpm typecheck
 pnpm build
 ```
+
+Production-like runtime validation is enforced in CI after `next start`; see [Production Readiness](docs/PRODUCTION_READINESS.md) and the [Deployment Runbook](docs/DEPLOYMENT_RUNBOOK.md).
 
 Database commands:
 
 ```bash
 pnpm db:generate
 pnpm db:migrate
+pnpm db:migrate:status
 ```
 
 ## Product boundary
