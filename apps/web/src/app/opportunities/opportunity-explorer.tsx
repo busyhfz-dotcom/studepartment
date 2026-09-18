@@ -243,6 +243,7 @@ export function OpportunityExplorer() {
                   </div>
                   <a className={styles.secondaryAction} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source</a>
                   <SaveOpportunityButton className={styles.secondaryAction} opportunityId={opportunity.id} />
+                  <a className={styles.secondaryAction} href={"/assistant?opportunity=" + opportunity.id}>Ask assistant</a>
                   <a className={styles.primaryAction} href={opportunity.applicationUrl ?? opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application</a>
                 </aside>
               </article>

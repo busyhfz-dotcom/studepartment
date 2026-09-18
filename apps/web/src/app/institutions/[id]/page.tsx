@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductShell } from "@/components/shell/product-shell";
-import { getInstitutionalIntelligence } from "@/server/institutions/intelligence";
+import { getInstitutionalIntelligence, getInstitutionFitSnapshot } from "@/server/institutions/intelligence";
 import styles from "./page.module.css";
 
 function date(value?: string) {
@@ -11,7 +11,10 @@ function date(value?: string) {
 
 export default async function InstitutionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const institution = await getInstitutionalIntelligence(id);
+  const [institution, fit] = await Promise.all([
+    getInstitutionalIntelligence(id),
+    getInstitutionFitSnapshot(id),
+  ]);
   if (!institution) notFound();
 
   return (
@@ -20,7 +23,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
         <Link className="backLink" href="/discover/institutions">← Back to institution discovery</Link>
         <header className={styles.hero}>
           <div>
-            <span className="eyebrow">Institutional Intelligence · v1.2</span>
+            <span className="eyebrow">Institutional Intelligence · v1.3</span>
             <h1>{institution.name}</h1>
             <p>{institution.type}{institution.countryCode ? " · " + institution.countryCode : ""}{institution.verified ? " · Verified organization" : ""}</p>
           </div>
@@ -33,6 +36,26 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
           <div><strong>{institution.opportunities.length}</strong><span>current opportunities</span></div>
           <div><strong>{institution.topics.length}</strong><span>observed research topics</span></div>
         </section>
+
+        {fit ? (
+          <section className={styles.fitPanel}>
+            <div className={styles.fitCopy}>
+              <span className="sectionLabel">Your scientific fit</span>
+              <h2>Evidence overlap with your Scientific Identity</h2>
+              <p>This is a deterministic overlap snapshot, not a prestige score or hiring prediction.</p>
+            </div>
+            <div className={styles.fitSignals}>
+              <div><strong>{fit.sharedTopics.length}</strong><span>shared topics</span></div>
+              <div><strong>{fit.sharedMethods.length}</strong><span>shared methods</span></div>
+              <div><strong>{fit.matchingOpportunityCount}</strong><span>overlapping current opportunities</span></div>
+            </div>
+            <div className={styles.fitReasons}>
+              {fit.reasons.map((reason) => <p key={reason}>✓ {reason}</p>)}
+              {fit.gaps.map((gap) => <p className={styles.fitGap} key={gap}>Review: {gap}</p>)}
+            </div>
+            <Link className={styles.assistantAction} href={"/assistant?institution=" + institution.id}>Ask Research Assistant about this institution ↗</Link>
+          </section>
+        ) : null}
 
         <section className={styles.grid}>
           <article className={styles.panel}>

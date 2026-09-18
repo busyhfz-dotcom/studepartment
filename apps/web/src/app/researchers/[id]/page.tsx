@@ -120,6 +120,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
           </div>
           <div className={styles.actionButtons}>
             <Link className="secondary" href={"/graph?researcher=" + researcher.id}>Evidence graph</Link>
+            <Link className="secondary" href={"/assistant?researcher=" + researcher.id}>Ask Research Assistant</Link>
             <Link className="primaryButton" href={"/introductions/new?researcher=" + researcher.id}>Request scientific introduction</Link>
           </div>
         </section>

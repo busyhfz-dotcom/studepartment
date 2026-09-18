@@ -88,6 +88,7 @@ export function integrationConfiguration() {
     ),
     pubmed: Boolean(process.env.NCBI_EUTILS_EMAIL?.trim()),
     semanticRetrieval: Boolean(process.env.OPENAI_API_KEY?.trim()),
+    researchAssistant: Boolean(process.env.OPENAI_API_KEY?.trim()),
     opportunityIngestion: Boolean(process.env.OPPORTUNITY_INGEST_TOKEN?.trim()),
   };
 }

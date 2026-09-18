@@ -18,7 +18,8 @@ Optional feature groups remain explicitly degradable:
 
 - ORCID credentials: required together when ORCID is enabled.
 - NCBI_EUTILS_EMAIL: required for PubMed enrichment; NCBI_API_KEY is optional.
-- OPENAI_API_KEY: semantic retrieval remains structured/lexical without it.
+- OPENAI_API_KEY: semantic retrieval remains structured/lexical without it; the Research Assistant is explicitly unavailable without it.
+- OPENAI_ASSISTANT_MODEL: optional synthesis model override for the grounded Research Assistant.
 - OPPORTUNITY_INGEST_TOKEN: ingestion remains disabled without it.
 
 Run:
@@ -52,6 +53,7 @@ Protected surfaces include:
 - institutional discovery
 - opportunity intelligence
 - scientific graph reads
+- grounded Research Assistant requests
 - publication enrichment synchronization
 - scientific introduction creation
 - introduction lifecycle actions
@@ -92,6 +94,8 @@ Readiness performs a real PostgreSQL query and returns HTTP 503 when the databas
 
 The product shell reads the readiness endpoint and displays ready, degraded, or checking state instead of a static status label.
 
+Readiness also reports whether the Research Assistant provider is configured as a boolean integration state; it never exposes the API key or model credentials.
+
 ## CI gates
 
 Every pull request and push to main or the canonical development branch validates:
@@ -107,7 +111,7 @@ Every pull request and push to main or the canonical development branch validate
 9. Production runtime boot using next start.
 10. Liveness and database readiness.
 11. Security headers and nonce CSP.
-12. Anonymous access denial on /api/v1/me.
+12. Anonymous access denial on /api/v1/me and /api/v1/assistant/research.
 13. Real Better Auth email signup.
 14. Real session cookie resolution to canonical User.id.
 15. Authenticated owned ResearcherProfile resolution.

@@ -1,4 +1,6 @@
 import { getDb } from "@studepartment/db";
+import type { InstitutionFitSnapshot } from "@/lib/api-contracts";
+import { getCurrentUser } from "@/server/auth/current-user";
 
 export async function getInstitutionalIntelligence(organizationId: string) {
   const db = getDb();
@@ -95,5 +97,103 @@ export async function getInstitutionalIntelligence(organizationId: string) {
     })),
     topics: rank(topicCounts).map(([name, count]) => ({ name, researcherCount: count })),
     methods: rank(methodCounts).map(([name, count]) => ({ name, researcherCount: count })),
+  };
+}
+
+
+export async function getInstitutionFitSnapshot(organizationId: string): Promise<InstitutionFitSnapshot | null> {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  const db = getDb();
+  const profile = await db.researcherProfile.findUnique({
+    where: { userId: currentUser.id },
+    include: {
+      topics: { include: { topic: true } },
+      methods: { include: { method: true } },
+    },
+  });
+  if (!profile) return null;
+
+  const organization = await db.organization.findUnique({
+    where: { id: organizationId },
+    select: {
+      id: true,
+      name: true,
+      affiliations: {
+        where: { current: true, researcher: { profilePublic: true } },
+        select: {
+          researcher: {
+            select: {
+              topics: { select: { topicId: true, topic: { select: { name: true } } } },
+              methods: { select: { methodId: true, method: { select: { name: true } } } },
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!organization) return null;
+
+  const institutionalTopicIds = new Map<string, string>();
+  const institutionalMethodIds = new Map<string, string>();
+  for (const affiliation of organization.affiliations) {
+    for (const relation of affiliation.researcher.topics) {
+      institutionalTopicIds.set(relation.topicId, relation.topic.name);
+    }
+    for (const relation of affiliation.researcher.methods) {
+      institutionalMethodIds.set(relation.methodId, relation.method.name);
+    }
+  }
+
+  const sharedTopics = profile.topics
+    .filter((relation) => institutionalTopicIds.has(relation.topicId))
+    .map((relation) => relation.topic.name);
+  const sharedMethods = profile.methods
+    .filter((relation) => institutionalMethodIds.has(relation.methodId))
+    .map((relation) => relation.method.name);
+
+  const topicIds = profile.topics.map((relation) => relation.topicId);
+  const methodIds = profile.methods.map((relation) => relation.methodId);
+  const opportunityOverlap = [
+    ...(topicIds.length ? [{ topics: { some: { topicId: { in: topicIds } } } }] : []),
+    ...(methodIds.length ? [{ methods: { some: { methodId: { in: methodIds } } } }] : []),
+  ];
+
+  const matchingOpportunityCount = opportunityOverlap.length
+    ? await db.opportunity.count({
+        where: {
+          organizationId,
+          status: "ACTIVE",
+          OR: [{ deadline: null }, { deadline: { gte: new Date() } }],
+          AND: [{ OR: opportunityOverlap }],
+        },
+      })
+    : 0;
+
+  const reasons: string[] = [];
+  if (sharedTopics.length) reasons.push("Shared research topics: " + sharedTopics.slice(0, 5).join(", ") + ".");
+  if (sharedMethods.length) reasons.push("Shared methods: " + sharedMethods.slice(0, 5).join(", ") + ".");
+  if (matchingOpportunityCount) {
+    reasons.push(
+      matchingOpportunityCount + " current " + (matchingOpportunityCount === 1 ? "opportunity overlaps" : "opportunities overlap") + " your recorded topics or methods.",
+    );
+  }
+
+  const gaps: string[] = [];
+  if (!profile.topics.length) gaps.push("Your Scientific Identity has no canonical research topics to compare.");
+  else if (!sharedTopics.length) gaps.push("No exact canonical topic overlap is currently recorded.");
+  if (!profile.methods.length) gaps.push("Your Scientific Identity has no canonical methods to compare.");
+  else if (!sharedMethods.length) gaps.push("No exact canonical method overlap is currently recorded.");
+  if (!organization.affiliations.length) gaps.push("This institution has no public current researcher evidence to derive scientific capability from.");
+
+  return {
+    organizationId: organization.id,
+    organizationName: organization.name,
+    sharedTopics,
+    sharedMethods,
+    matchingOpportunityCount,
+    reasons,
+    gaps,
   };
 }

@@ -34,6 +34,7 @@ Optional integrations:
     NCBI_API_KEY=
     OPENAI_API_KEY=
     OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+    OPENAI_ASSISTANT_MODEL=gpt-5.6-luna
     OPPORTUNITY_INGEST_TOKEN=
 
 Before deployment:
@@ -131,7 +132,22 @@ If enabled, ensure the semantic index has been generated using the intended embe
 
 The product must never claim hybrid/vector retrieval when the semantic provider/index is unavailable.
 
-## 9. Opportunity ingestion
+## 9. Research Assistant
+
+If OPENAI_API_KEY is absent, the Research Assistant returns an explicit not-configured response. It does not fall back to ungrounded model output.
+
+OPENAI_ASSISTANT_MODEL controls the synthesis model. The repository default is gpt-5.6-luna.
+
+The assistant sends only the authenticated user's request-specific Studepartment source ledger and question to the provider, requests store=false, and does not enable external web browsing.
+
+Verify in staging that:
+
+- anonymous assistant requests return 401
+- authenticated users without a Scientific Identity receive an explicit identity-required response
+- generated answers show valid Studepartment source ids
+- provider failures do not produce fabricated fallback answers
+
+## 10. Opportunity ingestion
 
 OPPORTUNITY_INGEST_TOKEN should be a high-entropy secret of at least 32 characters.
 
@@ -143,7 +159,7 @@ It uses Bearer authentication, timing-safe token comparison, payload validation,
 
 Do not expose the ingestion token to browser code.
 
-## 10. Rollback
+## 11. Rollback
 
 Application rollback:
 
@@ -162,7 +178,7 @@ For a faulty schema release:
 3. confirm migration status
 4. redeploy the compatible application image
 
-## 11. Secret rotation
+## 12. Secret rotation
 
 BETTER_AUTH_SECRET rotation can invalidate existing protected material if changed abruptly.
 
@@ -179,7 +195,7 @@ Rotate immediately if any of these are exposed:
 
 After rotation, run readiness and deployment smoke.
 
-## 12. Go-live gate
+## 13. Go-live gate
 
 Production go-live requires all of the following:
 
