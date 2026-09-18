@@ -160,6 +160,7 @@ model User {
   sessions        Session[]
   accounts        Account[]
   evidenceActions EvidenceRecord[] @relation("EvidenceActor")
+  savedOpportunities SavedOpportunity[]
 }
 
 model Session {
@@ -458,6 +459,7 @@ model Opportunity {
   topics                 OpportunityTopic[]
   methods                OpportunityMethod[]
   provenance             OpportunityProvenance[]
+  savedBy                SavedOpportunity[]
 
   @@index([organizationId, type])
   @@index([status, deadline])
@@ -554,4 +556,22 @@ model ConnectionRequestEvent {
 
   @@index([requestId, createdAt])
   @@index([actorResearcherId, createdAt])
+}
+
+
+model SavedOpportunity {
+  id              String      @id @default(cuid())
+  userId          String
+  opportunityId   String
+  deadlineAlert   Boolean     @default(true)
+  alertLeadDays   Int         @default(7)
+  notes           String?
+  savedAt         DateTime    @default(now())
+  lastAlertedAt   DateTime?
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity     Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, opportunityId])
+  @@index([userId, savedAt])
+  @@index([deadlineAlert, lastAlertedAt])
 }

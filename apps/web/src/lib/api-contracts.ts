@@ -437,3 +437,37 @@ export type ScientificGraphNeighborhoodResponse = {
     opportunities: number;
   };
 };
+
+
+export type SavedOpportunityRecord = {
+  id: string;
+  opportunityId: string;
+  deadlineAlert: boolean;
+  alertLeadDays: number;
+  notes?: string;
+  savedAt: string;
+  opportunity: {
+    title: string;
+    type: OpportunityTypeValue;
+    organization: string;
+    sourceUrl: string;
+    applicationUrl?: string;
+    deadline?: string;
+    deadlinePrecision: OpportunityDeadlinePrecision;
+    freshness: OpportunityFreshness;
+    status: "active" | "closed" | "expired" | "stale";
+  };
+};
+
+export type SavedOpportunityListResponse = {
+  saved: SavedOpportunityRecord[];
+  total: number;
+  dueSoon: number;
+};
+
+export type SaveOpportunityInput = {
+  opportunityId: string;
+  deadlineAlert?: boolean;
+  alertLeadDays?: number;
+  notes?: string | null;
+};
