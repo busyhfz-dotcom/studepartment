@@ -7,6 +7,7 @@ import type {
   OpportunityIntelligenceResponse,
   OpportunityTypeValue,
 } from "@/lib/api-contracts";
+import { FeedbackControls } from "@/components/feedback/feedback-controls";
 import styles from "./page.module.css";
 import { SaveOpportunityButton } from "./save-opportunity-button";
 
@@ -241,6 +242,7 @@ export function OpportunityExplorer() {
                     <strong>{opportunity.source.name}</strong>
                     <small>{opportunity.source.type.replaceAll("-", " ")}</small>
                   </div>
+                  <FeedbackControls entityId={opportunity.id} entityType="opportunity" />
                   <a className={styles.secondaryAction} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source</a>
                   <SaveOpportunityButton className={styles.secondaryAction} opportunityId={opportunity.id} />
                   <a className={styles.secondaryAction} href={"/assistant?opportunity=" + opportunity.id}>Ask assistant</a>
