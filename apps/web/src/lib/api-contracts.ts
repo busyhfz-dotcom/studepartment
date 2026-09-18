@@ -275,6 +275,8 @@ export type ScientificIntroductionPreview = {
   receiver: {
     id: string;
     fullName: string;
+    headline: string;
+    institution: string;
     availability: DiscoveryAvailability;
   };
   purpose: IntroductionPurpose;
@@ -282,4 +284,52 @@ export type ScientificIntroductionPreview = {
   reasons: string[];
   requestAllowed: boolean;
   blockReason?: string;
+  guardrails: string[];
+};
+
+export type CreateIntroductionInput = {
+  receiverId: string;
+  purpose: IntroductionPurpose;
+  context: string;
+};
+
+export type IntroductionRequestStatus =
+  | "pending"
+  | "accepted"
+  | "declined"
+  | "withdrawn"
+  | "expired"
+  | "archived";
+
+export type IntroductionRequestRecord = {
+  id: string;
+  direction: "incoming" | "outgoing";
+  status: IntroductionRequestStatus;
+  purpose: IntroductionPurpose;
+  context: string;
+  createdAt: string;
+  expiresAt?: string;
+  respondedAt?: string;
+  counterpart: {
+    id: string;
+    fullName: string;
+    headline: string;
+    institution: string;
+    verified: boolean;
+  };
+};
+
+export type IntroductionListResponse = {
+  box: "inbox" | "outbox";
+  requests: IntroductionRequestRecord[];
+};
+
+export type IntroductionAction = "accept" | "decline" | "withdraw";
+
+export type IntroductionPolicyResponse = {
+  allowIntroductions: boolean;
+  requireVerifiedSender: boolean;
+  allowedPurposes: IntroductionPurpose[];
+  cooldownDays: number;
+  maxInboundPerDay: number;
 };
