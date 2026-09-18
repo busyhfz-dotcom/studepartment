@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ProductShell } from "@/components/shell/product-shell";
 import { OpportunityExplorer } from "./opportunity-explorer";
 import styles from "./page.module.css";
@@ -15,6 +16,7 @@ export default function OpportunitiesPage() {
           <p className="lede">
             Source freshness, scientific relevance, and formal eligibility remain separate so a compelling research match is never presented as guaranteed eligibility.
           </p>
+          <Link href="/opportunities/saved">Open saved opportunity workspace ↗</Link>
         </header>
         <OpportunityExplorer />
       </div>
