@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, ProfileResponse } from "@/lib/api-contracts";
 import {
   AuthenticationRequiredError,
@@ -12,6 +12,11 @@ import {
   parseProfileUpdateInput,
   ProfileValidationError,
 } from "@/server/validation/profile";
+import {
+  consumeClientRateLimit,
+  RateLimitExceededError,
+  rateLimitErrorResponse,
+} from "@/server/security/rate-limit";
 
 function apiError(status: number, code: string, message: string) {
   const body: ApiError = { success: false, error: { code, message } };
@@ -29,6 +34,7 @@ export async function GET() {
     const body: ApiSuccess<ProfileResponse> = { success: true, data: profile };
     return NextResponse.json(body);
   } catch (error) {
+    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     if (error instanceof AuthenticationRequiredError) {
       return apiError(401, error.code, error.message);
     }
@@ -37,8 +43,9 @@ export async function GET() {
   }
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   try {
+    await consumeClientRateLimit(request, "profile:update", { windowSeconds: 3600, max: 60 });
     const user = await requireCurrentUser();
     const input = parseProfileUpdateInput(await request.json());
     const profile = await researcherRepository.updateProfileForUser(user.id, input);
