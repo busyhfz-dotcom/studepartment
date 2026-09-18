@@ -48,12 +48,12 @@ function parseDate(value?: string) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function canonicalKey(work: OrcidWorkSummary, pubmed?: PubMedSummary) {
+function canonicalKey(orcid: string, work: OrcidWorkSummary, pubmed?: PubMedSummary) {
   const pmid = pubmed?.pmid ?? work.pmid;
   const doi = normalizeDoi(pubmed?.doi ?? work.doi);
   if (pmid) return `pmid:${pmid}`;
   if (doi) return `doi:${doi}`;
-  return `orcid:${work.putCode}`;
+  return `orcid:${orcid}:${work.putCode}`;
 }
 
 function orcidWorkUrl(orcid: string, work: OrcidWorkSummary) {
@@ -173,14 +173,26 @@ export async function syncOwnedPublications(): Promise<PublicationSyncResult> {
     else orcidOnly += 1;
 
     await db.$transaction(async (tx) => {
-      const key = canonicalKey(work, pubmed);
+      const key = canonicalKey(profile.orcid!, work, pubmed);
       const data = publicationData(work, pubmed, observedAt);
       const existing = await findExistingPublication(tx, key, data.pmid ?? undefined, data.doi ?? undefined);
+      const updateData = !pubmed && existing
+        ? {
+            ...data,
+            publicationType: existing.publicationType,
+            volume: existing.volume,
+            issue: existing.issue,
+            pages: existing.pages,
+            sourceUrl: existing.sourceUrl ?? data.sourceUrl,
+            authorNames: existing.authorNames.length ? existing.authorNames : data.authorNames,
+            lastVerifiedAt: existing.lastVerifiedAt,
+          }
+        : data;
 
       const publication = existing
         ? await tx.publication.update({
             where: { id: existing.id },
-            data: { canonicalKey: key, ...data },
+            data: { canonicalKey: key, ...updateData },
           })
         : await tx.publication.create({
             data: { canonicalKey: key, ...data },
@@ -333,7 +345,7 @@ export async function listOwnedPublications(): Promise<PublicationListResponse> 
           publication: {
             include: {
               provenance: {
-                where: { researcherId: { not: null }, status: { in: ["ASSERTED", "VERIFIED"] } },
+                where: { researcherId: profile.id, status: { in: ["ASSERTED", "VERIFIED"] } },
                 select: { sourceType: true },
               },
             },
