@@ -37,6 +37,13 @@ assert.match(csp, /frame-ancestors 'none'/, "CSP must deny framing");
 const anonymousMe = await request("/api/v1/me");
 assert.equal(anonymousMe.status, 401, "anonymous /api/v1/me must return 401");
 
+const anonymousAssistant = await request("/api/v1/assistant/research", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ question: "Which researchers overlap my work?" }),
+});
+assert.equal(anonymousAssistant.status, 401, "anonymous Research Assistant must return 401");
+
 const email = "ci-" + randomUUID() + "@example.test";
 const password = "CI-Strong-Password-" + randomUUID();
 const signup = await request("/api/auth/sign-up/email", {
