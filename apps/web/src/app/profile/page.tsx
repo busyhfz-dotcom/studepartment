@@ -2,12 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ProductShell } from "@/components/shell/product-shell";
 import { ScientificProfileCard } from "@/components/scientific/scientific-profile-card";
+import { PublicationEvidencePanel } from "./publication-evidence-panel";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { researcherRepository } from "@/server/repositories/researcher-repository";
 import styles from "./profile.module.css";
 
 const orcidMessages: Record<string, { text: string; error?: boolean }> = {
-  connected: { text: "ORCID ownership verified. Your scientific identity now carries an explicit verified ORCID provenance signal." },
+  connected: { text: "ORCID ownership verified. You can now synchronize public works and corroborate matching publication metadata with PubMed." },
   denied: { text: "ORCID authorization was cancelled. No profile data or verification state was changed.", error: true },
   "invalid-state": { text: "ORCID verification could not be completed because the authorization state was invalid or expired. Try again from profile settings.", error: true },
   conflict: { text: "That ORCID iD is already connected to another scientific identity. No change was made.", error: true },
@@ -62,6 +63,7 @@ export default async function ProfilePage({
         ) : null}
 
         <ScientificProfileCard identity={identity} />
+        <PublicationEvidencePanel />
 
         {profile.completeness ? (
           <section className={styles.guidance} aria-labelledby="profile-guidance-title">
