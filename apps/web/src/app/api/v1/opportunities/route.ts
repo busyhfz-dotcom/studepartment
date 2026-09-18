@@ -1,38 +1,25 @@
-import { NextResponse } from "next/server";
-import type { ApiSuccess, OpportunityResult } from "@/lib/api-contracts";
+import { NextResponse, type NextRequest } from "next/server";
+import type { ApiError, ApiSuccess, OpportunityIntelligenceResponse } from "@/lib/api-contracts";
+import { discoverOpportunities } from "@/server/opportunities/intelligence";
+import { parseOpportunityQuery } from "@/server/opportunities/query";
 
-const opportunities: OpportunityResult[] = [
-  {
-    id: "ki-postdoc-immunotherapy",
-    type: "postdoc",
-    title: "Postdoctoral Researcher · Translational Cancer Immunology",
-    organization: "Karolinska Institutet",
-    location: "Stockholm, Sweden",
-    deadline: "2026-10-15",
-    sourceUrl: "https://example.org/opportunities/ki-postdoc-immunotherapy",
-    lastVerifiedAt: "2026-09-13",
-    relevance: "strong",
-    eligibility: "likely",
-    reasons: ["Cancer immunotherapy", "Clinical research background", "Biomarker experience"],
-    gaps: ["Confirm wet-lab methodology requirement"],
-  },
-  {
-    id: "oxford-fellowship-oncology",
-    type: "fellowship",
-    title: "Early Career Fellowship · Precision Oncology",
-    organization: "University of Oxford",
-    location: "Oxford, UK",
-    deadline: "2026-11-03",
-    sourceUrl: "https://example.org/opportunities/oxford-fellowship-oncology",
-    lastVerifiedAt: "2026-09-13",
-    relevance: "relevant",
-    eligibility: "review",
-    reasons: ["Translational oncology", "Compatible career stage"],
-    gaps: ["Review independent funding eligibility", "Confirm geographic eligibility"],
-  },
-];
-
-export async function GET() {
-  const body: ApiSuccess<OpportunityResult[]> = { success: true, data: opportunities };
-  return NextResponse.json(body);
+export async function GET(request: NextRequest) {
+  try {
+    const query = parseOpportunityQuery(request.nextUrl.searchParams);
+    const data = await discoverOpportunities(query);
+    const body: ApiSuccess<OpportunityIntelligenceResponse> = { success: true, data };
+    return NextResponse.json(body, {
+      headers: { "Cache-Control": "private, no-store" },
+    });
+  } catch (error) {
+    console.error("Opportunity intelligence failed", error);
+    const body: ApiError = {
+      success: false,
+      error: {
+        code: "OPPORTUNITY_INTELLIGENCE_FAILED",
+        message: "Opportunity intelligence is temporarily unavailable.",
+      },
+    };
+    return NextResponse.json(body, { status: 500 });
+  }
 }
