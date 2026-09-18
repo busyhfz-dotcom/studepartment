@@ -8,6 +8,7 @@ import type {
   OpportunityTypeValue,
 } from "@/lib/api-contracts";
 import styles from "./page.module.css";
+import { SaveOpportunityButton } from "./save-opportunity-button";
 
 type OpportunityApiResponse = ApiSuccess<OpportunityIntelligenceResponse> | ApiError;
 
@@ -241,6 +242,7 @@ export function OpportunityExplorer() {
                     <small>{opportunity.source.type.replaceAll("-", " ")}</small>
                   </div>
                   <a className={styles.secondaryAction} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source</a>
+                  <SaveOpportunityButton className={styles.secondaryAction} opportunityId={opportunity.id} />
                   <a className={styles.primaryAction} href={opportunity.applicationUrl ?? opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application</a>
                 </aside>
               </article>
