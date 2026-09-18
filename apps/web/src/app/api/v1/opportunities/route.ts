@@ -2,9 +2,15 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, OpportunityIntelligenceResponse } from "@/lib/api-contracts";
 import { discoverOpportunities } from "@/server/opportunities/intelligence";
 import { parseOpportunityQuery } from "@/server/opportunities/query";
+import {
+  consumeClientRateLimit,
+  RateLimitExceededError,
+  rateLimitErrorResponse,
+} from "@/server/security/rate-limit";
 
 export async function GET(request: NextRequest) {
   try {
+    await consumeClientRateLimit(request, "opportunities:read", { windowSeconds: 60, max: 120 });
     const query = parseOpportunityQuery(request.nextUrl.searchParams);
     const data = await discoverOpportunities(query);
     const body: ApiSuccess<OpportunityIntelligenceResponse> = { success: true, data };
@@ -12,6 +18,7 @@ export async function GET(request: NextRequest) {
       headers: { "Cache-Control": "private, no-store" },
     });
   } catch (error) {
+    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     console.error("Opportunity intelligence failed", error);
     const body: ApiError = {
       success: false,
