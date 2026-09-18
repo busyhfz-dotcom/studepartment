@@ -4,6 +4,7 @@ import {
   AuthenticationRequiredError,
   requireCurrentUser,
 } from "@/server/auth/current-user";
+import { recordProductEvent } from "@/server/analytics/product-events";
 import {
   researcherRepository,
   ResearcherRepositoryError,
@@ -49,6 +50,7 @@ export async function PATCH(request: NextRequest) {
     const user = await requireCurrentUser();
     const input = parseProfileUpdateInput(await request.json());
     const profile = await researcherRepository.updateProfileForUser(user.id, input);
+    await recordProductEvent(user.id, "PROFILE_UPDATED");
     const body: ApiSuccess<ProfileResponse> = { success: true, data: profile };
     return NextResponse.json(body);
   } catch (error) {
