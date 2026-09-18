@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { getDb } from "@studepartment/db";
 import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError } from "@/lib/api-contracts";
@@ -29,10 +29,6 @@ function digestSubject(subject: string) {
     .slice(0, 32);
 }
 
-function bucket(nowMs: number, windowSeconds: number) {
-  return Math.floor(nowMs / (windowSeconds * 1000));
-}
-
 function retryAfter(nowMs: number, windowSeconds: number) {
   const windowMs = windowSeconds * 1000;
   return Math.max(1, Math.ceil((windowMs - (nowMs % windowMs)) / 1000));
@@ -51,28 +47,25 @@ export async function consumeRateLimit(
   rule: RateLimitRule,
 ) {
   const nowMs = Date.now();
-  const key = [
-    "app",
-    scope,
-    digestSubject(subject),
-    String(bucket(nowMs, rule.windowSeconds)),
-  ].join(":");
+  const windowStart = BigInt(nowMs - rule.windowSeconds * 1000);
+  const now = BigInt(nowMs);
+  const key = ["app", scope, digestSubject(subject)].join(":");
+  const id = randomUUID();
 
-  const row = await getDb().rateLimit.upsert({
-    where: { key },
-    create: {
-      key,
-      count: 1,
-      lastRequest: BigInt(nowMs),
-    },
-    update: {
-      count: { increment: 1 },
-      lastRequest: BigInt(nowMs),
-    },
-    select: { count: true },
-  });
+  const rows = await getDb().$queryRaw<Array<{ count: number }>>`
+    INSERT INTO "RateLimit" ("id", "key", "count", "lastRequest")
+    VALUES (${id}, ${key}, 1, ${now})
+    ON CONFLICT ("key") DO UPDATE SET
+      "count" = CASE
+        WHEN "RateLimit"."lastRequest" < ${windowStart} THEN 1
+        ELSE "RateLimit"."count" + 1
+      END,
+      "lastRequest" = ${now}
+    RETURNING "count"
+  `;
 
-  if (row.count > rule.max) {
+  const count = rows[0]?.count ?? 1;
+  if (count > rule.max) {
     throw new RateLimitExceededError(scope, retryAfter(nowMs, rule.windowSeconds));
   }
 }
