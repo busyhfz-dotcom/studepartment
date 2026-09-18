@@ -44,6 +44,12 @@ const anonymousAssistant = await request("/api/v1/assistant/research", {
 });
 assert.equal(anonymousAssistant.status, 401, "anonymous Research Assistant must return 401");
 
+const anonymousExport = await request("/api/v1/account/export");
+assert.equal(anonymousExport.status, 401, "anonymous account export must return 401");
+
+const anonymousFeedback = await request("/api/v1/feedback");
+assert.equal(anonymousFeedback.status, 401, "anonymous feedback read must return 401");
+
 const email = "ci-" + randomUUID() + "@example.test";
 const password = "CI-Strong-Password-" + randomUUID();
 const signup = await request("/api/auth/sign-up/email", {
