@@ -142,6 +142,7 @@ enum PublicationProvenanceStatus {
 }
 
 enum PublicationEvidenceLevel {
+  MANUAL_ASSERTED
   ORCID_ASSERTED
   PUBMED_CORROBORATED
 }
@@ -363,7 +364,7 @@ model ResearcherPublication {
   publicationId  String
   authorOrder    Int?
   sourceType     PublicationSourceType    @default(MANUAL)
-  evidenceLevel  PublicationEvidenceLevel @default(ORCID_ASSERTED)
+  evidenceLevel  PublicationEvidenceLevel @default(MANUAL_ASSERTED)
   lastObservedAt DateTime                 @default(now())
   researcher     ResearcherProfile        @relation(fields: [researcherId], references: [id], onDelete: Cascade)
   publication    Publication              @relation(fields: [publicationId], references: [id], onDelete: Cascade)
