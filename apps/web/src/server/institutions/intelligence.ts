@@ -175,7 +175,9 @@ export async function getInstitutionFitSnapshot(organizationId: string): Promise
   if (sharedTopics.length) reasons.push("Shared research topics: " + sharedTopics.slice(0, 5).join(", ") + ".");
   if (sharedMethods.length) reasons.push("Shared methods: " + sharedMethods.slice(0, 5).join(", ") + ".");
   if (matchingOpportunityCount) {
-    reasons.push(matchingOpportunityCount + " current opportunity" + (matchingOpportunityCount === 1 ? "" : "ies").replace("ys", "ies") + " overlaps your recorded topics or methods.");
+    reasons.push(
+      matchingOpportunityCount + " current " + (matchingOpportunityCount === 1 ? "opportunity overlaps" : "opportunities overlap") + " your recorded topics or methods.",
+    );
   }
 
   const gaps: string[] = [];
