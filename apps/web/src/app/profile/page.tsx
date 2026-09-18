@@ -54,6 +54,7 @@ export default async function ProfilePage({
             <p className={styles.toolbarCopy}>Manage the canonical profile and evidence used by discovery, matching, and introductions.</p>
           </div>
           <div className={styles.toolbarActions}>
+            <Link className="secondary" href="/settings/privacy">Privacy & data</Link>
             <Link className="secondary" href={"/graph?researcher=" + profile.id}>Open evidence graph</Link>
             <Link className="primaryButton" href="/profile/edit">Edit scientific identity</Link>
           </div>
