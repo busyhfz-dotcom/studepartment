@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   ApiError,
   ApiSuccess,
@@ -38,6 +38,30 @@ function statusClass(status: IntroductionRequestRecord["status"]) {
   return styles["status_" + status] ?? "";
 }
 
+async function fetchIntroductionList(targetBox: BoxName) {
+  const response = await fetch("/api/v1/introductions?box=" + targetBox, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  const body = (await response.json()) as ListApiResponse;
+  if (!response.ok || !body.success) {
+    throw new Error(body.success ? "Unable to load introductions." : body.error.message);
+  }
+  return body.data.requests;
+}
+
+async function fetchIntroductionPolicy() {
+  const response = await fetch("/api/v1/introduction-policy", {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  const body = (await response.json()) as PolicyApiResponse;
+  if (!response.ok || !body.success) {
+    throw new Error(body.success ? "Unable to load recipient controls." : body.error.message);
+  }
+  return body.data;
+}
+
 export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
   const [box, setBox] = useState<BoxName>(initialBox);
   const [requests, setRequests] = useState<IntroductionRequestRecord[]>([]);
@@ -50,51 +74,49 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
-  const loadRequests = useCallback(async (targetBox: BoxName) => {
-    try {
-      const response = await fetch("/api/v1/introductions?box=" + targetBox, {
-        headers: { Accept: "application/json" },
-        cache: "no-store",
-      });
-      const body = (await response.json()) as ListApiResponse;
-      if (!response.ok || !body.success) {
-        throw new Error(body.success ? "Unable to load introductions." : body.error.message);
-      }
-      setRequests(body.data.requests);
-    } catch (requestError) {
-      setRequests([]);
-      setError(requestError instanceof Error ? requestError.message : "Unable to load introductions.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  useEffect(() => {
+    let active = true;
 
-  const loadPolicy = useCallback(async () => {
-    try {
-      const response = await fetch("/api/v1/introduction-policy", {
-        headers: { Accept: "application/json" },
-        cache: "no-store",
+    void fetchIntroductionList(box)
+      .then((nextRequests) => {
+        if (!active) return;
+        setRequests(nextRequests);
+      })
+      .catch((requestError: unknown) => {
+        if (!active) return;
+        setRequests([]);
+        setError(requestError instanceof Error ? requestError.message : "Unable to load introductions.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
-      const body = (await response.json()) as PolicyApiResponse;
-      if (!response.ok || !body.success) {
-        throw new Error(body.success ? "Unable to load recipient controls." : body.error.message);
-      }
-      setPolicy(body.data);
-      setDraftPolicy(body.data);
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Unable to load recipient controls.");
-    } finally {
-      setPolicyLoading(false);
-    }
-  }, []);
+
+    return () => {
+      active = false;
+    };
+  }, [box]);
 
   useEffect(() => {
-    void loadRequests(box);
-  }, [box, loadRequests]);
+    let active = true;
 
-  useEffect(() => {
-    void loadPolicy();
-  }, [loadPolicy]);
+    void fetchIntroductionPolicy()
+      .then((nextPolicy) => {
+        if (!active) return;
+        setPolicy(nextPolicy);
+        setDraftPolicy(nextPolicy);
+      })
+      .catch((requestError: unknown) => {
+        if (!active) return;
+        setError(requestError instanceof Error ? requestError.message : "Unable to load recipient controls.");
+      })
+      .finally(() => {
+        if (active) setPolicyLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function performAction(request: IntroductionRequestRecord, action: IntroductionAction) {
     setActionId(request.id);
@@ -117,7 +139,8 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
             ? "Introduction declined."
             : "Introduction withdrawn.",
       );
-      await loadRequests(box);
+      const nextRequests = await fetchIntroductionList(box);
+      setRequests(nextRequests);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to update introduction.");
     } finally {
