@@ -3,7 +3,9 @@ import { NextResponse, type NextRequest } from "next/server";
 
 function contentSecurityPolicy(nonce: string) {
   const isDevelopment = process.env.NODE_ENV === "development";
-  const isProduction = process.env.DEPLOYMENT_ENV === "production";
+  const isProduction =
+    process.env.DEPLOYMENT_ENV === "production"
+    || (process.env.NODE_ENV === "production" && process.env.DEPLOYMENT_ENV !== "ci");
 
   return [
     "default-src 'self'",
