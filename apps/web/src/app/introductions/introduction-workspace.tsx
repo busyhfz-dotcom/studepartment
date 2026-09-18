@@ -118,6 +118,13 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
     };
   }, []);
 
+  function changeBox(nextBox: BoxName) {
+    if (nextBox === box) return;
+    setError(null);
+    setLoading(true);
+    setBox(nextBox);
+  }
+
   async function performAction(request: IntroductionRequestRecord, action: IntroductionAction) {
     setActionId(request.id);
     setError(null);
@@ -198,11 +205,7 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
           <button
             aria-selected={box === "inbox"}
             className={box === "inbox" ? styles.tabActive : styles.tab}
-            onClick={() => {
-              setError(null);
-              setLoading(true);
-              setBox("inbox");
-            }}
+            onClick={() => changeBox("inbox")}
             role="tab"
             type="button"
           >
@@ -211,11 +214,7 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
           <button
             aria-selected={box === "outbox"}
             className={box === "outbox" ? styles.tabActive : styles.tab}
-            onClick={() => {
-              setError(null);
-              setLoading(true);
-              setBox("outbox");
-            }}
+            onClick={() => changeBox("outbox")}
             role="tab"
             type="button"
           >
