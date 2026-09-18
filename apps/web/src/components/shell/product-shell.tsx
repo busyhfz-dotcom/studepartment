@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import { SystemStatus } from "./system-status";
 import styles from "./product-shell.module.css";
 
 type IconName = "overview" | "discover" | "opportunity" | "introduction" | "identity" | "graph";
@@ -151,7 +152,7 @@ export function ProductShell({ children }: { children: ReactNode }) {
               <small>Explainable AI · Controlled access</small>
             </div>
           </div>
-          <div className={styles.version}>Platform foundation · v0.9</div>
+          <div className={styles.version}>Platform · v1.0 readiness</div>
         </div>
       </aside>
 
@@ -172,7 +173,7 @@ export function ProductShell({ children }: { children: ReactNode }) {
               <span>Search research</span>
               <kbd>⌘ K</kbd>
             </Link>
-            <div className={styles.systemState}><span /> System ready</div>
+            <SystemStatus />
             <Link aria-label="Open scientific identity" className={styles.avatar} href="/profile">RI</Link>
           </div>
         </header>
