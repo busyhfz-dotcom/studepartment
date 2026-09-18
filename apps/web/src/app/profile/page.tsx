@@ -53,7 +53,10 @@ export default async function ProfilePage({
             <span className="eyebrow">Scientific identity</span>
             <p className={styles.toolbarCopy}>Manage the canonical profile and evidence used by discovery, matching, and introductions.</p>
           </div>
-          <Link className="primaryButton" href="/profile/edit">Edit scientific identity</Link>
+          <div className={styles.toolbarActions}>
+            <Link className="secondary" href={"/graph?researcher=" + profile.id}>Open evidence graph</Link>
+            <Link className="primaryButton" href="/profile/edit">Edit scientific identity</Link>
+          </div>
         </div>
 
         {orcidMessage ? (

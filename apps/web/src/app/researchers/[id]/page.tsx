@@ -1,17 +1,18 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductShell } from "@/components/shell/product-shell";
-import { researcherPreviews } from "@/lib/scientific-data";
+import { getPublicResearcherProfile } from "@/server/researchers/public-profile";
 import styles from "./page.module.css";
 
-export function generateStaticParams() {
-  return researcherPreviews.map((researcher) => ({ id: researcher.id }));
+function evidenceLabel(value: "MANUAL_ASSERTED" | "ORCID_ASSERTED" | "PUBMED_CORROBORATED") {
+  if (value === "PUBMED_CORROBORATED") return "PubMed corroborated";
+  if (value === "ORCID_ASSERTED") return "ORCID asserted";
+  return "Manual assertion";
 }
 
 export default async function ResearcherPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const researcher = researcherPreviews.find((item) => item.id === id);
-
+  const researcher = await getPublicResearcherProfile(id);
   if (!researcher) notFound();
 
   return (
@@ -22,14 +23,22 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
         <header className={styles.header}>
           <div>
             <span className="eyebrow">Scientific identity</span>
-            <h1>{researcher.name}</h1>
-            <p className={styles.role}>{researcher.title}</p>
+            <h1>{researcher.fullName}</h1>
+            <p className={styles.role}>{researcher.headline}</p>
             <p className={styles.meta}>{researcher.institution} · {researcher.location}</p>
+            {researcher.bio ? <p className={styles.bio}>{researcher.bio}</p> : null}
           </div>
           <div className={styles.trustCard}>
-            <span className="sectionLabel">Trust signals</span>
-            <strong>{researcher.verified ? "Verified scientific identity" : "Public scientific identity"}</strong>
-            <p>Identity confidence is based on source-backed scientific data rather than social activity.</p>
+            <span className="sectionLabel">Trust architecture</span>
+            <strong>{researcher.verified ? "Verified scientific identity" : "Canonical public identity"}</strong>
+            <p>Trust signals come from identity, organization, ORCID, and publication evidence rather than social activity.</p>
+            <div className={styles.trustGrid}>
+              {researcher.trustSignals.map((signal) => (
+                <span className={signal.verified ? styles.trustOn : styles.trustOff} key={signal.label}>
+                  {signal.verified ? "✓" : "○"} {signal.label}
+                </span>
+              ))}
+            </div>
           </div>
         </header>
 
@@ -37,34 +46,71 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
           <article className={styles.panel}>
             <span className="sectionLabel">Research focus</span>
             <div className={styles.tags}>
-              {researcher.topics.map((topic) => <span key={topic}>{topic}</span>)}
+              {researcher.topics.length
+                ? researcher.topics.map((topic) => <span key={topic}>{topic}</span>)
+                : <span className={styles.emptyTag}>No canonical topics yet</span>}
             </div>
           </article>
 
           <article className={styles.panel}>
             <span className="sectionLabel">Methods</span>
             <ul className="cleanList">
-              {researcher.methods.map((method) => <li key={method}>{method}</li>)}
+              {researcher.methods.length
+                ? researcher.methods.map((method) => <li key={method}>{method}</li>)
+                : <li>No canonical methods yet</li>}
             </ul>
           </article>
 
           <article className={styles.panel}>
             <span className="sectionLabel">Currently open to</span>
+            <div className={styles.availability}>{researcher.availability} availability</div>
             <ul className="cleanList">
-              {researcher.openTo.map((goal) => <li key={goal}>✓ {goal}</li>)}
+              {researcher.collaborationGoals.length
+                ? researcher.collaborationGoals.map((goal) => <li key={goal}>✓ {goal}</li>)
+                : <li>No active collaboration goals published</li>}
             </ul>
           </article>
         </section>
 
-        <section className={styles.matchPanel}>
-          <div>
-            <span className="sectionLabel">Why this researcher appeared</span>
-            <h2>{researcher.match.level} scientific alignment</h2>
-            <p>We show the underlying reasons instead of turning relevance into a public researcher score.</p>
+        <section className={styles.publicationPanel}>
+          <div className={styles.publicationHeading}>
+            <div>
+              <span className="sectionLabel">Publication evidence</span>
+              <h2>Recent source-backed outputs</h2>
+            </div>
+            <Link href={"/graph?researcher=" + researcher.id}>Open evidence graph ↗</Link>
           </div>
-          <ul>
-            {researcher.match.reasons.map((reason) => <li key={reason}>✓ {reason}</li>)}
-          </ul>
+
+          {researcher.publications.length ? (
+            <div className={styles.publicationList}>
+              {researcher.publications.map((publication) => (
+                <article className={styles.publicationCard} key={publication.id}>
+                  <div className={styles.publicationMeta}>
+                    <span>{evidenceLabel(publication.evidenceLevel)}</span>
+                    <span>{publication.year ?? "Date unavailable"}</span>
+                  </div>
+                  <h3>{publication.title}</h3>
+                  <p>{publication.journal ?? "Journal not published"}</p>
+                  <div className={styles.publicationIds}>
+                    {publication.pmid ? <span>PMID {publication.pmid}</span> : null}
+                    {publication.doi ? <span>DOI {publication.doi}</span> : null}
+                  </div>
+                  {publication.sourceUrl ? <a href={publication.sourceUrl} rel="noreferrer" target="_blank">Open source ↗</a> : null}
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyPublications}>No active publication evidence is available on this scientific identity yet.</div>
+          )}
+        </section>
+
+        <section className={styles.graphPanel}>
+          <div>
+            <span className="sectionLabel">Scientific neighborhood</span>
+            <h2>Inspect how this identity connects to research evidence.</h2>
+            <p>Evidence Graph derives relationships from canonical publications, topics, methods, labs, institutions, and active opportunities.</p>
+          </div>
+          <Link className={styles.graphButton} href={"/graph?researcher=" + researcher.id}>Explore evidence graph</Link>
         </section>
 
         <section className={styles.actionBar}>
@@ -72,7 +118,10 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
             <strong>Interested in connecting?</strong>
             <p>Review the purpose and context before sending a controlled scientific introduction.</p>
           </div>
-          <Link className="primaryButton" href={`/introductions/new?researcher=${researcher.id}`}>Request scientific introduction</Link>
+          <div className={styles.actionButtons}>
+            <Link className="secondary" href={"/graph?researcher=" + researcher.id}>Evidence graph</Link>
+            <Link className="primaryButton" href={"/introductions/new?researcher=" + researcher.id}>Request scientific introduction</Link>
+          </div>
         </section>
       </div>
     </ProductShell>

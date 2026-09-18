@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import styles from "./product-shell.module.css";
 
-type IconName = "overview" | "discover" | "opportunity" | "introduction" | "identity";
+type IconName = "overview" | "discover" | "opportunity" | "introduction" | "identity" | "graph";
 
 type NavItem = {
   href: string;
@@ -23,12 +23,14 @@ const workspaceItems: NavItem[] = [
 
 const identityItems: NavItem[] = [
   { href: "/profile", label: "Scientific identity", description: "Profile and provenance", icon: "identity" },
+  { href: "/graph", label: "Evidence graph", description: "Scientific relationships", icon: "graph" },
 ];
 
 const pageNames: Array<[string, string]> = [
   ["/discover", "Scientific Discovery"],
   ["/opportunities", "Opportunity Intelligence"],
   ["/introductions", "Scientific Introductions"],
+  ["/graph", "Scientific Evidence Graph"],
   ["/researchers", "Researcher Profile"],
   ["/profile", "Scientific Identity"],
   ["/", "Research Overview"],
@@ -72,6 +74,14 @@ function Icon({ name }: { name: IconName }) {
         <circle cx="12" cy="8" r="4" />
         <path d="M4.5 21c.6-4.8 3.3-7 7.5-7s6.9 2.2 7.5 7" />
         <path d="m17.5 4.5 1 1 2-2" />
+      </>
+    ),
+    graph: (
+      <>
+        <circle cx="12" cy="5" r="2.5" />
+        <circle cx="5" cy="17" r="2.5" />
+        <circle cx="19" cy="17" r="2.5" />
+        <path d="m10.7 7.2-4.4 7.6M13.3 7.2l4.4 7.6M7.5 17h9" />
       </>
     ),
   };
@@ -141,7 +151,7 @@ export function ProductShell({ children }: { children: ReactNode }) {
               <small>Explainable AI · Controlled access</small>
             </div>
           </div>
-          <div className={styles.version}>Platform foundation · v0.7</div>
+          <div className={styles.version}>Platform foundation · v0.9</div>
         </div>
       </aside>
 
