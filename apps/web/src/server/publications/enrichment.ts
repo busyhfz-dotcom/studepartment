@@ -166,8 +166,9 @@ export async function syncOwnedPublications(): Promise<PublicationSyncResult> {
 
   for (const work of works) {
     seenPutCodes.push(work.putCode);
+    const normalizedWorkDoi = normalizeDoi(work.doi);
     const pubmed = (work.pmid ? pubmedByPmid.get(work.pmid) : undefined)
-      ?? (work.doi ? pubmedByDoi.get(normalizeDoi(work.doi)) : undefined);
+      ?? (normalizedWorkDoi ? pubmedByDoi.get(normalizedWorkDoi) : undefined);
     const evidenceLevel = pubmed ? "PUBMED_CORROBORATED" : "ORCID_ASSERTED";
     if (pubmed) pubmedCorroborated += 1;
     else orcidOnly += 1;
@@ -330,7 +331,8 @@ export async function syncOwnedPublications(): Promise<PublicationSyncResult> {
 
 export async function listOwnedPublications(): Promise<PublicationListResponse> {
   const user = await requireCurrentUser();
-  const profile = await getDb().researcherProfile.findUnique({
+  const db = getDb();
+  const profile = await db.researcherProfile.findUnique({
     where: { userId: user.id },
     include: {
       evidence: {
@@ -338,25 +340,26 @@ export async function listOwnedPublications(): Promise<PublicationListResponse> 
         select: { id: true },
         take: 1,
       },
-      publications: {
-        where: { active: true },
-        orderBy: { publication: { publicationDate: "desc" } },
+    },
+  });
+  if (!profile) throw new PublicationEnrichmentError("PROFILE_NOT_FOUND", "Scientific profile not found.");
+
+  const relations = await db.researcherPublication.findMany({
+    where: { researcherId: profile.id, active: true },
+    orderBy: { publication: { publicationDate: "desc" } },
+    include: {
+      publication: {
         include: {
-          publication: {
-            include: {
-              provenance: {
-                where: { researcherId: profile.id, status: { in: ["ASSERTED", "VERIFIED"] } },
-                select: { sourceType: true },
-              },
-            },
+          provenance: {
+            where: { researcherId: profile.id, status: { in: ["ASSERTED", "VERIFIED"] } },
+            select: { sourceType: true },
           },
         },
       },
     },
   });
-  if (!profile) throw new PublicationEnrichmentError("PROFILE_NOT_FOUND", "Scientific profile not found.");
 
-  const publications: PublicationRecord[] = profile.publications.map((relation) => {
+  const publications: PublicationRecord[] = relations.map((relation) => {
     const publication = relation.publication;
     const sources = new Set<"ORCID" | "PubMed" | "Manual">();
     for (const evidence of publication.provenance) {
