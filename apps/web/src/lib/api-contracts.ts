@@ -375,3 +375,65 @@ export type PublicationSyncResult = {
   staleRelationships: number;
   warnings: string[];
 };
+
+
+export type ScientificGraphNodeType =
+  | "researcher"
+  | "publication"
+  | "topic"
+  | "method"
+  | "laboratory"
+  | "institution"
+  | "opportunity";
+
+export type ScientificGraphEdgeType =
+  | "affiliated-with"
+  | "researches"
+  | "uses-method"
+  | "authored"
+  | "member-of"
+  | "part-of"
+  | "offers"
+  | "focuses-on"
+  | "uses-method-in-opportunity";
+
+export type ScientificGraphEvidence = {
+  level: "verified" | "corroborated" | "source-backed" | "asserted";
+  source: string;
+  detail?: string;
+};
+
+export type ScientificGraphNode = {
+  id: string;
+  entityId: string;
+  type: ScientificGraphNodeType;
+  label: string;
+  subtitle?: string;
+  href?: string;
+  evidence: ScientificGraphEvidence;
+  metadata: Record<string, string | number | boolean | null>;
+};
+
+export type ScientificGraphEdge = {
+  id: string;
+  source: string;
+  target: string;
+  type: ScientificGraphEdgeType;
+  label: string;
+  evidence: ScientificGraphEvidence;
+};
+
+export type ScientificGraphNeighborhoodResponse = {
+  researcherId: string;
+  generatedAt: string;
+  nodes: ScientificGraphNode[];
+  edges: ScientificGraphEdge[];
+  counts: Record<ScientificGraphNodeType, number>;
+  truncated: boolean;
+  limits: {
+    nodes: number;
+    edges: number;
+    publications: number;
+    opportunities: number;
+  };
+};
