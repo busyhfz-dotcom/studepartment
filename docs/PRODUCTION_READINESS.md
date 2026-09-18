@@ -139,6 +139,17 @@ The container includes a liveness HEALTHCHECK.
 
 Database migrations are deliberately not run automatically by application startup. They must be a release/predeploy step so multiple application replicas do not compete to migrate the schema.
 
+## Dependency security overrides
+
+The root pnpm override table temporarily pins:
+
+- deepmerge-ts 8.0.2 to remove GHSA-ggr8-5vv4-36mx from Prisma's transitive config loader path.
+- mysql2 3.24.4 to remove the mysql_clear_password downgrade advisory from Better Auth's transitive multi-database dependency tree.
+
+Studepartment uses PostgreSQL, not MySQL, but production audit gates the installed dependency tree rather than relying on database-selection assumptions.
+
+These overrides must be removed when the direct upstream dependency ranges resolve to patched versions. CI migration, build, and runtime-auth smoke tests guard compatibility while the overrides exist.
+
 ## Remaining external prerequisites
 
 The repository can enforce application readiness, but the following are deployment-environment responsibilities:
