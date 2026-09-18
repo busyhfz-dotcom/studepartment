@@ -27,7 +27,7 @@ export async function getInstitutionalIntelligence(organizationId: string) {
             include: {
               topics: { include: { topic: true } },
               methods: { include: { method: true } },
-              publications: { where: { active: true }, select: { id: true } },
+              publications: { where: { active: true }, select: { publicationId: true } },
             },
           },
         },
