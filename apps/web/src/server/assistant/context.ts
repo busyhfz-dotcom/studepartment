@@ -45,11 +45,14 @@ function sourceLine(citation: ResearchAssistantCitation) {
   ].filter(Boolean).join("; ");
 }
 
-export async function buildResearchAssistantContext(target?: ResearchAssistantTarget): Promise<ContextResult> {
-  const user = await requireCurrentUser();
+export async function buildResearchAssistantContext(
+  target?: ResearchAssistantTarget,
+  authenticatedUserId?: string,
+): Promise<ContextResult> {
+  const userId = authenticatedUserId ?? (await requireCurrentUser()).id;
   const db = getDb();
   const profile = await db.researcherProfile.findUnique({
-    where: { userId: user.id },
+    where: { userId },
     include: {
       affiliations: {
         where: { current: true },
@@ -175,7 +178,7 @@ export async function buildResearchAssistantContext(target?: ResearchAssistantTa
         methods: { take: 10, include: { method: true } },
       },
     });
-    if (!researcher || (!researcher.profilePublic && researcher.userId !== user.id)) {
+    if (!researcher || (!researcher.profilePublic && researcher.userId !== userId)) {
       throw new ResearchAssistantContextError("TARGET_NOT_FOUND", "Researcher target not found.", 404);
     }
     add({
