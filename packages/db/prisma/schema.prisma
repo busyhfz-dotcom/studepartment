@@ -366,6 +366,7 @@ model ResearcherPublication {
   sourceType     PublicationSourceType    @default(MANUAL)
   evidenceLevel  PublicationEvidenceLevel @default(MANUAL_ASSERTED)
   lastObservedAt DateTime                 @default(now())
+  active         Boolean                  @default(true)
   researcher     ResearcherProfile        @relation(fields: [researcherId], references: [id], onDelete: Cascade)
   publication    Publication              @relation(fields: [publicationId], references: [id], onDelete: Cascade)
 
