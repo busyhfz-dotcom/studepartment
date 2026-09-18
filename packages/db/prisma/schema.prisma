@@ -207,6 +207,15 @@ model Verification {
   @@index([identifier])
 }
 
+model RateLimit {
+  id          String @id @default(cuid())
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+
+  @@index([lastRequest])
+}
+
 model ResearcherProfile {
   id                 String                  @id @default(cuid())
   userId             String?                 @unique
