@@ -511,3 +511,38 @@ export type InstitutionFitSnapshot = {
   reasons: string[];
   gaps: string[];
 };
+
+
+export type FeedbackEntityTypeValue = "researcher" | "laboratory" | "institution" | "opportunity";
+export type FeedbackSignalValue =
+  | "relevant"
+  | "not-relevant"
+  | "already-know"
+  | "wrong-career-stage"
+  | "wrong-field"
+  | "not-available";
+
+export type FeedbackInput = {
+  entityType: FeedbackEntityTypeValue;
+  entityId: string;
+  signal: FeedbackSignalValue;
+};
+
+export type FeedbackRecord = FeedbackInput & {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type FeedbackListResponse = {
+  feedback: FeedbackRecord[];
+};
+
+export type AccountActivitySummary = {
+  feedbackSubmitted: number;
+  opportunitiesSaved: number;
+  introductionsSent: number;
+  assistantQueries: number;
+  profileUpdates: number;
+  since?: string;
+};
