@@ -1,6 +1,10 @@
 import { getDb } from "@studepartment/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { getCoreRuntimeConfig } from "@/server/config/environment";
+
+const runtime = getCoreRuntimeConfig();
+const trustedOrigin = new URL(runtime.betterAuthUrl).origin;
 
 /**
  * Authentication provider boundary for the web application.
@@ -15,6 +19,9 @@ export const auth = betterAuth({
   database: prismaAdapter(getDb(), {
     provider: "postgresql",
   }),
+  secret: runtime.betterAuthSecret,
+  baseURL: runtime.betterAuthUrl,
+  trustedOrigins: [trustedOrigin],
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 12,
@@ -24,11 +31,26 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 14,
     updateAge: 60 * 60 * 24,
   },
+  rateLimit: {
+    enabled: true,
+    storage: "database",
+    modelName: "rateLimit",
+    window: 60,
+    max: 120,
+    customRules: {
+      "/sign-in/email": { window: 60, max: 8 },
+      "/sign-up/email": { window: 300, max: 5 },
+      "/forget-password": { window: 300, max: 5 },
+      "/reset-password": { window: 300, max: 8 },
+    },
+  },
   advanced: {
     database: {
       joins: true,
     },
+    ipAddress: {
+      ipAddressHeaders: [runtime.authIpHeader],
+      ...(runtime.trustedProxies.length ? { trustedProxies: runtime.trustedProxies } : {}),
+    },
   },
-  secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL,
 });
