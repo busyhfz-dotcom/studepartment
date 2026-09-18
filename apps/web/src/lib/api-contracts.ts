@@ -184,19 +184,76 @@ export type ProfileUpdateInput = {
   methodSlugs?: string[];
 };
 
+export type OpportunityTypeValue =
+  | "phd"
+  | "postdoc"
+  | "fellowship"
+  | "grant"
+  | "collaboration"
+  | "research-assistantship";
+
+export type OpportunityFreshness = "fresh" | "aging" | "stale";
+export type OpportunityDeadlinePrecision = "exact" | "date-only" | "month-only" | "rolling" | "unknown";
+export type OpportunitySourceTypeValue =
+  | "institutional-careers"
+  | "funder"
+  | "lab-website"
+  | "research-network"
+  | "manual"
+  | "import";
+
+export type OpportunityQuery = {
+  text: string;
+  types: OpportunityTypeValue[];
+  topicSlugs: string[];
+  methodSlugs: string[];
+  countryCodes: string[];
+  deadlineWithinDays: number | null;
+  includeStale: boolean;
+  limit: number;
+};
+
 export type OpportunityResult = {
   id: string;
-  type: "phd" | "postdoc" | "fellowship" | "grant" | "collaboration" | "research-assistantship";
+  type: OpportunityTypeValue;
   title: string;
+  description?: string;
   organization: string;
   location: string;
+  countryCode?: string;
   deadline?: string;
+  deadlinePrecision: OpportunityDeadlinePrecision;
   sourceUrl: string;
+  applicationUrl?: string;
+  source: {
+    type: OpportunitySourceTypeValue;
+    name: string;
+    recordId: string;
+  };
   lastVerifiedAt: string;
+  freshness: OpportunityFreshness;
   relevance: "strong" | "relevant" | "exploratory";
+  relevanceScore: number;
   eligibility: "likely" | "review" | "unlikely";
   reasons: string[];
+  eligibilityReasons: string[];
   gaps: string[];
+  researchInterests: string[];
+  methods: string[];
+};
+
+export type OpportunityIntelligenceResponse = {
+  query: OpportunityQuery;
+  results: OpportunityResult[];
+  totalConsidered: number;
+  cappedAt: number;
+  personalized: boolean;
+  profileContext: {
+    careerStage?: string;
+    countryCode?: string;
+    topicSlugs: string[];
+    methodSlugs: string[];
+  } | null;
 };
 
 export type IntroductionPurpose =
