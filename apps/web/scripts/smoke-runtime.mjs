@@ -41,10 +41,16 @@ const email = "ci-" + randomUUID() + "@example.test";
 const password = "CI-Strong-Password-" + randomUUID();
 const signup = await request("/api/auth/sign-up/email", {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    Origin: baseUrl,
+  },
   body: JSON.stringify({ name: "CI Researcher", email, password }),
 });
-assert.ok(signup.ok, "Better Auth signup failed with HTTP " + signup.status);
+if (!signup.ok) {
+  const detail = await signup.text();
+  throw new Error("Better Auth signup failed with HTTP " + signup.status + ": " + detail.slice(0, 500));
+}
 
 const setCookie = signup.headers.get("set-cookie");
 assert.ok(setCookie, "signup response must set a session cookie");
