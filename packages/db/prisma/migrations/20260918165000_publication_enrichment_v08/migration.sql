@@ -31,7 +31,8 @@ CREATE INDEX "Publication_lastVerifiedAt_idx" ON "Publication"("lastVerifiedAt")
 ALTER TABLE "ResearcherPublication"
   ADD COLUMN "sourceType" "PublicationSourceType" NOT NULL DEFAULT 'MANUAL',
   ADD COLUMN "evidenceLevel" "PublicationEvidenceLevel" NOT NULL DEFAULT 'MANUAL_ASSERTED',
-  ADD COLUMN "lastObservedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+  ADD COLUMN "lastObservedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  ADD COLUMN "active" BOOLEAN NOT NULL DEFAULT true;
 
 CREATE INDEX "ResearcherPublication_researcherId_evidenceLevel_idx"
   ON "ResearcherPublication"("researcherId", "evidenceLevel");
