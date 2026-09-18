@@ -8,6 +8,7 @@ import type {
   DiscoveryAvailability,
   ResearcherDiscoveryResponse,
 } from "@/lib/api-contracts";
+import { FeedbackControls } from "@/components/feedback/feedback-controls";
 import styles from "./page.module.css";
 
 type DiscoveryApiResponse = ApiSuccess<ResearcherDiscoveryResponse> | ApiError;
@@ -251,6 +252,7 @@ export function DiscoveryExplorer() {
                       {person.verifiedSignals.slice(0, 3).map((signal) => <span key={signal}>✓ {signal}</span>)}
                     </div>
                   ) : null}
+                  <FeedbackControls entityId={person.id} entityType="researcher" />
                   <Link className={styles.profileLink} href={`/researchers/${person.id}`}>View profile</Link>
                   <Link className={styles.introLink} href={`/introductions/new?researcher=${person.id}`}>Review introduction</Link>
                 </div>
