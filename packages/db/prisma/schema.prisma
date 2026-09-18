@@ -67,6 +67,17 @@ enum ConnectionStatus {
   PENDING
   ACCEPTED
   DECLINED
+  WITHDRAWN
+  EXPIRED
+  ARCHIVED
+}
+
+enum ConnectionEventType {
+  CREATED
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  EXPIRED
   ARCHIVED
 }
 
@@ -201,6 +212,8 @@ model ResearcherProfile {
   labMemberships     LabMember[]
   sentRequests       ConnectionRequest[]     @relation("SentConnectionRequests")
   receivedRequests   ConnectionRequest[]     @relation("ReceivedConnectionRequests")
+  introductionPolicy IntroductionPolicy?
+  connectionEvents   ConnectionRequestEvent[] @relation("ConnectionEventActor")
   evidence           EvidenceRecord[]
 }
 
@@ -423,18 +436,53 @@ model OpportunityProvenance {
   @@index([status, observedAt])
 }
 
+model IntroductionPolicy {
+  id                    String              @id @default(cuid())
+  researcherId          String              @unique
+  allowIntroductions    Boolean             @default(true)
+  requireVerifiedSender Boolean             @default(false)
+  allowedPurposes       ConnectionPurpose[] @default([])
+  cooldownDays          Int                 @default(30)
+  maxInboundPerDay      Int                 @default(10)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  researcher            ResearcherProfile   @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+}
+
 model ConnectionRequest {
-  id         String            @id @default(cuid())
-  senderId   String
-  receiverId String
-  purpose    ConnectionPurpose
-  context    String?
-  status     ConnectionStatus  @default(PENDING)
-  createdAt  DateTime          @default(now())
-  updatedAt  DateTime          @updatedAt
-  sender     ResearcherProfile @relation("SentConnectionRequests", fields: [senderId], references: [id], onDelete: Cascade)
-  receiver   ResearcherProfile @relation("ReceivedConnectionRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+  id                 String                   @id @default(cuid())
+  senderId           String
+  receiverId         String
+  purpose            ConnectionPurpose
+  context            String?
+  contextFingerprint String?
+  status             ConnectionStatus         @default(PENDING)
+  expiresAt          DateTime?
+  respondedAt        DateTime?
+  withdrawnAt        DateTime?
+  archivedAt         DateTime?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  sender             ResearcherProfile        @relation("SentConnectionRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver           ResearcherProfile        @relation("ReceivedConnectionRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+  events             ConnectionRequestEvent[]
 
   @@index([receiverId, status])
   @@index([senderId, status])
+  @@index([senderId, createdAt])
+  @@index([receiverId, createdAt])
+}
+
+model ConnectionRequestEvent {
+  id                String              @id @default(cuid())
+  requestId         String
+  type              ConnectionEventType
+  actorResearcherId String?
+  createdAt         DateTime            @default(now())
+  metadata          Json?
+  request           ConnectionRequest   @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  actor             ResearcherProfile?  @relation("ConnectionEventActor", fields: [actorResearcherId], references: [id], onDelete: SetNull)
+
+  @@index([requestId, createdAt])
+  @@index([actorResearcherId, createdAt])
 }
