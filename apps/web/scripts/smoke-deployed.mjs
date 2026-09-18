@@ -36,4 +36,12 @@ const me = await fetch(baseUrl + "/api/v1/me", {
 });
 assert.equal(me.status, 401, "anonymous private API must return 401");
 
+const assistant = await fetch(baseUrl + "/api/v1/assistant/research", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({ question: "Which current opportunities overlap my identity?" }),
+  cache: "no-store",
+});
+assert.equal(assistant.status, 401, "anonymous Research Assistant must return 401");
+
 console.log("Deployment smoke checks passed for " + baseUrl);
