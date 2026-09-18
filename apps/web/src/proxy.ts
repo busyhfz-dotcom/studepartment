@@ -9,6 +9,7 @@ function contentSecurityPolicy(nonce: string) {
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDevelopment ? " 'unsafe-eval'" : ""}`,
     `style-src 'self' 'nonce-${nonce}'${isDevelopment ? " 'unsafe-inline'" : ""}`,
+    "style-src-attr 'unsafe-inline'",
     "img-src 'self' blob: data: https:",
     "font-src 'self' data:",
     "connect-src 'self'",
@@ -16,6 +17,9 @@ function contentSecurityPolicy(nonce: string) {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
+    "frame-src 'none'",
+    "manifest-src 'self'",
+    "media-src 'self'",
     "worker-src 'self' blob:",
     isProduction ? "upgrade-insecure-requests" : "",
   ]
