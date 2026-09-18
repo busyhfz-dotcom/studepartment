@@ -51,7 +51,6 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
   const [notice, setNotice] = useState<string | null>(null);
 
   const loadRequests = useCallback(async (targetBox: BoxName) => {
-    setLoading(true);
     setError(null);
     try {
       const response = await fetch("/api/v1/introductions?box=" + targetBox, {
@@ -72,7 +71,6 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
   }, []);
 
   const loadPolicy = useCallback(async () => {
-    setPolicyLoading(true);
     try {
       const response = await fetch("/api/v1/introduction-policy", {
         headers: { Accept: "application/json" },
@@ -178,7 +176,10 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
           <button
             aria-selected={box === "inbox"}
             className={box === "inbox" ? styles.tabActive : styles.tab}
-            onClick={() => setBox("inbox")}
+            onClick={() => {
+              setLoading(true);
+              setBox("inbox");
+            }}
             role="tab"
             type="button"
           >
@@ -187,7 +188,10 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
           <button
             aria-selected={box === "outbox"}
             className={box === "outbox" ? styles.tabActive : styles.tab}
-            onClick={() => setBox("outbox")}
+            onClick={() => {
+              setLoading(true);
+              setBox("outbox");
+            }}
             role="tab"
             type="button"
           >
