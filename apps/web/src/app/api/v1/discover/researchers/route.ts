@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, ResearcherDiscoveryResponse } from "@/lib/api-contracts";
 import { rerankResearcherDiscovery } from "@/server/discovery/hybrid-rerank";
 import { discoverResearchers } from "@/server/discovery/researcher-discovery";
+import { suppressPrivateFeedback } from "@/server/feedback/private-feedback";
 import { parseResearcherDiscoveryQuery } from "@/server/discovery/query";
 import {
   consumeClientRateLimit,
@@ -15,10 +16,12 @@ export async function GET(request: NextRequest) {
     const query = parseResearcherDiscoveryQuery(request.nextUrl.searchParams);
     const structured = await discoverResearchers(query);
     const discovery = await rerankResearcherDiscovery(structured);
-    const body: ApiSuccess<ResearcherDiscoveryResponse> = { success: true, data: discovery };
+    const results = await suppressPrivateFeedback("researcher", discovery.results, (item) => item.id);
+    const data: ResearcherDiscoveryResponse = { ...discovery, results };
+    const body: ApiSuccess<ResearcherDiscoveryResponse> = { success: true, data };
     return NextResponse.json(body, {
       headers: {
-        "Cache-Control": "private, max-age=30, stale-while-revalidate=60",
+        "Cache-Control": "private, no-store",
       },
     });
   } catch (error) {
