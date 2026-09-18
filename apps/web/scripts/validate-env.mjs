@@ -1,5 +1,5 @@
 const issues = [];
-const env = (process.env.DEPLOYMENT_ENV || "development").trim().toLowerCase();
+const env = (process.env.DEPLOYMENT_ENV || (process.env.NODE_ENV === "production" ? "production" : "development")).trim().toLowerCase();
 const allowed = new Set(["development", "test", "ci", "staging", "production"]);
 
 if (!allowed.has(env)) issues.push("DEPLOYMENT_ENV must be development, test, ci, staging, or production.");
