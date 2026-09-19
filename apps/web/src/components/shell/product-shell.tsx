@@ -160,7 +160,7 @@ export function ProductShell({ children }: { children: ReactNode }) {
               <small>Explainable AI · Controlled access</small>
             </div>
           </div>
-          <div className={styles.version}>Platform · v1.3 intelligence</div>
+          <div className={styles.version}>Platform · v1.4 release candidate</div>
         </div>
       </aside>
 

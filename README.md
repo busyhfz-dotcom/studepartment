@@ -6,9 +6,9 @@ It is designed to help researchers discover the right people, laboratories, inst
 
 ## Current status
 
-`v1.0.0-rc.1 — Production Readiness Candidate`
+`v1.4.0-rc.1 — Public Release Candidate`
 
-The canonical product now includes Scientific Identity, hybrid discovery, opportunity intelligence, controlled introductions, ORCID/PubMed publication evidence, the Scientific Evidence Graph, persistent abuse controls, health/readiness endpoints, security headers/CSP, and production runtime smoke validation.
+The canonical product now includes Scientific Identity, hybrid researcher/lab/institution discovery, opportunity intelligence and saved-deadline workflows, controlled introductions, ORCID/PubMed publication evidence, the Scientific Evidence Graph, Institutional Intelligence, a citation-grounded Research Assistant, private feedback loops, data-minimized product analytics, account export/delete controls, persistent abuse controls, health/readiness endpoints, security headers/CSP, and production runtime smoke validation.
 
 ## Core product principles
 
@@ -44,16 +44,27 @@ docs/
 - [System architecture](docs/architecture/system.md)
 - [Matching engine](docs/ai/matching.md)
 - [Privacy model](docs/security/privacy-model.md)
+- [Production readiness](docs/PRODUCTION_READINESS.md)
+- [Deployment runbook](docs/DEPLOYMENT_RUNBOOK.md)
+- [Research Assistant](docs/RESEARCH_ASSISTANT.md)
+- [Public Beta controls](docs/PUBLIC_BETA_CONTROLS.md)
 
-## v0.1.0 scope
+## Release candidate scope
 
-The first foundation release establishes:
+v1.4.0-rc.1 contains the complete repository-side product loop:
 
-1. The monorepo and CI baseline.
-2. Scientific identity data structures.
-3. Researcher, institution, lab, publication, opportunity, and connection entities.
-4. The initial product visual language.
-5. Documentation for matching, privacy, and roadmap decisions.
+1. Verified and provenance-aware Scientific Identity.
+2. Explainable hybrid discovery across researchers, laboratories, and institutions.
+3. Source-aware Opportunity Intelligence with separate relevance and eligibility.
+4. Private saved-opportunity workflow and deadline alert policy.
+5. Controlled scientific introductions with recipient policy and anti-spam controls.
+6. ORCID/PubMed publication enrichment and Scientific Evidence Graph.
+7. Institutional Intelligence and deterministic scientific-fit evidence.
+8. Citation-grounded Research Assistant constrained to canonical Studepartment evidence.
+9. Private feedback, data-minimized product analytics, account export, and permanent account deletion.
+10. Production-readiness CI, security headers/CSP, health endpoints, Docker release path, and deployment smoke tooling.
+
+Live production launch still depends on deployment infrastructure and credentials documented in the Deployment Runbook.
 
 ## Development
 

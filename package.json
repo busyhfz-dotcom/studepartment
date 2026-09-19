@@ -1,6 +1,6 @@
 {
   "name": "studepartment",
-  "version": "1.0.0-rc.1",
+  "version": "1.4.0-rc.1",
   "private": true,
   "packageManager": "pnpm@10.15.1",
   "scripts": {
