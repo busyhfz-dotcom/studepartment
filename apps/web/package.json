@@ -1,0 +1,29 @@
+{
+  "name": "@studepartment/web",
+  "version": "1.4.0-rc.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "env:check": "node scripts/validate-env.mjs",
+    "smoke:runtime": "node scripts/smoke-runtime.mjs"
+  },
+  "dependencies": {
+    "@studepartment/db": "workspace:*",
+    "better-auth": "1.7.5",
+    "next": "16.3.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "16.3.3",
+    "typescript": "6.0.3"
+  }
+}

@@ -1,0 +1,633 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  STUDENT
+  RESEARCHER
+  PROFESSOR
+  LAB_ADMIN
+  INSTITUTION_ADMIN
+}
+
+enum OrganizationType {
+  UNIVERSITY
+  HOSPITAL
+  RESEARCH_INSTITUTE
+  COMPANY
+  FOUNDATION
+}
+
+enum OpportunityType {
+  PHD
+  POSTDOC
+  FELLOWSHIP
+  GRANT
+  COLLABORATION
+  RESEARCH_ASSISTANTSHIP
+}
+
+enum OpportunitySourceType {
+  INSTITUTIONAL_CAREERS
+  FUNDER
+  LAB_WEBSITE
+  RESEARCH_NETWORK
+  MANUAL
+  IMPORT
+}
+
+enum OpportunityStatus {
+  ACTIVE
+  CLOSED
+  EXPIRED
+  STALE
+}
+
+enum OpportunityDeadlinePrecision {
+  EXACT
+  DATE_ONLY
+  MONTH_ONLY
+  ROLLING
+  UNKNOWN
+}
+
+enum OpportunityProvenanceStatus {
+  ASSERTED
+  VERIFIED
+  STALE
+  DISPUTED
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  EXPIRED
+  ARCHIVED
+}
+
+enum ConnectionEventType {
+  CREATED
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  EXPIRED
+  ARCHIVED
+}
+
+enum ConnectionPurpose {
+  RESEARCH_DISCUSSION
+  COLLABORATION
+  MENTORSHIP
+  POSITION_INQUIRY
+  GRANT_PARTNERSHIP
+  CLINICAL_PROJECT
+}
+
+enum AvailabilityMode {
+  OPEN
+  SELECTIVE
+  QUIET
+  CLOSED
+}
+
+enum CollaborationGoal {
+  RESEARCH_COLLABORATION
+  MENTORSHIP
+  STUDENT_SUPERVISION
+  CLINICAL_PROJECT
+  GRANT_PARTNERSHIP
+  POSITION_OPPORTUNITIES
+}
+
+enum ProficiencyLevel {
+  LEARNING
+  WORKING
+  ADVANCED
+}
+
+enum EvidenceSourceType {
+  USER_ENTRY
+  ORCID
+  PUBMED
+  INSTITUTIONAL_EMAIL
+  INSTITUTIONAL_DIRECTORY
+  MANUAL_REVIEW
+}
+
+enum EvidenceStatus {
+  ASSERTED
+  VERIFIED
+  DISPUTED
+  STALE
+}
+
+enum PublicationSourceType {
+  ORCID
+  PUBMED
+  MANUAL
+}
+
+enum PublicationProvenanceStatus {
+  ASSERTED
+  VERIFIED
+  STALE
+  DISPUTED
+}
+
+enum PublicationEvidenceLevel {
+  MANUAL_ASSERTED
+  ORCID_ASSERTED
+  PUBMED_CORROBORATED
+}
+
+enum FeedbackEntityType {
+  RESEARCHER
+  LABORATORY
+  INSTITUTION
+  OPPORTUNITY
+}
+
+enum FeedbackSignal {
+  RELEVANT
+  NOT_RELEVANT
+  ALREADY_KNOW
+  WRONG_CAREER_STAGE
+  WRONG_FIELD
+  NOT_AVAILABLE
+}
+
+enum ProductEventType {
+  PROFILE_UPDATED
+  FEEDBACK_SUBMITTED
+  OPPORTUNITY_SAVED
+  INTRODUCTION_SENT
+  ASSISTANT_USED
+  DATA_EXPORTED
+}
+
+model User {
+  id             String           @id @default(cuid())
+  name           String           @default("")
+  email          String           @unique
+  emailVerified  Boolean          @default(false)
+  image           String?
+  role            UserRole         @default(RESEARCHER)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  researcher      ResearcherProfile?
+  sessions        Session[]
+  accounts        Account[]
+  evidenceActions EvidenceRecord[] @relation("EvidenceActor")
+  savedOpportunities SavedOpportunity[]
+  discoveryFeedback DiscoveryFeedback[]
+  productEvents ProductEvent[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                     String    @id @default(cuid())
+  userId                 String
+  accountId              String
+  providerId             String
+  accessToken            String?
+  refreshToken           String?
+  idToken                String?
+  accessTokenExpiresAt   DateTime?
+  refreshTokenExpiresAt  DateTime?
+  scope                   String?
+  password                String?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+model RateLimit {
+  id          String @id @default(cuid())
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+
+  @@index([lastRequest])
+}
+
+model ResearcherProfile {
+  id                 String                  @id @default(cuid())
+  userId             String?                 @unique
+  fullName           String
+  headline           String?
+  bio                String?
+  countryCode        String?
+  city               String?
+  careerStage        String?
+  orcid              String?                 @unique
+  verified           Boolean                 @default(false)
+  profilePublic      Boolean                 @default(true)
+  availabilityMode   AvailabilityMode        @default(SELECTIVE)
+  collaborationGoals CollaborationGoal[]
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  user               User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  affiliations       ResearcherAffiliation[]
+  topics             ResearcherTopic[]
+  methods            ResearcherMethod[]
+  publications       ResearcherPublication[]
+  publicationEvidence PublicationProvenance[]
+  labMemberships     LabMember[]
+  sentRequests       ConnectionRequest[]     @relation("SentConnectionRequests")
+  receivedRequests   ConnectionRequest[]     @relation("ReceivedConnectionRequests")
+  introductionPolicy IntroductionPolicy?
+  connectionEvents   ConnectionRequestEvent[] @relation("ConnectionEventActor")
+  evidence           EvidenceRecord[]
+}
+
+model EvidenceRecord {
+  id               String             @id @default(cuid())
+  researcherId     String
+  actorUserId      String?
+  sourceType       EvidenceSourceType
+  sourceRecordId   String?
+  sourceUrl        String?
+  fieldPath        String
+  valueFingerprint String?
+  confidence       Float?
+  status           EvidenceStatus     @default(ASSERTED)
+  observedAt       DateTime           @default(now())
+  verifiedAt       DateTime?
+  metadata         Json?
+  researcher       ResearcherProfile  @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  actor             User?              @relation("EvidenceActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([researcherId, fieldPath])
+  @@index([sourceType, sourceRecordId])
+  @@index([status, observedAt])
+}
+
+model Organization {
+  id             String                   @id @default(cuid())
+  name           String
+  normalizedName String
+  type           OrganizationType
+  countryCode    String?
+  website        String?
+  verified       Boolean                  @default(false)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  affiliations   ResearcherAffiliation[]
+  labs           Laboratory[]
+  opportunities  Opportunity[]
+
+  @@index([normalizedName])
+}
+
+model ResearcherAffiliation {
+  id             String            @id @default(cuid())
+  researcherId   String
+  organizationId String
+  title          String?
+  startDate      DateTime?
+  endDate        DateTime?
+  current        Boolean           @default(true)
+  researcher     ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([researcherId])
+  @@index([organizationId])
+}
+
+model ResearchTopic {
+  id            String             @id @default(cuid())
+  name          String
+  slug          String             @unique
+  parentId      String?
+  meshId        String?
+  parent        ResearchTopic?     @relation("TopicHierarchy", fields: [parentId], references: [id])
+  children      ResearchTopic[]    @relation("TopicHierarchy")
+  researchers   ResearcherTopic[]
+  opportunities OpportunityTopic[]
+}
+
+model ResearcherTopic {
+  researcherId String
+  topicId      String
+  weight       Float             @default(1)
+  researcher   ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  topic        ResearchTopic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([researcherId, topicId])
+}
+
+model ResearchMethod {
+  id            String              @id @default(cuid())
+  name          String
+  slug          String              @unique
+  researchers   ResearcherMethod[]
+  opportunities OpportunityMethod[]
+}
+
+model ResearcherMethod {
+  researcherId String
+  methodId     String
+  proficiency  ProficiencyLevel  @default(WORKING)
+  researcher   ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  method       ResearchMethod    @relation(fields: [methodId], references: [id], onDelete: Cascade)
+
+  @@id([researcherId, methodId])
+}
+
+model Publication {
+  id                  String                  @id @default(cuid())
+  canonicalKey        String                  @unique
+  title               String
+  abstract            String?
+  doi                 String?                 @unique
+  pmid                String?                 @unique
+  pmcid               String?                 @unique
+  journal             String?
+  publicationDate     DateTime?
+  publicationType     String?
+  volume              String?
+  issue               String?
+  pages               String?
+  sourceUrl           String?
+  authorNames         String[]                @default([])
+  citationCount       Int                     @default(0)
+  firstSeenAt         DateTime                @default(now())
+  lastVerifiedAt      DateTime?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  researchers         ResearcherPublication[]
+  provenance          PublicationProvenance[]
+
+  @@index([publicationDate])
+  @@index([lastVerifiedAt])
+}
+
+model ResearcherPublication {
+  researcherId   String
+  publicationId  String
+  authorOrder    Int?
+  sourceType     PublicationSourceType    @default(MANUAL)
+  evidenceLevel  PublicationEvidenceLevel @default(MANUAL_ASSERTED)
+  lastObservedAt DateTime                 @default(now())
+  active         Boolean                  @default(true)
+  researcher     ResearcherProfile        @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  publication    Publication              @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+
+  @@id([researcherId, publicationId])
+  @@index([researcherId, evidenceLevel])
+}
+
+model PublicationProvenance {
+  id                 String                       @id @default(cuid())
+  evidenceKey        String                       @unique
+  publicationId      String
+  researcherId       String?
+  sourceType         PublicationSourceType
+  sourceRecordId     String
+  sourceUrl          String?
+  contentFingerprint String
+  status             PublicationProvenanceStatus  @default(ASSERTED)
+  observedAt         DateTime                     @default(now())
+  verifiedAt         DateTime?
+  metadata           Json?
+  publication        Publication                  @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  researcher         ResearcherProfile?           @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+
+  @@index([publicationId, sourceType])
+  @@index([researcherId, sourceType, observedAt])
+  @@index([status, observedAt])
+}
+
+model Laboratory {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  website        String?
+  verified       Boolean      @default(false)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  members        LabMember[]
+
+  @@index([organizationId])
+}
+
+model LabMember {
+  laboratoryId String
+  researcherId String
+  role         String?
+  laboratory   Laboratory        @relation(fields: [laboratoryId], references: [id], onDelete: Cascade)
+  researcher   ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+
+  @@id([laboratoryId, researcherId])
+}
+
+model Opportunity {
+  id                     String                       @id @default(cuid())
+  organizationId         String
+  type                   OpportunityType
+  status                 OpportunityStatus            @default(ACTIVE)
+  title                  String
+  description            String?
+  city                   String?
+  countryCode            String?
+  applicationUrl         String?
+  deadline               DateTime?
+  deadlineRaw            String?
+  deadlinePrecision      OpportunityDeadlinePrecision @default(UNKNOWN)
+  deadlineTimezone       String?
+  sourceType             OpportunitySourceType        @default(MANUAL)
+  sourceName             String
+  sourceRecordId         String
+  sourceKey              String                       @unique
+  sourceUrl              String
+  publishedAt            DateTime?
+  firstSeenAt            DateTime                     @default(now())
+  lastSeenAt             DateTime                     @default(now())
+  lastVerifiedAt         DateTime?
+  eligibleCareerStages   String[]                     @default([])
+  eligibleCountryCodes   String[]                     @default([])
+  createdAt              DateTime                     @default(now())
+  updatedAt              DateTime                     @updatedAt
+  organization           Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  topics                 OpportunityTopic[]
+  methods                OpportunityMethod[]
+  provenance             OpportunityProvenance[]
+  savedBy                SavedOpportunity[]
+
+  @@index([organizationId, type])
+  @@index([status, deadline])
+  @@index([sourceType, sourceName])
+  @@index([lastSeenAt])
+}
+
+model OpportunityTopic {
+  opportunityId String
+  topicId       String
+  weight        Float        @default(1)
+  opportunity   Opportunity  @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  topic         ResearchTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([opportunityId, topicId])
+  @@index([topicId])
+}
+
+model OpportunityMethod {
+  opportunityId String
+  methodId      String
+  opportunity   Opportunity   @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  method        ResearchMethod @relation(fields: [methodId], references: [id], onDelete: Cascade)
+
+  @@id([opportunityId, methodId])
+  @@index([methodId])
+}
+
+model OpportunityProvenance {
+  id                 String                      @id @default(cuid())
+  opportunityId      String
+  sourceType         OpportunitySourceType
+  sourceName         String
+  sourceRecordId     String
+  sourceUrl          String
+  contentFingerprint String
+  status             OpportunityProvenanceStatus @default(ASSERTED)
+  observedAt         DateTime                    @default(now())
+  publishedAt        DateTime?
+  metadata           Json?
+  opportunity        Opportunity                 @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([opportunityId, contentFingerprint])
+  @@index([sourceType, sourceName, sourceRecordId])
+  @@index([status, observedAt])
+}
+
+model IntroductionPolicy {
+  id                    String              @id @default(cuid())
+  researcherId          String              @unique
+  allowIntroductions    Boolean             @default(true)
+  requireVerifiedSender Boolean             @default(false)
+  allowedPurposes       ConnectionPurpose[] @default([])
+  cooldownDays          Int                 @default(30)
+  maxInboundPerDay      Int                 @default(10)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  researcher            ResearcherProfile   @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+}
+
+model ConnectionRequest {
+  id                 String                   @id @default(cuid())
+  senderId           String
+  receiverId         String
+  purpose            ConnectionPurpose
+  context            String?
+  contextFingerprint String?
+  status             ConnectionStatus         @default(PENDING)
+  expiresAt          DateTime?
+  respondedAt        DateTime?
+  withdrawnAt        DateTime?
+  archivedAt         DateTime?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  sender             ResearcherProfile        @relation("SentConnectionRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver           ResearcherProfile        @relation("ReceivedConnectionRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+  events             ConnectionRequestEvent[]
+
+  @@index([receiverId, status])
+  @@index([senderId, status])
+  @@index([senderId, createdAt])
+  @@index([receiverId, createdAt])
+}
+
+model ConnectionRequestEvent {
+  id                String              @id @default(cuid())
+  requestId         String
+  type              ConnectionEventType
+  actorResearcherId String?
+  createdAt         DateTime            @default(now())
+  metadata          Json?
+  request           ConnectionRequest   @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  actor             ResearcherProfile?  @relation("ConnectionEventActor", fields: [actorResearcherId], references: [id], onDelete: SetNull)
+
+  @@index([requestId, createdAt])
+  @@index([actorResearcherId, createdAt])
+}
+
+
+model SavedOpportunity {
+  id              String      @id @default(cuid())
+  userId          String
+  opportunityId   String
+  deadlineAlert   Boolean     @default(true)
+  alertLeadDays   Int         @default(7)
+  notes           String?
+  savedAt         DateTime    @default(now())
+  lastAlertedAt   DateTime?
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity     Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, opportunityId])
+  @@index([userId, savedAt])
+  @@index([deadlineAlert, lastAlertedAt])
+}
+
+
+model DiscoveryFeedback {
+  id         String             @id @default(cuid())
+  userId     String
+  entityType FeedbackEntityType
+  entityId   String
+  signal     FeedbackSignal
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, entityType, entityId])
+  @@index([userId, signal])
+  @@index([entityType, entityId])
+}
+
+model ProductEvent {
+  id         String           @id @default(cuid())
+  userId     String
+  eventType  ProductEventType
+  entityType FeedbackEntityType?
+  entityId   String?
+  occurredAt DateTime         @default(now())
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, occurredAt])
+  @@index([eventType, occurredAt])
+}

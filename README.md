@@ -1,341 +1,105 @@
-# Medical Research Intelligence Platform
+# Studepartment
 
-## Vision
+Studepartment is an AI-powered, privacy-first scientific intelligence and connection platform for medical and biomedical research.
 
-An AI-powered scientific infrastructure platform that reduces friction in medical research discovery, funding, and collaboration.
+It is designed to help researchers discover the right people, laboratories, institutions, positions, grants, and collaborations without the noise of a conventional social network.
 
-The platform is not designed as a social competition system. Its purpose is to make researchers, laboratories, institutions, grants, and opportunities easier to discover and connect through trust, intelligence, and privacy.
+## Current status
 
-## Core Principles
+`v1.4.0-rc.1 — Public Release Candidate`
 
-- Reduce information fragmentation in medical research.
-- Improve discovery of researchers, labs, hospitals, and grants.
-- Enable meaningful private scientific introductions.
-- Protect researchers from irrelevant requests and noise.
-- Use AI to explain recommendations rather than create opaque rankings.
+The canonical product now includes Scientific Identity, hybrid researcher/lab/institution discovery, opportunity intelligence and saved-deadline workflows, controlled introductions, ORCID/PubMed publication evidence, the Scientific Evidence Graph, Institutional Intelligence, a citation-grounded Research Assistant, private feedback loops, data-minimized product analytics, account export/delete controls, persistent abuse controls, health/readiness endpoints, security headers/CSP, and production runtime smoke validation.
 
-## Main Modules
+## Core product principles
 
-### 1. Scientific Identity
+- Facilitation over engagement.
+- Relevance over volume.
+- Trust over popularity.
+- Explainable AI recommendations.
+- Private, permission-based scientific communication.
+- Scientific data provenance and freshness.
 
-A verified scientific profile containing:
+## Repository structure
 
-- Research interests
-- Publications
-- Institution affiliations
-- Projects
-- Collaboration preferences
-- ORCID and scientific identity connections
+```text
+apps/
+  web/                Next.js product application
 
-### 2. Research Discovery
+packages/
+  db/                 Prisma/PostgreSQL scientific data model
 
-Semantic discovery of:
+docs/
+  product/            Vision and roadmap
+  architecture/       System architecture
+  ai/                 Matching and intelligence design
+  security/           Privacy and communication model
 
-- Researchers
-- Laboratories
-- Institutions
-- Opportunities
-
-Matching is based on scientific context, not only keywords.
-
-### 3. Opportunity Intelligence
-
-Personalized discovery and analysis of:
-
-- PhD positions
-- Postdoctoral positions
-- Fellowships
-- Grants
-- Research collaborations
-
-### 4. Scientific Connection System
-
-A private introduction workflow:
-
-Discovery → Match Analysis → Introduction Request → Private Conversation
-
-The goal is high-value communication, not social networking.
-
-### 5. AI Intelligence Layer
-
-Capabilities:
-
-- Research profile summarization
-- Semantic search
-- Opportunity matching
-- Collaboration recommendations
-- Communication assistance
-
----
-
-# Product Philosophy
-
-The platform is a scientific facilitation infrastructure, not a social network.
-
-It does not optimize for:
-
-- Followers
-- Likes
-- Artificial rankings
-- Engagement noise
-
-It optimizes for:
-
-- Relevant discovery
-- Trusted identity
-- High-quality introductions
-- Successful scientific collaboration
-
----
-
-# Connection Intelligence Model
-
-The connection engine is designed to reduce friction without creating overload.
-
-## Matching Signals
-
-- Research topic similarity
-- Publication similarity
-- Method compatibility
-- Research goals
-- Geographic and institutional context
-- Trust signals
-
-## Connection Quality Model
-
-```
-Match Quality
-+
-Intent Compatibility
-+
-Trust Level
--
-Spam Risk
-=
-Connection Value
+.github/workflows/    CI validation
 ```
 
-## Connection Flow
-
-```
-Discovery
-
-↓
-
-Scientific Match Analysis
-
-↓
-
-Introduction Request
-
-↓
-
-Private Conversation
-
-↓
-
-Potential Collaboration
-```
-
-The system uses controlled introductions instead of unrestricted messaging.
-
----
-
-# Scientific Knowledge Graph
-
-The long-term competitive advantage is a knowledge graph connecting:
-
-```
-Researcher
-    ↔
-Publication
-    ↔
-Research Topic
-    ↔
-Disease
-    ↔
-Method
-    ↔
-Laboratory
-    ↔
-Institution
-    ↔
-Opportunity
-    ↔
-Project
-```
-
-This enables discovery beyond keyword search.
-
----
-
-# AI Architecture
-
-Main AI services:
-
-## Scientific Profile Intelligence
-
-Transforms:
-
-- Publications
-- CVs
-- ORCID data
-- Research history
-
-into structured scientific identity.
-
-## Semantic Discovery
-
-Uses:
-
-- Embeddings
-- Vector search
-- Knowledge graph expansion
-
-for contextual search.
-
-## Matching Engine
-
-Ranking factors:
-
-- Scientific similarity
-- Graph relationships
-- Research intent
-- Trust signals
-- Recency
-
-## AI Research Assistant
-
-Provides:
-
-- Opportunity analysis
-- Collaboration explanations
-- Research summaries
-- Introduction assistance
-
----
-
-# Security & Privacy Principles
-
-Privacy is part of the product architecture.
-
-## Data Levels
-
-- Public scientific information
-- Verified scientific information
-- Controlled contact information
-- Private communication data
-
-Principles:
-
-- User-controlled visibility
-- No selling private data
-- Explainable AI recommendations
-- Secure private communication
-
----
-
-# Business Model
-
-## Free Layer
-
-For researchers:
-
-- Scientific profile
-- Discovery
-- Basic matching
-- Opportunity access
-
-## Premium Researcher Layer
-
-Advanced capabilities:
-
-- AI analysis
-- Career intelligence
-- Advanced matching
-- Application assistance
-
-## Institutional Layer
-
-For:
-
-- Universities
-- Hospitals
-- Research centers
-- Pharmaceutical companies
-
-Capabilities:
-
-- Talent discovery
-- Research analytics
-- Collaboration mapping
-
----
-
-# Go-To-Market Strategy
-
-Initial strategy:
-
-Build scientific intelligence before building a social network.
-
-Starting focus:
-
-- Oncology
-- Immunology
-- Clinical research
-
-Reason:
-
-- High research activity
-- Large funding ecosystem
-- Strong collaboration need
-
----
-
-# Product Roadmap
-
-## Phase 1 — Foundation
-
-- Scientific profiles
-- Authentication
-- Basic discovery
-
-## Phase 2 — Intelligence
-
-- Semantic search
-- AI matching
-- Opportunity intelligence
-
-## Phase 3 — Network
-
-- Scientific introductions
-- Private communication
-- Lab platforms
-
-## Phase 4 — Global Infrastructure
-
-- Institutional dashboards
-- Research analytics
-- Scientific knowledge graph expansion
-
----
-
-# Engineering Direction
-
-Architecture direction:
-
-- Next.js
-- TypeScript
+## Documentation
+
+- [Product vision](docs/product/vision.md)
+- [Product roadmap](docs/product/roadmap.md)
+- [System architecture](docs/architecture/system.md)
+- [Matching engine](docs/ai/matching.md)
+- [Privacy model](docs/security/privacy-model.md)
+- [Production readiness](docs/PRODUCTION_READINESS.md)
+- [Deployment runbook](docs/DEPLOYMENT_RUNBOOK.md)
+- [Research Assistant](docs/RESEARCH_ASSISTANT.md)
+- [Public Beta controls](docs/PUBLIC_BETA_CONTROLS.md)
+
+## Release candidate scope
+
+v1.4.0-rc.1 contains the complete repository-side product loop:
+
+1. Verified and provenance-aware Scientific Identity.
+2. Explainable hybrid discovery across researchers, laboratories, and institutions.
+3. Source-aware Opportunity Intelligence with separate relevance and eligibility.
+4. Private saved-opportunity workflow and deadline alert policy.
+5. Controlled scientific introductions with recipient policy and anti-spam controls.
+6. ORCID/PubMed publication enrichment and Scientific Evidence Graph.
+7. Institutional Intelligence and deterministic scientific-fit evidence.
+8. Citation-grounded Research Assistant constrained to canonical Studepartment evidence.
+9. Private feedback, data-minimized product analytics, account export, and permanent account deletion.
+10. Production-readiness CI, security headers/CSP, health endpoints, Docker release path, and deployment smoke tooling.
+
+Live production launch still depends on deployment infrastructure and credentials documented in the Deployment Runbook.
+
+## Development
+
+Requirements:
+
+- Node.js 22+
+- pnpm 10+
 - PostgreSQL
-- Prisma
-- Vector search
-- Knowledge graph layer
-- AI services
-- Secure APIs
 
-Development principles:
+Install and run:
 
-- Modular architecture
-- Explainable AI
-- Privacy by design
-- Measurable product value
+```bash
+pnpm install
+pnpm dev
+```
+
+Validation:
+
+```bash
+pnpm env:check
+pnpm lint
+pnpm typecheck
+pnpm build
+```
+
+Production-like runtime validation is enforced in CI after `next start`; see [Production Readiness](docs/PRODUCTION_READINESS.md) and the [Deployment Runbook](docs/DEPLOYMENT_RUNBOOK.md).
+
+Database commands:
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+pnpm db:migrate:status
+```
+
+## Product boundary
+
+Studepartment does not optimize for followers, likes, public researcher rankings, or endless feed engagement. The primary outcome is a meaningful scientific discovery or connection.
