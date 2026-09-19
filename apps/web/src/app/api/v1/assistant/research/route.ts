@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, ResearchAssistantRequest, ResearchAssistantResponse } from "@/lib/api-contracts";
 import { AuthenticationRequiredError, requireCurrentUser } from "@/server/auth/current-user";
+import { recordProductEvent } from "@/server/analytics/product-events";
 import { ResearchAssistantContextError } from "@/server/assistant/context";
 import {
   ResearchAssistantConfigurationError,
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest) {
 
     const input = (await request.json()) as ResearchAssistantRequest;
     const data = await answerResearchQuestion(input, user.id);
+    await recordProductEvent(user.id, "ASSISTANT_USED", input.target ? { type: input.target.type, id: input.target.id } : undefined);
     const body: ApiSuccess<ResearchAssistantResponse> = { success: true, data };
     return NextResponse.json(body, {
       headers: { "Cache-Control": "private, no-store" },

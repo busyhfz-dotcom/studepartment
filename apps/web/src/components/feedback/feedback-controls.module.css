@@ -1,0 +1,1 @@
+.wrap{display:grid;gap:4px}.wrap label{display:grid;gap:4px}.wrap label>span{color:var(--muted-2);font-size:7px;font-weight:800}.wrap select{width:100%;min-height:32px;padding:0 7px;color:var(--text);border:1px solid var(--line);border-radius:7px;background:#fff;font:inherit;font-size:8px}.message,.error{font-size:7px;line-height:1.35}.message{color:#36705d}.error{color:#8a443e}

@@ -1,6 +1,7 @@
 import { getDb } from "@studepartment/db";
 import type { SavedOpportunityListResponse, SavedOpportunityRecord, SaveOpportunityInput } from "@/lib/api-contracts";
 import { requireCurrentUser } from "@/server/auth/current-user";
+import { recordProductEvent } from "@/server/analytics/product-events";
 
 export class SavedOpportunityError extends Error {
   constructor(readonly code: string, message: string, readonly status = 400) {
@@ -46,7 +47,7 @@ export async function saveOpportunity(input: SaveOpportunityInput) {
   const opportunity = await db.opportunity.findUnique({ where: { id: opportunityId }, select: { id: true } });
   if (!opportunity) throw new SavedOpportunityError("OPPORTUNITY_NOT_FOUND", "Opportunity not found.", 404);
 
-  return db.savedOpportunity.upsert({
+  const saved = await db.savedOpportunity.upsert({
     where: { userId_opportunityId: { userId: user.id, opportunityId } },
     create: {
       userId: user.id,
@@ -62,6 +63,8 @@ export async function saveOpportunity(input: SaveOpportunityInput) {
     },
     select: { id: true, opportunityId: true, deadlineAlert: true, alertLeadDays: true, savedAt: true },
   });
+  await recordProductEvent(user.id, "OPPORTUNITY_SAVED", { type: "opportunity", id: opportunityId });
+  return saved;
 }
 
 export async function removeSavedOpportunity(opportunityId: string) {

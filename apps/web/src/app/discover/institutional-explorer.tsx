@@ -9,6 +9,7 @@ import type {
   InstitutionalEntityType,
   InstitutionalOrganizationType,
 } from "@/lib/api-contracts";
+import { FeedbackControls } from "@/components/feedback/feedback-controls";
 import styles from "./institutional.module.css";
 
 type DiscoveryApiResponse = ApiSuccess<InstitutionalDiscoveryResponse> | ApiError;
@@ -217,6 +218,7 @@ export function InstitutionalExplorer({ entityType }: { entityType: Institutiona
                     <span>Trust</span>
                     <strong>{result.verified ? "Verified" : title(result.confidence)}</strong>
                   </div>
+                  <FeedbackControls entityId={result.id} entityType={laboratory ? "laboratory" : "institution"} />
                   {!laboratory ? <Link href={"/institutions/" + result.id}>Institution intelligence ↗</Link> : null}
                   {result.website ? <a href={result.website} rel="noreferrer" target="_blank">Visit source website ↗</a> : null}
                 </aside>

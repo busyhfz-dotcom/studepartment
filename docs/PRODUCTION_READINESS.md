@@ -60,6 +60,9 @@ Protected surfaces include:
 - introduction policy edits
 - scientific profile updates
 - internal opportunity ingestion
+- private discovery feedback
+- account data export
+- confirmed account deletion
 
 Application counters are updated through one atomic PostgreSQL upsert. Raw IP addresses are not stored; client fingerprints are SHA-256 derived with the auth secret.
 
@@ -111,7 +114,7 @@ Every pull request and push to main or the canonical development branch validate
 9. Production runtime boot using next start.
 10. Liveness and database readiness.
 11. Security headers and nonce CSP.
-12. Anonymous access denial on /api/v1/me and /api/v1/assistant/research.
+12. Anonymous access denial on /api/v1/me, /api/v1/assistant/research, /api/v1/account/export, and /api/v1/feedback.
 13. Real Better Auth email signup.
 14. Real session cookie resolution to canonical User.id.
 15. Authenticated owned ResearcherProfile resolution.
@@ -132,6 +135,8 @@ It is intentionally non-destructive and verifies:
 - anonymous private API denial
 
 Authentication mutation smoke remains in isolated CI to avoid creating accounts in staging or production.
+
+Account deletion is intentionally excluded from deployment smoke. It requires an authenticated user and an explicit confirmation phrase, and is tested through schema/cascade validation plus application-level review rather than destructive live-environment smoke.
 
 ## Container
 

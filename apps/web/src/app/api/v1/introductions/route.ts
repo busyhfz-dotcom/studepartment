@@ -7,6 +7,8 @@ import type {
   IntroductionPurpose,
 } from "@/lib/api-contracts";
 import { createIntroduction, listIntroductions } from "@/server/introductions/engine";
+import { requireCurrentUser } from "@/server/auth/current-user";
+import { recordProductEvent } from "@/server/analytics/product-events";
 import { introductionErrorResponse } from "@/server/introductions/http";
 import {
   consumeClientRateLimit,
@@ -58,6 +60,8 @@ export async function POST(request: NextRequest) {
       context: raw.context,
     };
     const data = await createIntroduction(input);
+    const user = await requireCurrentUser();
+    await recordProductEvent(user.id, "INTRODUCTION_SENT", { type: "researcher", id: input.receiverId });
     const body: ApiSuccess<typeof data> = { success: true, data };
     return NextResponse.json(body, { status: 201 });
   } catch (error) {

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, InstitutionalDiscoveryResponse } from "@/lib/api-contracts";
 import { rerankInstitutionalDiscovery } from "@/server/discovery/hybrid-rerank";
 import { discoverInstitutionalEntities } from "@/server/discovery/institutional-discovery";
+import { suppressPrivateFeedback } from "@/server/feedback/private-feedback";
 import { parseInstitutionalDiscoveryQuery } from "@/server/discovery/query";
 import {
   consumeClientRateLimit,
@@ -15,10 +16,13 @@ export async function GET(request: NextRequest) {
     const query = parseInstitutionalDiscoveryQuery(request.nextUrl.searchParams);
     const structured = await discoverInstitutionalEntities(query);
     const discovery = await rerankInstitutionalDiscovery(structured);
-    const body: ApiSuccess<InstitutionalDiscoveryResponse> = { success: true, data: discovery };
+    const entityType = query.entityType === "laboratory" ? "laboratory" : "institution";
+    const results = await suppressPrivateFeedback(entityType, discovery.results, (item) => item.id);
+    const data: InstitutionalDiscoveryResponse = { ...discovery, results };
+    const body: ApiSuccess<InstitutionalDiscoveryResponse> = { success: true, data };
     return NextResponse.json(body, {
       headers: {
-        "Cache-Control": "private, max-age=30, stale-while-revalidate=60",
+        "Cache-Control": "private, no-store",
       },
     });
   } catch (error) {
