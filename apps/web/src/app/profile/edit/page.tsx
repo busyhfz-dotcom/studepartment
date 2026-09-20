@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import { listOrganizationOptions } from "@/server/repositories/organization-repository";
 import { researcherRepository } from "@/server/repositories/researcher-repository";
 import { ProfileEditor } from "./profile-editor";
+import styles from "./page.module.css";
 
 const statusCopy: Record<string, string> = {
   "not-configured": "ORCID verification is not configured in this environment yet. Add the ORCID client credentials and registered redirect URI to enable it.",
@@ -25,27 +26,46 @@ export default async function EditProfilePage({
   ]);
   if (!profile) redirect("/onboarding");
 
+  const orcidVerified = profile.verification.some(
+    (signal) => signal.verified && signal.label.toLowerCase().includes("orcid"),
+  );
+
   return (
     <main className="shell onboardingShell">
-      <Link className="backLink" href="/profile">← Back to profile</Link>
+      <Link className="backLink" href="/profile">← Back to Scientific Identity</Link>
+
       <header className="onboardingHeader">
-        <span className="eyebrow">Scientific Identity · v1</span>
-        <h1>Keep your scientific identity precise, sourced, and useful.</h1>
+        <span className="eyebrow">Scientific Identity Maintenance</span>
+        <h1>Maintain the scientific context behind research decisions.</h1>
         <p className="lede">
-          Identity data is used for discovery, matching, opportunity analysis, and trusted introductions. It is not used to build a public popularity score.
+          Keep identity, research focus, collaboration intent, provenance, and visibility accurate. These controls inform
+          discovery and decision support without creating a public reputation score.
         </p>
       </header>
 
-      <section className="orcidPanel">
+      <section className="orcidPanel" aria-labelledby="orcid-provenance-title">
         <div>
-          <span className="eyebrow">Verified identity source</span>
-          <h2>Verify ORCID ownership through ORCID itself.</h2>
+          <div className={styles.provenanceLine}>
+            <span className="eyebrow">ORCID provenance</span>
+            <span className={orcidVerified ? styles.verifiedState : styles.assertedState}>
+              {orcidVerified ? "Ownership verified" : "Manual assertion"}
+            </span>
+          </div>
+          <h2 id="orcid-provenance-title">
+            {orcidVerified ? "ORCID ownership is connected to this identity." : "Verify ORCID ownership through ORCID."}
+          </h2>
           <p>
-            Manual ORCID text remains an assertion. OAuth verification records an explicit ORCID provenance signal and does not store the returned access token.
+            Manual ORCID entry is an identity assertion only. OAuth verification records ownership provenance; it does
+            not independently verify every work associated with the ORCID record.
           </p>
-          {orcid && statusCopy[orcid] ? <p role="status"><strong>{statusCopy[orcid]}</strong></p> : null}
+          {profile.orcid ? <code className={styles.orcidIdentifier}>{profile.orcid}</code> : null}
+          {orcid && statusCopy[orcid] ? (
+            <p className={styles.orcidStatus} role="status"><strong>{statusCopy[orcid]}</strong></p>
+          ) : null}
         </div>
-        <a className="primaryButton" href="/api/integrations/orcid/connect">Verify with ORCID</a>
+        <a className="primaryButton" href="/api/integrations/orcid/connect">
+          {orcidVerified ? "Re-verify with ORCID" : "Verify with ORCID"}
+        </a>
       </section>
 
       <ProfileEditor profile={profile} organizations={organizations} />
