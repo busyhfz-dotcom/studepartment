@@ -1,57 +1,66 @@
 .scopeNav {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0 0 30px;
-  padding: 6px;
+  gap: 4px;
+  margin: 0 0 26px;
+  padding: 4px;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.62);
+  border-radius: 12px;
+  background: rgba(255,255,255,.58);
+  box-shadow: var(--shadow-xs);
 }
 
 .scopeLink {
+  position: relative;
   display: grid;
-  gap: 4px;
-  min-height: 68px;
-  padding: 13px 14px;
-  border: 1px solid transparent;
-  border-radius: 13px;
+  gap: 3px;
+  min-height: 60px;
+  padding: 11px 12px;
   color: var(--muted);
-  transition: background .18s ease, border-color .18s ease, color .18s ease;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  transition:
+    color var(--duration-fast) var(--ease),
+    background var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease);
 }
 
 .scopeLink:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255,255,255,.8);
 }
 
 .scopeLink span {
   color: inherit;
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 800;
+  letter-spacing: -.01em;
 }
 
 .scopeLink small {
-  font-size: 11px;
+  color: var(--muted-2);
+  font-size: 8px;
   line-height: 1.35;
 }
 
 .active {
-  border-color: var(--line);
   color: var(--text);
+  border-color: var(--line);
   background: #fff;
-  box-shadow: 0 8px 22px rgba(25, 33, 31, .05);
+  box-shadow: 0 5px 16px rgba(15,30,24,.045);
 }
 
-.active span::before {
+.active::after {
   content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: 7px;
+  position: absolute;
+  right: 11px;
+  top: 11px;
+  width: 5px;
+  height: 5px;
   border-radius: 999px;
   background: var(--accent-strong);
-  vertical-align: 1px;
+  box-shadow: 0 0 0 3px rgba(15,146,130,.06);
 }
 
 @media (max-width: 680px) {
