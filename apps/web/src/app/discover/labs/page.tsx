@@ -12,7 +12,7 @@ export default function LaboratoryDiscoveryPage() {
         <div className={styles.pageChrome}>
           <div>
             <span className="eyebrow">Laboratory Discovery</span>
-            <span className={styles.versionPill}>Entity Discovery v0.4</span>
+            <span className={styles.versionPill}>Member-derived evidence</span>
           </div>
         </div>
 
