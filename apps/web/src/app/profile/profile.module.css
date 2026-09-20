@@ -3,7 +3,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 22px;
-  margin: 2px 0 22px;
+  margin: 4px 0 26px;
 }
 
 .toolbarActions {
@@ -17,7 +17,7 @@
   margin: 9px 0 0;
   color: var(--muted);
   font-size: 10px;
-  line-height: 1.6;
+  line-height: 1.72;
 }
 
 .notice {
@@ -41,8 +41,8 @@
   margin-top: 12px;
   padding: 20px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  border-radius: 17px;
+  background: linear-gradient(180deg,var(--surface),rgba(255,255,255,.9));
   box-shadow: var(--shadow-xs);
 }
 
@@ -55,9 +55,10 @@
 
 .header h2 {
   margin: 5px 0 0;
-  font-size: clamp(20px, 2.4vw, 28px);
-  letter-spacing: -.035em;
-  font-weight: 660;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: clamp(24px, 2.7vw, 32px);
+  letter-spacing: -.03em;
+  font-weight: 520;
 }
 
 .header strong {
@@ -131,9 +132,10 @@
 
 .publicationHeader h2 {
   margin: 5px 0 5px;
-  font-size: clamp(21px, 2.6vw, 29px);
-  letter-spacing: -.035em;
-  font-weight: 660;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: clamp(25px, 2.8vw, 34px);
+  letter-spacing: -.03em;
+  font-weight: 520;
 }
 
 .publicationHeader p {
@@ -262,8 +264,8 @@
   gap: 8px;
   padding: 13px;
   border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface-subtle);
+  border-radius: 12px;
+  background: linear-gradient(180deg,var(--surface-subtle),rgba(255,255,255,.76));
   transition:
     border-color var(--duration-fast) var(--ease),
     background var(--duration-fast) var(--ease);
