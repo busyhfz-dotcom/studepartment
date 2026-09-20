@@ -12,7 +12,7 @@ export default function InstitutionDiscoveryPage() {
         <div className={styles.pageChrome}>
           <div>
             <span className="eyebrow">Institution Discovery</span>
-            <span className={styles.versionPill}>Entity Discovery v0.4</span>
+            <span className={styles.versionPill}>Affiliation-backed intelligence</span>
           </div>
         </div>
 
