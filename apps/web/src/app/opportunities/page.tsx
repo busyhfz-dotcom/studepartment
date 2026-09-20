@@ -10,13 +10,13 @@ export default function OpportunitiesPage() {
         <header className={styles.header}>
           <div className={styles.headerMeta}>
             <span className="eyebrow">Opportunity Intelligence</span>
-            <span className={styles.versionPill}>v0.6</span>
+            <span className={styles.versionPill}>Source-aware decisions</span>
           </div>
-          <h1>Know what deserves your application time.</h1>
+          <h1>Protect your time before you apply.</h1>
           <p className="lede">
-            Source freshness, scientific relevance, and formal eligibility remain separate so a compelling research match is never presented as guaranteed eligibility.
+            Compare source freshness, scientific relevance, published eligibility, deadlines, and institutional context before committing serious application effort.
           </p>
-          <Link href="/opportunities/saved">Open saved opportunity workspace ↗</Link>
+          <Link href="/opportunities/saved">Open saved workspace ↗</Link>
         </header>
         <OpportunityExplorer />
       </div>

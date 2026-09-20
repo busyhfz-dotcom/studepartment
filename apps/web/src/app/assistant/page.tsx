@@ -28,11 +28,11 @@ export default async function ResearchAssistantPage({
         <header className={styles.header}>
           <div className={styles.headerMeta}>
             <span className="eyebrow">Research Assistant</span>
-            <span className={styles.version}>v1.3</span>
+            <span className={styles.version}>Citation-grounded</span>
           </div>
-          <h1>Reason over your research evidence, not a generic chat history.</h1>
+          <h1>Reason over evidence you can inspect.</h1>
           <p>
-            Ask about scientific fit, current opportunities, researchers, or institutions. Answers are constrained to a request-specific canonical source ledger and must cite the evidence they use.
+            Ask about scientific fit, current opportunities, researchers, or institutions. Every answer is constrained to a request-specific Studepartment source ledger and must cite the evidence it uses.
           </p>
         </header>
         <ResearchAssistantWorkspace target={target} />
