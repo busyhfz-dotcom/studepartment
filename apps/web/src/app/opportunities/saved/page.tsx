@@ -8,9 +8,12 @@ export default function SavedOpportunitiesPage() {
     <ProductShell>
       <div className={styles.shell}>
         <header className={styles.header}>
-          <div><span className="eyebrow">Opportunity Workspace</span><span className={styles.version}>v1.1</span></div>
-          <h1>Track opportunities without losing source context.</h1>
-          <p>Saved opportunities preserve the canonical source, freshness, deadline precision, and your alert window. Saving never changes scientific relevance or eligibility.</p>
+          <span className="eyebrow">Opportunity Decision Workspace</span>
+          <h1>Review source-backed opportunities as decisions, not bookmarks.</h1>
+          <p>
+            Keep source context, freshness, deadline precision, alerts, and your own notes visible in one place.
+            Saving an opportunity never changes scientific relevance or formal eligibility.
+          </p>
           <Link href="/opportunities">← Back to Opportunity Intelligence</Link>
         </header>
         <SavedOpportunityWorkspace />
