@@ -74,7 +74,7 @@ body {
   background:
     radial-gradient(circle at 80% -10%, rgba(15, 146, 130, .045), transparent 33rem),
     var(--background);
-  font-family: Inter, "SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans), "Segoe UI", Arial, sans-serif;
   font-size: 14px;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
@@ -123,7 +123,7 @@ h1,
 h2,
 h3 {
   color: var(--text-strong);
-  font-family: "Inter Tight", "SF Pro Display", Inter, "Segoe UI", sans-serif;
+  font-family: var(--font-sans), "Segoe UI", sans-serif;
   text-wrap: balance;
 }
 
