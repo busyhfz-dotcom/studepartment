@@ -12,14 +12,14 @@ export default function DiscoverPage() {
         <div className={styles.pageChrome}>
           <div>
             <span className="eyebrow">Scientific Discovery</span>
-            <span className={styles.versionPill}>Discovery v0.4</span>
+            <span className={styles.versionPill}>Evidence-aware retrieval</span>
           </div>
         </div>
 
         <header className={styles.discoverHeader}>
-          <h1>Find the few researchers who fit the work.</h1>
+          <h1>Find the researchers whose work fits the question.</h1>
           <p className="lede">
-            Search by scientific intent, methods, geography, and collaboration context. Results stay deliberately small and explain their reasoning.
+            Search by scientific intent, methods, geography, and collaboration context. Each result exposes the evidence behind the match instead of hiding it inside a score.
           </p>
         </header>
 
