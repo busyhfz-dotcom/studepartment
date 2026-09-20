@@ -22,9 +22,9 @@ export default async function NewIntroductionPage({
             <span className="eyebrow">Scientific Introduction</span>
             <span className={styles.versionPill}>Controlled outreach</span>
           </div>
-          <h1>Give the recipient enough context to make a decision.</h1>
+          <h1>Give the recipient enough scientific context to decide.</h1>
           <p className="lede">
-            Studepartment does not provide unrestricted messaging. Every request is evaluated against scientific context, recipient controls, cooldowns, and anti-spam limits.
+            Every introduction is evaluated against scientific relevance, recipient controls, cooldowns, and anti-noise limits before it can be sent.
           </p>
         </header>
 

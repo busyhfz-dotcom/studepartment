@@ -29,9 +29,9 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
             {researcher.bio ? <p className={styles.bio}>{researcher.bio}</p> : null}
           </div>
           <div className={styles.trustCard}>
-            <span className="sectionLabel">Trust architecture</span>
+            <span className="sectionLabel">Evidence & trust</span>
             <strong>{researcher.verified ? "Verified scientific identity" : "Canonical public identity"}</strong>
-            <p>Trust signals come from identity, organization, ORCID, and publication evidence rather than social activity.</p>
+            <p>Trust signals reflect identity, organization, ORCID, and publication evidence—not social activity or popularity.</p>
             <div className={styles.trustGrid}>
               {researcher.trustSignals.map((signal) => (
                 <span className={signal.verified ? styles.trustOn : styles.trustOff} key={signal.label}>
@@ -62,7 +62,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
           </article>
 
           <article className={styles.panel}>
-            <span className="sectionLabel">Currently open to</span>
+            <span className="sectionLabel">Collaboration posture</span>
             <div className={styles.availability}>{researcher.availability} availability</div>
             <ul className="cleanList">
               {researcher.collaborationGoals.length
@@ -106,16 +106,16 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
 
         <section className={styles.graphPanel}>
           <div>
-            <span className="sectionLabel">Scientific neighborhood</span>
-            <h2>Inspect how this identity connects to research evidence.</h2>
-            <p>Evidence Graph derives relationships from canonical publications, topics, methods, labs, institutions, and active opportunities.</p>
+            <span className="sectionLabel">Evidence neighborhood</span>
+            <h2>Inspect the scientific relationships behind this identity.</h2>
+            <p>The Evidence Graph derives relationships from canonical publications, topics, methods, laboratories, institutions, and current opportunities.</p>
           </div>
           <Link className={styles.graphButton} href={"/graph?researcher=" + researcher.id}>Explore evidence graph</Link>
         </section>
 
         <section className={styles.actionBar}>
           <div>
-            <strong>Interested in connecting?</strong>
+            <strong>Is the scientific context strong enough to connect?</strong>
             <p>Review the purpose and context before sending a controlled scientific introduction.</p>
           </div>
           <div className={styles.actionButtons}>

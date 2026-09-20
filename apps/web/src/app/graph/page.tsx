@@ -15,11 +15,11 @@ export default async function ScientificGraphPage({
         <header className={styles.header}>
           <div className={styles.headerMeta}>
             <span className="eyebrow">Scientific Evidence Graph</span>
-            <span className={styles.versionPill}>v0.9</span>
+            <span className={styles.versionPill}>Derived canonical relationships</span>
           </div>
-          <h1>See the evidence around a scientific identity.</h1>
+          <h1>Map the evidence around a scientific identity.</h1>
           <p className="lede">
-            Publications, research topics, methods, laboratories, institutions, and current opportunities are derived from canonical product data and shown as explainable relationships rather than a hidden researcher score.
+            Trace publications, topics, methods, laboratories, institutions, and current opportunities as explicit relationships derived from canonical product data—not as a hidden researcher score.
           </p>
         </header>
         <ScientificGraphExplorer researcherId={researcher} />

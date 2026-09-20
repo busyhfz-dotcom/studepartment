@@ -23,7 +23,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
         <Link className="backLink" href="/discover/institutions">← Back to institution discovery</Link>
         <header className={styles.hero}>
           <div>
-            <span className="eyebrow">Institutional Intelligence · v1.3</span>
+            <span className="eyebrow">Institutional Research Intelligence</span>
             <h1>{institution.name}</h1>
             <p>{institution.type}{institution.countryCode ? " · " + institution.countryCode : ""}{institution.verified ? " · Verified organization" : ""}</p>
           </div>
@@ -40,9 +40,9 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
         {fit ? (
           <section className={styles.fitPanel}>
             <div className={styles.fitCopy}>
-              <span className="sectionLabel">Your scientific fit</span>
-              <h2>Evidence overlap with your Scientific Identity</h2>
-              <p>This is a deterministic overlap snapshot, not a prestige score or hiring prediction.</p>
+              <span className="sectionLabel">Identity-to-institution overlap</span>
+              <h2>Where your Scientific Identity intersects this institution</h2>
+              <p>This view compares canonical topics, methods, and current opportunities. It is not a prestige score, institutional ranking, or hiring prediction.</p>
             </div>
             <div className={styles.fitSignals}>
               <div><strong>{fit.sharedTopics.length}</strong><span>shared topics</span></div>
@@ -53,13 +53,13 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
               {fit.reasons.map((reason) => <p key={reason}>✓ {reason}</p>)}
               {fit.gaps.map((gap) => <p className={styles.fitGap} key={gap}>Review: {gap}</p>)}
             </div>
-            <Link className={styles.assistantAction} href={"/assistant?institution=" + institution.id}>Ask Research Assistant about this institution ↗</Link>
+            <Link className={styles.assistantAction} href={"/assistant?institution=" + institution.id}>Interrogate this institution with Research Assistant ↗</Link>
           </section>
         ) : null}
 
         <section className={styles.grid}>
           <article className={styles.panel}>
-            <span className="sectionLabel">Research concentration</span>
+            <span className="sectionLabel">Research concentration evidence</span>
             <h2>Topics represented by current researchers</h2>
             <div className={styles.signalList}>
               {institution.topics.map((item) => <div key={item.name}><span>{item.name}</span><strong>{item.researcherCount} researchers</strong></div>)}
@@ -67,7 +67,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
             </div>
           </article>
           <article className={styles.panel}>
-            <span className="sectionLabel">Method capability</span>
+            <span className="sectionLabel">Method capability evidence</span>
             <h2>Methods represented by current researchers</h2>
             <div className={styles.signalList}>
               {institution.methods.map((item) => <div key={item.name}><span>{item.name}</span><strong>{item.researcherCount} researchers</strong></div>)}
@@ -77,8 +77,8 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
         </section>
 
         <section className={styles.panel}>
-          <span className="sectionLabel">People</span>
-          <h2>Public current researchers</h2>
+          <span className="sectionLabel">Current researcher evidence</span>
+          <h2>Researchers currently connected through public affiliations</h2>
           <div className={styles.people}>
             {institution.researchers.map((researcher) => (
               <Link href={"/researchers/" + researcher.id} key={researcher.id}>
@@ -101,7 +101,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
             </div>
           </article>
           <article className={styles.panel}>
-            <span className="sectionLabel">Opportunity pulse</span>
+            <span className="sectionLabel">Current opportunity evidence</span>
             <h2>Current source-backed opportunities</h2>
             <div className={styles.stack}>
               {institution.opportunities.map((opportunity) => <div key={opportunity.id}><strong>{opportunity.title}</strong><span>{opportunity.type} · {opportunity.deadlinePrecision === "rolling" ? "Rolling" : date(opportunity.deadline)}</span><a href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Source ↗</a></div>)}
