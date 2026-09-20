@@ -51,13 +51,25 @@ export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: stri
   return (
     <main className={styles.page}>
       <section className={styles.panel}>
-        <Link className={styles.brand} href="/">Studepartment</Link>
-        <span className="eyebrow">Trusted scientific identity</span>
-        <h1>{isSignUp ? "Create your research account" : "Continue to your scientific workspace"}</h1>
+        <Link className={styles.brand} href="/">
+          <span className={styles.brandMark} aria-hidden="true">
+            <svg fill="none" viewBox="0 0 32 32">
+              <path d="M9.2 8.8h8.4a5.2 5.2 0 0 1 0 10.4h-3.2a4.6 4.6 0 0 0 0 9.2h8.4" />
+              <circle cx="9.2" cy="8.8" r="2.2" />
+              <circle cx="22.8" cy="23.8" r="2.2" />
+            </svg>
+          </span>
+          <span>
+            <strong>Studepartment</strong>
+            <small>Medical Research Intelligence</small>
+          </span>
+        </Link>
+        <span className="eyebrow">Secure research access</span>
+        <h1>{isSignUp ? "Create your scientific workspace" : "Return to your research workspace"}</h1>
         <p className={styles.intro}>
           {isSignUp
-            ? "Your account is the private authorization boundary behind your scientific identity. Public profile data remains separately controlled."
-            : "Sign in to edit identity data, manage availability, and access private scientific workflows."}
+            ? "Create the private account boundary behind your Scientific Identity, evidence, saved opportunities, introductions, and research workflows."
+            : "Sign in to continue your private Scientific Identity, evidence, opportunity, and introduction workflows."}
         </p>
 
         <form className={styles.form} onSubmit={submit}>
@@ -99,9 +111,9 @@ export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: stri
       </section>
 
       <aside className={styles.context}>
-        <span className="eyebrow">Privacy by design</span>
-        <h2>Account identity is not a scientific ranking.</h2>
-        <p>Authentication controls who may change private or user-owned data. Verification and provenance remain explicit scientific signals with their own sources.</p>
+        <span className="eyebrow">Research trust architecture</span>
+        <h2>Authentication protects identity. Evidence establishes trust.</h2>
+        <p>Your account determines who can change user-owned research data. Scientific verification, provenance, and source confidence remain separate evidence layers.</p>
         <ul>
           <li>Session → canonical User.id</li>
           <li>User.id → owned ResearcherProfile</li>
