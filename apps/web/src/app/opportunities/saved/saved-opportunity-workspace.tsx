@@ -11,6 +11,22 @@ function date(value?: string) {
   return new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
 }
 
+function dateTime(value: string) {
+  return new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
+}
+
+function sourceHost(value: string) {
+  try {
+    return new URL(value).hostname.replace(/^www\./, "");
+  } catch {
+    return "Canonical source";
+  }
+}
+
+function titleCase(value: string) {
+  return value.replaceAll("-", " ").replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
 export function SavedOpportunityWorkspace() {
   const [data, setData] = useState<SavedOpportunityListResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -49,42 +65,73 @@ export function SavedOpportunityWorkspace() {
   }
 
   if (error) return <div className={styles.error}>{error}</div>;
-  if (!data) return <div className={styles.loading}>Loading opportunity workspace…</div>;
+  if (!data) return <div className={styles.loading}>Loading opportunity decision workspace…</div>;
 
   return (
     <>
-      <section className={styles.summary}>
-        <div><strong>{data.total}</strong><span>saved opportunities</span></div>
-        <div><strong>{data.dueSoon}</strong><span>inside your alert window</span></div>
-        <div><strong>7–90d</strong><span>supported deadline lead time</span></div>
+      <section className={styles.summary} aria-label="Opportunity decision summary">
+        <div>
+          <strong>{data.total}</strong>
+          <span>source-backed opportunities under review</span>
+        </div>
+        <div>
+          <strong>{data.dueSoon}</strong>
+          <span>inside your configured alert window</span>
+        </div>
+        <div className={styles.summaryContext}>
+          <strong>Decision context stays separate from ranking.</strong>
+          <span>Freshness, source, deadline precision, and your notes are shown without creating a hidden opportunity score.</span>
+        </div>
       </section>
 
       {data.saved.length === 0 ? (
         <section className={styles.empty}>
-          <strong>Your opportunity workspace is empty.</strong>
-          <p>Save a source-backed opportunity from Opportunity Intelligence to track its deadline without turning the product into an engagement feed.</p>
+          <strong>No opportunities are under review yet.</strong>
+          <p>
+            Add a source-backed opportunity from Opportunity Intelligence when you want to preserve its source,
+            deadline context, and private decision notes.
+          </p>
         </section>
       ) : (
-        <section className={styles.list}>
+        <section className={styles.list} aria-label="Saved opportunity decisions">
           {data.saved.map((item) => (
             <article className={styles.card} key={item.id}>
-              <div>
+              <div className={styles.primaryContext}>
                 <div className={styles.topline}>
-                  <span>{item.opportunity.type.replaceAll("-", " ")}</span>
-                  <span>{item.opportunity.freshness}</span>
+                  <span className={styles.tag}>{titleCase(item.opportunity.type)}</span>
+                  <span className={styles.tag} data-freshness={item.opportunity.freshness}>
+                    {titleCase(item.opportunity.freshness)}
+                  </span>
+                  <span className={styles.tag} data-status={item.opportunity.status}>
+                    {titleCase(item.opportunity.status)}
+                  </span>
                 </div>
                 <h2>{item.opportunity.title}</h2>
-                <p>{item.opportunity.organization}</p>
+                <p className={styles.organization}>{item.opportunity.organization}</p>
+                <div className={styles.sourceLine}>
+                  <span>{sourceHost(item.opportunity.sourceUrl)}</span>
+                  <span>saved {dateTime(item.savedAt)}</span>
+                </div>
+                {item.notes ? <p className={styles.notes}>{item.notes}</p> : null}
               </div>
-              <div className={styles.deadline}>
-                <span>Deadline</span>
-                <strong>{item.opportunity.deadlinePrecision === "rolling" ? "Rolling" : date(item.opportunity.deadline)}</strong>
-                <small>{item.deadlineAlert ? item.alertLeadDays + "-day alert armed" : "Alert off"}</small>
+
+              <div className={styles.decisionContext}>
+                <div className={styles.fact}>
+                  <span>Deadline</span>
+                  <strong>{item.opportunity.deadlinePrecision === "rolling" ? "Rolling" : date(item.opportunity.deadline)}</strong>
+                  <small>Precision: {titleCase(item.opportunity.deadlinePrecision)}</small>
+                </div>
+                <div className={styles.fact}>
+                  <span>Alert state</span>
+                  <strong>{item.deadlineAlert ? "Active" : "Off"}</strong>
+                  <small>{item.deadlineAlert ? item.alertLeadDays + "-day lead time" : "No deadline alert configured"}</small>
+                </div>
               </div>
+
               <div className={styles.actions}>
-                <a href={item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source</a>
-                <a href={item.opportunity.applicationUrl ?? item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Application ↗</a>
-                <button onClick={() => void remove(item.opportunityId)} type="button">Remove</button>
+                <a href={item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open source ↗</a>
+                <a href={item.opportunity.applicationUrl ?? item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application ↗</a>
+                <button onClick={() => void remove(item.opportunityId)} type="button">Remove from workspace</button>
               </div>
             </article>
           ))}

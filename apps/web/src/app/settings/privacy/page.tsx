@@ -13,9 +13,12 @@ export default async function PrivacySettingsPage() {
     <ProductShell>
       <div className={styles.shell}>
         <header className={styles.header}>
-          <span className="eyebrow">Privacy & Data · v1.4</span>
-          <h1>Your data stays controllable.</h1>
-          <p>Review private product activity, export your account data, or permanently remove your account and Scientific Identity.</p>
+          <span className="eyebrow">Research Data Control Center</span>
+          <h1>Control the data attached to your research activity.</h1>
+          <p>
+            Review private account activity, export a portable record, or permanently remove your account and
+            Scientific Identity with the consequences stated before you act.
+          </p>
           <Link href="/profile">← Back to Scientific Identity</Link>
         </header>
         <PrivacyControls />

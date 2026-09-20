@@ -62,6 +62,12 @@ export function ProfileEditor({
   );
   const topicDefaults = useMemo(() => new Set(profile.topicSlugs ?? []), [profile.topicSlugs]);
   const methodDefaults = useMemo(() => new Set(profile.methodSlugs ?? []), [profile.methodSlugs]);
+  const orcidVerified = useMemo(
+    () => profile.verification.some(
+      (signal) => signal.verified && signal.label.toLowerCase().includes("orcid"),
+    ),
+    [profile.verification],
+  );
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -112,14 +118,20 @@ export function ProfileEditor({
   return (
     <form className={styles.editorCard} onSubmit={submit}>
       <section className={styles.editorSection}>
-        <span className="sectionLabel">Identity</span>
+        <div className={styles.sectionHead}>
+          <div>
+            <span className="sectionLabel">Identity</span>
+            <h2>Research identity</h2>
+          </div>
+          <p>Maintain the factual identity and institutional context used across discovery and research workflows.</p>
+        </div>
         <div className={styles.editorGrid}>
           <label className={styles.fieldGroup}>
             <span>Full name</span>
             <input name="fullName" defaultValue={profile.fullName} maxLength={160} required />
           </label>
           <label className={styles.fieldGroup}>
-            <span>Headline</span>
+            <span>Professional headline</span>
             <input name="headline" defaultValue={profile.headline} maxLength={220} />
           </label>
           <label className={styles.fieldGroup}>
@@ -132,7 +144,7 @@ export function ProfileEditor({
               <option value="">Independent / not listed</option>
               {organizations.map((organization) => (
                 <option value={organization.id} key={organization.id}>
-                  {organization.name}{organization.verified ? " · verified" : ""}
+                  {organization.name}{organization.verified ? " · verified institution" : ""}
                 </option>
               ))}
             </select>
@@ -146,7 +158,7 @@ export function ProfileEditor({
             <input name="countryCode" defaultValue={profile.countryCode ?? ""} maxLength={2} placeholder="DE" />
           </label>
           <label className={styles.fieldGroup}>
-            <span>Availability</span>
+            <span>Introduction availability</span>
             <select name="availability" defaultValue={profile.availability}>
               <option value="open">Open</option>
               <option value="selective">Selective</option>
@@ -158,40 +170,61 @@ export function ProfileEditor({
       </section>
 
       <section className={styles.editorSection}>
-        <span className="sectionLabel">Research summary</span>
+        <div className={styles.sectionHead}>
+          <div>
+            <span className="sectionLabel">Research summary</span>
+            <h2>Scientific context</h2>
+          </div>
+          <p>Describe the research context another researcher needs to understand your work. Keep it factual and specific.</p>
+        </div>
         <label className={styles.fieldGroup}>
-          <span>Summary</span>
+          <span>Research summary</span>
           <textarea name="bio" defaultValue={profile.bio ?? ""} rows={6} maxLength={3000} />
         </label>
       </section>
 
       <section className={styles.editorSection}>
-        <span className="sectionLabel">Research focus</span>
-        <p className={styles.sectionHelp}>Use canonical topics and methods so discovery can work on structured scientific data rather than free-text keywords.</p>
+        <div className={styles.sectionHead}>
+          <div>
+            <span className="sectionLabel">Canonical research focus</span>
+            <h2>Topics and methods</h2>
+          </div>
+          <p>Structured terms support explainable retrieval. They are matching inputs, not expertise ratings or reputation signals.</p>
+        </div>
         <div className={styles.choiceColumns}>
           <fieldset className={styles.choiceGroup}>
             <legend>Topics</legend>
-            {topicOptions.map(([value, label]) => (
-              <label key={value} className={styles.checkRow}>
-                <input type="checkbox" name="topicSlugs" value={value} defaultChecked={topicDefaults.has(value)} />
-                <span>{label}</span>
-              </label>
-            ))}
+            <div className={styles.choiceList}>
+              {topicOptions.map(([value, label]) => (
+                <label key={value} className={styles.checkRow}>
+                  <input type="checkbox" name="topicSlugs" value={value} defaultChecked={topicDefaults.has(value)} />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
           </fieldset>
           <fieldset className={styles.choiceGroup}>
             <legend>Methods</legend>
-            {methodOptions.map(([value, label]) => (
-              <label key={value} className={styles.checkRow}>
-                <input type="checkbox" name="methodSlugs" value={value} defaultChecked={methodDefaults.has(value)} />
-                <span>{label}</span>
-              </label>
-            ))}
+            <div className={styles.choiceList}>
+              {methodOptions.map(([value, label]) => (
+                <label key={value} className={styles.checkRow}>
+                  <input type="checkbox" name="methodSlugs" value={value} defaultChecked={methodDefaults.has(value)} />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
           </fieldset>
         </div>
       </section>
 
       <section className={styles.editorSection}>
-        <span className="sectionLabel">Collaboration intent</span>
+        <div className={styles.sectionHead}>
+          <div>
+            <span className="sectionLabel">Collaboration intent</span>
+            <h2>What contact is relevant</h2>
+          </div>
+          <p>Choose the scientific reasons for which you want to be considered. Recipient controls still govern every introduction.</p>
+        </div>
         <div className={styles.choiceGrid}>
           {collaborationOptions.map(([value, label]) => (
             <label key={value} className={styles.checkRow}>
@@ -202,34 +235,64 @@ export function ProfileEditor({
         </div>
       </section>
 
-      <section className={`${styles.editorSection} ${styles.editorSplit}`}>
-        <div>
-          <span className="sectionLabel">ORCID</span>
-          <label className={styles.fieldGroup}>
-            <span>ORCID iD</span>
-            <input name="orcid" defaultValue={profile.orcid ?? ""} placeholder="0000-0000-0000-0000" />
-          </label>
-          <p className={styles.sourceNotice}>Manual entry is recorded as an assertion, not verification. Verified ORCID status requires the authorized ORCID import flow.</p>
+      <section className={styles.editorSection}>
+        <div className={styles.sectionHead}>
+          <div>
+            <span className="sectionLabel">ORCID provenance</span>
+            <h2>Identifier and ownership state</h2>
+          </div>
+          <p>ORCID ownership and publication evidence are separate claims. Bibliographic corroboration is evaluated independently.</p>
         </div>
-        <div>
-          <span className="sectionLabel">Visibility</span>
+        <div className={styles.provenanceGrid}>
+          <div>
+            <label className={styles.fieldGroup}>
+              <span>ORCID iD</span>
+              <input name="orcid" defaultValue={profile.orcid ?? ""} placeholder="0000-0000-0000-0000" />
+            </label>
+            <p className={styles.sourceNotice}>
+              Manual entry is recorded as an assertion. Verified ownership requires the authorized ORCID flow.
+            </p>
+          </div>
+          <div className={styles.provenanceEvidence}>
+            <strong>{orcidVerified ? "Ownership provenance: verified" : "Ownership provenance: asserted"}</strong>
+            <span>
+              {orcidVerified
+                ? "The connected ORCID flow verified control of this ORCID identity. Individual works still carry their own evidence level."
+                : "This identifier has not been ownership-verified through the connected ORCID flow."}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.editorSection}>
+        <div className={styles.sectionHead}>
+          <div>
+            <span className="sectionLabel">Visibility</span>
+            <h2>Discovery control</h2>
+          </div>
+          <p>Control whether this Scientific Identity can appear in researcher discovery. Private product activity is not published here.</p>
+        </div>
+        <div className={styles.visibilityGrid}>
           <label className={styles.visibilityToggle}>
             <input name="profilePublic" type="checkbox" defaultChecked={profile.profilePublic ?? true} />
             <span>
-              <strong>Public scientific profile</strong>
-              <small>Allow the profile to appear in researcher discovery.</small>
+              <strong>Include this Scientific Identity in researcher discovery</strong>
+              <small>Turn this off to remove the profile from researcher discovery while retaining your account and private workspace.</small>
             </span>
           </label>
+          <p className={styles.controlNote}>
+            Visibility changes affect discovery exposure only. They do not convert private activity into public profile data.
+          </p>
         </div>
       </section>
 
       <footer className={styles.editorActions}>
         <div>
-          <span>Every saved edit is attached to the authenticated user and recorded with provenance.</span>
+          <span>Saved edits remain attached to the authenticated account and retain provenance context.</span>
           {message ? <p className={status === "error" ? styles.errorMessage : styles.successMessage}>{message}</p> : null}
         </div>
         <button className="primaryButton" type="submit" disabled={status === "saving"}>
-          {status === "saving" ? "Saving…" : "Save scientific identity"}
+          {status === "saving" ? "Saving…" : "Save Scientific Identity"}
         </button>
       </footer>
     </form>

@@ -19,10 +19,10 @@ export default async function OnboardingPage() {
     <main className="shell onboardingShell">
       <header className="onboardingHeader">
         <Link className="backLink" href="/">← Studepartment</Link>
-        <span className="eyebrow">Scientific Identity · v1 onboarding</span>
-        <h1>Build the minimum identity needed for useful scientific discovery.</h1>
+        <span className="eyebrow">Scientific Identity Calibration</span>
+        <h1>Calibrate the scientific context behind every research decision.</h1>
         <p className="lede">
-          Four focused steps capture scientific context, research focus, collaboration intent, and visibility without turning onboarding into a long social-profile form.
+          Four focused steps establish your research context, methods, collaboration posture, and evidence visibility without turning identity into a social profile.
         </p>
       </header>
       <OnboardingWizard profile={profile} organizations={organizations} />
