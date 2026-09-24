@@ -1,1 +1,66 @@
-.wrap{display:grid;gap:4px}.wrap label{display:grid;gap:4px}.wrap label>span{color:var(--muted-2);font-size:7px;font-weight:800}.wrap select{width:100%;min-height:32px;padding:0 7px;color:var(--text);border:1px solid var(--line);border-radius:7px;background:#fff;font:inherit;font-size:8px}.message,.error{font-size:7px;line-height:1.35}.message{color:#36705d}.error{color:#8a443e}
+.wrap {
+  display: grid;
+  gap: 4px;
+}
+
+.wrap label {
+  display: grid;
+  gap: 5px;
+}
+
+.wrap label > span {
+  color: var(--muted-2);
+  font-size: 7px;
+  font-weight: 820;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+.wrap select {
+  width: 100%;
+  min-height: 34px;
+  padding: 0 28px 0 8px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  box-shadow: var(--shadow-xs);
+  font: inherit;
+  font-size: 8px;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease),
+    background var(--duration-fast) var(--ease);
+}
+
+.wrap select:hover {
+  border-color: var(--line-strong);
+  background: #fbfcfb;
+}
+
+.wrap select:focus {
+  border-color: rgba(15,146,130,.4);
+  box-shadow: 0 0 0 3px rgba(15,146,130,.065);
+}
+
+.wrap select:disabled {
+  color: var(--muted);
+  cursor: wait;
+  background: var(--surface-subtle);
+}
+
+.message,
+.error {
+  font-size: 7px;
+  line-height: 1.4;
+}
+
+.message {
+  color: #36705d;
+}
+
+.error {
+  color: #8a443e;
+}
