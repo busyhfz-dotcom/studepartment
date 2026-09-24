@@ -57,7 +57,7 @@ export function FeedbackControls({
         throw new Error(body.success ? "Feedback could not be saved." : body.error.message);
       }
       setStatus("saved");
-      setMessage("Private feedback saved.");
+      setMessage("Private preference saved.");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Feedback could not be saved.");
@@ -67,7 +67,7 @@ export function FeedbackControls({
   return (
     <div className={styles.wrap}>
       <label>
-        <span>Private feedback</span>
+        <span>Private result preference</span>
         <select
           aria-label={"Private feedback for " + entityType}
           disabled={status === "saving"}
@@ -77,7 +77,7 @@ export function FeedbackControls({
           }}
           value={signal}
         >
-          <option value="">Teach my results…</option>
+          <option value="">Adjust future results…</option>
           {options(entityType).map((value) => <option key={value} value={value}>{labels[value]}</option>)}
         </select>
       </label>
