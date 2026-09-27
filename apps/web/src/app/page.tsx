@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ProductShell } from "@/components/shell/product-shell";
+import { getCurrentUser } from "@/server/auth/current-user";
+import { MarketingLanding } from "./marketing-landing";
 import styles from "./page.module.css";
 
 const intelligenceSurfaces = [
@@ -83,7 +85,12 @@ const evidencePrinciples = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const user = await getCurrentUser();
+  if (!user) {
+    return <MarketingLanding />;
+  }
+
   return (
     <ProductShell>
       <div className={styles.dashboard}>
