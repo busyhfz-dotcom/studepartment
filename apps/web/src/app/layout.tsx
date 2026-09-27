@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Manrope, Newsreader } from "next/font/google";
+import { getSiteUrl, siteDescription, siteName, siteTagline } from "@/lib/site";
 import "./globals.css";
 
 const sans = Manrope({
@@ -23,13 +24,33 @@ const mono = IBM_Plex_Mono({
 
 export const dynamic = "force-dynamic";
 
+export const viewport: Viewport = {
+  themeColor: "#0b1412",
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Studepartment · Medical Research Intelligence",
-    template: "%s · Studepartment",
+    default: `${siteName} · ${siteTagline}`,
+    template: `%s · ${siteName}`,
   },
-  description:
-    "Evidence-aware scientific intelligence for medical research discovery, opportunity analysis, institutional context, and trusted collaboration.",
+  description: siteDescription,
+  applicationName: siteName,
+  openGraph: {
+    type: "website",
+    siteName,
+    title: `${siteName} · ${siteTagline}`,
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteName} · ${siteTagline}`,
+    description: siteDescription,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
