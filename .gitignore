@@ -10,3 +10,4 @@ coverage
 pnpm-lock.yaml
 apps/web/.next
 packages/db/generated
+*.tsbuildinfo
