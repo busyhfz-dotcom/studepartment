@@ -1,303 +1,277 @@
 import Link from "next/link";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
-import { CountUp, IntroGate, Reveal } from "./marketing-landing-client";
+import { OpportunityTicker, PlatformTabs, MobileNav, Reveal } from "./marketing-landing-client";
 import styles from "./marketing-landing.module.css";
 
 /**
- * Design note (see the frontend-design skill): earlier passes over this page
- * leaned on the defaults that skill warns about — an ALL-CAPS eyebrow above
- * the headline, middle-dot-joined meta text, a "→" on every link, and a
- * fade-up reveal on every single section. Those are removed here. Motion is
- * spent in two deliberate places instead: the entrance gate (see
- * marketing-landing-client.tsx) and the departures board below, which flips
- * its rows in once on load. Everything else holds still.
+ * This page mirrors the "Studepartment — Main page concept" design handed
+ * off by the design pass (dark-green / mint palette, Newsreader display type
+ * over DM-Sans-style body copy). It keeps the concept's structure and copy
+ * as close to verbatim as a server-rendered React page allows, while wiring
+ * the hero ticker to the real public opportunity feed instead of sample
+ * data, and adding a fifth "Institutions" platform surface for the
+ * institution/lab discovery directory that did not exist when the concept
+ * was designed.
  */
 
-const gatePaths = [
+const platformSurfaces = [
   {
-    id: "position",
-    label: "Find a position",
-    detail: "PhD, postdoc, or research role",
-    targetId: "path-position",
+    key: "identity",
+    number: "01 / Scientific Identity",
+    title: "Let your work speak clearly.",
+    copy: "Bring together research topics, methods, affiliations, ORCID ownership and publication evidence in a profile you control.",
+    action: "Explore identity",
+    href: "/profile",
+    preview: "A scientific profile with provenance.",
+    rows: [
+      ["Research topics", "Canonical context"],
+      ["Methods & affiliations", "Structured evidence"],
+      ["ORCID & publications", "Attributable sources"],
+    ],
   },
   {
-    id: "grant",
-    label: "Find a grant",
-    detail: "Funding for your next project",
-    targetId: "path-grant",
+    key: "discovery",
+    number: "02 / Scientific Discovery",
+    title: "Find fit with a reason.",
+    copy: "Search researchers, laboratories and institutions by scientific intent, methods, geography and collaboration availability.",
+    action: "Explore discovery",
+    href: "/discover",
+    preview: "Find collaborators by what they study.",
+    rows: [
+      ["Scientific intent", "A focused question"],
+      ["Relevant people & labs", "Explainable results"],
+      ["Source context", "Inspect the evidence"],
+    ],
   },
   {
-    id: "organization",
-    label: "Post an opportunity",
-    detail: "I represent an institution or lab",
-    targetId: "path-organization",
-  },
-];
-
-const intentPaths = [
-  {
-    id: "path-position",
-    kicker: "Find a position",
-    title: "PhD, postdoc, or research role",
-    copy: "Browse verified openings worldwide with real deadlines, instead of checking a dozen university career pages by hand.",
-    href: "/auth/sign-up?callbackUrl=%2Fopportunities",
-    action: "Start finding positions",
+    key: "institutions",
+    number: "03 / Institution Directory",
+    title: "See who is behind the work.",
+    copy: "Browse verified research institutions and their laboratories — including newly indexed cancer research centers — before you decide where to apply.",
+    action: "Explore institutions",
+    href: "/discover/institutions",
+    preview: "An institution directory with lab-level detail.",
+    rows: [
+      ["Institutions & labs", "Directory, not a leaderboard"],
+      ["Focus areas", "Matched to your field"],
+      ["Provenance", "Sourced and dated"],
+    ],
   },
   {
-    id: "path-grant",
-    kicker: "Find a grant",
-    title: "Funding for your next project",
-    copy: "Filter funder opportunities by topic, country, and career stage — built for applicants who can't afford to miss a deadline.",
-    href: "/auth/sign-up?callbackUrl=%2Fopportunities",
-    action: "Start finding grants",
+    key: "opportunities",
+    number: "04 / Opportunity Intelligence",
+    title: "See beyond the headline.",
+    copy: "Review positions and grants alongside source freshness, scientific relevance, published eligibility and deadlines.",
+    action: "Browse opportunities",
+    href: "/opportunities",
+    preview: "A clearer decision before you apply.",
+    rows: [
+      ["Published deadline", "Timing matters"],
+      ["Scientific relevance", "Why it fits"],
+      ["Formal eligibility", "Check requirements"],
+    ],
   },
   {
-    id: "path-organization",
-    kicker: "Post a position or grant",
-    title: "I represent an institution or lab",
-    copy: "Register an institutional profile, kept separate from individual researcher accounts, to post and manage opportunities.",
-    href: "/auth/sign-up?callbackUrl=%2Fonboarding%2Forganization",
-    action: "Create an institutional profile",
+    key: "assistant",
+    number: "05 / Research Assistant",
+    title: "Ask with evidence in view.",
+    copy: "Explore focused questions across your scientific context. Answers are designed to point back to the sources behind them.",
+    action: "Explore assistant",
+    href: "/assistant",
+    preview: "A question with an inspectable source trail.",
+    rows: [
+      ["Your research question", "Focused prompt"],
+      ["Source ledger", "Grounded response"],
+      ["Next step", "Researcher decides"],
+    ],
   },
-];
-
-const howItWorks = [
-  {
-    number: "01",
-    title: "Tell us what you're looking for",
-    copy: "Field, career stage, and where you're open to relocating — a two-minute profile, not a full CV rebuild.",
-  },
-  {
-    number: "02",
-    title: "We scan so you don't have to",
-    copy: "Positions and grants are pulled continuously from real institutional and funder sources across every region — one place instead of dozens of tabs.",
-  },
-  {
-    number: "03",
-    title: "Apply with confidence",
-    copy: "Verified deadlines, direct application links, and institutional context, so your limited time goes toward applying, not verifying.",
-  },
-];
-
-const principles = [
-  {
-    kicker: "Cost",
-    title: "Free for researchers",
-    copy: "No subscription, no paywall on opportunities. We charge institutions that post — never the people applying.",
-  },
-  {
-    kicker: "Coverage",
-    title: "Worldwide, not one region",
-    copy: "Europe, North America, and Asia sources are scanned together, so opportunities that never reach your inbox still reach you.",
-  },
-  {
-    kicker: "Trust",
-    title: "Reasons before rank",
-    copy: "Every match shows why it's a fit — eligibility, deadline, and source — not an opaque score you have to trust blindly.",
-  },
-  {
-    kicker: "Privacy",
-    title: "Private by default",
-    copy: "Nothing you enter becomes a public profile or a leaderboard. You decide what is visible, to whom.",
-  },
-];
-
-function BrandMark() {
-  return (
-    <span className={styles.brandMark} aria-hidden="true">
-      <svg fill="none" viewBox="0 0 32 32">
-        <path d="M9.2 8.8h8.4a5.2 5.2 0 0 1 0 10.4h-3.2a4.6 4.6 0 0 0 0 9.2h8.4" />
-        <circle cx="9.2" cy="8.8" r="2.2" />
-        <circle cx="22.8" cy="23.8" r="2.2" />
-      </svg>
-    </span>
-  );
-}
-
-type BoardRow = {
-  id: string;
-  title: string;
-  meta: string;
-  deadline: string;
-};
-
-function DeparturesBoard({ rows }: { rows: BoardRow[] }) {
-  return (
-    <aside className={styles.board} aria-label="Opportunities closing soonest">
-      <div className={styles.boardHead}>
-        <span>Closing soonest</span>
-        <span>Deadline</span>
-      </div>
-      <div className={styles.boardBody}>
-        {rows.length ? (
-          rows.map((row, index) => (
-            <div
-              key={row.id}
-              className={styles.boardRow}
-              style={{ animationDelay: `${index * 70}ms` }}
-            >
-              <div className={styles.boardRowMain}>
-                <strong>{row.title}</strong>
-                <small>{row.meta}</small>
-              </div>
-              <span className={styles.boardDeadline}>{row.deadline}</span>
-            </div>
-          ))
-        ) : (
-          <p className={styles.tickerEmpty}>New opportunities are being added — check back shortly.</p>
-        )}
-      </div>
-      <p className={styles.boardFoot}>Updated continuously. Sign in to filter by field and deadline.</p>
-    </aside>
-  );
-}
+] as const;
 
 export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }) {
-  const boardRows: BoardRow[] = [...ticker.positions, ...ticker.grants]
-    .slice(0, 7)
-    .map((item) => ({
-      id: item.id,
-      title: item.title,
-      meta: `${item.organization}${item.countryCode ? ` · ${item.countryCode}` : ""}`,
-      deadline: item.deadlineLabel.replace(/^Deadline /, "").replace(/^Rolling.*/, "Rolling"),
-    }));
-
   return (
-    <>
-      <IntroGate paths={gatePaths} />
-      <div className={styles.page}>
-        <header className={styles.nav}>
-          <Link className={styles.brand} href="/">
-            <BrandMark />
-            <span>
-              <strong>Studepartment</strong>
-              <small>Medical research, worldwide</small>
-            </span>
-          </Link>
-          <div className={styles.navActions}>
-            <Link className="secondary" href="/auth/sign-in">Sign in</Link>
-            <Link className="primaryButton" href="/auth/sign-up">Get started free</Link>
-          </div>
-        </header>
-
-        <section className={styles.hero}>
-          <div className={styles.heroCopy}>
-            <h1>Find the position or grant you qualify for, before its deadline finds you.</h1>
-            <p>
-              Studepartment scans real openings from universities and funders across Europe, North America, and
-              Asia, so a normal connection and a few minutes a week are enough to keep up. It&apos;s free to search
-              and free to apply — we charge the institutions that post, never the people applying.
-            </p>
-            <div className={styles.heroActions}>
-              <Link className="primaryButton" href="/auth/sign-up">Create your free profile</Link>
-              <Link className="secondary" href="/auth/sign-in">Sign in</Link>
-            </div>
-
-            <div className={styles.statsRow}>
-              <div className={styles.statItem}>
-                <strong><CountUp end={ticker.stats.totalPositions} suffix="+" /></strong>
-                <span>Live positions</span>
-              </div>
-              <div className={styles.statItem}>
-                <strong><CountUp end={ticker.stats.totalGrants} suffix="+" /></strong>
-                <span>Open grants</span>
-              </div>
-              <div className={styles.statItem}>
-                <strong><CountUp end={ticker.stats.countries} suffix="+" /></strong>
-                <span>Countries</span>
-              </div>
-              <div className={styles.statItem}>
-                <strong>$0</strong>
-                <span>Cost to apply</span>
-              </div>
-            </div>
-          </div>
-
-          <DeparturesBoard rows={boardRows} />
-        </section>
-
-        <section className={styles.intentSection}>
-          <div className={styles.sectionIntro}>
-            <div>
-              <h2>What are you trying to do right now?</h2>
-            </div>
-            <p>Pick one — everything past this point is built around getting you there in the fewest steps.</p>
-          </div>
-          <div className={styles.intentGrid}>
-            {intentPaths.map((path) => (
-              <Link key={path.id} id={path.id} className={styles.intentCard} href={path.href}>
-                <span className={styles.intentKicker}>{path.kicker}</span>
-                <strong>{path.title}</strong>
-                <p>{path.copy}</p>
-                <span className={styles.intentAction}>{path.action}</span>
+    <div className={styles.page}>
+      <header className={styles.top}>
+        <div className={styles.container}>
+          <div className={styles.topInner}>
+            <Link className={styles.brand} href="/">
+              <span className={styles.mark}>S</span>
+              <span>
+                studepartment<b>.</b>
+              </span>
+            </Link>
+            <MobileNav
+              links={[
+                { href: "#platform", label: "Platform" },
+                { href: "#principles", label: "Our approach" },
+                { href: "#pathways", label: "Who it's for" },
+              ]}
+            />
+            <div className={styles.navActions}>
+              <Link href="/auth/sign-in">Sign in</Link>
+              <Link className={styles.join} href="/auth/sign-up">
+                Join free ↗
               </Link>
-            ))}
-          </div>
-        </section>
-
-        <Reveal as="section" className={styles.section}>
-          <div className={styles.sectionIntro}>
-            <div>
-              <h2>From a two-minute profile to a verified application, in three steps.</h2>
-            </div>
-            <p>Every step is designed to protect your time — not to keep you scrolling.</p>
-          </div>
-          <div className={styles.flowGrid}>
-            {howItWorks.map((step) => (
-              <article className={styles.flowCard} key={step.number}>
-                <span className={styles.flowNumber}>{step.number}</span>
-                <strong>{step.title}</strong>
-                <p>{step.copy}</p>
-              </article>
-            ))}
-          </div>
-        </Reveal>
-
-        <section className={styles.section}>
-          <div className={styles.sectionIntro}>
-            <div>
-              <h2>Built to stay useful even if you never pay us a cent.</h2>
             </div>
           </div>
-          <div className={styles.principlesGrid}>
-            {principles.map((item) => (
-              <div className={styles.principleCard} key={item.kicker}>
-                <span>{item.kicker}</span>
-                <strong>{item.title}</strong>
-                <p>{item.copy}</p>
+        </div>
+      </header>
+
+      <main id="top">
+        <section className={styles.hero}>
+          <div className={styles.container}>
+            <div className={styles.heroTop}>
+              <i /> Medical research intelligence · worldwide
+            </div>
+            <div className={styles.heroGrid}>
+              <div className={styles.heroCopy}>
+                <h1>
+                  Good research starts with the <em>right connection.</em>
+                </h1>
+                <p>
+                  One place to understand your scientific context, find relevant people and opportunities, and take
+                  the next step with evidence you can inspect.
+                </p>
+                <div className={styles.heroActions}>
+                  <a className={styles.primary} href="#platform">
+                    Explore the platform <span>↗</span>
+                  </a>
+                  <a className={styles.secondary} href="#pathways">
+                    Browse positions &amp; grants ↓
+                  </a>
+                </div>
               </div>
-            ))}
-          </div>
-          <div className={styles.honestNote}>
-            <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 3.5 19 6v5.4c0 4.3-2.6 7.4-7 9.1-4.4-1.7-7-4.8-7-9.1V6l7-2.5Z" />
-              <path d="m9.2 12 1.8 1.8 3.8-4" />
-            </svg>
-            <p>
-              Studepartment is early. We would rather tell you that plainly than manufacture numbers to look bigger
-              than we are — the platform is built to earn your trust with evidence, not with claims.
-            </p>
+
+              <OpportunityTicker ticker={ticker} />
+            </div>
+            <div className={styles.heroBottom}>
+              <span>Researcher-controlled · source-aware · private by default</span>
+              <span>Explore the platform ↓</span>
+            </div>
           </div>
         </section>
 
-        <section className={styles.section}>
-          <div className={styles.closing}>
+        <section className={styles.intro} id="platform">
+          <div className={styles.container}>
+            <Reveal className={styles.introHead}>
+              <div>
+                <span className={styles.eyebrow}>The platform</span>
+                <h2>
+                  One research context.
+                  <br />
+                  More ways to move forward.
+                </h2>
+              </div>
+              <p>
+                Studepartment connects your scientific identity to discovery, opportunities and evidence-led
+                decisions. Explore each part below.
+              </p>
+            </Reveal>
+            <PlatformTabs surfaces={platformSurfaces} />
+          </div>
+        </section>
+
+        <section className={styles.proof} id="principles">
+          <div className={`${styles.container} ${styles.proofGrid}`}>
+            <Reveal as="article" className={styles.proofItem}>
+              <span className={styles.index}>01 / Provenance</span>
+              <h3>Know where it came from.</h3>
+              <p>Sources, dates and institutional context should remain visible when you evaluate a research lead.</p>
+            </Reveal>
+            <Reveal as="article" className={styles.proofItem} delay={80}>
+              <span className={styles.index}>02 / Fit</span>
+              <h3>Reasons before rank.</h3>
+              <p>Scientific relevance and formal eligibility are different questions. Both deserve a clear answer.</p>
+            </Reveal>
+            <Reveal as="article" className={styles.proofItem} delay={160}>
+              <span className={styles.index}>03 / Control</span>
+              <h3>Your context stays yours.</h3>
+              <p>
+                Research interests and private feedback support your decisions without becoming a public score.
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        <section className={styles.pathways} id="pathways">
+          <div className={styles.container}>
+            <Reveal className={styles.pathHead}>
+              <div>
+                <span className={styles.eyebrow}>A place for each side of research</span>
+                <h2>Find a way in that fits.</h2>
+              </div>
+              <p>
+                The public entry flow keeps opportunity browsing simple. Institutions have a distinct path to share
+                their openings.
+              </p>
+            </Reveal>
+            <div className={styles.pathGrid}>
+              <Reveal as="div">
+                <Link className={styles.pathCard} href="/start">
+                  <div className={styles.topline}>
+                    <span>For researchers</span>
+                    <span>↗</span>
+                  </div>
+                  <div>
+                    <h3>Explore positions &amp; funding</h3>
+                    <p>Browse publicly first; create an account for personal tracking and research tools.</p>
+                  </div>
+                  <span className={styles.action}>
+                    Start browsing <span>→</span>
+                  </span>
+                </Link>
+              </Reveal>
+              <Reveal as="div" delay={80}>
+                <Link
+                  className={styles.pathCard}
+                  href="/auth/sign-up?callbackUrl=%2Fonboarding%2Forganization"
+                >
+                  <div className={styles.topline}>
+                    <span>For labs &amp; institutions</span>
+                    <span>↗</span>
+                  </div>
+                  <div>
+                    <h3>Share an opportunity</h3>
+                    <p>Build an institutional profile and bring a role or funding call to relevant researchers.</p>
+                  </div>
+                  <span className={styles.action}>
+                    Create an institutional profile <span>→</span>
+                  </span>
+                </Link>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.closing}>
+          <div className={`${styles.container} ${styles.closingGrid}`}>
             <div>
-              <h2>Your next position or grant is already listed. Go find it.</h2>
-              <p>Create your profile in minutes and decide, at every step, what stays private.</p>
+              <span className={styles.eyebrow}>Begin with your research</span>
+              <h2>
+                Make the next move <em>matter.</em>
+              </h2>
+              <p>Find context, inspect evidence, and decide on your own terms.</p>
             </div>
-            <div className={styles.closingActions}>
-              <Link className="primaryButton" href="/auth/sign-up">Create your free profile</Link>
-              <Link className="secondary" href="/auth/sign-in">Sign in</Link>
-            </div>
+            <Link href="/start">
+              Explore opportunities <span>↗</span>
+            </Link>
           </div>
         </section>
+      </main>
 
-        <footer className={styles.footer}>
-          <span>© {new Date().getFullYear()} Studepartment. Medical research, worldwide.</span>
+      <footer className={`${styles.footer} ${styles.container}`}>
+        <Link className={styles.brand} href="/">
+          <span className={styles.mark}>S</span>
+          <span>
+            studepartment<b>.</b>
+          </span>
+        </Link>
+        <span>Medical research, worldwide.</span>
+        <div className={styles.footerLinks}>
+          <a href="#platform">Platform</a>
+          <a href="#principles">Our approach</a>
           <Link href="/auth/sign-in">Sign in to your workspace</Link>
-        </footer>
-      </div>
-    </>
+        </div>
+      </footer>
+    </div>
   );
 }

@@ -1,13 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import styles from "./marketing-landing.module.css";
 
 /**
- * Scroll-triggered reveal wrapper. Adds a "visible" class once the element
- * enters the viewport, then stops observing. Used sparingly — see the
- * frontend-design notes in marketing-landing.tsx for why this isn't applied
- * to every section.
+ * Scroll-triggered reveal wrapper, ported from the previous marketing page.
  */
 export function Reveal({
   children,
@@ -35,7 +34,7 @@ export function Reveal({
           }
         }
       },
-      { threshold: 0.14, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -45,7 +44,7 @@ export function Reveal({
   return (
     <Element
       ref={ref}
-      className={`${styles.reveal} ${visible ? styles.revealVisible : ""} ${className}`.trim()}
+      className={`${styles.revealItem} ${visible ? styles.visible : ""} ${className}`.trim()}
       style={{ transitionDelay: visible ? `${delay}ms` : "0ms" }}
     >
       {children}
@@ -53,172 +52,225 @@ export function Reveal({
   );
 }
 
-/**
- * Animated count-up used for the hero trust strip. Counts once the number
- * scrolls into view.
- */
-export function CountUp({
-  end,
-  prefix = "",
-  suffix = "",
-  duration = 1100,
-}: {
-  end: number;
-  prefix?: string;
-  suffix?: string;
-  duration?: number;
-}) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      const id = requestAnimationFrame(() => setValue(end));
-      return () => cancelAnimationFrame(id);
-    }
-    let frame = 0;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          observer.unobserve(entry.target);
-          const start = performance.now();
-          const tick = (now: number) => {
-            const progress = Math.min(1, (now - start) / duration);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setValue(Math.round(end * eased));
-            if (progress < 1) frame = requestAnimationFrame(tick);
-          };
-          frame = requestAnimationFrame(tick);
-        }
-      },
-      { threshold: 0.4 },
-    );
-    observer.observe(node);
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(frame);
-    };
-  }, [end, duration]);
-
+/** Mobile nav toggle used in the header. */
+export function MobileNav({ links }: { links: { href: string; label: string }[] }) {
+  const [open, setOpen] = useState(false);
   return (
-    <span ref={ref}>
-      {prefix}
-      {value.toLocaleString()}
-      {suffix}
-    </span>
+    <>
+      <nav className={`${styles.nav} ${open ? styles.navOpen : ""}`} aria-label="Main navigation">
+        {links.map((link) => (
+          <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
+      <button
+        type="button"
+        className={styles.mobileToggle}
+        aria-label="Toggle navigation"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+      >
+        ☰
+      </button>
+    </>
   );
 }
 
-type GatePath = {
+type TickerEntry = {
   id: string;
-  label: string;
-  detail: string;
-  targetId: string;
+  kind: "Position" | "Grant";
+  title: string;
+  organization: string;
+  deadlineLabel: string;
 };
 
-const GATE_SESSION_KEY = "sp-gate-seen";
+function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
+  const positions: TickerEntry[] = ticker.positions.map((item) => ({
+    id: item.id,
+    kind: "Position",
+    title: item.title,
+    organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
+    deadlineLabel: item.deadlineLabel,
+  }));
+  const grants: TickerEntry[] = ticker.grants.map((item) => ({
+    id: item.id,
+    kind: "Grant",
+    title: item.title,
+    organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
+    deadlineLabel: item.deadlineLabel,
+  }));
+  const merged: TickerEntry[] = [];
+  const max = Math.max(positions.length, grants.length);
+  for (let i = 0; i < max; i += 1) {
+    if (positions[i]) merged.push(positions[i]);
+    if (grants[i]) merged.push(grants[i]);
+  }
+  return merged.slice(0, 8);
+}
+
+function badgeStatus(label: string): "urgent" | "soon" | "open" {
+  const lower = label.toLowerCase();
+  if (lower.includes("rolling")) return "open";
+  const weekMatch = lower.match(/(\d+)\s*week/);
+  const dayMatch = lower.match(/(\d+)\s*day/);
+  if (dayMatch && Number(dayMatch[1]) <= 14) return "urgent";
+  if (weekMatch && Number(weekMatch[1]) <= 2) return "urgent";
+  if (weekMatch && Number(weekMatch[1]) <= 6) return "soon";
+  return "open";
+}
 
 /**
- * The entrance screen requested for the marketing site: a short, animated
- * screen a visitor passes through before the main page, offering a small
- * number of simple onward paths instead of a wall of content. It renders
- * over the real page (which stays in the DOM underneath), and dismisses
- * itself either by picking a path — which scrolls the main page to the
- * matching section — or via the "Skip to the site" link. It remembers the
- * choice for the browser session so a visitor isn't gated again when they
- * come back to "/" later in the same visit.
+ * The hero "desk" widget: a continuously scrolling list of real live
+ * opportunities pulled from the public ticker, click-to-expand into a
+ * detail panel — same interaction as the design concept, real data instead
+ * of the concept's illustrative sample rows.
  */
-export function IntroGate({ paths }: { paths: GatePath[] }) {
-  const [dismissed, setDismissed] = useState(false);
-  const [leaving, setLeaving] = useState(false);
-  const firstButtonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem(GATE_SESSION_KEY) === "1";
-    } catch {
-      seen = false;
-    }
-    if (seen) {
-      const id = requestAnimationFrame(() => setDismissed(true));
-      return () => cancelAnimationFrame(id);
-    }
-    firstButtonRef.current?.focus();
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  function close(targetId?: string) {
-    try {
-      sessionStorage.setItem(GATE_SESSION_KEY, "1");
-    } catch {
-      /* private browsing / storage disabled — gate just reappears next time */
-    }
-    setLeaving(true);
-    window.setTimeout(() => {
-      setDismissed(true);
-      if (targetId) {
-        const el = document.getElementById(targetId);
-        el?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }, 280);
-  }
-
-  if (dismissed) return null;
+export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker }) {
+  const entries = buildEntries(ticker);
+  const [selected, setSelected] = useState<TickerEntry | null>(null);
 
   return (
-    <div
-      className={`${styles.gate} ${leaving ? styles.gateLeaving : ""}`}
-      role="dialog"
-      aria-label="Choose what you're looking for"
-    >
-      <div className={styles.gateMotif} aria-hidden="true">
-        <svg viewBox="0 0 320 200" className={styles.gateRoute}>
-          <path
-            className={styles.gateRoutePath}
-            d="M20 150 C 90 40, 210 210, 300 60"
-            fill="none"
-            strokeWidth="1.5"
-            strokeDasharray="4 6"
-          />
-          <circle className={styles.gateRouteDot} cx="20" cy="150" r="4" />
-          <circle className={styles.gateRouteDot} cx="300" cy="60" r="4" />
-          <circle className={styles.gateRouteMover} r="3.5" />
-        </svg>
-        <span className={styles.gateStamp}>Funded</span>
+    <aside className={`${styles.heroDesk} ${selected ? styles.isSelected : ""}`} aria-label="Latest position and grant preview">
+      <div className={styles.deskHeading}>
+        <span>Latest opportunities</span>
+        <span>Live from Studepartment</span>
       </div>
-
-      <div className={styles.gateBody}>
-        <p className={styles.gateEyebrow}>Studepartment</p>
-        <h1 className={styles.gateHeading}>Where are you trying to get to?</h1>
-        <p className={styles.gateSub}>
-          Pick one — we&apos;ll take you straight there. Nothing to fill in yet.
-        </p>
-        <div className={styles.gatePaths}>
-          {paths.map((path, index) => (
-            <button
-              key={path.id}
-              ref={index === 0 ? firstButtonRef : undefined}
-              type="button"
-              className={styles.gatePathButton}
-              onClick={() => close(path.targetId)}
-            >
-              <span className={styles.gatePathLabel}>{path.label}</span>
-              <span className={styles.gatePathDetail}>{path.detail}</span>
-            </button>
-          ))}
+      {entries.length ? (
+        <div className={styles.latestList} aria-label="Select an opportunity; the list pauses while you hover">
+          <div className={styles.latestTrack}>
+            {[false, true].map((duplicate) => (
+              <div className={styles.latestGroup} aria-hidden={duplicate || undefined} key={duplicate ? "dup" : "orig"}>
+                {entries.map((entry, index) => {
+                  const status = badgeStatus(entry.deadlineLabel);
+                  const label = status === "urgent" ? "Closing soon" : status === "soon" ? "Plan ahead" : "Time to prepare";
+                  return (
+                    <button
+                      key={`${duplicate ? "dup-" : ""}${entry.id}-${index}`}
+                      type="button"
+                      className={styles.latestRow}
+                      tabIndex={duplicate ? -1 : undefined}
+                      aria-label={`${entry.kind}: ${entry.title}, ${entry.deadlineLabel}`}
+                      onClick={() => setSelected(entry)}
+                    >
+                      <span>
+                        <span className={styles.kind}>{entry.kind}</span>
+                        <strong>{entry.title}</strong>
+                        <small>{entry.organization}</small>
+                      </span>
+                      <span className={`${styles.deadline} ${styles[status]}`}>
+                        <span className={styles.badge}>{label}</span>
+                        <time>{entry.deadlineLabel}</time>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         </div>
-        <button type="button" className={styles.gateSkip} onClick={() => close()}>
-          Skip to the site
-        </button>
+      ) : (
+        <p className={styles.latestLoading}>New opportunities are being added — check back shortly.</p>
+      )}
+
+      {selected ? (
+        <div className={styles.opportunityDetail} role="region" aria-label="Selected opportunity" aria-live="polite">
+          <div className={styles.detailTop}>
+            <span>{selected.kind}</span>
+            <button type="button" aria-label="Close opportunity details" onClick={() => setSelected(null)}>
+              ×
+            </button>
+          </div>
+          <h3>{selected.title}</h3>
+          <p>{selected.organization}</p>
+          <div className={styles.detailDeadline}>{selected.deadlineLabel}</div>
+          <Link href="/opportunities">Browse opportunities ↗</Link>
+        </div>
+      ) : null}
+
+      <div className={styles.deskFooter}>
+        <span>Refreshed continuously from verified sources.</span>
+        <Link href="/opportunities">Browse all ↗</Link>
       </div>
-    </div>
+    </aside>
   );
+}
+
+type Surface = {
+  key: string;
+  number: string;
+  title: string;
+  copy: string;
+  action: string;
+  href: string;
+  preview: string;
+  rows: readonly (readonly [string, string])[];
+};
+
+/** Tabbed "platform surfaces" panel — Identity / Discovery / Institutions / Opportunities / Assistant. */
+export function PlatformTabs({ surfaces }: { surfaces: readonly Surface[] }) {
+  const [activeKey, setActiveKey] = useState(surfaces[0]?.key ?? "");
+  const active = surfaces.find((surface) => surface.key === activeKey) ?? surfaces[0];
+
+  return (
+    <>
+      <div className={styles.surfaceTabs} role="tablist" aria-label="Platform areas">
+        {surfaces.map((surface) => (
+          <button
+            key={surface.key}
+            role="tab"
+            type="button"
+            aria-selected={surface.key === activeKey}
+            onClick={() => setActiveKey(surface.key)}
+          >
+            {surfaceLabel(surface.key)}
+          </button>
+        ))}
+      </div>
+      {active ? (
+        <div className={styles.surfacePanel} role="tabpanel" aria-live="polite">
+          <div className={styles.surfaceContent}>
+            <span className={styles.number}>{active.number}</span>
+            <h3>{active.title}</h3>
+            <p>{active.copy}</p>
+            <Link href={active.href}>
+              {active.action} <span>↗</span>
+            </Link>
+          </div>
+          <div className={styles.instrument}>
+            <div className={styles.instrumentTop}>
+              <span>Research instrument / preview</span>
+              <b>{active.key.toUpperCase()}</b>
+            </div>
+            <div className={styles.instrumentCenter}>{active.preview}</div>
+            <div className={styles.instrumentLines}>
+              {active.rows.map(([a, b]) => (
+                <div key={a}>
+                  <span>{a}</span>
+                  <b>{b}</b>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function surfaceLabel(key: string) {
+  switch (key) {
+    case "identity":
+      return "Scientific Identity";
+    case "discovery":
+      return "Discovery";
+    case "institutions":
+      return "Institutions";
+    case "opportunities":
+      return "Opportunities";
+    case "assistant":
+      return "Research Assistant";
+    default:
+      return key;
+  }
 }

@@ -26,6 +26,15 @@ const intelligenceSurfaces = [
   },
   {
     index: "03",
+    label: "Institution Directory",
+    title: "See who is behind the work.",
+    copy: "Browse verified research institutions and laboratories — including newly indexed cancer research centers — with provenance you can inspect.",
+    href: "/discover/institutions",
+    action: "Browse institutions",
+    signal: "Verified directory",
+  },
+  {
+    index: "04",
     label: "Opportunity Intelligence",
     title: "Protect your application time.",
     copy: "Evaluate source freshness, scientific relevance, published eligibility, deadlines, and institutional context before committing effort.",
@@ -34,7 +43,7 @@ const intelligenceSurfaces = [
     signal: "Source-backed",
   },
   {
-    index: "04",
+    index: "05",
     label: "Research Assistant",
     title: "Reason over evidence you can inspect.",
     copy: "Ask focused questions across your scientific context. Answers stay grounded in a request-specific Studepartment source ledger.",
