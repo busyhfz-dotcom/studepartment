@@ -81,7 +81,7 @@
 .welcome .stage { color: #8fb5a6; }
 .entryHead { text-align: center; max-width: 850px; margin: 32px auto 32px; }
 .entryHead .eyebrow { color: var(--mint); }
-.entryHead h1 { font-size: clamp(44px, 5vw, 69px); margin: 11px 0 8px; }
+.entryHead h1 { font-size: clamp(44px, 5vw, 69px); margin: 11px 0 8px; color: inherit; }
 .entryHead p { font-size: 16px; color: #bdd4c8; margin: 0; }
 
 .entryCards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; max-width: 1050px; margin: 0 auto; }
@@ -119,7 +119,7 @@
 /* Hero (browse / detail / next) */
 .hero, .heroCompact { background: var(--deep); color: #fff; padding: 0 0 45px; }
 .hero .stage, .heroCompact .stage { color: #8db3a2; }
-.hero h1, .heroCompact h1 { font-size: clamp(46px, 5vw, 72px); line-height: 1.05; margin: 12px 0 14px; max-width: 950px; }
+.hero h1, .heroCompact h1 { font-size: clamp(46px, 5vw, 72px); line-height: 1.05; margin: 12px 0 14px; max-width: 950px; color: inherit; }
 .heroCompact h1 { font-size: clamp(36px, 3.9vw, 56px); margin: 6px 0; }
 .hero p, .heroCompact p { font-size: 17px; color: #bfd5c8; max-width: 680px; margin: 0; }
 .heroCompact p { font-size: 15px; }
