@@ -66,17 +66,32 @@ function Stage({ n }: { n: 1 | 2 | 3 | 4 }) {
   );
 }
 
-function TopBar() {
+function TopBar({ onViewSite }: { onViewSite?: () => void }) {
   return (
     <header className={styles.topbar}>
-      <Link className={styles.brand} href="/" aria-label="Studepartment home">
-        <span className={styles.mark}>S</span>
-        <span>
-          studepartment<b>.</b>
-        </span>
-      </Link>
+      {onViewSite ? (
+        <button type="button" className={styles.brand} onClick={onViewSite} aria-label="Studepartment home">
+          <span className={styles.mark}>S</span>
+          <span>
+            studepartment<b>.</b>
+          </span>
+        </button>
+      ) : (
+        <Link className={styles.brand} href="/" aria-label="Studepartment home">
+          <span className={styles.mark}>S</span>
+          <span>
+            studepartment<b>.</b>
+          </span>
+        </Link>
+      )}
       <nav className={styles.topActions} aria-label="Site navigation">
-        <Link href="/">Main site</Link>
+        {onViewSite ? (
+          <button type="button" onClick={onViewSite}>
+            Main site
+          </button>
+        ) : (
+          <Link href="/">Main site</Link>
+        )}
         <Link href="/auth/sign-in">Sign in</Link>
         <Link className={styles.join} href="/auth/sign-up">
           Join free
@@ -95,7 +110,7 @@ function FootBar() {
   );
 }
 
-export function StartFlow() {
+export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
   const [step, setStep] = useState<Step>("welcome");
   const [kind, setKind] = useState<Kind>("position");
   const [query, setQuery] = useState("");
@@ -152,7 +167,7 @@ export function StartFlow() {
   if (step === "welcome") {
     return (
       <div className={styles.page}>
-        <TopBar />
+        <TopBar onViewSite={onViewSite} />
         <main className={`${styles.welcome} ${styles.fade}`}>
           <div className={styles.wrap}>
             <Stage n={1} />
@@ -191,9 +206,16 @@ export function StartFlow() {
             </div>
             <div className={styles.entryFoot}>
               <span>Explore freely. Save or contact a research lead when you&apos;re ready.</span>
-              <button type="button" onClick={() => setStep("institutions")}>
-                For labs and institutions: post an opportunity ↗
-              </button>
+              <span className={styles.entryFootLinks}>
+                {onViewSite ? (
+                  <button type="button" onClick={onViewSite}>
+                    Skip — view the full site ↗
+                  </button>
+                ) : null}
+                <button type="button" onClick={() => setStep("institutions")}>
+                  For labs and institutions: post an opportunity ↗
+                </button>
+              </span>
             </div>
           </div>
         </main>
@@ -205,7 +227,7 @@ export function StartFlow() {
   if (step === "institutions") {
     return (
       <div className={styles.page}>
-        <TopBar />
+        <TopBar onViewSite={onViewSite} />
         <main className={`${styles.wrap} ${styles.institutionPage} ${styles.fade}`}>
           <button type="button" className={styles.back} onClick={() => setStep("welcome")}>
             ← Back to choices
@@ -230,7 +252,7 @@ export function StartFlow() {
     const isGrant = kind === "grant";
     return (
       <div className={styles.page}>
-        <TopBar />
+        <TopBar onViewSite={onViewSite} />
         <section className={styles.heroCompact}>
           <div className={styles.wrap}>
             <Stage n={2} />
@@ -336,7 +358,7 @@ export function StartFlow() {
     const applyHref = selected.applicationUrl || selected.sourceUrl;
     return (
       <div className={styles.page}>
-        <TopBar />
+        <TopBar onViewSite={onViewSite} />
         <section className={styles.hero}>
           <div className={styles.wrap}>
             <Stage n={3} />
@@ -426,7 +448,7 @@ export function StartFlow() {
     const signUpHref = `/auth/sign-up?callbackUrl=%2Fopportunities`;
     return (
       <div className={styles.page}>
-        <TopBar />
+        <TopBar onViewSite={onViewSite} />
         <main className={`${styles.next} ${styles.fade}`}>
           <Stage n={4} />
           <button type="button" className={styles.back} onClick={() => setStep("detail")}>
@@ -509,7 +531,7 @@ export function StartFlow() {
   // Fallback: selected opportunity lost (e.g. deep-linked step without state) — go back to welcome.
   return (
     <div className={styles.page}>
-      <TopBar />
+      <TopBar onViewSite={onViewSite} />
       <main className={`${styles.wrap} ${styles.fade}`} style={{ padding: "60px 0" }}>
         <p>Let&apos;s start again.</p>
         <button type="button" className={styles.primary} onClick={() => setStep("welcome")}>

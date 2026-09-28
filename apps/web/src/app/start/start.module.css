@@ -35,8 +35,9 @@
   padding: 0 var(--gutter);
   gap: 20px;
 }
-.brand { display: flex; align-items: center; gap: 10px; font-size: 21px; letter-spacing: -.055em; font-weight: 700; }
+.brand { display: flex; align-items: center; gap: 10px; font-size: 21px; letter-spacing: -.055em; font-weight: 700; background: none; border: 0; padding: 0; }
 .brand b { color: #20a584; }
+.topActions button { background: none; border: 0; padding: 0; }
 .mark {
   width: 32px;
   height: 32px;
@@ -104,9 +105,10 @@
 .choice small { font-size: 14px; color: #60776a; }
 .foot { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 20px; font-size: 14px; font-weight: 700; color: #146750; }
 
-.entryFoot { display: flex; align-items: center; justify-content: space-between; gap: 20px; max-width: 1050px; margin: 22px auto 0; padding: 0 0 37px; color: #a6c8b6; font-size: 13px; }
+.entryFoot { display: flex; align-items: center; justify-content: space-between; gap: 20px; max-width: 1050px; margin: 22px auto 0; padding: 0 0 37px; color: #a6c8b6; font-size: 13px; flex-wrap: wrap; }
 .entryFoot button { background: none; border: 0; color: #bcebd2; text-decoration: underline; text-underline-offset: 4px; font-size: 13px; padding: 8px 0; }
 .entryFoot button:hover { color: #fff; }
+.entryFootLinks { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 
 /* Institutions placeholder */
 .institutionPage { padding-top: 80px; max-width: 900px; min-height: 75vh; }
