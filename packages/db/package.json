@@ -11,6 +11,7 @@
     "migrate": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
     "seed": "tsx prisma/seed.ts",
+    "seed:cancer-centers": "tsx prisma/run-seed-cancer-centers.ts",
     "discovery:index": "node scripts/index-discovery-embeddings.mjs"
   },
   "dependencies": {
