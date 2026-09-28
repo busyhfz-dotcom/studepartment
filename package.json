@@ -11,6 +11,8 @@
     "db:generate": "pnpm --filter @studepartment/db generate",
     "db:migrate": "pnpm --filter @studepartment/db migrate",
     "db:migrate:deploy": "pnpm --filter @studepartment/db migrate:deploy",
+    "db:seed": "pnpm --filter @studepartment/db seed",
+    "db:seed:cancer-centers": "pnpm --filter @studepartment/db seed:cancer-centers",
     "discovery:index": "pnpm --filter @studepartment/db discovery:index",
     "env:check": "pnpm --filter @studepartment/web env:check",
     "smoke:runtime": "pnpm --filter @studepartment/web smoke:runtime",
