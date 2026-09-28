@@ -3,6 +3,7 @@ import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getPublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { MarketingLanding } from "./marketing-landing";
+import { HomeGate } from "./home-gate-client";
 import styles from "./page.module.css";
 
 const intelligenceSurfaces = [
@@ -99,7 +100,7 @@ export default async function HomePage() {
   const user = await getCurrentUser();
   if (!user) {
     const ticker = await getPublicOpportunityTicker();
-    return <MarketingLanding ticker={ticker} />;
+    return <HomeGate siteContent={<MarketingLanding ticker={ticker} />} />;
   }
 
   const isInstitution = user.accountKind === "INSTITUTION";
