@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { NotificationPreferences } from "./notification-preferences";
 import { PrivacyControls } from "./privacy-controls";
 import styles from "./page.module.css";
 
@@ -21,6 +22,7 @@ export default async function PrivacySettingsPage() {
           </p>
           <Link href="/profile">← Back to Scientific Identity</Link>
         </header>
+        <NotificationPreferences />
         <PrivacyControls />
       </div>
     </ProductShell>

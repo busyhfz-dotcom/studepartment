@@ -1,0 +1,185 @@
+.shell {
+  max-width: 1080px;
+  padding-bottom: 60px;
+}
+
+.header {
+  display: grid;
+  gap: 14px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.headerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.header h1 {
+  max-width: 780px;
+  margin: 0;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -.04em;
+  font-weight: 660;
+}
+
+.headerActions {
+  display: flex;
+  gap: 10px;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 7px;
+  font-weight: 830;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.statusVerified {
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+}
+
+.statusUnverified {
+  color: var(--muted-2);
+  background: var(--surface-subtle);
+  border: 1px solid var(--line);
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.statCard {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.statCard strong {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.statCard span {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 620;
+}
+
+.editor {
+  margin-top: 12px;
+  padding: clamp(20px, 3vw, 32px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.editor h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 660;
+}
+
+.editorLede {
+  max-width: 640px;
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+}
+
+.grid label,
+.fullField {
+  display: grid;
+  gap: 6px;
+  color: var(--muted-2);
+  font-size: 8px;
+  font-weight: 810;
+  letter-spacing: .035em;
+}
+
+.grid input,
+.grid select,
+.fullField input,
+.fullField textarea {
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 11px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  outline: none;
+  background: #fff;
+  box-shadow: var(--shadow-xs);
+  font: inherit;
+  font-size: 9px;
+}
+
+.fullField {
+  margin-top: 14px;
+}
+
+.fullField textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.error {
+  margin: 16px 0 0;
+  padding: 10px 11px;
+  color: #8c3d43;
+  border: 1px solid rgba(159,47,47,.16);
+  border-radius: 8px;
+  background: var(--danger-soft);
+  font-size: 8px;
+  font-weight: 720;
+}
+
+.success {
+  margin: 16px 0 0;
+  padding: 10px 11px;
+  color: var(--accent-deep);
+  border: 1px solid rgba(15,146,130,.2);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  font-size: 8px;
+  font-weight: 720;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 800px) {
+  .statGrid,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

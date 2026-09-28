@@ -8,6 +8,7 @@ import { OnboardingWizard } from "./onboarding-wizard";
 export default async function OnboardingPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/auth/sign-in?callbackUrl=/onboarding");
+  if (user.accountKind === "INSTITUTION") redirect("/onboarding/organization");
 
   const [profile, organizations] = await Promise.all([
     researcherRepository.getProfileForUser(user.id),
@@ -24,6 +25,9 @@ export default async function OnboardingPage() {
         <p className="lede">
           Four focused steps establish your research context, methods, collaboration posture, and evidence visibility without turning identity into a social profile.
         </p>
+        <Link className="secondary" href="/onboarding/organization">
+          Setting up a lab, hospital, or institution instead? Switch to an institutional profile ↗
+        </Link>
       </header>
       <OnboardingWizard profile={profile} organizations={organizations} />
     </main>

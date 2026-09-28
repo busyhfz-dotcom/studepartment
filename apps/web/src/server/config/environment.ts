@@ -90,5 +90,7 @@ export function integrationConfiguration() {
     semanticRetrieval: Boolean(process.env.OPENAI_API_KEY?.trim()),
     researchAssistant: Boolean(process.env.OPENAI_API_KEY?.trim()),
     opportunityIngestion: Boolean(process.env.OPPORTUNITY_INGEST_TOKEN?.trim()),
+    weeklyDigestJob: Boolean(process.env.DIGEST_JOB_TOKEN?.trim()),
+    emailDelivery: Boolean(process.env.RESEND_API_KEY?.trim() && process.env.DIGEST_FROM_EMAIL?.trim()),
   };
 }

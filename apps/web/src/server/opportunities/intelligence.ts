@@ -7,6 +7,7 @@ import type {
   OpportunityTypeValue,
 } from "@/lib/api-contracts";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getTopInterestTopicSlugs, recordSearchAndUpdateInterest } from "@/server/personalization/interest-signals";
 
 const typeToDb = {
   phd: "PHD",
@@ -218,6 +219,13 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
 
   const db = getDb();
   const profile = await currentProfileContext();
+  const currentUser = await getCurrentUser();
+
+  if (currentUser && query.text.trim()) {
+    await recordSearchAndUpdateInterest(currentUser.id, query.text, "opportunities");
+  }
+  const interestTopicSlugs = currentUser ? await getTopInterestTopicSlugs(currentUser.id) : [];
+
   const now = new Date();
   const staleCutoff = new Date(now.getTime() - 45 * 86_400_000);
   const where: Prisma.OpportunityWhereInput = {
@@ -252,8 +260,11 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     },
   });
 
-  const requestedTopics = query.topicSlugs.length ? query.topicSlugs : profile?.topicSlugs ?? [];
+  const requestedTopics = query.topicSlugs.length
+    ? query.topicSlugs
+    : Array.from(new Set([...(profile?.topicSlugs ?? []), ...interestTopicSlugs]));
   const requestedMethods = query.methodSlugs.length ? query.methodSlugs : profile?.methodSlugs ?? [];
+  const behaviorMatchedTopics = new Set(interestTopicSlugs);
   const tokens = tokenize(query.text);
 
   const scored = rows.map((opportunity): OpportunityResult => {
@@ -291,6 +302,10 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     if (matchedTopicNames.length) reasons.push(`Research topic alignment: ${matchedTopicNames.slice(0, 3).join(", ")}`);
     if (matchedMethodNames.length) reasons.push(`Method alignment: ${matchedMethodNames.slice(0, 3).join(", ")}`);
     if (matchedTokens.length) reasons.push(`Search intent terms: ${matchedTokens.slice(0, 4).join(", ")}`);
+    const behaviorMatchedNames = opportunity.topics
+      .filter(({ topic }) => behaviorMatchedTopics.has(topic.slug) && !matchedTopicNames.includes(topic.name))
+      .map(({ topic }) => topic.name);
+    if (behaviorMatchedNames.length) reasons.push(`Based on your recent searches: ${behaviorMatchedNames.slice(0, 3).join(", ")}`);
     if (!reasons.length) reasons.push("Opportunity is within the current structured filters but has limited scientific-profile evidence.");
 
     const eligibility = evaluateEligibility(
@@ -343,7 +358,7 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     results: scored.slice(0, query.limit),
     totalConsidered: rows.length,
     cappedAt: query.limit,
-    personalized: Boolean(profile),
+    personalized: Boolean(profile) || interestTopicSlugs.length > 0,
     profileContext: profile,
   };
 }

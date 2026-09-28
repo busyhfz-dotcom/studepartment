@@ -145,6 +145,44 @@ export type OrganizationOption = {
   verified: boolean;
 };
 
+export type AccountKindValue = "individual" | "institution";
+
+export type OrganizationProfileResponse = {
+  id: string;
+  name: string;
+  type: InstitutionalOrganizationType;
+  countryCode?: string | null;
+  website?: string | null;
+  description?: string | null;
+  logoUrl?: string | null;
+  contactEmail?: string | null;
+  sizeLabel?: string | null;
+  verified: boolean;
+  claimedAt?: string | null;
+  activeOpportunityCount: number;
+  affiliatedResearcherCount: number;
+};
+
+export type OrganizationCreateInput = {
+  name: string;
+  type: InstitutionalOrganizationType;
+  countryCode?: string | null;
+  website?: string | null;
+  description?: string | null;
+  contactEmail?: string | null;
+  sizeLabel?: string | null;
+};
+
+export type OrganizationUpdateInput = {
+  name?: string;
+  type?: InstitutionalOrganizationType;
+  countryCode?: string | null;
+  website?: string | null;
+  description?: string | null;
+  contactEmail?: string | null;
+  sizeLabel?: string | null;
+};
+
 export type ProfileResponse = {
   id: string;
   fullName: string;
@@ -536,6 +574,17 @@ export type FeedbackRecord = FeedbackInput & {
 
 export type FeedbackListResponse = {
   feedback: FeedbackRecord[];
+};
+
+export type DigestFrequencyValue = "weekly" | "off";
+
+export type NotificationPreferencesResponse = {
+  digestFrequency: DigestFrequencyValue;
+  lastDigestSentAt: string | null;
+};
+
+export type NotificationPreferencesUpdateInput = {
+  digestFrequency: DigestFrequencyValue;
 };
 
 export type AccountActivitySummary = {

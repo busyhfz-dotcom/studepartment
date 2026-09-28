@@ -6,7 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { SystemStatus } from "./system-status";
 import styles from "./product-shell.module.css";
 
-type IconName = "overview" | "discover" | "opportunity" | "introduction" | "identity" | "graph" | "assistant";
+type IconName = "overview" | "discover" | "opportunity" | "introduction" | "identity" | "graph" | "assistant" | "scanner" | "conference";
 
 type NavItem = {
   href: string;
@@ -21,10 +21,17 @@ const workspaceItems: NavItem[] = [
   { href: "/assistant", label: "Research Assistant", description: "Grounded evidence reasoning", icon: "assistant" },
   { href: "/opportunities", label: "Opportunities", description: "Positions, fellowships, grants", icon: "opportunity" },
   { href: "/introductions", label: "Introductions", description: "Purpose-led scientific outreach", icon: "introduction" },
+  { href: "/scanner", label: "Scanner", description: "Real-world position & grant databases", icon: "scanner" },
+  { href: "/conferences", label: "Conferences", description: "Rankings, CFPs, and CME credit", icon: "conference" },
 ];
 
-const identityItems: NavItem[] = [
+const identityItemsIndividual: NavItem[] = [
   { href: "/profile", label: "Scientific Identity", description: "Profile, evidence, provenance", icon: "identity" },
+  { href: "/graph", label: "Evidence Graph", description: "Scientific relationships", icon: "graph" },
+];
+
+const identityItemsInstitution: NavItem[] = [
+  { href: "/organization/profile", label: "Organization Profile", description: "Institutional identity & postings", icon: "identity" },
   { href: "/graph", label: "Evidence Graph", description: "Scientific relationships", icon: "graph" },
 ];
 
@@ -34,9 +41,12 @@ const pageNames: Array<[string, string]> = [
   ["/opportunities", "Opportunity Intelligence"],
   ["/introductions", "Scientific Introductions"],
   ["/graph", "Scientific Evidence Graph"],
+  ["/scanner", "Scanner Directory"],
+  ["/conferences", "Conferences & Credit"],
   ["/institutions", "Institutional Intelligence"],
   ["/researchers", "Researcher Profile"],
   ["/settings", "Settings"],
+  ["/organization/profile", "Organization Profile"],
   ["/profile", "Scientific Identity"],
   ["/", "Research Overview"],
 ];
@@ -100,6 +110,18 @@ function Icon({ name }: { name: IconName }) {
         <path d="M8 8h8M8 11h5" />
       </>
     ),
+    scanner: (
+      <>
+        <circle cx="12" cy="12" r="8.5" />
+        <path d="M12 12 17 8.5M12 6.5V12" />
+      </>
+    ),
+    conference: (
+      <>
+        <rect x="4" y="5" width="16" height="13" rx="2" />
+        <path d="M4 9.5h16M8 3.5v3M16 3.5v3M9 13.5h6" />
+      </>
+    ),
   };
 
   return (
@@ -157,11 +179,19 @@ function NavigationGroup({
   );
 }
 
-export function ProductShell({ children }: { children: ReactNode }) {
+export function ProductShell({
+  children,
+  accountKind = "individual",
+}: {
+  children: ReactNode;
+  accountKind?: "individual" | "institution";
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const pageName = pageNames.find(([prefix]) => prefix === "/" ? pathname === "/" : pathname.startsWith(prefix))?.[1] ?? "Research Workspace";
+  const identityItems = accountKind === "institution" ? identityItemsInstitution : identityItemsIndividual;
+  const identityHref = accountKind === "institution" ? "/organization/profile" : "/profile";
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -263,8 +293,8 @@ export function ProductShell({ children }: { children: ReactNode }) {
               <kbd>⌘K</kbd>
             </Link>
             <SystemStatus />
-            <Link aria-label="Open Scientific Identity" className={styles.avatar} href="/profile">
-              <span>RI</span>
+            <Link aria-label="Open Scientific Identity" className={styles.avatar} href={identityHref}>
+              <span>{accountKind === "institution" ? "IN" : "RI"}</span>
             </Link>
           </div>
         </header>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getPublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { MarketingLanding } from "./marketing-landing";
 import styles from "./page.module.css";
 
@@ -88,11 +89,29 @@ const evidencePrinciples = [
 export default async function HomePage() {
   const user = await getCurrentUser();
   if (!user) {
-    return <MarketingLanding />;
+    const ticker = await getPublicOpportunityTicker();
+    return <MarketingLanding ticker={ticker} />;
   }
 
+  const isInstitution = user.accountKind === "INSTITUTION";
+  const identityHref = isInstitution ? "/organization/profile" : "/profile";
+  const surfaces = isInstitution
+    ? intelligenceSurfaces.map((surface) =>
+        surface.href === "/profile"
+          ? {
+              ...surface,
+              label: "Institutional Identity",
+              title: "Present your institution with evidence, not vanity metrics.",
+              copy: "Claimed organization record, opportunity postings, and researcher-facing verification status live in one institutional profile.",
+              href: "/organization/profile",
+              action: "Open institutional profile",
+            }
+          : surface,
+      )
+    : intelligenceSurfaces;
+
   return (
-    <ProductShell>
+    <ProductShell accountKind={user.accountKind === "INSTITUTION" ? "institution" : "individual"}>
       <div className={styles.dashboard}>
         <header className={styles.hero}>
           <div className={styles.heroCopy}>
@@ -103,7 +122,7 @@ export default async function HomePage() {
             </p>
             <div className={styles.heroActions}>
               <Link className="primaryButton" href="/discover">Start scientific discovery</Link>
-              <Link className="secondary" href="/profile">Review Scientific Identity</Link>
+              <Link className="secondary" href={identityHref}>{isInstitution ? "Review Institutional Profile" : "Review Scientific Identity"}</Link>
             </div>
           </div>
 
@@ -163,7 +182,7 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.surfaceGrid}>
-            {intelligenceSurfaces.map((surface) => (
+            {surfaces.map((surface) => (
               <Link className={styles.surfaceCard} href={surface.href} key={surface.index}>
                 <div className={styles.surfaceTop}>
                   <span>{surface.index}</span>

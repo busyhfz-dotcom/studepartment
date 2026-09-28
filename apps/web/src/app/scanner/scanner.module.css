@@ -1,0 +1,123 @@
+.shell {
+  max-width: 1200px;
+  padding-bottom: 90px;
+}
+
+.header {
+  max-width: 900px;
+  margin: 2px 0 30px;
+}
+
+.header h1 {
+  max-width: 900px;
+  margin: 14px 0 13px;
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1.02;
+  letter-spacing: -.05em;
+  font-weight: 660;
+}
+
+.category {
+  margin-top: 34px;
+}
+
+.categoryHeading {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.categoryHeading h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 680;
+  letter-spacing: -.02em;
+}
+
+.categoryHeading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.sourceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.sourceCard {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+  text-decoration: none;
+  transition: border-color var(--duration-fast) var(--ease), transform var(--duration-fast) var(--ease);
+}
+
+.sourceCard:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+
+.sourceTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sourceTop strong {
+  font-size: 13px;
+  font-weight: 720;
+  color: var(--text);
+}
+
+.sourceTop span {
+  color: var(--accent-strong);
+  font-size: 11px;
+}
+
+.sourceCard p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 9.5px;
+  line-height: 1.55;
+}
+
+.sourceMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.sourceMeta span {
+  padding: 4px 7px;
+  color: var(--muted-2);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-subtle);
+  font-size: 7.5px;
+  font-weight: 700;
+}
+
+.footnote {
+  max-width: 780px;
+  margin: 40px 0 0;
+  padding-top: 18px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  font-size: 9.5px;
+  line-height: 1.6;
+}
+
+.footnote a {
+  color: var(--accent-strong);
+  font-weight: 700;
+}

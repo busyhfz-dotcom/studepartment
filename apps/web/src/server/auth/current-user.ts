@@ -9,9 +9,12 @@ export type AccountRole =
   | "LAB_ADMIN"
   | "INSTITUTION_ADMIN";
 
+export type AccountKind = "INDIVIDUAL" | "INSTITUTION";
+
 export type CurrentUser = {
   id: string;
   role: AccountRole;
+  accountKind: AccountKind;
 };
 
 export interface SessionProvider {
@@ -41,11 +44,11 @@ export const betterAuthSessionProvider: SessionProvider = {
 
     const user = await getDb().user.findUnique({
       where: { id: session.user.id },
-      select: { id: true, role: true },
+      select: { id: true, role: true, accountKind: true },
     });
 
     if (!user) return null;
-    return { id: user.id, role: user.role };
+    return { id: user.id, role: user.role, accountKind: user.accountKind };
   },
 };
 

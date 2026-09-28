@@ -1,5 +1,30 @@
 import Link from "next/link";
+import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import styles from "./marketing-landing.module.css";
+
+const intentPaths = [
+  {
+    kicker: "Find a position",
+    title: "PhD, postdoc, or research role",
+    copy: "Get straight to source-aware opportunity intelligence — deadlines, eligibility, and institutional context before you apply.",
+    href: "/auth/sign-up?callbackUrl=%2Fopportunities",
+    action: "Start finding positions",
+  },
+  {
+    kicker: "Find a grant",
+    title: "Funding for your next project",
+    copy: "Filter funder opportunities by topic, method, and career stage instead of scanning a dozen separate portals.",
+    href: "/auth/sign-up?callbackUrl=%2Fopportunities",
+    action: "Start finding grants",
+  },
+  {
+    kicker: "Post a position or grant",
+    title: "I represent an institution or lab",
+    copy: "Register a claimed institutional profile, distinct from an individual researcher identity, to post and manage opportunities.",
+    href: "/auth/sign-up?callbackUrl=%2Fonboarding%2Forganization",
+    action: "Create an institutional profile",
+  },
+];
 
 const howItWorks = [
   {
@@ -54,7 +79,31 @@ function BrandMark() {
   );
 }
 
-export function MarketingLanding() {
+function TickerRow({ items, emptyLabel }: { items: PublicOpportunityTicker["positions"]; emptyLabel: string }) {
+  if (!items.length) {
+    return <p className={styles.tickerEmpty}>{emptyLabel}</p>;
+  }
+  const loop = [...items, ...items];
+  return (
+    <div className={styles.tickerTrack}>
+      <div className={styles.tickerScroll}>
+        {loop.map((item, index) => (
+          <Link
+            className={styles.tickerChip}
+            href="/auth/sign-up?callbackUrl=%2Fopportunities"
+            key={`${item.id}-${index}`}
+          >
+            <strong>{item.title}</strong>
+            <span>{item.organization}{item.countryCode ? ` · ${item.countryCode}` : ""}</span>
+            <small>{item.deadlineLabel}</small>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }) {
   return (
     <div className={styles.page}>
       <header className={styles.nav}>
@@ -100,6 +149,46 @@ export function MarketingLanding() {
             <div><span>04</span><div><strong>Controlled action</strong><small>Trust precedes outreach.</small></div></div>
           </div>
         </aside>
+      </section>
+
+      <section className={styles.intentSection} aria-label="Choose your path">
+        <div className={styles.sectionIntro}>
+          <div>
+            <span className="sectionLabel">Start here</span>
+            <h2>What are you trying to do right now?</h2>
+          </div>
+          <p>Pick one — everything past this point is built around getting you there in the fewest steps.</p>
+        </div>
+        <div className={styles.intentGrid}>
+          {intentPaths.map((path) => (
+            <Link className={styles.intentCard} href={path.href} key={path.kicker}>
+              <span className={styles.intentKicker}>{path.kicker}</span>
+              <strong>{path.title}</strong>
+              <p>{path.copy}</p>
+              <span className={styles.intentAction}>{path.action} <b>↗</b></span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionIntro}>
+          <div>
+            <span className="sectionLabel">Live on the platform</span>
+            <h2>New positions and grants are added continuously.</h2>
+          </div>
+          <p>A live sample of currently active listings — sign in to filter by topic, method, geography, and deadline.</p>
+        </div>
+        <div className={styles.tickerGrid}>
+          <div className={styles.tickerColumn}>
+            <span className={styles.tickerLabel}>Positions · PhD, postdoc, fellowships</span>
+            <TickerRow items={ticker.positions} emptyLabel="New positions are being added — check back shortly." />
+          </div>
+          <div className={styles.tickerColumn}>
+            <span className={styles.tickerLabel}>Grants &amp; funding</span>
+            <TickerRow items={ticker.grants} emptyLabel="New grants are being added — check back shortly." />
+          </div>
+        </div>
       </section>
 
       <section className={styles.section}>

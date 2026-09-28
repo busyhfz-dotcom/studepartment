@@ -172,6 +172,16 @@ enum ProductEventType {
   DATA_EXPORTED
 }
 
+enum AccountKind {
+  INDIVIDUAL
+  INSTITUTION
+}
+
+enum DigestFrequency {
+  WEEKLY
+  OFF
+}
+
 model User {
   id             String           @id @default(cuid())
   name           String           @default("")
@@ -179,6 +189,9 @@ model User {
   emailVerified  Boolean          @default(false)
   image           String?
   role            UserRole         @default(RESEARCHER)
+  accountKind     AccountKind      @default(INDIVIDUAL)
+  digestFrequency DigestFrequency  @default(WEEKLY)
+  lastDigestSentAt DateTime?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   researcher      ResearcherProfile?
@@ -188,6 +201,9 @@ model User {
   savedOpportunities SavedOpportunity[]
   discoveryFeedback DiscoveryFeedback[]
   productEvents ProductEvent[]
+  ownedOrganization Organization?      @relation("OrganizationOwner")
+  interestSignals   UserInterestSignal[]
+  searchQueries     SearchQueryLog[]
 }
 
 model Session {
@@ -304,8 +320,15 @@ model Organization {
   countryCode    String?
   website        String?
   verified       Boolean                  @default(false)
+  ownerUserId    String?                  @unique
+  description    String?
+  logoUrl        String?
+  contactEmail   String?
+  sizeLabel      String?
+  claimedAt      DateTime?
   createdAt      DateTime                 @default(now())
   updatedAt      DateTime                 @updatedAt
+  owner          User?                    @relation("OrganizationOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
   affiliations   ResearcherAffiliation[]
   labs           Laboratory[]
   opportunities  Opportunity[]
@@ -338,6 +361,7 @@ model ResearchTopic {
   children      ResearchTopic[]    @relation("TopicHierarchy")
   researchers   ResearcherTopic[]
   opportunities OpportunityTopic[]
+  interestSignals UserInterestSignal[]
 }
 
 model ResearcherTopic {
@@ -630,4 +654,34 @@ model ProductEvent {
 
   @@index([userId, occurredAt])
   @@index([eventType, occurredAt])
+}
+
+/// Rolling per-topic interest weight derived from a user's searches, saves,
+/// and feedback signals. Powers behavior-driven personalization without
+/// exposing raw search history to recommendation consumers.
+model UserInterestSignal {
+  id          String        @id @default(cuid())
+  userId      String
+  topicId     String
+  weight      Float         @default(0)
+  lastEventAt DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic       ResearchTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+  @@index([userId, weight])
+}
+
+/// Short-lived log of a user's free-text search queries, used only to update
+/// UserInterestSignal weights via topic matching. Never rendered to others.
+model SearchQueryLog {
+  id        String   @id @default(cuid())
+  userId    String
+  queryText String
+  context   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
