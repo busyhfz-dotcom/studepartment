@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import styles from "./marketing-landing.module.css";
 
@@ -209,6 +209,7 @@ type Surface = {
 
 /** Tabbed "platform surfaces" panel — Identity / Discovery / Institutions / Opportunities / Assistant. */
 export function PlatformTabs({ surfaces }: { surfaces: readonly Surface[] }) {
+  const tabId = useId();
   const [activeKey, setActiveKey] = useState(surfaces[0]?.key ?? "");
   const active = surfaces.find((surface) => surface.key === activeKey) ?? surfaces[0];
 
@@ -220,15 +221,30 @@ export function PlatformTabs({ surfaces }: { surfaces: readonly Surface[] }) {
             key={surface.key}
             role="tab"
             type="button"
+            id={`${tabId}-${surface.key}`}
+            aria-controls={`${tabId}-panel`}
             aria-selected={surface.key === activeKey}
+            tabIndex={surface.key === activeKey ? 0 : -1}
             onClick={() => setActiveKey(surface.key)}
+            onKeyDown={(event) => {
+              const index = surfaces.findIndex((item) => item.key === surface.key);
+              const nextIndex =
+                event.key === "ArrowRight" ? (index + 1) % surfaces.length :
+                event.key === "ArrowLeft" ? (index - 1 + surfaces.length) % surfaces.length :
+                event.key === "Home" ? 0 :
+                event.key === "End" ? surfaces.length - 1 : null;
+              if (nextIndex === null) return;
+              event.preventDefault();
+              setActiveKey(surfaces[nextIndex].key);
+              event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[nextIndex]?.focus();
+            }}
           >
             {surfaceLabel(surface.key)}
           </button>
         ))}
       </div>
       {active ? (
-        <div className={styles.surfacePanel} role="tabpanel" aria-live="polite">
+        <div className={styles.surfacePanel} id={`${tabId}-panel`} role="tabpanel" aria-labelledby={`${tabId}-${active.key}`} tabIndex={0}>
           <div className={styles.surfaceContent}>
             <span className={styles.number}>{active.number}</span>
             <h3>{active.title}</h3>
