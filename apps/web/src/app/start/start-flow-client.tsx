@@ -123,7 +123,6 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
   useEffect(() => {
     if (step !== "browse") return;
     const controller = new AbortController();
-    setLoading(true);
     const params = new URLSearchParams();
     if (kind === "grant") {
       params.set("type", "grant");
@@ -137,12 +136,14 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
     fetch(`/api/v1/opportunities?${params.toString()}`, { signal: controller.signal })
       .then((response) => response.json())
       .then((body) => {
-        if (body?.success) setResults(body.data.results as OpportunityResult[]);
+        if (!controller.signal.aborted && body?.success) setResults(body.data.results as OpportunityResult[]);
       })
       .catch(() => {
         /* aborted or transient network error — the empty state covers it */
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
 
     return () => controller.abort();
   }, [step, kind, query, country]);
@@ -153,6 +154,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
   );
 
   function openBrowse(nextKind: Kind) {
+    setLoading(true);
     setKind(nextKind);
     setQuery("");
     setCountry("");
@@ -301,9 +303,15 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
               aria-label="Search opportunities"
               placeholder="Search a topic, role or institution"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setLoading(true);
+                setQuery(event.target.value);
+              }}
             />
-            <select aria-label="Location" value={country} onChange={(event) => setCountry(event.target.value)}>
+            <select aria-label="Location" value={country} onChange={(event) => {
+              setLoading(true);
+              setCountry(event.target.value);
+            }}>
               <option value="">Any location</option>
               {countries.map((location) => (
                 <option key={location} value={location}>
@@ -362,7 +370,10 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
         <section className={styles.hero}>
           <div className={styles.wrap}>
             <Stage n={3} />
-            <button type="button" className={styles.back} onClick={() => setStep("browse")}>
+            <button type="button" className={styles.back} onClick={() => {
+              setLoading(true);
+              setStep("browse");
+            }}>
               ← Back to {isGrant ? "grants" : "positions"}
             </button>
             <h1 className={styles.serif}>
