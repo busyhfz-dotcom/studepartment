@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { SystemStatus } from "./system-status";
 import styles from "./product-shell.module.css";
 
@@ -259,6 +260,7 @@ export function ProductShell({
               <small>Evidence-aware · User controlled</small>
             </span>
           </Link>
+          <SignOutButton />
           <div className={styles.version}>
             <span>Release candidate</span>
             <strong>v1.4.0-rc.1</strong>

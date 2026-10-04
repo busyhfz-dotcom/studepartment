@@ -1,0 +1,78 @@
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 50px;
+  padding: 7px 8px;
+  color: #bdcbc5;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease), border-color var(--duration-fast) var(--ease);
+}
+
+.button:hover {
+  border-color: rgba(255, 255, 255, .05);
+  background: rgba(255, 255, 255, .035);
+}
+
+.button:focus-visible {
+  outline: 2px solid #7adac9;
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  cursor: wait;
+  opacity: .6;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  color: #8cb6a8;
+  border: 1px solid rgba(99, 200, 181, .1);
+  border-radius: 9px;
+  background: rgba(99, 200, 181, .04);
+}
+
+.icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.copy strong,
+.copy small {
+  display: block;
+}
+
+.copy strong {
+  font-size: 9px;
+  font-weight: 770;
+}
+
+.copy small {
+  margin-top: 2px;
+  color: #5c6e66;
+  font-size: 7.5px;
+}
+
+.error {
+  margin: 0;
+  color: #8b353b;
+  font-size: 11px;
+  line-height: 1.5;
+}

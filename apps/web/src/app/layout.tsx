@@ -1,23 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Manrope, Newsreader } from "next/font/google";
+import localFont from "next/font/local";
 import { getSiteUrl, siteDescription, siteName, siteTagline } from "@/lib/site";
 import "./globals.css";
 
-const sans = Manrope({
-  subsets: ["latin"],
+const sans = localFont({
+  src: "./fonts/manrope-latin-wght-normal.woff2",
+  weight: "200 800",
   variable: "--font-sans",
   display: "swap",
 });
 
-const editorial = Newsreader({
-  subsets: ["latin"],
+const editorial = localFont({
+  src: [
+    { path: "./fonts/newsreader-latin-wght-normal.woff2", weight: "200 800", style: "normal" },
+    { path: "./fonts/newsreader-latin-wght-italic.woff2", weight: "200 800", style: "italic" },
+  ],
   variable: "--font-editorial",
   display: "swap",
 });
 
-const mono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const mono = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-mono-latin-400-normal.woff2", weight: "400" },
+    { path: "./fonts/ibm-plex-mono-latin-500-normal.woff2", weight: "500" },
+    { path: "./fonts/ibm-plex-mono-latin-600-normal.woff2", weight: "600" },
+  ],
   variable: "--font-mono",
   display: "swap",
 });

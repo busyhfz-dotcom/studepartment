@@ -3,16 +3,7 @@ import type { PublicOpportunityTicker } from "@/server/opportunities/public-tick
 import { OpportunityTicker, PlatformTabs, MobileNav, Reveal } from "./marketing-landing-client";
 import styles from "./marketing-landing.module.css";
 
-/**
- * This page mirrors the "Studepartment — Main page concept" design handed
- * off by the design pass (dark-green / mint palette, Newsreader display type
- * over DM-Sans-style body copy). It keeps the concept's structure and copy
- * as close to verbatim as a server-rendered React page allows, while wiring
- * the hero ticker to the real public opportunity feed instead of sample
- * data, and adding a fifth "Institutions" platform surface for the
- * institution/lab discovery directory that did not exist when the concept
- * was designed.
- */
+/** Public platform overview, retaining the original copy and live opportunity feed. */
 
 const platformSurfaces = [
   {
@@ -135,9 +126,9 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                   <a className={styles.primary} href="#platform">
                     Explore the platform <span>↗</span>
                   </a>
-                  <a className={styles.secondary} href="#pathways">
+                  <Link className={styles.secondary} href="/start">
                     Browse positions &amp; grants ↓
-                  </a>
+                  </Link>
                 </div>
               </div>
 
