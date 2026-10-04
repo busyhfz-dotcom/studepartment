@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ProductShell } from "@/components/shell/product-shell";
 import { ScientificProfileCard } from "@/components/scientific/scientific-profile-card";
 import { PublicationEvidencePanel } from "./publication-evidence-panel";
@@ -58,7 +57,6 @@ export default async function ProfilePage({
             <Link className="secondary" href="/settings/privacy">Privacy & data</Link>
             <Link className="secondary" href={"/graph?researcher=" + profile.id}>Open evidence graph</Link>
               <Link className="primaryButton" href="/profile/edit">Edit scientific identity</Link>
-              <SignOutButton />
           </div>
         </div>
 

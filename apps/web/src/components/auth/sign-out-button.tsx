@@ -31,12 +31,20 @@ export function SignOutButton() {
     <div className={styles.control}>
       <button
         type="button"
-        className={`secondary ${styles.button}`}
+        className={styles.button}
         onClick={signOut}
         disabled={pending}
         aria-busy={pending}
       >
-        {pending ? "Signing out…" : "Sign out"}
+        <span className={styles.icon} aria-hidden="true">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M13 7l5 5-5 5M18 12H9" />
+          </svg>
+        </span>
+        <span className={styles.copy}>
+          <strong>{pending ? "Signing out…" : "Sign out"}</strong>
+          <small>Leave your workspace</small>
+        </span>
       </button>
       {error && <p className={styles.error} role="alert">{error}</p>}
     </div>
