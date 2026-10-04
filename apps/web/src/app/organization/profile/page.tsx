@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getOwnedOrganization } from "@/server/repositories/organization-repository";
@@ -32,6 +33,7 @@ export default async function OrganizationProfilePage() {
           </p>
           <div className={styles.headerActions}>
             <Link className="secondary" href={`/institutions/${organization.id}`}>View public institutional page ↗</Link>
+            <SignOutButton />
           </div>
         </header>
 

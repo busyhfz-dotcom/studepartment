@@ -1,0 +1,23 @@
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.button {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.button:disabled {
+  cursor: wait;
+  opacity: .6;
+}
+
+.error {
+  max-width: 240px;
+  margin: 0;
+  color: #8b353b;
+  font-size: 11px;
+  line-height: 1.5;
+}
