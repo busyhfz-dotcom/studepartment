@@ -33,14 +33,14 @@
 
 .scopeLink span {
   color: inherit;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: -.01em;
 }
 
 .scopeLink small {
   color: var(--muted-2);
-  font-size: 8px;
+  font-size: 11px;
   line-height: 1.35;
 }
 
@@ -48,7 +48,7 @@
   color: var(--text);
   border-color: var(--line);
   background: #fff;
-  box-shadow: 0 5px 16px rgba(15,30,24,.045);
+  box-shadow: 0 5px 16px rgba(15,19,30,.045);
 }
 
 .active::after {
@@ -60,7 +60,7 @@
   height: 5px;
   border-radius: 999px;
   background: var(--accent-strong);
-  box-shadow: 0 0 0 3px rgba(15,146,130,.06);
+  box-shadow: 0 0 0 3px rgba(20,52,141,.06);
 }
 
 @media (max-width: 680px) {
