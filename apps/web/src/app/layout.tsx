@@ -2,20 +2,13 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { getSiteUrl, siteDescription, siteName, siteTagline } from "@/lib/site";
 import "./globals.css";
+import "./theme.css";
+import { MotionRuntime } from "@/components/design/motion-runtime";
 
 const sans = localFont({
   src: "./fonts/manrope-latin-wght-normal.woff2",
   weight: "200 800",
   variable: "--font-sans",
-  display: "swap",
-});
-
-const editorial = localFont({
-  src: [
-    { path: "./fonts/newsreader-latin-wght-normal.woff2", weight: "200 800", style: "normal" },
-    { path: "./fonts/newsreader-latin-wght-italic.woff2", weight: "200 800", style: "italic" },
-  ],
-  variable: "--font-editorial",
   display: "swap",
 });
 
@@ -32,7 +25,7 @@ const mono = localFont({
 export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
-  themeColor: "#0b1412",
+  themeColor: "#080e20",
 };
 
 export const metadata: Metadata = {
@@ -63,7 +56,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${sans.variable} ${editorial.variable} ${mono.variable}`}>{children}</body>
+      <body className={`${sans.variable} ${mono.variable}`}><MotionRuntime />{children}</body>
     </html>
   );
 }
