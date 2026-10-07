@@ -27,7 +27,7 @@
   background: transparent;
   text-align: left;
   font: inherit;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 780;
   cursor: default;
 }
@@ -39,7 +39,7 @@
 .progress button span {
   color: var(--muted-2);
   font-family: var(--font-mono), monospace;
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 600;
 }
 
@@ -74,6 +74,10 @@
   line-height: 1.04;
   letter-spacing: -.048em;
   font-weight: 655;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .grid {
@@ -87,7 +91,7 @@
   display: grid;
   gap: 6px;
   color: var(--muted-2);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 810;
   letter-spacing: .035em;
 }
@@ -106,15 +110,15 @@
   background: #fff;
   box-shadow: var(--shadow-xs);
   font: inherit;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .grid input:focus,
 .grid select:focus,
 .fullField input:focus,
 .fullField select:focus {
-  border-color: rgba(15,146,130,.4);
-  box-shadow: 0 0 0 3px rgba(15,146,130,.07);
+  border-color: rgba(20,52,141,.4);
+  box-shadow: 0 0 0 3px rgba(20,52,141,.07);
 }
 
 .fullField {
@@ -123,7 +127,7 @@
 
 .fullField small {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: normal;
@@ -148,10 +152,14 @@
 .choiceColumns h3 {
   margin: 0 0 5px;
   color: var(--muted-2);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 830;
   letter-spacing: .08em;
   text-transform: uppercase;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .choiceColumns button,
@@ -165,7 +173,7 @@
   background: #fff;
   text-align: left;
   font: inherit;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 720;
   cursor: pointer;
   transition:
@@ -177,7 +185,7 @@
 .choiceColumns button:hover,
 .choices button:hover {
   border-color: var(--line-strong);
-  background: #fbfcfb;
+  background: #fbfbfc;
 }
 
 .choices {
@@ -189,7 +197,7 @@
 .choiceColumns .selected,
 .choices .selected {
   color: var(--accent-deep);
-  border-color: rgba(15,146,130,.2);
+  border-color: rgba(20,52,141,.2);
   background: var(--accent-soft);
   box-shadow: inset 2px 0 0 var(--accent-strong);
 }
@@ -215,12 +223,12 @@
 }
 
 .visibility strong {
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .visibility small {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.45;
 }
 
@@ -231,7 +239,7 @@
   border: 1px solid rgba(159,47,47,.16);
   border-radius: 8px;
   background: var(--danger-soft);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 720;
 }
 

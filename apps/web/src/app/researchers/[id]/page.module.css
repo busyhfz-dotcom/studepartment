@@ -18,6 +18,10 @@
   line-height: .96;
   letter-spacing: -.058em;
   font-weight: 660;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .role {
@@ -31,14 +35,14 @@
 .meta {
   margin: 6px 0 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .bio {
   max-width: 780px;
   margin: 15px 0 0;
-  color: #54635d;
-  font-size: 10px;
+  color: #4d556a;
+  font-size: 11px;
   line-height: 1.7;
 }
 
@@ -46,11 +50,11 @@
   position: relative;
   overflow: hidden;
   padding: 18px;
-  border: 1px solid rgba(15,146,130,.13);
+  border: 1px solid rgba(20,52,141,.13);
   border-radius: var(--radius-md);
   background:
-    radial-gradient(circle at 110% -10%, rgba(49,185,164,.11), transparent 14rem),
-    linear-gradient(150deg, rgba(239,248,245,.98), rgba(255,255,255,.96));
+    radial-gradient(circle at 110% -10%, rgba(49,85,185,.11), transparent 14rem),
+    linear-gradient(150deg, rgba(239,241,248,.98), rgba(255,255,255,.96));
   box-shadow: var(--shadow-xs);
 }
 
@@ -75,8 +79,8 @@
 
 .trustCard > p {
   margin: 6px 0 0;
-  color: #687a73;
-  font-size: 8px;
+  color: #5f6983;
+  font-size: 11px;
   line-height: 1.55;
 }
 
@@ -96,20 +100,20 @@
   padding: 6px 7px;
   border: 1px solid transparent;
   border-radius: 7px;
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 760;
 }
 
 .trustOn {
-  color: #2b705a;
-  border-color: rgba(47,143,103,.08);
+  color: #2b3d70;
+  border-color: rgba(47,73,143,.08);
   background: var(--success-soft);
 }
 
 .trustOff {
   color: var(--muted);
-  border-color: rgba(24,35,31,.04);
-  background: rgba(24,35,31,.035);
+  border-color: rgba(24,27,35,.04);
+  background: rgba(24,27,35,.035);
 }
 
 .grid {
@@ -137,10 +141,10 @@
 .tags span {
   padding: 5px 7px;
   color: var(--accent-strong);
-  border: 1px solid rgba(15,146,130,.1);
+  border: 1px solid rgba(20,52,141,.1);
   border-radius: 7px;
   background: var(--accent-soft);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 720;
 }
 
@@ -155,10 +159,10 @@
   margin: 10px 0 6px;
   padding: 5px 7px;
   color: var(--accent-strong);
-  border: 1px solid rgba(15,146,130,.11);
+  border: 1px solid rgba(20,52,141,.11);
   border-radius: 999px;
   background: var(--accent-soft);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 820;
   text-transform: capitalize;
 }
@@ -184,11 +188,15 @@
   font-size: 24px;
   letter-spacing: -.035em;
   font-weight: 660;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .publicationHeading > a {
   color: var(--accent-strong);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 820;
 }
 
@@ -223,7 +231,7 @@
   gap: 9px;
   color: var(--muted-2);
   font-family: var(--font-mono), monospace;
-  font-size: 6.5px;
+  font-size: 11px;
 }
 
 .publicationMeta span:first-child {
@@ -232,7 +240,7 @@
   border-radius: 999px;
   background: var(--accent-soft);
   font-family: var(--font-sans), sans-serif;
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -241,12 +249,16 @@
   font-size: 11px;
   line-height: 1.42;
   letter-spacing: -.012em;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .publicationCard > p {
   margin: 0;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .publicationIds {
@@ -259,15 +271,15 @@
   padding: 4px 5px;
   color: var(--muted);
   border-radius: 6px;
-  background: rgba(24,35,31,.04);
+  background: rgba(24,27,35,.04);
   font-family: var(--font-mono), monospace;
-  font-size: 6.5px;
+  font-size: 11px;
 }
 
 .publicationCard > a {
   justify-self: start;
   color: var(--accent-strong);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 820;
 }
 
@@ -278,7 +290,7 @@
   border: 1px dashed var(--line-strong);
   border-radius: 9px;
   background: rgba(255,255,255,.45);
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .graphPanel {
@@ -290,12 +302,12 @@
   margin-top: 9px;
   padding: 22px;
   overflow: hidden;
-  color: #edf5f1;
+  color: #edeff5;
   border: 1px solid rgba(255,255,255,.06);
   border-radius: var(--radius-md);
   background:
-    radial-gradient(circle at 88% 0%, rgba(65,190,170,.13), transparent 20rem),
-    linear-gradient(145deg, #101a17, #0a1310);
+    radial-gradient(circle at 88% 0%, rgba(65,98,190,.13), transparent 20rem),
+    linear-gradient(145deg, #10131a, #0a0c13);
   box-shadow: var(--shadow-sm);
 }
 
@@ -306,25 +318,29 @@
   bottom: -86px;
   width: 190px;
   height: 190px;
-  border: 1px solid rgba(104,214,195,.06);
+  border: 1px solid rgba(104,133,214,.06);
   border-radius: 50%;
-  box-shadow: 0 0 0 32px rgba(104,214,195,.015);
+  box-shadow: 0 0 0 32px rgba(104,133,214,.015);
   pointer-events: none;
 }
 
 .graphPanel h2 {
   margin: 6px 0 5px;
-  color: #f5faf8;
+  color: #f5f6fa;
   font-size: 24px;
   letter-spacing: -.038em;
   font-weight: 650;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .graphPanel p {
   max-width: 730px;
   margin: 0;
-  color: #81958d;
-  font-size: 8px;
+  color: #78829e;
+  font-size: 11px;
   line-height: 1.6;
 }
 
@@ -336,11 +352,11 @@
   justify-content: center;
   min-height: 39px;
   padding: 0 11px;
-  color: #08211c;
+  color: #080f21;
   border: 0;
   border-radius: 9px;
-  background: #78dac7;
-  font-size: 8px;
+  background: #7892da;
+  font-size: 11px;
   font-weight: 850;
   white-space: nowrap;
 }
@@ -355,22 +371,22 @@
   gap: 24px;
   margin-top: 9px;
   padding: 13px 14px 13px 17px;
-  border: 1px solid rgba(24,35,31,.09);
+  border: 1px solid rgba(24,27,35,.09);
   border-radius: 12px;
   background: rgba(255,255,255,.92);
-  box-shadow: 0 14px 34px rgba(15,30,24,.08);
+  box-shadow: 0 14px 34px rgba(15,19,30,.08);
   backdrop-filter: blur(18px) saturate(135%);
 }
 
 .actionBar strong {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 790;
 }
 
 .actionBar p {
   margin: 3px 0 0;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .actionButtons {
@@ -410,3 +426,7 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* Shared electric-blue interaction treatment. */
+.trustCard,.publicationCard{transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){.trustCard:hover,.publicationCard:hover{transform:translateY(-3px);box-shadow:0 16px 36px #1728470c;border-color:#c5d4f6}}
