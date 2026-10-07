@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { authClient } from "@/lib/auth-client";
 import styles from "./auth.module.css";
+import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
 
 type Mode = "sign-in" | "sign-up";
 
@@ -111,6 +112,8 @@ export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: stri
       </section>
 
       <aside className={styles.context}>
+        <Link href="/" className={styles.contextBrand}><span><BrandSymbol /></span>Studepartment.</Link>
+        <ResearchOrbit />
         <span className="eyebrow">Research trust architecture</span>
         <h2>Authentication protects identity. Evidence establishes trust.</h2>
         <p>Your account determines who can change user-owned research data. Scientific verification, provenance, and source confidence remain separate evidence layers.</p>

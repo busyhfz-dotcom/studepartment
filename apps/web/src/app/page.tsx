@@ -5,6 +5,7 @@ import { getPublicOpportunityTicker } from "@/server/opportunities/public-ticker
 import { MarketingLanding } from "./marketing-landing";
 import { HomeGate } from "./home-gate-client";
 import styles from "./page.module.css";
+import { ResearchOrbit } from "@/components/design/research-art";
 
 const intelligenceSurfaces = [
   {
@@ -126,7 +127,7 @@ export default async function HomePage() {
         <header className={styles.hero}>
           <div className={styles.heroCopy}>
             <span className="eyebrow">Medical Research Intelligence</span>
-            <h1>Research decisions, grounded in evidence.</h1>
+            <h1>Research decisions,<br /><em>grounded in evidence.</em></h1>
             <p>
               Studepartment connects scientific identity, discovery, opportunities, institutions, and trusted introductions into one evidence-aware research workspace.
             </p>
@@ -137,6 +138,7 @@ export default async function HomePage() {
           </div>
 
           <aside className={styles.heroIndex} aria-label="Platform principles">
+            <ResearchOrbit />
             <div className={styles.heroIndexTop}>
               <span>Research operating principles</span>
               <strong>04 / core</strong>

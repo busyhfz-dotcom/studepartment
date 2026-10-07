@@ -10,7 +10,7 @@
 
 .wrap label > span {
   color: var(--muted-2);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 820;
   letter-spacing: .055em;
   text-transform: uppercase;
@@ -27,7 +27,7 @@
   background: #fff;
   box-shadow: var(--shadow-xs);
   font: inherit;
-  font-size: 8px;
+  font-size: 11px;
   cursor: pointer;
   transition:
     border-color var(--duration-fast) var(--ease),
@@ -37,12 +37,12 @@
 
 .wrap select:hover {
   border-color: var(--line-strong);
-  background: #fbfcfb;
+  background: #fbfbfc;
 }
 
 .wrap select:focus {
-  border-color: rgba(15,146,130,.4);
-  box-shadow: 0 0 0 3px rgba(15,146,130,.065);
+  border-color: rgba(20,52,141,.4);
+  box-shadow: 0 0 0 3px rgba(20,52,141,.065);
 }
 
 .wrap select:disabled {
@@ -53,12 +53,12 @@
 
 .message,
 .error {
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.4;
 }
 
 .message {
-  color: #36705d;
+  color: #364570;
 }
 
 .error {

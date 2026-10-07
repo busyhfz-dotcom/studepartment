@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { OpportunityTicker, PlatformTabs, MobileNav, Reveal } from "./marketing-landing-client";
 import styles from "./marketing-landing.module.css";
+import { BrandSymbol, ResearchPreview } from "@/components/design/research-art";
 
 /** Public platform overview, retaining the original copy and live opportunity feed. */
 
@@ -85,7 +86,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
         <div className={styles.container}>
           <div className={styles.topInner}>
             <Link className={styles.brand} href="/">
-              <span className={styles.mark}>S</span>
+              <span className={styles.mark}><BrandSymbol /></span>
               <span>
                 studepartment<b>.</b>
               </span>
@@ -132,12 +133,13 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                 </div>
               </div>
 
-              <OpportunityTicker ticker={ticker} />
             </div>
             <div className={styles.heroBottom}>
               <span>Researcher-controlled · source-aware · private by default</span>
               <span>Explore the platform ↓</span>
             </div>
+            <ResearchPreview />
+            <OpportunityTicker ticker={ticker} />
           </div>
         </section>
 
@@ -251,7 +253,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
 
       <footer className={`${styles.footer} ${styles.container}`}>
         <Link className={styles.brand} href="/">
-          <span className={styles.mark}>S</span>
+          <span className={styles.mark}><BrandSymbol /></span>
           <span>
             studepartment<b>.</b>
           </span>

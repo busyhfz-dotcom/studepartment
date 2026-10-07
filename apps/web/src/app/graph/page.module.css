@@ -22,7 +22,7 @@
   border-radius: 999px;
   background: rgba(255,255,255,.72);
   box-shadow: var(--shadow-xs);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 820;
 }
 
@@ -33,6 +33,10 @@
   line-height: .96;
   letter-spacing: -.06em;
   font-weight: 655;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .loadingShell {
@@ -44,7 +48,7 @@
 .loadingGrid div {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: linear-gradient(90deg, rgba(31,39,35,.03), rgba(31,39,35,.075), rgba(31,39,35,.03));
+  background: linear-gradient(90deg, rgba(29,32,41,.03), rgba(29,32,41,.075), rgba(29,32,41,.03));
   background-size: 220% 100%;
   animation: graphLoading 1.2s ease-in-out infinite;
 }
@@ -81,13 +85,17 @@
   font-size: 26px;
   letter-spacing: -.035em;
   font-weight: 660;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .errorState p {
   max-width: 680px;
   margin: 0 0 16px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.6;
 }
 
@@ -99,7 +107,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background:
-    linear-gradient(150deg, rgba(255,255,255,.98), rgba(247,249,248,.92));
+    linear-gradient(150deg, rgba(255,255,255,.98), rgba(247,247,249,.92));
   box-shadow: var(--shadow-xs);
 }
 
@@ -108,12 +116,16 @@
   font-size: 29px;
   letter-spacing: -.04em;
   font-weight: 660;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .summaryIntro p {
   margin: 0;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .researcherEvidence {
@@ -126,16 +138,16 @@
 .researcherEvidence span {
   padding: 5px 7px;
   color: var(--accent-strong);
-  border: 1px solid rgba(15,146,130,.12);
+  border: 1px solid rgba(20,52,141,.12);
   border-radius: 999px;
   background: var(--accent-soft);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 820;
 }
 
 .researcherEvidence strong {
   color: var(--text);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 760;
 }
 
@@ -171,7 +183,7 @@
 }
 
 .countCardActive {
-  border-color: rgba(15,146,130,.2);
+  border-color: rgba(20,52,141,.2);
   background: var(--accent-soft);
 }
 
@@ -198,7 +210,7 @@
 .countCard span,
 .countCardActive span {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 760;
 }
 
@@ -210,8 +222,8 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background:
-    linear-gradient(rgba(24,35,31,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(24,35,31,.025) 1px, transparent 1px),
+    linear-gradient(rgba(24,27,35,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24,27,35,.025) 1px, transparent 1px),
     var(--surface);
   background-size: 30px 30px, 30px 30px, auto;
   box-shadow: var(--shadow-xs);
@@ -221,7 +233,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(15,146,130,.035), transparent 28rem);
+  background: radial-gradient(circle at 50% 0%, rgba(20,52,141,.035), transparent 28rem);
   pointer-events: none;
 }
 
@@ -235,12 +247,12 @@
   margin: 0 auto;
   padding: 15px 18px;
   color: #fff;
-  border: 1px solid rgba(115,222,204,.11);
+  border: 1px solid rgba(115,144,222,.11);
   border-radius: 12px;
   background:
-    radial-gradient(circle at 70% -40%, rgba(80,203,183,.13), transparent 15rem),
-    linear-gradient(145deg, #111d19, #0a1310);
-  box-shadow: 0 12px 28px rgba(10,24,18,.12);
+    radial-gradient(circle at 70% -40%, rgba(80,113,203,.13), transparent 15rem),
+    linear-gradient(145deg, #11141d, #0a0c13);
+  box-shadow: 0 12px 28px rgba(10,14,24,.12);
 }
 
 .graphRoot strong {
@@ -249,13 +261,13 @@
 }
 
 .graphRoot small {
-  color: #7d948b;
-  font-size: 8px;
+  color: #76809b;
+  font-size: 11px;
 }
 
 .rootType {
-  color: #72d8c5;
-  font-size: 7px;
+  color: #728dd8;
+  font-size: 11px;
   font-weight: 850;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -283,7 +295,7 @@
   padding: 11px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(247,249,248,.84);
+  background: rgba(247,247,249,.84);
   backdrop-filter: blur(4px);
 }
 
@@ -296,7 +308,7 @@
 
 .lane > header span {
   color: var(--text);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -310,7 +322,7 @@
   border-radius: 7px;
   background: #fff;
   font-family: var(--font-mono), monospace;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 600;
 }
 
@@ -318,7 +330,7 @@
   min-height: 38px;
   margin: 5px 0 10px;
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.5;
 }
 
@@ -357,7 +369,7 @@
   justify-content: space-between;
   gap: 7px;
   color: var(--muted-2);
-  font-size: 6.5px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: .05em;
   text-transform: uppercase;
@@ -372,13 +384,13 @@
 
 .evidence_verified,
 .evidence_corroborated {
-  color: #236650;
+  color: #233566;
   background: var(--success-soft);
 }
 
 .evidence_source-backed {
-  color: #546354;
-  background: rgba(84,105,88,.08);
+  color: #4d556a;
+  background: rgba(79,87,110,.08);
 }
 
 .evidence_asserted {
@@ -389,16 +401,20 @@
 .nodeCard h3,
 .nodeCardMuted h3 {
   margin: 0;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.38;
   letter-spacing: -.01em;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .nodeCard p,
 .nodeCardMuted p {
   margin: 0;
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.45;
 }
 
@@ -411,7 +427,7 @@
   padding-top: 6px;
   color: var(--muted-2);
   border-top: 1px solid var(--line);
-  font-size: 6.5px;
+  font-size: 11px;
 }
 
 .nodeCard footer a,
@@ -426,7 +442,7 @@
   border: 1px dashed var(--line-strong);
   border-radius: 8px;
   background: rgba(255,255,255,.45);
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.5;
 }
 
@@ -451,13 +467,17 @@
   font-size: 25px;
   letter-spacing: -.037em;
   font-weight: 660;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .edgeHeading p {
   max-width: 780px;
   margin: 0;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 11px;
   line-height: 1.55;
 }
 
@@ -469,7 +489,7 @@
   border-radius: 8px;
   background: #fff;
   font: inherit;
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 820;
   cursor: pointer;
 }
@@ -498,7 +518,7 @@
 .edgeTableHeader {
   color: var(--muted-2);
   background: var(--surface-subtle);
-  font-size: 6.5px;
+  font-size: 11px;
   font-weight: 850;
   letter-spacing: .07em;
   text-transform: uppercase;
@@ -507,21 +527,21 @@
 .edgeRow {
   min-height: 47px;
   border-top: 1px solid var(--line);
-  font-size: 7px;
+  font-size: 11px;
 }
 
 .edgeRow:hover {
-  background: rgba(247,249,248,.7);
+  background: rgba(247,247,249,.7);
 }
 
 .edgeRow > span:first-child,
 .edgeRow > span:nth-child(3) {
-  color: #44534c;
+  color: #3f4658;
 }
 
 .edgeRow > strong {
   color: var(--text);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 760;
 }
 
@@ -532,13 +552,13 @@
 
 .edgeEvidence b {
   color: var(--accent-strong);
-  font-size: 6.5px;
+  font-size: 11px;
   text-transform: capitalize;
 }
 
 .edgeEvidence small {
   color: var(--muted-2);
-  font-size: 6.5px;
+  font-size: 11px;
 }
 
 .graphFootnote {
@@ -548,7 +568,7 @@
   margin-top: 10px;
   color: var(--muted-2);
   font-family: var(--font-mono), monospace;
-  font-size: 6.5px;
+  font-size: 11px;
 }
 
 .graphFootnote strong {
@@ -565,7 +585,11 @@
 @media (max-width: 760px) {
   .header h1 {
     font-size: 45px;
-  }
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
+}
 
   .graphSummary {
     grid-template-columns: 1fr;

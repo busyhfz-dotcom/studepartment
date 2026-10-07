@@ -244,7 +244,7 @@ export function PlatformTabs({ surfaces }: { surfaces: readonly Surface[] }) {
         ))}
       </div>
       {active ? (
-        <div className={styles.surfacePanel} id={`${tabId}-panel`} role="tabpanel" aria-labelledby={`${tabId}-${active.key}`} tabIndex={0}>
+        <div key={active.key} className={styles.surfacePanel} id={`${tabId}-panel`} role="tabpanel" aria-labelledby={`${tabId}-${active.key}`} tabIndex={0}>
           <div className={styles.surfaceContent}>
             <span className={styles.number}>{active.number}</span>
             <h3>{active.title}</h3>

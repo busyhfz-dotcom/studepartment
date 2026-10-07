@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { OpportunityResult } from "@/lib/api-contracts";
 import styles from "./start.module.css";
+import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
 
 type Kind = "position" | "grant";
 type Step = "welcome" | "browse" | "detail" | "next" | "institutions";
@@ -71,14 +72,14 @@ function TopBar({ onViewSite }: { onViewSite?: () => void }) {
     <header className={styles.topbar}>
       {onViewSite ? (
         <button type="button" className={styles.brand} onClick={onViewSite} aria-label="Studepartment home">
-          <span className={styles.mark}>S</span>
+          <span className={styles.mark}><BrandSymbol /></span>
           <span>
             studepartment<b>.</b>
           </span>
         </button>
       ) : (
         <Link className={styles.brand} href="/" aria-label="Studepartment home">
-          <span className={styles.mark}>S</span>
+          <span className={styles.mark}><BrandSymbol /></span>
           <span>
             studepartment<b>.</b>
           </span>
@@ -174,6 +175,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
           <div className={styles.wrap}>
             <Stage n={1} />
             <div className={styles.entryHead}>
+              <ResearchOrbit />
               <span className={styles.eyebrow}>Welcome / choose your path</span>
               <h1 className={styles.serif}>
                 What are you looking for <em>today?</em>

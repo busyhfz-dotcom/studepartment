@@ -18,12 +18,16 @@
   line-height: .95;
   letter-spacing: -.06em;
   font-weight: 655;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .hero p {
   margin: 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .hero > a {
@@ -36,7 +40,7 @@
   border-radius: 9px;
   background: #fff;
   box-shadow: var(--shadow-xs);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 820;
   white-space: nowrap;
 }
@@ -71,7 +75,7 @@
   bottom: -28px;
   width: 72px;
   height: 72px;
-  border: 1px solid rgba(15,146,130,.05);
+  border: 1px solid rgba(20,52,141,.05);
   border-radius: 50%;
 }
 
@@ -86,7 +90,7 @@
 .metrics span {
   max-width: 150px;
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.4;
 }
 
@@ -98,11 +102,11 @@
   margin-top: 9px;
   padding: 20px;
   overflow: hidden;
-  border: 1px solid rgba(15,146,130,.13);
+  border: 1px solid rgba(20,52,141,.13);
   border-radius: var(--radius-md);
   background:
-    radial-gradient(circle at 92% -18%, rgba(55,184,163,.1), transparent 20rem),
-    linear-gradient(145deg, rgba(240,249,246,.98), rgba(255,255,255,.96));
+    radial-gradient(circle at 92% -18%, rgba(55,89,184,.1), transparent 20rem),
+    linear-gradient(145deg, rgba(240,242,249,.98), rgba(255,255,255,.96));
   box-shadow: var(--shadow-xs);
 }
 
@@ -123,13 +127,17 @@
   line-height: 1.14;
   letter-spacing: -.038em;
   font-weight: 660;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .fitCopy p {
   max-width: 680px;
   margin: 0;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 11px;
   line-height: 1.6;
 }
 
@@ -145,7 +153,7 @@
   gap: 3px;
   min-height: 78px;
   padding: 10px;
-  border: 1px solid rgba(15,146,130,.09);
+  border: 1px solid rgba(20,52,141,.09);
   border-radius: 9px;
   background: rgba(255,255,255,.68);
 }
@@ -159,7 +167,7 @@
 
 .fitSignals span {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.35;
 }
 
@@ -169,13 +177,13 @@
   grid-template-columns: repeat(2, minmax(0,1fr));
   gap: 5px 16px;
   padding-top: 12px;
-  border-top: 1px solid rgba(15,146,130,.1);
+  border-top: 1px solid rgba(20,52,141,.1);
 }
 
 .fitReasons p {
   margin: 0;
-  color: #356a59;
-  font-size: 8px;
+  color: #35436a;
+  font-size: 11px;
   line-height: 1.5;
 }
 
@@ -193,8 +201,8 @@
   color: #fff;
   border-radius: 9px;
   background: var(--accent-strong);
-  box-shadow: 0 7px 16px rgba(8,117,104,.11);
-  font-size: 8px;
+  box-shadow: 0 7px 16px rgba(16,41,109,.11);
+  font-size: 11px;
   font-weight: 840;
 }
 
@@ -224,6 +232,10 @@
   line-height: 1.2;
   letter-spacing: -.03em;
   font-weight: 660;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .signalList,
@@ -255,18 +267,18 @@
 .stack span,
 .stack p {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
 }
 
 .signalList strong {
   color: var(--text);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 760;
 }
 
 .stack strong {
   color: var(--text);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 770;
 }
 
@@ -278,7 +290,7 @@
 .stack a {
   justify-self: start;
   color: var(--accent-strong);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 820;
 }
 
@@ -316,24 +328,24 @@
   right: 10px;
   top: 9px;
   color: var(--accent-strong);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .people strong {
   padding-right: 18px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 790;
 }
 
 .people span {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
 }
 
 .people small {
   margin-top: auto;
   color: var(--muted-2);
-  font-size: 6.5px;
+  font-size: 11px;
   line-height: 1.4;
 }
 
@@ -341,7 +353,7 @@
   max-width: 900px;
   margin: 12px 0 0;
   color: var(--muted-2);
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.55;
 }
 
@@ -374,7 +386,11 @@
 @media (max-width: 560px) {
   .hero h1 {
     font-size: 44px;
-  }
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
+}
 
   .metrics,
   .fitSignals,

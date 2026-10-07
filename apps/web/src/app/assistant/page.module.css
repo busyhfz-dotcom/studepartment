@@ -21,7 +21,7 @@
   border-radius: 999px;
   background: rgba(255,255,255,.72);
   box-shadow: var(--shadow-xs);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 820;
 }
 
@@ -32,6 +32,10 @@
   line-height: .965;
   letter-spacing: -.058em;
   font-weight: 660;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .header p {
@@ -47,7 +51,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background:
-    linear-gradient(155deg, rgba(255,255,255,.98), rgba(247,249,248,.92));
+    linear-gradient(155deg, rgba(255,255,255,.98), rgba(247,247,249,.92));
   box-shadow: var(--shadow-sm);
 }
 
@@ -75,10 +79,10 @@
 .guardrails span {
   padding: 5px 7px;
   color: var(--accent-strong);
-  border: 1px solid rgba(15,146,130,.11);
+  border: 1px solid rgba(20,52,141,.11);
   border-radius: 999px;
   background: var(--accent-soft);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -107,8 +111,8 @@
 }
 
 .composer textarea:focus {
-  border-color: rgba(15,146,130,.4);
-  box-shadow: 0 0 0 3px rgba(15,146,130,.07);
+  border-color: rgba(20,52,141,.4);
+  box-shadow: 0 0 0 3px rgba(20,52,141,.07);
 }
 
 .composerFooter {
@@ -122,7 +126,7 @@
 .composerFooter > span {
   color: var(--muted-2);
   font-family: var(--font-mono), monospace;
-  font-size: 7px;
+  font-size: 11px;
 }
 
 .suggestions {
@@ -139,7 +143,7 @@
   border-radius: 8px;
   background: #fff;
   font: inherit;
-  font-size: 8px;
+  font-size: 11px;
   cursor: pointer;
   text-align: left;
   transition:
@@ -160,20 +164,20 @@
   gap: 12px;
   margin-top: 9px;
   padding: 11px 13px;
-  border: 1px solid rgba(103,117,110,.12);
+  border: 1px solid rgba(92,102,128,.12);
   border-radius: 9px;
-  background: rgba(24,35,31,.028);
+  background: rgba(24,27,35,.028);
 }
 
 .privacyNote strong {
   white-space: nowrap;
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .privacyNote p {
   margin: 0;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 11px;
   line-height: 1.55;
 }
 
@@ -184,7 +188,7 @@
   border: 1px solid rgba(143,68,61,.18);
   border-radius: 9px;
   background: var(--danger-soft);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .answerGrid {
@@ -214,14 +218,14 @@
 .answerTopline > span:last-child {
   color: var(--muted-2);
   font-family: var(--font-mono), monospace;
-  font-size: 7px;
+  font-size: 11px;
 }
 
 .answerText {
   margin-top: 14px;
   white-space: pre-wrap;
-  color: #34423c;
-  font-size: 10px;
+  color: #323744;
+  font-size: 11px;
   line-height: 1.75;
 }
 
@@ -236,12 +240,12 @@
 .limits p {
   margin: 0;
   color: var(--muted-2);
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.5;
 }
 
 .sourceHeader strong {
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .sourceList {
@@ -269,26 +273,26 @@
 .sourceId {
   color: var(--accent-strong);
   font-family: var(--font-mono), monospace;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 900;
 }
 
 .sourceList article > div span:last-child {
   padding: 4px 5px;
   border-radius: 6px;
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 800;
 }
 
 .evidence_verified,
 .evidence_corroborated {
-  color: #286b55;
+  color: #283a6b;
   background: var(--success-soft);
 }
 
 .evidence_source-backed {
-  color: #5c675f;
-  background: rgba(82,97,87,.07);
+  color: #525a71;
+  background: rgba(75,83,104,.07);
 }
 
 .evidence_asserted {
@@ -298,14 +302,18 @@
 
 .sourceList h3 {
   margin: 0;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.35;
+
+  font-family: var(--font-sans), Arial, sans-serif;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .sourceList p {
   margin: 0;
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
   line-height: 1.5;
 }
 
@@ -317,7 +325,7 @@
   padding-top: 5px;
   color: var(--muted-2);
   border-top: 1px solid var(--line);
-  font-size: 7px;
+  font-size: 11px;
 }
 
 .sourceList a {
@@ -342,7 +350,7 @@
   max-width: 760px;
   margin: 5px 0 0;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.55;
 }
 
