@@ -8,3 +8,36 @@ button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,trans
 .chip{background:#f1f4fb;color:#617393;border-color:#e1e7f3}.trustPanel{background:#edf2ff;border-color:#dce5ff}.trustPanel span{color:#7d91b7}.profileName{font-family:var(--font-sans),Arial,sans-serif;font-weight:800;font-size:clamp(32px,4vw,48px);line-height:1.15}.profileCard{border-radius:18px}.profileTopline{background:radial-gradient(ellipse at right top,#a696ef24,transparent 60%),linear-gradient(135deg,#f1f5ff,#e8edff)}.profileSection,.profileSplit{background:white}.card,.panel,.profileCard{transition:box-shadow .3s var(--ease),border-color .3s var(--ease)}.card:hover{box-shadow:var(--shadow-sm);border-color:#d3def6}.lede{font-size:14px;line-height:1.85}.statement h2{font-weight:750;line-height:1.2}
 @media(prefers-reduced-motion:no-preference){main h1{animation:headingArrival .65s var(--ease) both}.primaryButton:disabled{animation:pendingPulse 1.5s ease-in-out infinite}@keyframes headingArrival{from{opacity:.3;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}@keyframes pendingPulse{50%{opacity:.6}}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Branded page scrollbar for the dark entry and the shared workspace. */
+html::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  background: #0d1730;
+}
+html::-webkit-scrollbar-track {
+  background: #0d1730;
+  box-shadow: inset 1px 0 #ffffff14;
+}
+html::-webkit-scrollbar-thumb {
+  min-height: 48px;
+  border: 3px solid #0d1730;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #91aeff, #7869df);
+}
+html::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #b2c6ff, #9d89f3);
+}
+html::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+html::-webkit-scrollbar-corner { background: #0d1730; }
+
+@supports (-moz-appearance: none) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #8298f2 #0d1730;
+  }
+}
