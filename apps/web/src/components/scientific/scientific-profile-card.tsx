@@ -1,4 +1,5 @@
 import type { ScientificIdentity } from "@/features/scientific-identity/types";
+import { IdentityAvatar } from "@/components/identity/identity-avatar";
 
 export function ScientificProfileCard({ identity }: { identity: ScientificIdentity }) {
   const verifiedCount = identity.verification.filter((item) => item.verified).length;
@@ -6,13 +7,16 @@ export function ScientificProfileCard({ identity }: { identity: ScientificIdenti
   return (
     <article className="profileCard">
       <div className="profileTopline">
-        <div>
-          <span className="eyebrow">Scientific identity</span>
-          <h1 className="profileName">{identity.fullName}</h1>
-          <p className="profileHeadline">{identity.headline}</p>
-          <p className="profileMeta">
-            {identity.institution}{identity.location ? ` · ${identity.location}` : ""}
-          </p>
+        <div className="profileIdentity">
+          <IdentityAvatar name={identity.fullName} src={identity.imageUrl} />
+          <div>
+            <span className="eyebrow">Scientific identity</span>
+            <h1 className="profileName">{identity.fullName}</h1>
+            <p className="profileHeadline">{identity.headline}</p>
+            <p className="profileMeta">
+              {identity.institution}{identity.location ? ` · ${identity.location}` : ""}
+            </p>
+          </div>
         </div>
         <div className="trustPanel" aria-label="Verification status">
           <strong>{verifiedCount}/{identity.verification.length}</strong>

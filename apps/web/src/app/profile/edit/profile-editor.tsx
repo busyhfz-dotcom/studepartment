@@ -10,6 +10,7 @@ import type {
   ProfileUpdateInput,
 } from "@/lib/api-contracts";
 import styles from "./page.module.css";
+import { IdentityAvatar } from "@/components/identity/identity-avatar";
 
 const topicOptions = [
   ["oncology", "Oncology"],
@@ -57,6 +58,7 @@ export function ProfileEditor({
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [accountRole, setAccountRole] = useState<IndividualProfileRole>(profile.accountRole);
+  const [imageUrl, setImageUrl] = useState(profile.imageUrl ?? "");
 
   const collaborationDefaults = useMemo(
     () => new Set(profile.collaborationGoals.map(collaborationValueFromLabel).filter(Boolean)),
@@ -80,6 +82,7 @@ export function ProfileEditor({
     const payload: ProfileUpdateInput = {
       fullName: String(form.get("fullName") ?? ""),
       headline: String(form.get("headline") ?? "") || null,
+      imageUrl: imageUrl || null,
       bio: String(form.get("bio") ?? "") || null,
       city: String(form.get("city") ?? "") || null,
       countryCode: String(form.get("countryCode") ?? "") || null,
@@ -105,71 +108,7 @@ export function ProfileEditor({
             ...(accountRole === "researcher"
               ? {
                   currentProject: String(form.get("currentProject") ?? "") || null,
-                  yearsExperience: String(form.get("yearsExperience") ?? "") || null,
-                }
-              : {}),
-            ...(accountRole === "professor"
-              ? {
-                  labName: String(form.get("labName") ?? "") || null,
-                  supervisionStatus: String(form.get("supervisionStatus") ?? "") || null,
-                }
-              : {}),
-          },
-    };
-
-    try {
-      const response = await fetch("/api/v1/profile", {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const result = (await response.json()) as
-        | { success: true; data: ProfileResponse }
-        | { success: false; error: { message: string } };
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.success ? "Profile update failed." : result.error.message);
-      }
-
-      setStatus("success");
-      setMessage("Scientific identity saved. Provenance for these edits has been recorded.");
-      router.refresh();
-      router.push("/profile");
-    } catch (error) {
-      setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Profile update failed.");
-    }
-  }
-
-  return (
-    <form className={styles.editorCard} onSubmit={submit}>
-      <section className={styles.editorSection}>
-        <div className={styles.sectionHead}>
-          <div>
-            <span className="sectionLabel">Identity</span>
-            <h2>Research identity</h2>
-          </div>
-          <p>Maintain the factual identity and institutional context used across discovery and research workflows.</p>
-        </div>
-        <div className={styles.editorGrid}>
-          <label className={styles.fieldGroup}>
-            <span>Full name</span>
-            <input name="fullName" defaultValue={profile.fullName} maxLength={160} required />
-          </label>
-          <label className={styles.fieldGroup}>
-            <span>Profile type</span>
-            <select value={accountRole} onChange={(event) => setAccountRole(event.target.value as IndividualProfileRole)}>
-              <option value="student">Student</option>
-              <option value="researcher">Researcher</option>
-              <option value="professor">Professor / faculty</option>
-            </select>
-          </label>
-          <label className={styles.fieldGroup}>
-            <span>Professional headline</span>
-            <input name="headline" defaultValue={profile.headline} maxLength={220} />
-          </label>
-          <label className={styles.fieldGroup}>
-            <span>Career stage / title</span>
+      5ÓŸm¢G§²ÚîÆ­yÐan>
             <input name="careerStage" defaultValue={profile.careerStage} maxLength={120} />
           </label>
           <label className={styles.fieldGroup}>

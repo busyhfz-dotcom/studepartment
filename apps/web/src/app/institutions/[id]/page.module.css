@@ -11,6 +11,9 @@
   margin: 8px 0 22px;
 }
 
+.identityBlock { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 18px; min-width: 0; }
+.identityBlock > div { min-width: 0; }
+
 .hero h1 {
   max-width: 900px;
   margin: 13px 0 7px;
@@ -310,11 +313,16 @@
   border: 1px solid var(--line);
   border-radius: 9px;
   background: var(--surface-subtle);
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
   transition:
     transform var(--duration-fast) var(--ease),
     border-color var(--duration-fast) var(--ease),
     background var(--duration-fast) var(--ease);
 }
+
+.personCopy { display: grid; gap: 3px; min-width: 0; }
+.personCopy strong, .personCopy span, .personCopy small { display: block; overflow-wrap: anywhere; }
 
 .people a:hover {
   transform: translateY(-1px);
@@ -384,8 +392,10 @@
 }
 
 @media (max-width: 560px) {
+  .identityBlock { grid-template-columns: 1fr; gap: 14px; }
   .hero h1 {
-    font-size: 44px;
+    font-size: clamp(34px, 11vw, 46px);
+    overflow-wrap: anywhere;
 
   font-family: var(--font-sans), Arial, sans-serif;
   font-weight: 750;
@@ -397,4 +407,7 @@
   .fitReasons {
     grid-template-columns: 1fr;
   }
+
+  .hero > a, .assistantAction { width: 100%; min-height: 46px; justify-content: center; }
+  .fitPanel, .panel { padding: 16px 14px; }
 }

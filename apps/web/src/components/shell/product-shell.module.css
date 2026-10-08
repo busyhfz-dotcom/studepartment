@@ -583,3 +583,18 @@
 @media(max-width:1200px){.frame{grid-template-columns:216px minmax(0,1fr)}.brandCopy strong{font-size:15px}.brandMark{height:33px;width:33px}.brandCopy small{font-size:6px}.content{padding:28px}.topbar{padding:0 28px}.quickSearch{min-width:220px}}
 @media(max-width:940px){.frame{display:block}.sidebar{position:fixed;width:262px;top:0;left:0;height:100dvh;transform:translateX(-100%);transition:transform .3s var(--ease);z-index:60}.sidebarOpen{transform:translateX(0)}.brandCopy strong{font-size:18px}.brandCopy small{font-size:8px}.brandMark{height:40px;width:40px}.menuButton{display:flex}.quickSearch{min-width:0;width:38px;padding:10px}.quickSearch span,.quickSearch kbd{display:none}}
 @media(max-width:700px){.topbar{height:68px;padding:0 19px}.content{padding:25px 19px 60px}.topbarEyebrow{font-size:8px}.pageName{font-size:16px}.quickSearch{display:none}.topbarActions{gap:12px}.navItem{min-height:55px}}
+
+@media(max-width:940px){
+  .frame,.workspace,.content{min-width:0}
+  .sidebar{width:min(84vw,300px);padding-bottom:max(13px,env(safe-area-inset-bottom))}
+  .sidebarBody{overscroll-behavior:contain}
+  .menuButton,.mobileClose{min-width:44px;min-height:44px}
+}
+
+@media(max-width:700px){
+  .topbar{height:auto;min-height:66px;padding:8px max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left))}
+  .contextTitle{max-width:calc(100vw - 160px)}
+  .pageName{max-width:100%;white-space:normal;line-height:1.25}
+  .content{padding:22px max(14px,env(safe-area-inset-right)) calc(56px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+  .navItem{min-height:58px}
+}

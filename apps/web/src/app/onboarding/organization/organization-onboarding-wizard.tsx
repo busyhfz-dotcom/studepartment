@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import type { InstitutionalOrganizationType, OrganizationCreateInput, OrganizationProfileDetails } from "@/lib/api-contracts";
 import styles from "../onboarding.module.css";
 
@@ -32,6 +33,7 @@ export function OrganizationOnboardingWizard({ initialType }: { initialType?: In
   const [draft, setDraft] = useState<OrganizationCreateInput>({
     name: "",
     type: organizationTypes.some(([value]) => value === initialType) ? initialType! : "university",
+    logoUrl: null,
     countryCode: null,
     website: null,
     description: null,
@@ -69,6 +71,14 @@ export function OrganizationOnboardingWizard({ initialType }: { initialType?: In
         <div className={styles.stack}>
           <span className="eyebrow">Institutional context</span>
           <h2>What organization are you registering?</h2>
+          <div className={styles.photoEditor}>
+            <IdentityAvatar name={draft.name || "Organization"} src={draft.logoUrl} kind="organization" size="large" />
+            <label className={styles.fullField}>
+              <span>Organization logo URL</span>
+              <input inputMode="url" value={draft.logoUrl ?? ""} onChange={(event) => setDraft({ ...draft, logoUrl: event.target.value || null })} placeholder="https://institution.org/logo.png" />
+              <small>Use a secure image address. A branded monogram appears automatically when no logo is provided.</small>
+            </label>
+          </div>
           <div className={styles.grid}>
             <label className={styles.fullField}>
               <span>Organization name</span>

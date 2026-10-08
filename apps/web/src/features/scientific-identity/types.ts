@@ -26,6 +26,7 @@ export type AvailabilityMode = "open" | "selective" | "quiet" | "closed";
 export type ScientificIdentity = {
   id: string;
   fullName: string;
+  imageUrl?: string | null;
   headline: string;
   institution: string;
   location?: string;

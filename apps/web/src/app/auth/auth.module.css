@@ -380,6 +380,25 @@
 @media(max-width:940px){.page{grid-template-columns:1fr 1fr}.panel{width:calc(100% - 60px)}.panel h1{font-size:33px}.context{padding:35px}.context h2{font-size:30px}.context>div{transform:scale(.95)}.contextBrand{left:35px}}
 @media(max-width:700px){.page{grid-template-columns:1fr}.context{grid-column:1;grid-row:1;min-height:310px;padding:90px 25px 28px}.contextBrand{top:25px;left:25px;font-size:17px}.contextBrand>span{width:34px;height:34px}.context>div{position:absolute;right:-20px;top:110px;margin:0;transform:scale(.6);transform-origin:top right}.context h2{font-size:28px;max-width:300px;position:relative;z-index:1;margin:16px 0}.context :global(.eyebrow){font-size:8px;max-width:230px}.context p,.context ul{display:none}.panel{grid-column:1;grid-row:2;width:calc(100% - 50px);padding:35px 0 50px}.panel h1{font-size:33px}.form{max-width:none}.intro{font-size:12px}}
 
+@media(max-width:700px){
+  .page{display:flex;min-height:100svh;flex-direction:column;background:#fff}
+  .panel{order:1;width:min(100% - 36px,540px);padding:28px 0 34px;margin:0 auto}
+  .context{order:2;min-height:210px;padding:68px 20px 28px}
+  .contextBrand{top:20px;left:20px}
+  .context>div{display:none}
+  .context h2{max-width:none;margin:10px 0 0;font-size:24px}
+  .form{margin-top:24px;gap:17px}
+  .form input,.form button{min-height:48px}
+  .kindGrid,.roleChoices{gap:7px}
+  .kindGrid button,.roleChoices button{min-height:58px}
+}
+
+@media(max-width:420px){
+  .panel{width:calc(100% - 28px);padding-top:22px}
+  .panel h1{font-size:30px}
+  .formActions{flex-direction:column}
+}
+
 @media (max-width: 460px) {
   .kindGrid,
   .roleChoices { grid-template-columns: 1fr; }

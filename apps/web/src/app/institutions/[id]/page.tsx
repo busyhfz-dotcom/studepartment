@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getInstitutionalIntelligence, getInstitutionFitSnapshot } from "@/server/institutions/intelligence";
 import styles from "./page.module.css";
@@ -22,10 +23,13 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
       <div className={styles.shell}>
         <Link className="backLink" href="/discover/institutions">← Back to institution discovery</Link>
         <header className={styles.hero}>
-          <div>
-            <span className="eyebrow">Institutional Research Intelligence</span>
-            <h1>{institution.name}</h1>
-            <p>{institution.type}{institution.countryCode ? " · " + institution.countryCode : ""}{institution.verified ? " · Verified organization" : ""}</p>
+          <div className={styles.identityBlock}>
+            <IdentityAvatar name={institution.name} src={institution.logoUrl} kind="organization" size="large" />
+            <div>
+              <span className="eyebrow">Institutional Research Intelligence</span>
+              <h1>{institution.name}</h1>
+              <p>{institution.type}{institution.countryCode ? " · " + institution.countryCode : ""}{institution.verified ? " · Verified organization" : ""}</p>
+            </div>
           </div>
           {institution.website ? <a href={institution.website} rel="noreferrer" target="_blank">Official website ↗</a> : null}
         </header>
@@ -82,9 +86,8 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
           <div className={styles.people}>
             {institution.researchers.map((researcher) => (
               <Link href={"/researchers/" + researcher.id} key={researcher.id}>
-                <strong>{researcher.fullName}</strong>
-                <span>{researcher.headline}</span>
-                <small>{researcher.title ?? "Current affiliation"} · {researcher.publicationCount} active publication records</small>
+                <IdentityAvatar name={researcher.fullName} src={researcher.imageUrl} kind="person" size="small" />
+                <span className={styles.personCopy}><strong>{researcher.fullName}</strong><span>{researcher.headline}</span><small>{researcher.title ?? "Current affiliation"} · {researcher.publicationCount} active publication records</small></span>
               </Link>
             ))}
             {!institution.researchers.length ? <p>No public current researcher profiles are connected yet.</p> : null}

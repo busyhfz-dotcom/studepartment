@@ -89,7 +89,7 @@ function requireType(value: unknown): InstitutionalOrganizationType {
   return value as InstitutionalOrganizationType;
 }
 
-const createKeys = new Set(["name", "type", "countryCode", "website", "description", "contactEmail", "sizeLabel", "profileDetails"]);
+const createKeys = new Set(["name", "type", "countryCode", "website", "description", "logoUrl", "contactEmail", "sizeLabel", "profileDetails"]);
 const updateKeys = createKeys;
 const profileDetailKeys = new Set<keyof OrganizationProfileDetails>([
   "primaryFocus", "services", "facilities", "accreditations", "capacity", "fundingAreas",
@@ -124,6 +124,7 @@ export function parseOrganizationCreateInput(value: unknown): OrganizationCreate
     countryCode: optionalCountryCode(object.countryCode) ?? null,
     website: optionalUrl(object.website, "website") ?? null,
     description: optionalString(object.description, "description", 2000, { nullable: true }) ?? null,
+    logoUrl: optionalUrl(object.logoUrl, "logoUrl") ?? null,
     contactEmail: optionalEmail(object.contactEmail, "contactEmail") ?? null,
     sizeLabel: optionalString(object.sizeLabel, "sizeLabel", 60, { nullable: true }) ?? null,
     profileDetails: organizationDetails(object.profileDetails),
@@ -155,6 +156,9 @@ export function parseOrganizationUpdateInput(value: unknown): OrganizationUpdate
 
   const description = optionalString(object.description, "description", 2000, { nullable: true });
   if (description !== undefined) result.description = description;
+
+  const logoUrl = optionalUrl(object.logoUrl, "logoUrl");
+  if (logoUrl !== undefined) result.logoUrl = logoUrl;
 
   const contactEmail = optionalEmail(object.contactEmail, "contactEmail");
   if (contactEmail !== undefined) result.contactEmail = contactEmail;

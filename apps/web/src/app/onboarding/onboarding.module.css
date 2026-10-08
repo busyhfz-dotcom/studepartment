@@ -86,6 +86,17 @@
   gap: 11px;
 }
 
+.photoEditor {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+  gap:18px;
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--surface-subtle);
+}
+
 .grid label,
 .fullField {
   display: grid;
@@ -265,6 +276,7 @@
   .choiceColumns {
     grid-template-columns: 1fr;
   }
+  .photoEditor { grid-template-columns:1fr; justify-items:start; }
 
   .choices {
     grid-template-columns: 1fr 1fr;

@@ -68,6 +68,7 @@ const fixtureProfile: ProfileResponse = {
   id: "demo-researcher",
   fullName: currentResearcher.name,
   headline: `${currentResearcher.title} · Translational Oncology`,
+  imageUrl: null,
   institution: currentResearcher.institution,
   organizationId: "org-oxford",
   careerStage: "Early-career researcher",
@@ -104,6 +105,7 @@ const fixtureRepository: ResearcherRepository = {
       ...fixtureProfile,
       ...(input.fullName !== undefined ? { fullName: input.fullName } : {}),
       ...(input.headline !== undefined ? { headline: input.headline ?? "Medical researcher" } : {}),
+      ...(input.imageUrl !== undefined ? { imageUrl: input.imageUrl } : {}),
       ...(input.bio !== undefined ? { bio: input.bio } : {}),
       ...(input.city !== undefined ? { city: input.city } : {}),
       ...(input.countryCode !== undefined ? { countryCode: input.countryCode } : {}),
@@ -143,7 +145,7 @@ async function loadProfileByUserId(userId: string) {
   return db.researcherProfile.findUnique({
     where: { userId },
     include: {
-      user: { select: { emailVerified: true, role: true } },
+      user: { select: { emailVerified: true, role: true, image: true } },
       affiliations: {
         where: { current: true },
         include: { organization: true },
@@ -170,6 +172,7 @@ function mapLoadedProfile(profile: LoadedProfile): ProfileResponse {
     id: profile.id,
     fullName: profile.fullName,
     headline: profile.headline ?? "Medical researcher",
+    imageUrl: profile.user?.image ?? null,
     institution: affiliation?.organization.name ?? "Independent researcher",
     organizationId: affiliation?.organizationId ?? null,
     careerStage: profile.careerStage ?? "Researcher",
@@ -321,8 +324,14 @@ const prismaRepository: ResearcherRepository = {
         },
       });
 
-      if (input.accountRole !== undefined) {
-        await tx.user.update({ where: { id: userId }, data: { role: accountRoleToDb[input.accountRole] } });
+      if (input.accountRole !== undefined || input.imageUrl !== undefined) {
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            ...(input.accountRole !== undefined ? { role: accountRoleToDb[input.accountRole] } : {}),
+            ...(input.imageUrl !== undefined ? { image: input.imageUrl } : {}),
+          },
+        });
       }
 
       if (input.orcid !== undefined) {

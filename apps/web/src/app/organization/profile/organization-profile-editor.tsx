@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import type { InstitutionalOrganizationType, OrganizationProfileDetails, OrganizationProfileResponse, OrganizationUpdateInput } from "@/lib/api-contracts";
 import styles from "./organization-profile.module.css";
 
@@ -31,6 +32,7 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
   const [draft, setDraft] = useState<OrganizationUpdateInput>({
     name: organization.name,
     type: organization.type,
+    logoUrl: organization.logoUrl ?? null,
     countryCode: organization.countryCode ?? null,
     website: organization.website ?? null,
     description: organization.description ?? null,
@@ -71,6 +73,15 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
         These fields are self-reported by your organization&apos;s administrator and labeled as such until
         corroborated by institutional evidence (verified domain email, ROR/GRID match, or manual review).
       </p>
+
+      <div className={styles.logoEditor}>
+        <IdentityAvatar name={draft.name || organization.name} src={draft.logoUrl} kind="organization" size="large" />
+        <label>
+          <span>Organization logo URL</span>
+          <input inputMode="url" value={draft.logoUrl ?? ""} onChange={(event) => setDraft({ ...draft, logoUrl: event.target.value || null })} placeholder="https://institution.org/logo.png" />
+          <small>A branded monogram is used when no logo is provided.</small>
+        </label>
+      </div>
 
       <div className={styles.grid}>
         <label>

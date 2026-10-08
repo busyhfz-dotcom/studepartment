@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getPublicResearcherProfile } from "@/server/researchers/public-profile";
 import styles from "./page.module.css";
@@ -21,12 +22,15 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
         <Link className="backLink" href="/discover">← Back to scientific discovery</Link>
 
         <header className={styles.header}>
-          <div>
-            <span className="eyebrow">Scientific identity</span>
-            <h1>{researcher.fullName}</h1>
-            <p className={styles.role}>{researcher.headline}</p>
-            <p className={styles.meta}>{researcher.institution} · {researcher.location}</p>
-            {researcher.bio ? <p className={styles.bio}>{researcher.bio}</p> : null}
+          <div className={styles.identityBlock}>
+            <IdentityAvatar name={researcher.fullName} src={researcher.imageUrl} kind="person" size="large" />
+            <div>
+              <span className="eyebrow">Scientific identity</span>
+              <h1>{researcher.fullName}</h1>
+              <p className={styles.role}>{researcher.headline}</p>
+              <p className={styles.meta}>{researcher.institution} · {researcher.location}</p>
+              {researcher.bio ? <p className={styles.bio}>{researcher.bio}</p> : null}
+            </div>
           </div>
           <div className={styles.trustCard}>
             <span className="sectionLabel">Evidence & trust</span>

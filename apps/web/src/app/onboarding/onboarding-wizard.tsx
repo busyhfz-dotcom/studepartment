@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { CollaborationGoalValue, IndividualProfileDetails, IndividualProfileRole, OrganizationOption, ProfileResponse, ProfileUpdateInput } from "@/lib/api-contracts";
 import styles from "./onboarding.module.css";
+import { IdentityAvatar } from "@/components/identity/identity-avatar";
 
 const topics = [
   ["oncology", "Oncology"],
@@ -40,6 +41,7 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
   const [draft, setDraft] = useState<ProfileUpdateInput>({
     fullName: profile.fullName,
     headline: profile.headline,
+    imageUrl: profile.imageUrl ?? null,
     careerStage: profile.careerStage,
     organizationId: profile.organizationId ?? null,
     city: profile.city ?? null,
@@ -105,6 +107,10 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
           <div className={styles.stack}>
             <span className="eyebrow">Step 1 · Scientific context</span>
             <h2>Who are you in the research ecosystem?</h2>
+            <div className={styles.photoEditor}>
+              <IdentityAvatar name={draft.fullName ?? profile.fullName} src={draft.imageUrl} />
+              <label className={styles.fullField}><span>Professional profile photo URL</span><input type="url" value={draft.imageUrl ?? ""} onChange={(e) => setDraft({ ...draft, imageUrl: e.target.value || null })} placeholder="https://…" /><small>A branded initials avatar is used until you add a square portrait.</small></label>
+            </div>
             <div className={styles.grid}>
               <label><span>Full name</span><input value={draft.fullName ?? ""} onChange={(e) => setDraft({ ...draft, fullName: e.target.value })} /></label>
               <label><span>Your role</span><select value={draft.accountRole ?? "researcher"} onChange={(e) => setDraft({ ...draft, accountRole: e.target.value as IndividualProfileRole })}><option value="student">Student</option><option value="researcher">Researcher</option><option value="professor">Professor / faculty</option></select></label>

@@ -896,3 +896,22 @@
 .evidencePanel > a:hover {
   color: #173985;
 }
+
+@media(max-width:700px){
+  .dashboard{min-width:0}
+  .dashboard>.commandDeck{padding:22px 18px}
+  .heroActions{align-items:stretch;flex-direction:column}
+  .heroActions a{width:100%;min-height:46px}
+  .heroIndex>div:first-child{opacity:.45;pointer-events:none}
+  .workflowPanel,.evidencePanel{padding:20px 16px}
+}
+
+@media(max-width:480px){
+  .surfaceGrid{grid-template-columns:1fr}
+  .surfaceCard{min-height:0;padding:20px 17px}
+  .commandSearch{grid-template-columns:1fr}
+  .searchGlyph{display:none}
+  .workflowRow{grid-template-columns:32px minmax(0,1fr)}
+  .evidenceHeader{grid-template-columns:40px minmax(0,1fr)}
+  .evidenceMonogram{width:40px;height:40px}
+}

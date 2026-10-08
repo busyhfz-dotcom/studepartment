@@ -194,6 +194,7 @@ export type OrganizationCreateInput = {
   countryCode?: string | null;
   website?: string | null;
   description?: string | null;
+  logoUrl?: string | null;
   contactEmail?: string | null;
   sizeLabel?: string | null;
   profileDetails?: OrganizationProfileDetails;
@@ -205,6 +206,7 @@ export type OrganizationUpdateInput = {
   countryCode?: string | null;
   website?: string | null;
   description?: string | null;
+  logoUrl?: string | null;
   contactEmail?: string | null;
   sizeLabel?: string | null;
   profileDetails?: OrganizationProfileDetails;
@@ -214,6 +216,7 @@ export type ProfileResponse = {
   id: string;
   fullName: string;
   headline: string;
+  imageUrl?: string | null;
   institution: string;
   organizationId?: string | null;
   careerStage: string;
@@ -238,6 +241,7 @@ export type ProfileResponse = {
 export type ProfileUpdateInput = {
   fullName?: string;
   headline?: string | null;
+  imageUrl?: string | null;
   bio?: string | null;
   city?: string | null;
   countryCode?: string | null;

@@ -15,6 +15,7 @@ export async function getPublicResearcherProfile(researcherId: string) {
   const profile = await db.researcherProfile.findUnique({
     where: { id: researcherId },
     include: {
+      user: { select: { image: true } },
       affiliations: {
         where: { current: true },
         include: { organization: true },
@@ -58,6 +59,7 @@ export async function getPublicResearcherProfile(researcherId: string) {
   return {
     id: profile.id,
     fullName: profile.fullName,
+    imageUrl: profile.user?.image ?? null,
     headline: profile.headline ?? profile.careerStage ?? "Medical researcher",
     bio: profile.bio,
     institution: affiliation?.organization.name ?? "Independent researcher",

@@ -243,6 +243,31 @@
 @media(max-width:430px){.heroCopy h1{font-size:39px;line-height:1.13}.heroActions{gap:9px}.heroActions a{padding:10px 12px}.navActions>a:first-child{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.latestTrack{animation:none}.latestList{overflow:auto}.latestGroup[aria-hidden=true]{display:none}.heroCopy h1 em{animation:none}.surfacePanel{animation:none}}
 
+@media(max-width:760px){
+  .page{overflow-x:hidden}
+  .container{width:100%;padding-inline:18px}
+  .heroDesk{max-width:100%;transform:none;box-shadow:0 18px 42px #0003}
+  .latestRow{width:100%;min-width:0}
+  .surfacePanel{grid-template-columns:1fr;min-height:0;padding:24px 18px}
+  .proofGrid,.pathGrid{grid-template-columns:1fr}
+  .proofItem,.proofItem+.proofItem{min-height:0;padding:28px 0;border-left:0;border-top:1px solid #ffffff0b}
+  .proofItem:first-child{border-top:0}
+  .closingGrid{align-items:flex-start;flex-direction:column}
+  .closingGrid>a{width:100%;justify-content:center;min-height:48px}
+}
+
+@media(max-width:480px){
+  .container{padding-inline:14px}
+  .heroActions{flex-direction:column;align-items:stretch}
+  .heroActions a{width:100%;justify-content:center;min-height:46px}
+  .deskHeading{align-items:flex-start;flex-direction:column}
+  .latestGroup{padding-inline:14px}
+  .latestRow{grid-template-columns:1fr;padding:16px 0}
+  .surfacePanel,.instrument,.pathCard{padding:20px 16px}
+  .surfaceContent h3{font-size:25px}
+  .footer{align-items:flex-start;flex-direction:column}
+}
+
 .hero::before{content:none}.mark{padding-top:0}
 
 /* Keep the complete research workspace in view on a desktop-height screen. */

@@ -32,6 +32,7 @@ export default async function ProfilePage({
   const identity = {
     id: profile.id,
     fullName: profile.fullName,
+    imageUrl: profile.imageUrl,
     headline: profile.headline,
     institution: profile.institution,
     location: profile.location,

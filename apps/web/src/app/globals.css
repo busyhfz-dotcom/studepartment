@@ -69,6 +69,8 @@
 html {
   scroll-behavior: smooth;
   background: var(--background);
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -84,6 +86,15 @@ body {
   font-feature-settings: "cv02","cv03","cv04","cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img, svg, video, canvas { max-width: 100%; }
+button, a, input, select, textarea { touch-action: manipulation; }
+
+@media (max-width: 700px) {
+  input, select, textarea { font-size: 16px; }
+  .primaryButton, a.secondary, button.secondary { min-height: 46px; }
 }
 
 ::selection {
@@ -318,6 +329,9 @@ h1 {
   gap: 34px;
   padding: 34px;
 }
+
+.profileIdentity { display:flex; align-items:center; gap:22px; min-width:0; }
+.profileIdentity > div:last-child { min-width:0; }
 
 .profileName {
   margin: 14px 0 8px;
@@ -555,6 +569,7 @@ h1 {
   .card { min-height:auto; }
   .card h2 { margin-top:38px; }
   .profileTopline { flex-direction:column; padding:24px; }
+  .profileIdentity { align-items:flex-start; }
   .profileSection,.profileSplit { padding:24px; }
   .verificationGrid { grid-template-columns:1fr 1fr; }
   .verificationItem:nth-child(2) { border-right:0; }
@@ -562,4 +577,11 @@ h1 {
   .onboardingStep { grid-template-columns:1fr; }
   .optionGrid,.orcidPanel { grid-template-columns:1fr; }
   .onboardingFooter { align-items:stretch; flex-direction:column; }
+}
+
+@media (max-width:520px) {
+  .profileIdentity { flex-direction:column; gap:16px; }
+  .profileName { font-size:clamp(32px,11vw,44px); line-height:1.05; overflow-wrap:anywhere; }
+  .verificationGrid { grid-template-columns:1fr; }
+  .verificationItem,.verificationItem:nth-child(2) { border-right:0; }
 }

@@ -102,6 +102,20 @@
   gap: 9px;
 }
 
+.photoEditor {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+  gap:18px;
+  margin-bottom:18px;
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--surface-subtle);
+}
+
+.photoEditor small { color:var(--muted); font-size:10px; font-weight:500; line-height:1.5; letter-spacing:0; }
+
 .fieldGroup {
   display: grid;
   gap: 6px;
@@ -343,6 +357,7 @@
   }
 
   .editorSection { padding: 19px; }
+  .photoEditor { grid-template-columns:1fr; justify-items:start; }
 
   .editorActions {
     position: static;

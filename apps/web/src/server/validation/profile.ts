@@ -9,6 +9,7 @@ import { assertValidOrcid } from "@/server/integrations/orcid/orcid-id";
 const allowedKeys = new Set([
   "fullName",
   "headline",
+  "imageUrl",
   "bio",
   "city",
   "countryCode",
@@ -133,6 +134,20 @@ export function parseProfileUpdateInput(value: unknown): ProfileUpdateInput {
 
   const headline = optionalString(object.headline, "headline", 220, { nullable: true });
   if (headline !== undefined) result.headline = headline;
+
+  if (object.imageUrl !== undefined) {
+    const imageUrl = optionalString(object.imageUrl, "imageUrl", 2048, { nullable: true });
+    if (!imageUrl) result.imageUrl = imageUrl;
+    else {
+      try {
+        const url = new URL(imageUrl);
+        if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("bad-protocol");
+        result.imageUrl = imageUrl;
+      } catch {
+        throw new ProfileValidationError("imageUrl must be a valid http(s) URL.");
+      }
+    }
+  }
 
   const bio = optionalString(object.bio, "bio", 3000, { nullable: true });
   if (bio !== undefined) result.bio = bio;

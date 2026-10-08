@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getOwnedOrganization } from "@/server/repositories/organization-repository";
@@ -21,13 +22,18 @@ export default async function OrganizationProfilePage() {
     <ProductShell accountKind="institution">
       <div className={styles.shell}>
         <header className={styles.header}>
-          <div className={styles.headerMeta}>
-            <span className="eyebrow">{typeLabel} Identity</span>
-            <span className={`${styles.statusPill} ${organization.verified ? styles.statusVerified : styles.statusUnverified}`}>
-              {organization.verified ? "Verified institution" : "Unverified · self-reported"}
-            </span>
+          <div className={styles.identityHead}>
+            <IdentityAvatar name={organization.name} src={organization.logoUrl} kind="organization" size="large" />
+            <div>
+              <div className={styles.headerMeta}>
+                <span className="eyebrow">{typeLabel} Identity</span>
+                <span className={`${styles.statusPill} ${organization.verified ? styles.statusVerified : styles.statusUnverified}`}>
+                  {organization.verified ? "Verified institution" : "Unverified · self-reported"}
+                </span>
+              </div>
+              <h1>{organization.name}</h1>
+            </div>
           </div>
-          <h1>{organization.name}</h1>
           <p className="lede">
             This is your organization&apos;s canonical record on Studepartment — distinct from an individual
             researcher profile. Researchers see this identity when evaluating your postings, affiliations,

@@ -30,6 +30,7 @@ export async function getInstitutionalIntelligence(organizationId: string) {
               topics: { include: { topic: true } },
               methods: { include: { method: true } },
               publications: { where: { active: true }, select: { publicationId: true } },
+              user: { select: { image: true } },
             },
           },
         },
@@ -66,6 +67,7 @@ export async function getInstitutionalIntelligence(organizationId: string) {
   return {
     id: organization.id,
     name: organization.name,
+    logoUrl: organization.logoUrl,
     type: organization.type.toLowerCase().replaceAll("_", " "),
     countryCode: organization.countryCode,
     website: organization.website,
@@ -73,6 +75,7 @@ export async function getInstitutionalIntelligence(organizationId: string) {
     researchers: organization.affiliations.map((item) => ({
       id: item.researcher.id,
       fullName: item.researcher.fullName,
+      imageUrl: item.researcher.user?.image ?? null,
       headline: item.researcher.headline ?? item.researcher.careerStage ?? "Medical researcher",
       title: item.title,
       verified: item.researcher.verified,
