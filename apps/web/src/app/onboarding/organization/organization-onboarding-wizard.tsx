@@ -25,13 +25,13 @@ const typeFields: Record<InstitutionalOrganizationType, Array<[keyof Organizatio
 
 const sizeLabels = ["1–10", "11–50", "51–250", "251–1,000", "1,000+"];
 
-export function OrganizationOnboardingWizard() {
+export function OrganizationOnboardingWizard({ initialType }: { initialType?: InstitutionalOrganizationType }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [draft, setDraft] = useState<OrganizationCreateInput>({
     name: "",
-    type: "university",
+    type: organizationTypes.some(([value]) => value === initialType) ? initialType! : "university",
     countryCode: null,
     website: null,
     description: null,

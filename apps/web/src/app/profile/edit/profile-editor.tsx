@@ -97,12 +97,22 @@ export function ProfileEditor({
             degreeProgram: String(form.get("degreeProgram") ?? "") || null,
             graduationYear: String(form.get("graduationYear") ?? "") || null,
             thesisTopic: String(form.get("thesisTopic") ?? "") || null,
+            supervisorName: String(form.get("supervisorName") ?? "") || null,
           }
         : {
             academicTitle: String(form.get("academicTitle") ?? "") || null,
             department: String(form.get("department") ?? "") || null,
+            ...(accountRole === "researcher"
+              ? {
+                  currentProject: String(form.get("currentProject") ?? "") || null,
+                  yearsExperience: String(form.get("yearsExperience") ?? "") || null,
+                }
+              : {}),
             ...(accountRole === "professor"
-              ? { supervisionStatus: String(form.get("supervisionStatus") ?? "") || null }
+              ? {
+                  labName: String(form.get("labName") ?? "") || null,
+                  supervisionStatus: String(form.get("supervisionStatus") ?? "") || null,
+                }
               : {}),
           },
     };
@@ -194,13 +204,15 @@ export function ProfileEditor({
             <>
               <label className={styles.fieldGroup}><span>Degree program</span><input name="degreeProgram" defaultValue={profile.profileDetails?.degreeProgram ?? ""} placeholder="PhD, MSc, MD…" /></label>
               <label className={styles.fieldGroup}><span>Expected graduation</span><input name="graduationYear" defaultValue={profile.profileDetails?.graduationYear ?? ""} placeholder="2028" /></label>
+              <label className={styles.fieldGroup}><span>Supervisor</span><input name="supervisorName" defaultValue={profile.profileDetails?.supervisorName ?? ""} /></label>
               <label className={styles.fieldGroup}><span>Thesis / dissertation topic</span><input name="thesisTopic" defaultValue={profile.profileDetails?.thesisTopic ?? ""} /></label>
             </>
           ) : (
             <>
               <label className={styles.fieldGroup}><span>Academic title</span><input name="academicTitle" defaultValue={profile.profileDetails?.academicTitle ?? ""} placeholder="Assistant professor, PI…" /></label>
               <label className={styles.fieldGroup}><span>Department</span><input name="department" defaultValue={profile.profileDetails?.department ?? ""} /></label>
-              {accountRole === "professor" ? <label className={styles.fieldGroup}><span>Student supervision</span><select name="supervisionStatus" defaultValue={profile.profileDetails?.supervisionStatus ?? ""}><option value="">Not specified</option><option value="accepting">Accepting students</option><option value="selective">Selective</option><option value="closed">Not accepting students</option></select></label> : null}
+              {accountRole === "researcher" ? <><label className={styles.fieldGroup}><span>Years of research experience</span><input name="yearsExperience" defaultValue={profile.profileDetails?.yearsExperience ?? ""} /></label><label className={styles.fieldGroup}><span>Current project</span><input name="currentProject" defaultValue={profile.profileDetails?.currentProject ?? ""} /></label></> : null}
+              {accountRole === "professor" ? <><label className={styles.fieldGroup}><span>Lab / research group</span><input name="labName" defaultValue={profile.profileDetails?.labName ?? ""} /></label><label className={styles.fieldGroup}><span>Student supervision</span><select name="supervisionStatus" defaultValue={profile.profileDetails?.supervisionStatus ?? ""}><option value="">Not specified</option><option value="accepting">Accepting students</option><option value="selective">Selective</option><option value="closed">Not accepting students</option></select></label></> : null}
             </>
           )}
         </div>

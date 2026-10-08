@@ -249,7 +249,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
             institutional profile to post positions and grants — including a directory listing in{" "}
             <Link href="/discover/institutions">Institution discovery</Link>.
           </p>
-          <Link className={styles.primary} href="/auth/sign-in?callbackUrl=%2Fonboarding%2Forganization">
+          <Link className={styles.primary} href="/auth/sign-up?kind=institution">
             Create an institutional profile ↗
           </Link>
         </main>
@@ -471,7 +471,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
 
   if (step === "next" && selected) {
     const isGrant = kindOf(selected.type) === "grant";
-    const signUpHref = `/auth/sign-in?callbackUrl=%2Fopportunities`;
+    const signUpHref = `/auth/sign-up?kind=individual`;
     return (
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />

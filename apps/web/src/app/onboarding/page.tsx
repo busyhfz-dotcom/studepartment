@@ -6,7 +6,8 @@ import { researcherRepository } from "@/server/repositories/researcher-repositor
 import { OnboardingWizard } from "./onboarding-wizard";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({ searchParams }: { searchParams: Promise<{ role?: string }> }) {
+  const { role } = await searchParams;
   const user = await getCurrentUser();
   if (!user) redirect("/auth/sign-in?callbackUrl=/onboarding");
   if (user.accountKind === "INSTITUTION") redirect("/onboarding/organization");
@@ -31,7 +32,7 @@ export default async function OnboardingPage() {
           Setting up a lab, hospital, or institution instead? Switch to an institutional profile ↗
         </Link>
       </header>
-      <OnboardingWizard profile={profile} organizations={organizations} />
+      <OnboardingWizard profile={profile} organizations={organizations} initialRole={role === "student" || role === "professor" ? role : role === "researcher" ? role : undefined} />
     </main>
   );
 }

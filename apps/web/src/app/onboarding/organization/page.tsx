@@ -4,8 +4,10 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import { getOwnedOrganization } from "@/server/repositories/organization-repository";
 import { OrganizationOnboardingWizard } from "./organization-onboarding-wizard";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
+import type { InstitutionalOrganizationType } from "@/lib/api-contracts";
 
-export default async function OrganizationOnboardingPage() {
+export default async function OrganizationOnboardingPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
+  const { type } = await searchParams;
   const user = await getCurrentUser();
   if (!user) redirect("/auth/sign-in?callbackUrl=/onboarding/organization");
 
@@ -28,7 +30,7 @@ export default async function OrganizationOnboardingPage() {
           Applying as an individual researcher instead? Go back to the researcher path ↗
         </Link>
       </header>
-      <OrganizationOnboardingWizard />
+      <OrganizationOnboardingWizard initialType={type as InstitutionalOrganizationType | undefined} />
     </main>
   );
 }

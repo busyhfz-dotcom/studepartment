@@ -32,7 +32,7 @@ function initialGoal(label: string): CollaborationGoalValue | null {
   return goals.some(([value]) => value === candidate) ? candidate : null;
 }
 
-export function OnboardingWizard({ profile, organizations }: { profile: ProfileResponse; organizations: OrganizationOption[] }) {
+export function OnboardingWizard({ profile, organizations, initialRole }: { profile: ProfileResponse; organizations: OrganizationOption[]; initialRole?: IndividualProfileRole }) {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -50,7 +50,7 @@ export function OnboardingWizard({ profile, organizations }: { profile: ProfileR
     availability: profile.availability,
     profilePublic: profile.profilePublic ?? true,
     orcid: profile.orcid ?? null,
-    accountRole: profile.accountRole,
+    accountRole: initialRole ?? profile.accountRole,
     profileDetails: profile.profileDetails ?? {},
   });
 
@@ -113,9 +113,9 @@ export function OnboardingWizard({ profile, organizations }: { profile: ProfileR
               <label><span>Institution</span><select value={draft.organizationId ?? ""} onChange={(e) => setDraft({ ...draft, organizationId: e.target.value || null })}><option value="">Independent / not listed</option>{organizations.map((org) => <option key={org.id} value={org.id}>{org.name}{org.verified ? " · verified" : ""}</option>)}</select></label>
               <label><span>City</span><input value={draft.city ?? ""} onChange={(e) => setDraft({ ...draft, city: e.target.value || null })} /></label>
               <label><span>Country code</span><input maxLength={2} value={draft.countryCode ?? ""} onChange={(e) => setDraft({ ...draft, countryCode: e.target.value.toUpperCase() || null })} /></label>
-              {draft.accountRole === "student" ? <><label><span>Degree program</span><input value={draft.profileDetails?.degreeProgram ?? ""} onChange={(e) => updateDetail("degreeProgram", e.target.value)} placeholder="PhD, MSc, MD…" /></label><label><span>Expected graduation</span><input value={draft.profileDetails?.graduationYear ?? ""} onChange={(e) => updateDetail("graduationYear", e.target.value)} placeholder="2028" /></label><label className={styles.fullField}><span>Thesis / dissertation topic</span><input value={draft.profileDetails?.thesisTopic ?? ""} onChange={(e) => updateDetail("thesisTopic", e.target.value)} /></label></> : null}
-              {draft.accountRole !== "student" ? <><label><span>Academic title</span><input value={draft.profileDetails?.academicTitle ?? ""} onChange={(e) => updateDetail("academicTitle", e.target.value)} placeholder="Assistant professor, PI…" /></label><label><span>Department</span><input value={draft.profileDetails?.department ?? ""} onChange={(e) => updateDetail("department", e.target.value)} /></label></> : null}
-              {draft.accountRole === "professor" ? <label className={styles.fullField}><span>Student supervision</span><select value={draft.profileDetails?.supervisionStatus ?? ""} onChange={(e) => updateDetail("supervisionStatus", e.target.value)}><option value="">Not specified</option><option value="accepting">Accepting students</option><option value="selective">Selective</option><option value="closed">Not accepting students</option></select></label> : null}
+              {draft.accountRole === "student" ? <><label><span>Degree program</span><input value={draft.profileDetails?.degreeProgram ?? ""} onChange={(e) => updateDetail("degreeProgram", e.target.value)} placeholder="PhD, MSc, MD…" /></label><label><span>Expected graduation</span><input value={draft.profileDetails?.graduationYear ?? ""} onChange={(e) => updateDetail("graduationYear", e.target.value)} placeholder="2028" /></label><label><span>Supervisor</span><input value={draft.profileDetails?.supervisorName ?? ""} onChange={(e) => updateDetail("supervisorName", e.target.value)} /></label><label><span>Thesis / dissertation topic</span><input value={draft.profileDetails?.thesisTopic ?? ""} onChange={(e) => updateDetail("thesisTopic", e.target.value)} /></label></> : null}
+              {draft.accountRole === "researcher" ? <><label><span>Research position</span><input value={draft.profileDetails?.academicTitle ?? ""} onChange={(e) => updateDetail("academicTitle", e.target.value)} placeholder="Research fellow, scientist…" /></label><label><span>Department / unit</span><input value={draft.profileDetails?.department ?? ""} onChange={(e) => updateDetail("department", e.target.value)} /></label><label><span>Years of research experience</span><input value={draft.profileDetails?.yearsExperience ?? ""} onChange={(e) => updateDetail("yearsExperience", e.target.value)} placeholder="e.g. 5" /></label><label><span>Current project</span><input value={draft.profileDetails?.currentProject ?? ""} onChange={(e) => updateDetail("currentProject", e.target.value)} /></label></> : null}
+              {draft.accountRole === "professor" ? <><label><span>Academic title</span><input value={draft.profileDetails?.academicTitle ?? ""} onChange={(e) => updateDetail("academicTitle", e.target.value)} placeholder="Assistant professor, PI…" /></label><label><span>Department</span><input value={draft.profileDetails?.department ?? ""} onChange={(e) => updateDetail("department", e.target.value)} /></label><label><span>Lab / research group</span><input value={draft.profileDetails?.labName ?? ""} onChange={(e) => updateDetail("labName", e.target.value)} /></label><label><span>Student supervision</span><select value={draft.profileDetails?.supervisionStatus ?? ""} onChange={(e) => updateDetail("supervisionStatus", e.target.value)}><option value="">Not specified</option><option value="accepting">Accepting students</option><option value="selective">Selective</option><option value="closed">Not accepting students</option></select></label></> : null}
             </div>
           </div>
         ) : null}

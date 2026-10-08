@@ -215,7 +215,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
               <Reveal as="div" delay={80}>
                 <Link
                   className={styles.pathCard}
-                  href="/auth/sign-in?callbackUrl=%2Fonboarding%2Forganization"
+                  href="/auth/sign-up?kind=institution"
                 >
                   <div className={styles.topline}>
                     <span>For labs &amp; institutions</span>

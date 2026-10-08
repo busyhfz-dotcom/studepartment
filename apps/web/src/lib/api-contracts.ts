@@ -153,8 +153,12 @@ export type IndividualProfileDetails = {
   degreeProgram?: string | null;
   graduationYear?: string | null;
   thesisTopic?: string | null;
+  supervisorName?: string | null;
   academicTitle?: string | null;
   department?: string | null;
+  currentProject?: string | null;
+  yearsExperience?: string | null;
+  labName?: string | null;
   supervisionStatus?: string | null;
 };
 

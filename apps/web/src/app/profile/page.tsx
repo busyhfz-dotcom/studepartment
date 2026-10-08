@@ -46,8 +46,10 @@ export default async function ProfilePage({
   const orcidMessage = orcid ? orcidMessages[orcid] : undefined;
   const roleLabel = profile.accountRole === "student" ? "Student profile" : profile.accountRole === "professor" ? "Professor / faculty profile" : "Researcher profile";
   const roleDetails = profile.accountRole === "student"
-    ? [["Degree program", profile.profileDetails?.degreeProgram], ["Expected graduation", profile.profileDetails?.graduationYear], ["Thesis topic", profile.profileDetails?.thesisTopic]]
-    : [["Academic title", profile.profileDetails?.academicTitle], ["Department", profile.profileDetails?.department], ...(profile.accountRole === "professor" ? [["Student supervision", profile.profileDetails?.supervisionStatus]] : [])];
+    ? [["Degree program", profile.profileDetails?.degreeProgram], ["Expected graduation", profile.profileDetails?.graduationYear], ["Supervisor", profile.profileDetails?.supervisorName], ["Thesis topic", profile.profileDetails?.thesisTopic]]
+    : profile.accountRole === "researcher"
+      ? [["Research position", profile.profileDetails?.academicTitle], ["Department", profile.profileDetails?.department], ["Research experience", profile.profileDetails?.yearsExperience], ["Current project", profile.profileDetails?.currentProject]]
+      : [["Academic title", profile.profileDetails?.academicTitle], ["Department", profile.profileDetails?.department], ["Lab / research group", profile.profileDetails?.labName], ["Student supervision", profile.profileDetails?.supervisionStatus]];
 
   return (
     <ProductShell>

@@ -26,7 +26,8 @@ const allowedKeys = new Set([
 
 const accountRoles = new Set<IndividualProfileRole>(["student", "researcher", "professor"]);
 const profileDetailKeys = new Set<keyof IndividualProfileDetails>([
-  "degreeProgram", "graduationYear", "thesisTopic", "academicTitle", "department", "supervisionStatus",
+  "degreeProgram", "graduationYear", "thesisTopic", "supervisorName", "academicTitle", "department",
+  "currentProject", "yearsExperience", "labName", "supervisionStatus",
 ]);
 
 const collaborationGoals = new Set<CollaborationGoalValue>([

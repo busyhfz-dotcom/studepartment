@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { authClient } from "@/lib/auth-client";
+import type { IndividualProfileRole, InstitutionalOrganizationType } from "@/lib/api-contracts";
 import styles from "./auth.module.css";
 import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
@@ -12,11 +13,48 @@ function safeCallback(value: string | undefined, fallback: string) {
   return value?.startsWith("/") && !value.startsWith("//") ? value : fallback;
 }
 
-export function AuthForm({ callbackUrl }: { callbackUrl?: string }) {
+type AuthMode = "sign-in" | "sign-up";
+type AccountKind = "individual" | "institution";
+
+const individualRoles: Array<[IndividualProfileRole, string, string]> = [
+  ["student", "Student", "Degree, thesis and graduation details"],
+  ["researcher", "Researcher", "Research role, methods and current work"],
+  ["professor", "Professor / faculty", "Department, supervision and academic role"],
+];
+
+const organizationTypes: Array<[InstitutionalOrganizationType, string]> = [
+  ["university", "University"],
+  ["hospital", "Hospital"],
+  ["laboratory", "Laboratory"],
+  ["research-institute", "Research institute"],
+  ["company", "Company"],
+  ["foundation", "Foundation"],
+];
+
+export function AuthForm({
+  callbackUrl,
+  mode = "sign-in",
+  initialKind = "individual",
+  initialRole = "researcher",
+  initialOrganizationType = "university",
+}: {
+  callbackUrl?: string;
+  mode?: AuthMode;
+  initialKind?: AccountKind;
+  initialRole?: IndividualProfileRole;
+  initialOrganizationType?: InstitutionalOrganizationType;
+}) {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [message, setMessage] = useState("");
-  const destination = safeCallback(callbackUrl, "/profile");
+  const [signUpStep, setSignUpStep] = useState<"identity" | "credentials">("identity");
+  const [accountKind, setAccountKind] = useState<AccountKind>(initialKind);
+  const [accountRole, setAccountRole] = useState<IndividualProfileRole>(initialRole);
+  const [organizationType, setOrganizationType] = useState<InstitutionalOrganizationType>(initialOrganizationType);
+  const signInDestination = safeCallback(callbackUrl, "/profile");
+  const signUpDestination = accountKind === "individual"
+    ? `/onboarding?role=${encodeURIComponent(accountRole)}`
+    : `/onboarding/organization?type=${encodeURIComponent(organizationType)}`;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -25,8 +63,18 @@ export function AuthForm({ callbackUrl }: { callbackUrl?: string }) {
     const form = new FormData(event.currentTarget);
     const email = String(form.get("email") ?? "").trim();
     const password = String(form.get("password") ?? "");
+    const name = String(form.get("name") ?? "").trim();
+    const passwordConfirmation = String(form.get("passwordConfirmation") ?? "");
     try {
-      const result = await authClient.signIn.email({ email, password, callbackURL: destination });
+      if (mode === "sign-up" && password !== passwordConfirmation) {
+        setStatus("error");
+        setMessage("Passwords do not match.");
+        return;
+      }
+
+      const result = mode === "sign-up"
+        ? await authClient.signUp.email({ email, password, name, callbackURL: signUpDestination })
+        : await authClient.signIn.email({ email, password, callbackURL: signInDestination });
 
       if (result.error) {
         setStatus("error");
@@ -34,7 +82,7 @@ export function AuthForm({ callbackUrl }: { callbackUrl?: string }) {
         return;
       }
 
-      router.push(destination);
+      router.push(mode === "sign-up" ? signUpDestination : signInDestination);
       router.refresh();
     } catch (error) {
       setStatus("error");
@@ -59,34 +107,58 @@ export function AuthForm({ callbackUrl }: { callbackUrl?: string }) {
             <small>Medical Research Intelligence</small>
           </span>
         </Link>
-        <span className="eyebrow">Secure research access</span>
-        <h1>Return to your research workspace</h1>
+        <span className="eyebrow">{mode === "sign-up" ? "Create your scientific identity" : "Secure research access"}</span>
+        <h1>{mode === "sign-up" ? "Who are you?" : "Return to your research workspace"}</h1>
         <p className={styles.intro}>
-          Sign in to continue your private Scientific Identity, evidence, opportunity, and introduction workflows.
+          {mode === "sign-up"
+            ? "Choose the account that represents you. The next form will ask only for information relevant to your role or organization."
+            : "Sign in to continue your private Scientific Identity, evidence, opportunity, and introduction workflows."}
         </p>
 
-        <form className={styles.form} onSubmit={submit}>
-          <label>
-            <span>Email</span>
-            <input name="email" type="email" autoComplete="email" required />
-          </label>
-          <label>
-            <span>Password</span>
-            <input
-              name="password"
-              type="password"
-              minLength={12}
-              maxLength={128}
-              autoComplete="current-password"
-              required
-            />
-          </label>
-
-          {message ? <p className={styles.error} role="alert">{message}</p> : null}
-          <button className="primaryButton" type="submit" disabled={status === "loading"}>
-            {status === "loading" ? "Please wait…" : "Sign in"}
-          </button>
-        </form>
+        {mode === "sign-up" && signUpStep === "identity" ? (
+          <div className={styles.identityFlow}>
+            <div className={styles.kindGrid} aria-label="Account type">
+              <button type="button" className={accountKind === "individual" ? styles.selectedCard : styles.identityCard} onClick={() => setAccountKind("individual")}>
+                <strong>Individual</strong><span>Student, researcher or professor</span>
+              </button>
+              <button type="button" className={accountKind === "institution" ? styles.selectedCard : styles.identityCard} onClick={() => setAccountKind("institution")}>
+                <strong>Organization</strong><span>University, lab, hospital or research organization</span>
+              </button>
+            </div>
+            <div className={styles.roleChoices}>
+              <span>{accountKind === "individual" ? "Your role" : "Organization type"}</span>
+              {accountKind === "individual" ? individualRoles.map(([value, label, description]) => (
+                <button key={value} type="button" className={accountRole === value ? styles.selectedRole : ""} onClick={() => setAccountRole(value)}>
+                  <strong>{label}</strong><small>{description}</small>
+                </button>
+              )) : organizationTypes.map(([value, label]) => (
+                <button key={value} type="button" className={organizationType === value ? styles.selectedRole : ""} onClick={() => setOrganizationType(value)}>
+                  <strong>{label}</strong>
+                </button>
+              ))}
+            </div>
+            <button className="primaryButton" type="button" onClick={() => setSignUpStep("credentials")}>Continue</button>
+          </div>
+        ) : (
+          <form className={styles.form} onSubmit={submit}>
+            {mode === "sign-up" ? <label><span>{accountKind === "individual" ? "Full name" : "Representative name"}</span><input name="name" type="text" autoComplete="name" required /></label> : null}
+            <label><span>Email</span><input name="email" type="email" autoComplete="email" required /></label>
+            <label>
+              <span>Password</span>
+              <input name="password" type="password" minLength={12} maxLength={128} autoComplete={mode === "sign-up" ? "new-password" : "current-password"} required />
+            </label>
+            {mode === "sign-up" ? <label><span>Confirm password</span><input name="passwordConfirmation" type="password" minLength={12} maxLength={128} autoComplete="new-password" required /></label> : null}
+            {mode === "sign-up" ? <p className={styles.selectionSummary}>{accountKind === "individual" ? individualRoles.find(([value]) => value === accountRole)?.[1] : organizationTypes.find(([value]) => value === organizationType)?.[1]} account</p> : null}
+            {message ? <p className={styles.error} role="alert">{message}</p> : null}
+            <div className={styles.formActions}>
+              {mode === "sign-up" ? <button className="secondaryButton" type="button" disabled={status === "loading"} onClick={() => setSignUpStep("identity")}>Back</button> : null}
+              <button className="primaryButton" type="submit" disabled={status === "loading"}>{status === "loading" ? "Please wait…" : mode === "sign-up" ? "Create account" : "Sign in"}</button>
+            </div>
+          </form>
+        )}
+        <p className={styles.switcher}>
+          {mode === "sign-up" ? <>Already have an account? <Link href="/auth/sign-in">Sign in</Link></> : <>New to Studepartment? <Link href="/auth/sign-up">Create an account</Link></>}
+        </p>
       </section>
 
       <aside className={styles.context}>
