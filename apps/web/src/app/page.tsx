@@ -1,9 +1,6 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
-import { getPublicOpportunityTicker } from "@/server/opportunities/public-ticker";
-import { MarketingLanding } from "./marketing-landing";
 import { StartFlow } from "./start/start-flow-client";
 import styles from "./page.module.css";
 import { ResearchOrbit } from "@/components/design/research-art";
@@ -101,10 +98,7 @@ const evidencePrinciples = [
 export default async function HomePage() {
   const user = await getCurrentUser();
   if (!user) {
-    const entrySeen = (await cookies()).has("studepartment_entry_seen");
-    if (!entrySeen) return <StartFlow />;
-    const ticker = await getPublicOpportunityTicker();
-    return <MarketingLanding ticker={ticker} />;
+    return <StartFlow />;
   }
 
   const isInstitution = user.accountKind === "INSTITUTION";

@@ -87,7 +87,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
       <header className={styles.top}>
         <div className={styles.container}>
           <div className={styles.topInner}>
-            <Link className={styles.brand} href="/">
+            <Link className={styles.brand} href="/main-site">
               <span className={styles.mark}><BrandSymbol /></span>
               <span>
                 studepartment<b>.</b>
