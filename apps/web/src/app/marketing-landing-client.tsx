@@ -25,6 +25,10 @@ export function Reveal({
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
+    if (!("IntersectionObserver" in window)) {
+      setVisible(true);
+      return;
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -290,3 +294,4 @@ function surfaceLabel(key: string) {
       return key;
   }
 }
+

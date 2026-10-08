@@ -66,9 +66,11 @@
 }
 
 @media (max-width: 700px) {
-  .dark { opacity: .46; }
-  .light { opacity: .23; }
-  .backdrop svg { inset: -12%; width: 124%; height: 124%; }
+  .backdrop { display: none; }
+}
+
+@media (max-width: 1024px) and (prefers-reduced-motion: reduce) {
+  .backdrop { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -78,3 +80,4 @@
   .basePairs line,
   .sequenceNodes circle { animation: none; }
 }
+

@@ -254,6 +254,9 @@
   .proofItem:first-child{border-top:0}
   .closingGrid{align-items:flex-start;flex-direction:column}
   .closingGrid>a{width:100%;justify-content:center;min-height:48px}
+  .latestTrack{animation:none;transform:none}
+  .latestGroup[aria-hidden=true]{display:none}
+  .revealItem{opacity:1;transform:none;transition:none}
 }
 
 @media(max-width:480px){
@@ -306,3 +309,4 @@
   .heroActions { margin-top: 12px; }
   .heroBottom { margin: 7px 0 9px; }
 }
+

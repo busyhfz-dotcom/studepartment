@@ -597,4 +597,6 @@
   .pageName{max-width:100%;white-space:normal;line-height:1.25}
   .content{padding:22px max(14px,env(safe-area-inset-right)) calc(56px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
   .navItem{min-height:58px}
+  .motionLayer{display:none}
 }
+
