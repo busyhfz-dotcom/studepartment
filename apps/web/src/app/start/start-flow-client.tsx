@@ -53,6 +53,56 @@ function makeRoomForLocationPicker(select: HTMLSelectElement) {
   if (overflow > 0) window.scrollBy({ top: overflow, behavior: "instant" });
 }
 
+function ScientificBackdrop() {
+  return (
+    <div className={styles.scienceBackdrop} aria-hidden="true">
+      <svg viewBox="0 0 1440 1000" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="research-path" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#769cff" stopOpacity="0" />
+            <stop offset=".45" stopColor="#769cff" stopOpacity=".34" />
+            <stop offset="1" stopColor="#bd91ff" stopOpacity="0" />
+          </linearGradient>
+          <radialGradient id="research-node">
+            <stop stopColor="#d8e3ff" />
+            <stop offset=".25" stopColor="#8cabff" />
+            <stop offset="1" stopColor="#708cf0" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        <g className={styles.dataNetwork}>
+          <path d="M-40 260C170 142 286 356 480 246S792 104 966 218 1242 380 1490 240" />
+          <path d="M-20 716C196 610 292 782 514 654S816 520 1014 650 1280 790 1485 680" />
+          <path d="M182-30C120 172 314 260 238 462S102 774 250 1034" />
+          <path d="M1182-40C1088 152 1268 278 1156 470S1052 770 1228 1040" />
+          <path d="M480 246C544 366 476 534 514 654M966 218C902 356 944 528 1014 650" />
+        </g>
+
+        <g className={styles.signalNodes}>
+          <circle cx="182" cy="230" r="3" /><circle cx="480" cy="246" r="4" />
+          <circle cx="742" cy="142" r="2.5" /><circle cx="966" cy="218" r="4" />
+          <circle cx="1248" cy="330" r="3" /><circle cx="238" cy="462" r="3" />
+          <circle cx="514" cy="654" r="4" /><circle cx="784" cy="566" r="2.5" />
+          <circle cx="1014" cy="650" r="4" /><circle cx="1210" cy="770" r="3" />
+        </g>
+
+        <g className={styles.orbitField}>
+          <ellipse cx="1210" cy="196" rx="242" ry="108" />
+          <ellipse cx="1210" cy="196" rx="172" ry="172" />
+          <ellipse cx="1210" cy="196" rx="92" ry="222" transform="rotate(52 1210 196)" />
+          <circle className={styles.orbitNodeOne} cx="1044" cy="118" r="6" />
+          <circle className={styles.orbitNodeTwo} cx="1370" cy="251" r="5" />
+        </g>
+
+        <g className={styles.evidencePulse}>
+          <circle cx="226" cy="786" r="64" /><circle cx="226" cy="786" r="112" />
+          <circle cx="226" cy="786" r="5" fill="url(#research-node)" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 function Stage({ n }: { n: 1 | 2 | 3 | 4 }) {
   const labels = ["Choose", "Explore", "Review", "Next step"];
   return (
@@ -176,6 +226,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
   if (step === "welcome") {
     return (
       <div className={styles.page}>
+        <ScientificBackdrop />
         <TopBar onViewSite={onViewSite} />
         <main className={`${styles.welcome} ${styles.fade}`}>
           <div className={styles.wrap}>
@@ -237,6 +288,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
   if (step === "institutions") {
     return (
       <div className={styles.page}>
+        <ScientificBackdrop />
         <TopBar onViewSite={onViewSite} />
         <main className={`${styles.wrap} ${styles.institutionPage} ${styles.fade}`}>
           <button type="button" className={styles.back} onClick={() => setStep("welcome")}>
@@ -262,6 +314,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
     const isGrant = kind === "grant";
     return (
       <div className={styles.page}>
+        <ScientificBackdrop />
         <TopBar onViewSite={onViewSite} />
         <section className={styles.heroCompact}>
           <div className={styles.wrap}>
@@ -379,6 +432,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
     const applyHref = selected.applicationUrl || selected.sourceUrl;
     return (
       <div className={styles.page}>
+        <ScientificBackdrop />
         <TopBar onViewSite={onViewSite} />
         <section className={styles.hero}>
           <div className={styles.wrap}>
@@ -472,6 +526,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
     const signUpHref = `/auth/sign-up?callbackUrl=%2Fopportunities`;
     return (
       <div className={styles.page}>
+        <ScientificBackdrop />
         <TopBar onViewSite={onViewSite} />
         <main className={`${styles.next} ${styles.fade}`}>
           <Stage n={4} />
@@ -555,6 +610,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
   // Fallback: selected opportunity lost (e.g. deep-linked step without state) — go back to welcome.
   return (
     <div className={styles.page}>
+      <ScientificBackdrop />
       <TopBar onViewSite={onViewSite} />
       <main className={`${styles.wrap} ${styles.fade}`} style={{ padding: "60px 0" }}>
         <p>Let&apos;s start again.</p>
