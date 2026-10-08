@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getPublicOpportunityTicker } from "@/server/opportunities/public-ticker";
@@ -101,6 +102,8 @@ export default async function HomePage() {
   const user = await getCurrentUser();
   if (!user) {
     const ticker = await getPublicOpportunityTicker();
+    const entrySeen = (await cookies()).has("studepartment_entry_seen");
+    if (entrySeen) return <MarketingLanding ticker={ticker} />;
     return <HomeGate siteContent={<MarketingLanding ticker={ticker} />} />;
   }
 

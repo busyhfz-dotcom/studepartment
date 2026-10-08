@@ -1,11 +1,16 @@
 .page {
   min-height: 100vh;
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0,1.08fr) minmax(380px,.92fr);
   background:
     radial-gradient(circle at 12% 8%, rgba(15,146,130,.055), transparent 32rem),
     var(--background);
 }
+
+.page > :not(.motionLayer) { position: relative; z-index: 1; }
+.motionLayer { position: absolute; }
 
 .panel {
   width: min(630px, calc(100% - 56px));

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { listOrganizationOptions } from "@/server/repositories/organization-repository";
@@ -32,6 +33,7 @@ export default async function EditProfilePage({
 
   return (
     <main className="shell onboardingShell">
+      <ScientificBackdrop tone="light" />
       <Link className="backLink" href="/profile">← Back to Scientific Identity</Link>
 
       <header className="onboardingHeader">

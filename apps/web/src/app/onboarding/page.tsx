@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import { listOrganizationOptions } from "@/server/repositories/organization-repository";
 import { researcherRepository } from "@/server/repositories/researcher-repository";
 import { OnboardingWizard } from "./onboarding-wizard";
+import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 
 export default async function OnboardingPage() {
   const user = await getCurrentUser();
@@ -18,6 +19,7 @@ export default async function OnboardingPage() {
 
   return (
     <main className="shell onboardingShell">
+      <ScientificBackdrop tone="light" />
       <header className="onboardingHeader">
         <Link className="backLink" href="/">← Studepartment</Link>
         <span className="eyebrow">Scientific Identity Calibration</span>

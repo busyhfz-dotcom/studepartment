@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { SystemStatus } from "./system-status";
 import styles from "./product-shell.module.css";
 
@@ -209,6 +210,7 @@ export function ProductShell({
 
   return (
     <div className={styles.frame}>
+      <ScientificBackdrop className={styles.motionLayer} tone="light" />
       <button
         className={styles.skipLink}
         onClick={() => document.getElementById("workspace-content")?.focus()}

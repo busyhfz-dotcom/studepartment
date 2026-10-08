@@ -6,6 +6,7 @@ import { useState, type FormEvent } from "react";
 import { authClient } from "@/lib/auth-client";
 import styles from "./auth.module.css";
 import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
+import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 
 type Mode = "sign-in" | "sign-up";
 
@@ -51,6 +52,7 @@ export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: stri
 
   return (
     <main className={styles.page}>
+      <ScientificBackdrop className={styles.motionLayer} tone="light" />
       <section className={styles.panel}>
         <Link className={styles.brand} href="/">
           <span className={styles.brandMark} aria-hidden="true">
@@ -103,12 +105,11 @@ export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: stri
           </button>
         </form>
 
-        <p className={styles.switcher}>
-          {isSignUp ? "Already have an account? " : "New to Studepartment? "}
-          <Link href={isSignUp ? "/auth/sign-in" : "/auth/sign-up"}>
-            {isSignUp ? "Sign in" : "Create an account"}
-          </Link>
-        </p>
+        {isSignUp ? (
+          <p className={styles.switcher}>
+            Already have an account? <Link href="/auth/sign-in">Sign in</Link>
+          </p>
+        ) : null}
       </section>
 
       <aside className={styles.context}>

@@ -15,7 +15,12 @@ import { StartFlow } from "./start/start-flow-client";
 export function HomeGate({ siteContent }: { siteContent: ReactNode }) {
   const [showSite, setShowSite] = useState(false);
 
+  function openMainSite() {
+    document.cookie = "studepartment_entry_seen=1; Path=/; SameSite=Lax";
+    setShowSite(true);
+  }
+
   if (showSite) return <>{siteContent}</>;
 
-  return <StartFlow onViewSite={() => setShowSite(true)} />;
+  return <StartFlow onViewSite={openMainSite} />;
 }

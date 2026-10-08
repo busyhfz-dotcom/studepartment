@@ -11,11 +11,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${base}/auth/sign-up`,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
       url: `${base}/auth/sign-in`,
       changeFrequency: "monthly",
       priority: 0.4,

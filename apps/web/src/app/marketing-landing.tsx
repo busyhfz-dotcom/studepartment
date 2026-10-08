@@ -3,6 +3,7 @@ import type { PublicOpportunityTicker } from "@/server/opportunities/public-tick
 import { OpportunityTicker, PlatformTabs, MobileNav, Reveal } from "./marketing-landing-client";
 import styles from "./marketing-landing.module.css";
 import { BrandSymbol, ResearchPreview } from "@/components/design/research-art";
+import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 
 /** Public platform overview, retaining the original copy and live opportunity feed. */
 
@@ -82,6 +83,7 @@ const platformSurfaces = [
 export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }) {
   return (
     <div className={styles.page}>
+      <ScientificBackdrop className={styles.motionLayer} />
       <header className={styles.top}>
         <div className={styles.container}>
           <div className={styles.topInner}>
@@ -100,9 +102,6 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
             />
             <div className={styles.navActions}>
               <Link href="/auth/sign-in">Sign in</Link>
-              <Link className={styles.join} href="/auth/sign-up">
-                Join free ↗
-              </Link>
             </div>
           </div>
         </div>
@@ -216,7 +215,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
               <Reveal as="div" delay={80}>
                 <Link
                   className={styles.pathCard}
-                  href="/auth/sign-up?callbackUrl=%2Fonboarding%2Forganization"
+                  href="/auth/sign-in?callbackUrl=%2Fonboarding%2Forganization"
                 >
                   <div className={styles.topline}>
                     <span>For labs &amp; institutions</span>

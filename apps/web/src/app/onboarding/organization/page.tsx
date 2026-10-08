@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getOwnedOrganization } from "@/server/repositories/organization-repository";
 import { OrganizationOnboardingWizard } from "./organization-onboarding-wizard";
+import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 
 export default async function OrganizationOnboardingPage() {
   const user = await getCurrentUser();
@@ -13,6 +14,7 @@ export default async function OrganizationOnboardingPage() {
 
   return (
     <main className="shell onboardingShell">
+      <ScientificBackdrop tone="light" />
       <header className="onboardingHeader">
         <Link className="backLink" href="/">← Studepartment</Link>
         <span className="eyebrow">Institutional Identity</span>

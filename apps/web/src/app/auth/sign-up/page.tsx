@@ -1,4 +1,4 @@
-import { AuthForm } from "../auth-form";
+import { redirect } from "next/navigation";
 
 export default async function SignUpPage({
   searchParams,
@@ -6,5 +6,6 @@ export default async function SignUpPage({
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const { callbackUrl } = await searchParams;
-  return <AuthForm mode="sign-up" callbackUrl={callbackUrl} />;
+  const query = callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : "";
+  redirect(`/auth/sign-in${query}`);
 }

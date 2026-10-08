@@ -1,0 +1,97 @@
+.backdrop {
+  --motion-secondary: #bd91ff;
+  --motion-highlight: #e7edff;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  color: #769cff;
+}
+
+.dark { opacity: .58; }
+.light {
+  --motion-secondary: #8062d1;
+  --motion-highlight: #fff;
+  color: #4568ce;
+  opacity: .3;
+}
+
+.backdrop::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(currentColor .6px, transparent .6px);
+  background-size: 28px 28px;
+  opacity: .16;
+  mask-image: radial-gradient(ellipse at center, #000 8%, transparent 76%);
+  animation: sequenceGridDrift 30s linear infinite;
+}
+
+.backdrop svg {
+  position: fixed;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor 11%, transparent));
+}
+
+.dnaHelix {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dnaFloat 18s ease-in-out infinite alternate;
+}
+
+.secondaryHelix { opacity: .42; animation-delay: -8s; }
+.strandOne,
+.strandTwo {
+  fill: none;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-dasharray: 9 12;
+  animation: sequenceFlow 28s linear infinite;
+}
+.strandTwo { animation-direction: reverse; animation-duration: 34s; }
+
+.basePairs line {
+  stroke: color-mix(in srgb, currentColor 24%, transparent);
+  stroke-width: 1;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: basePairPulse 7s ease-in-out infinite;
+}
+.basePairs line:nth-child(3n + 2) { animation-delay: -2.2s; }
+.basePairs line:nth-child(3n) { animation-delay: -4.4s; }
+
+.sequenceNodes circle {
+  filter: drop-shadow(0 0 7px color-mix(in srgb, currentColor 65%, transparent));
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: nucleotidePulse 5.5s ease-in-out infinite;
+}
+.sequenceNodes circle:nth-child(even) { animation-delay: -2.75s; }
+
+@keyframes sequenceGridDrift { to { background-position: 56px 28px; } }
+@keyframes sequenceFlow { to { stroke-dashoffset: -420; } }
+@keyframes nucleotidePulse { 50% { opacity: .35; transform: scale(.72); } }
+@keyframes basePairPulse { 50% { opacity: .3; } }
+@keyframes dnaFloat {
+  from { translate: -8px -5px; }
+  to { translate: 18px 13px; }
+}
+
+@media (max-width: 700px) {
+  .dark { opacity: .46; }
+  .light { opacity: .23; }
+  .backdrop svg { inset: -12%; width: 124%; height: 124%; }
+  .secondaryHelix { opacity: .25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop::before,
+  .dnaHelix,
+  .strandOne,
+  .strandTwo,
+  .basePairs line,
+  .sequenceNodes circle { animation: none; }
+}
