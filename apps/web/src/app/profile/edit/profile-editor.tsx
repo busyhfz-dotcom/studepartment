@@ -108,7 +108,79 @@ export function ProfileEditor({
             ...(accountRole === "researcher"
               ? {
                   currentProject: String(form.get("currentProject") ?? "") || null,
-      5ÓŸm¢G§²ÚîÆ­yÐan>
+                  yearsExperience: String(form.get("yearsExperience") ?? "") || null,
+                }
+              : {}),
+            ...(accountRole === "professor"
+              ? {
+                  labName: String(form.get("labName") ?? "") || null,
+                  supervisionStatus: String(form.get("supervisionStatus") ?? "") || null,
+                }
+              : {}),
+          },
+    };
+
+    try {
+      const response = await fetch("/api/v1/profile", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = (await response.json()) as
+        | { success: true; data: ProfileResponse }
+        | { success: false; error: { message: string } };
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.success ? "Profile update failed." : result.error.message);
+      }
+
+      setStatus("success");
+      setMessage("Scientific identity saved. Provenance for these edits has been recorded.");
+      router.refresh();
+      router.push("/profile");
+    } catch (error) {
+      setStatus("error");
+      setMessage(error instanceof Error ? error.message : "Profile update failed.");
+    }
+  }
+
+  return (
+    <form className={styles.editorCard} onSubmit={submit}>
+      <section className={styles.editorSection}>
+        <div className={styles.sectionHead}>
+          <div>
+            <span className="sectionLabel">Identity</span>
+            <h2>Research identity</h2>
+          </div>
+          <p>Maintain the factual identity and institutional context used across discovery and research workflows.</p>
+        </div>
+        <div className={styles.photoEditor}>
+          <IdentityAvatar name={profile.fullName} src={imageUrl} />
+          <label className={styles.fieldGroup}>
+            <span>Professional profile photo URL</span>
+            <input type="url" value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="https://â€¦" />
+            <small>Use a square portrait from a secure HTTPS address. A branded initials avatar appears when no photo is provided.</small>
+          </label>
+        </div>
+        <div className={styles.editorGrid}>
+          <label className={styles.fieldGroup}>
+            <span>Full name</span>
+            <input name="fullName" defaultValue={profile.fullName} maxLength={160} required />
+          </label>
+          <label className={styles.fieldGroup}>
+            <span>Profile type</span>
+            <select value={accountRole} onChange={(event) => setAccountRole(event.target.value as IndividualProfileRole)}>
+              <option value="student">Student</option>
+              <option value="researcher">Researcher</option>
+              <option value="professor">Professor / faculty</option>
+            </select>
+          </label>
+          <label className={styles.fieldGroup}>
+            <span>Professional headline</span>
+            <input name="headline" defaultValue={profile.headline} maxLength={220} />
+          </label>
+          <label className={styles.fieldGroup}>
+            <span>Career stage / title</span>
             <input name="careerStage" defaultValue={profile.careerStage} maxLength={120} />
           </label>
           <label className={styles.fieldGroup}>
@@ -286,3 +358,4 @@ export function ProfileEditor({
     </form>
   );
 }
+
