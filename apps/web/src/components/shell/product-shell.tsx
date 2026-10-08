@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { SystemStatus } from "./system-status";
@@ -153,6 +153,12 @@ function NavigationGroup({
   pathname: string;
   close: () => void;
 }) {
+  const activeItemRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    activeItemRef.current?.scrollIntoView({ block: "nearest" });
+  }, [pathname]);
+
   return (
     <div className={styles.navGroup}>
       <span className={styles.navLabel}>{label}</span>
@@ -166,6 +172,7 @@ function NavigationGroup({
               href={item.href}
               key={item.href}
               onClick={close}
+              ref={active ? activeItemRef : undefined}
             >
               <span className={styles.iconWrap}><Icon name={item.icon} /></span>
               <span className={styles.navCopy}>
