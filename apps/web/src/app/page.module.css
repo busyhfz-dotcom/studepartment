@@ -813,3 +813,86 @@
 @media(max-width:1200px){.heroCopy{padding-right:0}.heroActions{position:static;flex-direction:row;flex-wrap:wrap;margin-top:20px}.heroCopy h1{font-size:38px}.dashboard{grid-template-columns:minmax(0,1.4fr) minmax(225px,.75fr)}.commandLead h2{font-size:27px}.surfaceGrid{grid-template-columns:1fr 1fr}.workflowGrid{grid-template-columns:1fr}.heroIndex{padding:18px}}
 @media(max-width:700px){.dashboard{grid-template-columns:1fr;gap:22px}.heroCopy{grid-row:1}.dashboard>.commandDeck{grid-column:1;grid-row:2;padding:25px}.heroIndex{grid-column:1;grid-row:3;position:relative;display:block;padding:24px}.heroIndex>div:first-child{position:absolute;right:-20px;top:0;height:130px;transform:scale(.58);margin:0}.heroIndexTop{max-width:220px}.principleList{max-width:300px;position:relative}.principleList>div{padding:9px 0}.heroCopy h1{font-size:34px;line-height:1.18;margin:16px 0}.heroCopy>p{font-size:12px}.heroActions{gap:9px}.heroActions a{font-size:10px}.commandLead h2{font-size:28px}.commandLead p{font-size:11px}.commandSearch{grid-template-columns:25px minmax(0,1fr);gap:10px}.searchText strong{font-size:10px}.searchCommand{grid-column:1/-1;text-align:center;margin-top:4px;padding:10px}.commandSignals{font-size:8px;gap:12px}.surfaceGrid{grid-template-columns:1fr 1fr;gap:13px}.surfaceCard{padding:20px;min-height:245px}.surfaceCard h3{font-size:20px}.surfaceCard p{font-size:11px}.sectionIntro h2{font-size:22px}.sectionIntro{flex-direction:column;align-items:flex-start;gap:13px}.sectionIntro p{max-width:none}.workflowGrid{grid-template-columns:1fr}.panelHeading h2{font-size:22px}.closingRail{grid-template-columns:1fr}}
 @media(max-width:430px){.heroCopy h1{font-size:31px}.surfaceGrid{grid-template-columns:1fr}.surfaceCard{min-height:230px}.commandLead h2{font-size:26px}}
+
+/* The evidence card follows the light blue dashboard palette. */
+.evidencePanel {
+  padding: clamp(24px, 2.5vw, 32px);
+  color: #23365c;
+  border: 1px solid #cbd9fa;
+  border-radius: 20px;
+  background: linear-gradient(155deg, #f3f6ff 0%, #e8efff 100%);
+  box-shadow: 0 12px 32px rgba(43, 72, 142, .07);
+}
+
+.evidencePanel .sectionLabel {
+  color: #536ba2;
+  font-size: 11px;
+}
+
+.evidenceMonogram {
+  width: 48px;
+  height: 48px;
+  color: #3558ae;
+  border-color: #b9cbf6;
+  background: #dce7ff;
+}
+
+.evidenceHeader {
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.evidenceHeader h2 {
+  color: #172b55;
+  font-size: clamp(24px, 2.2vw, 29px);
+  line-height: 1.2;
+}
+
+.evidenceIntro {
+  color: #3e527b;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.evidenceStack {
+  gap: 9px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.evidenceStack > div {
+  padding: 17px 18px;
+  border: 1px solid #d5e0f6;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .86);
+  box-shadow: 0 2px 8px rgba(32, 59, 115, .035);
+}
+
+.evidenceStack span {
+  color: #536eae;
+  font-size: 10px;
+}
+
+.evidenceStack strong {
+  color: #254179;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.evidenceStack p {
+  margin-top: 5px;
+  color: #4c6085;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.evidencePanel > a {
+  color: #294faa;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.evidencePanel > a:hover {
+  color: #173985;
+}

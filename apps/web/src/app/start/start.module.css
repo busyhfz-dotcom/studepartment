@@ -341,6 +341,25 @@
 .topActions > button:focus-visible,
 .topActions > a:not(.join):hover,
 .topActions > a:not(.join):focus-visible { color: #f1f5ff; }
+
+.page {
+  --select-menu-bg: #14213c;
+  --select-menu-border: #40547d;
+  --select-menu-text: #dce6ff;
+  --select-menu-hover: #25365c;
+  --select-menu-selected: #334776;
+  --select-menu-selected-text: #f3f5ff;
+}
+
+.page select {
+  color-scheme: dark;
+}
+
+.page select:focus,
+.page select:open {
+  border-color: #a394e8;
+  box-shadow: 0 0 0 3px rgba(163, 148, 232, .18);
+}
 .welcome .stage { padding: 16px 0 8px; }
 .entryHead { margin-bottom: 17px; }
 .entryHead > div:first-child {

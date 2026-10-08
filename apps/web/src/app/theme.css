@@ -41,3 +41,96 @@ html::-webkit-scrollbar-corner { background: #0d1730; }
     scrollbar-color: #8298f2 #0d1730;
   }
 }
+
+/* A calmer, consistent keyboard focus treatment across the site. */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #9988dc;
+  outline-offset: 2px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #8d80cc;
+  box-shadow: 0 0 0 3px rgba(141, 128, 204, .14);
+}
+
+/* Native selects keep their form and keyboard behavior while supported browsers
+   render the menu itself in the site's blue and lavender palette. */
+:root {
+  --select-menu-bg: #ffffff;
+  --select-menu-border: #d5def1;
+  --select-menu-text: #253450;
+  --select-menu-hover: #eef2ff;
+  --select-menu-selected: #e1e8ff;
+  --select-menu-selected-text: #304da6;
+}
+
+@supports (appearance: base-select) and selector(::picker(select)) {
+  select:not([multiple]):not([size]),
+  select:not([multiple]):not([size])::picker(select) {
+    appearance: base-select;
+  }
+
+  select:not([multiple]):not([size])::picker(select) {
+    min-width: anchor-size(width);
+    max-width: min(420px, calc(100vw - 24px));
+    max-height: min(320px, 55vh);
+    margin-top: 6px;
+    padding: 6px;
+    overflow: auto;
+    color: var(--select-menu-text);
+    border: 1px solid var(--select-menu-border);
+    border-radius: 12px;
+    background: var(--select-menu-bg);
+    box-shadow: 0 18px 46px rgba(23, 35, 60, .20), 0 3px 10px rgba(23, 35, 60, .08);
+  }
+
+  select:not([multiple]):not([size])::picker-icon {
+    color: currentColor;
+    opacity: .7;
+    transition: rotate .2s ease;
+  }
+
+  select:not([multiple]):not([size]):open::picker-icon {
+    rotate: 180deg;
+  }
+
+  select:not([multiple]):not([size]) option {
+    min-height: 38px;
+    padding: 9px 12px;
+    color: var(--select-menu-text);
+    border-radius: 7px;
+    background: transparent;
+    font: inherit;
+    line-height: 1.45;
+    cursor: pointer;
+  }
+
+  select:not([multiple]):not([size]) option:hover,
+  select:not([multiple]):not([size]) option:focus {
+    color: var(--select-menu-selected-text);
+    background: var(--select-menu-hover);
+  }
+
+  select:not([multiple]):not([size]) option:checked {
+    color: var(--select-menu-selected-text);
+    background: var(--select-menu-selected);
+    font-weight: 750;
+  }
+
+  select:not([multiple]):not([size]) option:checked:hover,
+  select:not([multiple]):not([size]) option:checked:focus {
+    background: var(--select-menu-hover);
+  }
+
+  select:not([multiple]):not([size]) option::checkmark {
+    order: 1;
+    margin-inline-start: auto;
+    color: var(--select-menu-selected-text);
+  }
+}
