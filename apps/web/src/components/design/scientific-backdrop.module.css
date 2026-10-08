@@ -17,23 +17,11 @@
   opacity: .3;
 }
 
-.backdrop::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: radial-gradient(currentColor .6px, transparent .6px);
-  background-size: 28px 28px;
-  opacity: .16;
-  mask-image: radial-gradient(ellipse at center, #000 8%, transparent 76%);
-  animation: sequenceGridDrift 30s linear infinite;
-}
-
 .backdrop svg {
   position: fixed;
   inset: -5%;
   width: 110%;
   height: 110%;
-  filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor 11%, transparent));
 }
 
 .dnaHelix {
@@ -42,7 +30,6 @@
   animation: dnaFloat 18s ease-in-out infinite alternate;
 }
 
-.secondaryHelix { opacity: .42; animation-delay: -8s; }
 .strandOne,
 .strandTwo {
   fill: none;
@@ -64,14 +51,12 @@
 .basePairs line:nth-child(3n) { animation-delay: -4.4s; }
 
 .sequenceNodes circle {
-  filter: drop-shadow(0 0 7px color-mix(in srgb, currentColor 65%, transparent));
   transform-box: fill-box;
   transform-origin: center;
   animation: nucleotidePulse 5.5s ease-in-out infinite;
 }
 .sequenceNodes circle:nth-child(even) { animation-delay: -2.75s; }
 
-@keyframes sequenceGridDrift { to { background-position: 56px 28px; } }
 @keyframes sequenceFlow { to { stroke-dashoffset: -420; } }
 @keyframes nucleotidePulse { 50% { opacity: .35; transform: scale(.72); } }
 @keyframes basePairPulse { 50% { opacity: .3; } }
@@ -84,11 +69,9 @@
   .dark { opacity: .46; }
   .light { opacity: .23; }
   .backdrop svg { inset: -12%; width: 124%; height: 124%; }
-  .secondaryHelix { opacity: .25; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .backdrop::before,
   .dnaHelix,
   .strandOne,
   .strandTwo,

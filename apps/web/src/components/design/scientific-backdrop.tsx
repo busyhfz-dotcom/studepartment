@@ -47,18 +47,6 @@ export function ScientificBackdrop({
           </g>
         </g>
 
-        <g className={`${styles.dnaHelix} ${styles.secondaryHelix}`} transform="translate(210 560) scale(.72) rotate(7 720 280)">
-          <g className={styles.basePairs}>
-            <line x1="20" y1="166" x2="20" y2="364" /><line x1="140" y1="170" x2="140" y2="360" />
-            <line x1="260" y1="280" x2="260" y2="280" /><line x1="380" y1="375" x2="380" y2="155" />
-            <line x1="500" y1="334" x2="500" y2="196" /><line x1="620" y1="250" x2="620" y2="250" />
-            <line x1="740" y1="151" x2="740" y2="379" /><line x1="860" y1="225" x2="860" y2="305" />
-            <line x1="980" y1="350" x2="980" y2="210" /><line x1="1100" y1="360" x2="1100" y2="170" />
-            <line x1="1220" y1="260" x2="1220" y2="300" /><line x1="1380" y1="151" x2="1380" y2="379" />
-          </g>
-          <path className={styles.strandOne} stroke={`url(#dna-strand-${tone})`} d="M-100 280C20 150 140 150 260 280S500 410 620 280 860 150 980 280 1220 410 1540 250" />
-          <path className={styles.strandTwo} stroke={`url(#dna-strand-${tone})`} d="M-100 250C20 380 140 380 260 250S500 120 620 250 860 380 980 250 1220 120 1540 280" />
-        </g>
       </svg>
     </div>
   );

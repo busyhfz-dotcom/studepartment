@@ -64,6 +64,7 @@ export type InstitutionalEntityType = "laboratory" | "institution";
 export type InstitutionalOrganizationType =
   | "university"
   | "hospital"
+  | "laboratory"
   | "research-institute"
   | "company"
   | "foundation";
@@ -146,6 +147,25 @@ export type OrganizationOption = {
 };
 
 export type AccountKindValue = "individual" | "institution";
+export type IndividualProfileRole = "student" | "researcher" | "professor";
+
+export type IndividualProfileDetails = {
+  degreeProgram?: string | null;
+  graduationYear?: string | null;
+  thesisTopic?: string | null;
+  academicTitle?: string | null;
+  department?: string | null;
+  supervisionStatus?: string | null;
+};
+
+export type OrganizationProfileDetails = {
+  primaryFocus?: string | null;
+  services?: string | null;
+  facilities?: string | null;
+  accreditations?: string | null;
+  capacity?: string | null;
+  fundingAreas?: string | null;
+};
 
 export type OrganizationProfileResponse = {
   id: string;
@@ -157,6 +177,7 @@ export type OrganizationProfileResponse = {
   logoUrl?: string | null;
   contactEmail?: string | null;
   sizeLabel?: string | null;
+  profileDetails?: OrganizationProfileDetails;
   verified: boolean;
   claimedAt?: string | null;
   activeOpportunityCount: number;
@@ -171,6 +192,7 @@ export type OrganizationCreateInput = {
   description?: string | null;
   contactEmail?: string | null;
   sizeLabel?: string | null;
+  profileDetails?: OrganizationProfileDetails;
 };
 
 export type OrganizationUpdateInput = {
@@ -181,6 +203,7 @@ export type OrganizationUpdateInput = {
   description?: string | null;
   contactEmail?: string | null;
   sizeLabel?: string | null;
+  profileDetails?: OrganizationProfileDetails;
 };
 
 export type ProfileResponse = {
@@ -203,6 +226,8 @@ export type ProfileResponse = {
   profilePublic?: boolean;
   topicSlugs?: string[];
   methodSlugs?: string[];
+  accountRole: IndividualProfileRole;
+  profileDetails?: IndividualProfileDetails;
   completeness?: ProfileCompleteness;
 };
 
@@ -220,6 +245,8 @@ export type ProfileUpdateInput = {
   collaborationGoals?: CollaborationGoalValue[];
   topicSlugs?: string[];
   methodSlugs?: string[];
+  accountRole?: IndividualProfileRole;
+  profileDetails?: IndividualProfileDetails;
 };
 
 export type OpportunityTypeValue =

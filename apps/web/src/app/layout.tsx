@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import { getSiteUrl, siteDescription, siteName, siteTagline } from "@/lib/site";
 import "./globals.css";
 import "./theme.css";
-import { MotionRuntime } from "@/components/design/motion-runtime";
 
 const sans = localFont({
   src: "./fonts/manrope-latin-wght-normal.woff2",
@@ -21,8 +20,6 @@ const mono = localFont({
   variable: "--font-mono",
   display: "swap",
 });
-
-export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
   themeColor: "#080e20",
@@ -56,7 +53,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${sans.variable} ${mono.variable}`}><MotionRuntime />{children}</body>
+      <body className={`${sans.variable} ${mono.variable}`}>{children}</body>
     </html>
   );
 }

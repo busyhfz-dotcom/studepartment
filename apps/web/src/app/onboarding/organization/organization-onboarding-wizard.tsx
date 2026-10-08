@@ -2,16 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { InstitutionalOrganizationType, OrganizationCreateInput } from "@/lib/api-contracts";
+import type { InstitutionalOrganizationType, OrganizationCreateInput, OrganizationProfileDetails } from "@/lib/api-contracts";
 import styles from "../onboarding.module.css";
 
 const organizationTypes: Array<[InstitutionalOrganizationType, string]> = [
   ["university", "University"],
   ["hospital", "Hospital"],
+  ["laboratory", "Laboratory"],
   ["research-institute", "Research institute"],
   ["company", "Company"],
   ["foundation", "Foundation"],
 ];
+
+const typeFields: Record<InstitutionalOrganizationType, Array<[keyof OrganizationProfileDetails, string, string]>> = {
+  hospital: [["services", "Clinical services", "Oncology, pathology, imaging…"], ["accreditations", "Accreditations", "Clinical and research accreditations"], ["capacity", "Clinical / research capacity", "Beds, trials, research units…"]],
+  laboratory: [["primaryFocus", "Research focus", "Core scientific focus"], ["facilities", "Facilities and instruments", "Sequencing, microscopy, biobank…"], ["services", "Research services", "Assays, analysis, sample processing…"]],
+  university: [["primaryFocus", "Academic focus", "Primary disciplines and research areas"], ["facilities", "Research infrastructure", "Core facilities and platforms"]],
+  "research-institute": [["primaryFocus", "Research programs", "Flagship programs and scientific focus"], ["facilities", "Research infrastructure", "Platforms, cohorts, core facilities…"]],
+  company: [["primaryFocus", "Scientific focus", "Therapeutic area, technology, product…"], ["services", "Capabilities", "Research and development capabilities"]],
+  foundation: [["fundingAreas", "Funding areas", "Diseases, methods, regions…"], ["services", "Programs", "Grants, fellowships, partnerships…"]],
+};
 
 const sizeLabels = ["1–10", "11–50", "51–250", "251–1,000", "1,000+"];
 
@@ -27,7 +37,12 @@ export function OrganizationOnboardingWizard() {
     description: null,
     contactEmail: null,
     sizeLabel: null,
+    profileDetails: {},
   });
+
+  function updateDetail(key: keyof OrganizationProfileDetails, value: string) {
+    setDraft((current) => ({ ...current, profileDetails: { ...current.profileDetails, [key]: value || null } }));
+  }
 
   async function submit() {
     setSaving(true);
@@ -106,6 +121,14 @@ export function OrganizationOnboardingWizard() {
                 placeholder="research-office@institution.edu"
               />
             </label>
+          </div>
+          <div className={styles.stack}>
+            <h3>{organizationTypes.find(([value]) => value === draft.type)?.[1]} profile details</h3>
+            <div className={styles.grid}>
+              {typeFields[draft.type].map(([key, label, placeholder]) => (
+                <label key={key}><span>{label}</span><input value={draft.profileDetails?.[key] ?? ""} onChange={(event) => updateDetail(key, event.target.value)} placeholder={placeholder} /></label>
+              ))}
+            </div>
           </div>
           <label className={styles.fullField}>
             <span>Description</span>

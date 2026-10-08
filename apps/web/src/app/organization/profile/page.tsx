@@ -13,13 +13,16 @@ export default async function OrganizationProfilePage() {
 
   const organization = await getOwnedOrganization(user.id);
   if (!organization) redirect("/onboarding/organization");
+  const typeLabel = ({ university: "University", hospital: "Hospital", laboratory: "Laboratory", "research-institute": "Research institute", company: "Company", foundation: "Foundation" } as const)[organization.type];
+  const detailLabels = { primaryFocus: "Primary focus", services: "Services and programs", facilities: "Facilities", accreditations: "Accreditations", capacity: "Capacity", fundingAreas: "Funding areas" } as const;
+  const visibleDetails = Object.entries(organization.profileDetails ?? {}).filter(([, value]) => value);
 
   return (
     <ProductShell accountKind="institution">
       <div className={styles.shell}>
         <header className={styles.header}>
           <div className={styles.headerMeta}>
-            <span className="eyebrow">Institutional Identity</span>
+            <span className="eyebrow">{typeLabel} Identity</span>
             <span className={`${styles.statusPill} ${organization.verified ? styles.statusVerified : styles.statusUnverified}`}>
               {organization.verified ? "Verified institution" : "Unverified · self-reported"}
             </span>
@@ -34,6 +37,8 @@ export default async function OrganizationProfilePage() {
             <Link className="secondary" href={`/institutions/${organization.id}`}>View public institutional page ↗</Link>
           </div>
         </header>
+
+        {visibleDetails.length ? <section className={styles.detailGrid}>{visibleDetails.map(([key, value]) => <div className={styles.statCard} key={key}><span>{detailLabels[key as keyof typeof detailLabels]}</span><strong>{value}</strong></div>)}</section> : null}
 
         <div className={styles.statGrid}>
           <div className={styles.statCard}>

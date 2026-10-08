@@ -18,6 +18,7 @@ enum UserRole {
 enum OrganizationType {
   UNIVERSITY
   HOSPITAL
+  LABORATORY
   RESEARCH_INSTITUTE
   COMPANY
   FOUNDATION
@@ -274,6 +275,7 @@ model ResearcherProfile {
   profilePublic      Boolean                 @default(true)
   availabilityMode   AvailabilityMode        @default(SELECTIVE)
   collaborationGoals CollaborationGoal[]
+  profileDetails     Json?
   createdAt          DateTime                @default(now())
   updatedAt          DateTime                @updatedAt
   user               User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -325,6 +327,7 @@ model Organization {
   logoUrl        String?
   contactEmail   String?
   sizeLabel      String?
+  profileDetails Json?
   claimedAt      DateTime?
   createdAt      DateTime                 @default(now())
   updatedAt      DateTime                 @updatedAt

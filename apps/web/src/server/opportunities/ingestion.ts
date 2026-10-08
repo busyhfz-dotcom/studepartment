@@ -16,7 +16,7 @@ export type OpportunityIngestionRecord = {
   description?: string | null;
   organization: {
     name: string;
-    type: "UNIVERSITY" | "HOSPITAL" | "RESEARCH_INSTITUTE" | "COMPANY" | "FOUNDATION";
+    type: "UNIVERSITY" | "HOSPITAL" | "LABORATORY" | "RESEARCH_INSTITUTE" | "COMPANY" | "FOUNDATION";
     countryCode?: string | null;
     website?: string | null;
   };

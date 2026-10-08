@@ -1,4 +1,4 @@
-import { getDb } from "@studepartment/db";
+import { getDb, type Prisma } from "@studepartment/db";
 import type {
   InstitutionalOrganizationType,
   OrganizationCreateInput,
@@ -30,6 +30,7 @@ export async function listOrganizationOptions(): Promise<OrganizationOption[]> {
 const organizationTypeToDb = {
   university: "UNIVERSITY",
   hospital: "HOSPITAL",
+  laboratory: "LABORATORY",
   "research-institute": "RESEARCH_INSTITUTE",
   company: "COMPANY",
   foundation: "FOUNDATION",
@@ -38,6 +39,7 @@ const organizationTypeToDb = {
 const organizationTypeFromDb = {
   UNIVERSITY: "university",
   HOSPITAL: "hospital",
+  LABORATORY: "laboratory",
   RESEARCH_INSTITUTE: "research-institute",
   COMPANY: "company",
   FOUNDATION: "foundation",
@@ -63,6 +65,7 @@ type OwnedOrganizationRow = {
   logoUrl: string | null;
   contactEmail: string | null;
   sizeLabel: string | null;
+  profileDetails: Prisma.JsonValue;
   verified: boolean;
   claimedAt: Date | null;
   _count: { opportunities: number; affiliations: number };
@@ -79,6 +82,7 @@ function mapOwnedOrganization(row: OwnedOrganizationRow): OrganizationProfileRes
     logoUrl: row.logoUrl,
     contactEmail: row.contactEmail,
     sizeLabel: row.sizeLabel,
+    profileDetails: (row.profileDetails as OrganizationProfileResponse["profileDetails"]) ?? {},
     verified: row.verified,
     claimedAt: row.claimedAt ? row.claimedAt.toISOString() : null,
     activeOpportunityCount: row._count.opportunities,
@@ -98,6 +102,7 @@ const ownedOrganizationSelect = {
   logoUrl: true,
   contactEmail: true,
   sizeLabel: true,
+  profileDetails: true,
   verified: true,
   claimedAt: true,
   _count: { select: { opportunities: true, affiliations: true } },
@@ -135,6 +140,7 @@ export async function createOwnedOrganization(
       logoUrl: null,
       contactEmail: input.contactEmail ?? null,
       sizeLabel: input.sizeLabel ?? null,
+      profileDetails: input.profileDetails ?? {},
       verified: false,
       claimedAt: new Date().toISOString(),
       activeOpportunityCount: 0,
@@ -160,6 +166,7 @@ export async function createOwnedOrganization(
         description: input.description ?? null,
         contactEmail: input.contactEmail ?? null,
         sizeLabel: input.sizeLabel ?? null,
+        profileDetails: (input.profileDetails ?? {}) as Prisma.InputJsonValue,
         ownerUserId: userId,
         claimedAt: new Date(),
       },
@@ -189,6 +196,7 @@ export async function updateOwnedOrganization(
       ...(input.description !== undefined ? { description: input.description } : {}),
       ...(input.contactEmail !== undefined ? { contactEmail: input.contactEmail } : {}),
       ...(input.sizeLabel !== undefined ? { sizeLabel: input.sizeLabel } : {}),
+      ...(input.profileDetails !== undefined ? { profileDetails: input.profileDetails } : {}),
     };
     return fixtureOwnedOrganization;
   }
@@ -209,6 +217,9 @@ export async function updateOwnedOrganization(
       ...(input.description !== undefined ? { description: input.description } : {}),
       ...(input.contactEmail !== undefined ? { contactEmail: input.contactEmail } : {}),
       ...(input.sizeLabel !== undefined ? { sizeLabel: input.sizeLabel } : {}),
+      ...(input.profileDetails !== undefined
+        ? { profileDetails: input.profileDetails as Prisma.InputJsonValue }
+        : {}),
     },
     select: ownedOrganizationSelect,
   });

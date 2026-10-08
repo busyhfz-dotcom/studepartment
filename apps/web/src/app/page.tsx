@@ -4,7 +4,7 @@ import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getPublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { MarketingLanding } from "./marketing-landing";
-import { HomeGate } from "./home-gate-client";
+import { StartFlow } from "./start/start-flow-client";
 import styles from "./page.module.css";
 import { ResearchOrbit } from "@/components/design/research-art";
 
@@ -101,10 +101,10 @@ const evidencePrinciples = [
 export default async function HomePage() {
   const user = await getCurrentUser();
   if (!user) {
-    const ticker = await getPublicOpportunityTicker();
     const entrySeen = (await cookies()).has("studepartment_entry_seen");
-    if (entrySeen) return <MarketingLanding ticker={ticker} />;
-    return <HomeGate siteContent={<MarketingLanding ticker={ticker} />} />;
+    if (!entrySeen) return <StartFlow />;
+    const ticker = await getPublicOpportunityTicker();
+    return <MarketingLanding ticker={ticker} />;
   }
 
   const isInstitution = user.accountKind === "INSTITUTION";

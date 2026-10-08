@@ -8,17 +8,15 @@ import styles from "./auth.module.css";
 import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 
-type Mode = "sign-in" | "sign-up";
-
 function safeCallback(value: string | undefined, fallback: string) {
   return value?.startsWith("/") && !value.startsWith("//") ? value : fallback;
 }
 
-export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: string }) {
+export function AuthForm({ callbackUrl }: { callbackUrl?: string }) {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [message, setMessage] = useState("");
-  const destination = safeCallback(callbackUrl, mode === "sign-up" ? "/onboarding" : "/profile");
+  const destination = safeCallback(callbackUrl, "/profile");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,12 +25,8 @@ export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: stri
     const form = new FormData(event.currentTarget);
     const email = String(form.get("email") ?? "").trim();
     const password = String(form.get("password") ?? "");
-    const name = String(form.get("name") ?? "").trim();
-
     try {
-      const result = mode === "sign-up"
-        ? await authClient.signUp.email({ name, email, password, callbackURL: destination })
-        : await authClient.signIn.email({ email, password, callbackURL: destination });
+      const result = await authClient.signIn.email({ email, password, callbackURL: destination });
 
       if (result.error) {
         setStatus("error");
@@ -47,8 +41,6 @@ export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: stri
       setMessage(error instanceof Error ? error.message : "Authentication failed.");
     }
   }
-
-  const isSignUp = mode === "sign-up";
 
   return (
     <main className={styles.page}>
@@ -68,20 +60,12 @@ export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: stri
           </span>
         </Link>
         <span className="eyebrow">Secure research access</span>
-        <h1>{isSignUp ? "Create your scientific workspace" : "Return to your research workspace"}</h1>
+        <h1>Return to your research workspace</h1>
         <p className={styles.intro}>
-          {isSignUp
-            ? "Create the private account boundary behind your Scientific Identity, evidence, saved opportunities, introductions, and research workflows."
-            : "Sign in to continue your private Scientific Identity, evidence, opportunity, and introduction workflows."}
+          Sign in to continue your private Scientific Identity, evidence, opportunity, and introduction workflows.
         </p>
 
         <form className={styles.form} onSubmit={submit}>
-          {isSignUp ? (
-            <label>
-              <span>Name</span>
-              <input name="name" autoComplete="name" maxLength={160} required />
-            </label>
-          ) : null}
           <label>
             <span>Email</span>
             <input name="email" type="email" autoComplete="email" required />
@@ -93,23 +77,16 @@ export function AuthForm({ mode, callbackUrl }: { mode: Mode; callbackUrl?: stri
               type="password"
               minLength={12}
               maxLength={128}
-              autoComplete={isSignUp ? "new-password" : "current-password"}
+              autoComplete="current-password"
               required
             />
-            {isSignUp ? <small>Use at least 12 characters.</small> : null}
           </label>
 
           {message ? <p className={styles.error} role="alert">{message}</p> : null}
           <button className="primaryButton" type="submit" disabled={status === "loading"}>
-            {status === "loading" ? "Please wait…" : isSignUp ? "Create account" : "Sign in"}
+            {status === "loading" ? "Please wait…" : "Sign in"}
           </button>
         </form>
-
-        {isSignUp ? (
-          <p className={styles.switcher}>
-            Already have an account? <Link href="/auth/sign-in">Sign in</Link>
-          </p>
-        ) : null}
       </section>
 
       <aside className={styles.context}>

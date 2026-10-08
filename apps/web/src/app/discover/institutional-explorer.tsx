@@ -20,6 +20,7 @@ const organizationTypeOptions: OrganizationTypeOption[] = [
   { value: "", label: "Any organization type" },
   { value: "university", label: "University" },
   { value: "hospital", label: "Hospital" },
+  { value: "laboratory", label: "Laboratory" },
   { value: "research-institute", label: "Research institute" },
   { value: "company", label: "Company" },
   { value: "foundation", label: "Foundation" },

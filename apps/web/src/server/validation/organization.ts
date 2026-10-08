@@ -1,5 +1,6 @@
 import type {
   InstitutionalOrganizationType,
+  OrganizationProfileDetails,
   OrganizationCreateInput,
   OrganizationUpdateInput,
 } from "@/lib/api-contracts";
@@ -7,6 +8,7 @@ import type {
 const organizationTypes = new Set<InstitutionalOrganizationType>([
   "university",
   "hospital",
+  "laboratory",
   "research-institute",
   "company",
   "foundation",
@@ -82,13 +84,29 @@ function optionalEmail(value: unknown, field: string): string | null | undefined
 
 function requireType(value: unknown): InstitutionalOrganizationType {
   if (typeof value !== "string" || !organizationTypes.has(value as InstitutionalOrganizationType)) {
-    throw new OrganizationValidationError("type must be one of university, hospital, research-institute, company, foundation.");
+    throw new OrganizationValidationError("type must be one of university, hospital, laboratory, research-institute, company, foundation.");
   }
   return value as InstitutionalOrganizationType;
 }
 
-const createKeys = new Set(["name", "type", "countryCode", "website", "description", "contactEmail", "sizeLabel"]);
+const createKeys = new Set(["name", "type", "countryCode", "website", "description", "contactEmail", "sizeLabel", "profileDetails"]);
 const updateKeys = createKeys;
+const profileDetailKeys = new Set<keyof OrganizationProfileDetails>([
+  "primaryFocus", "services", "facilities", "accreditations", "capacity", "fundingAreas",
+]);
+
+function organizationDetails(value: unknown): OrganizationProfileDetails | undefined {
+  if (value === undefined) return undefined;
+  const object = asObject(value);
+  const unknown = Object.keys(object).filter((key) => !profileDetailKeys.has(key as keyof OrganizationProfileDetails));
+  if (unknown.length) throw new OrganizationValidationError(`Unknown organization-specific fields: ${unknown.join(", ")}.`);
+  const result: OrganizationProfileDetails = {};
+  for (const key of profileDetailKeys) {
+    const parsed = optionalString(object[key], `profileDetails.${key}`, 500, { nullable: true });
+    if (parsed !== undefined) Object.assign(result, { [key]: parsed });
+  }
+  return result;
+}
 
 export function parseOrganizationCreateInput(value: unknown): OrganizationCreateInput {
   const object = asObject(value);
@@ -108,6 +126,7 @@ export function parseOrganizationCreateInput(value: unknown): OrganizationCreate
     description: optionalString(object.description, "description", 2000, { nullable: true }) ?? null,
     contactEmail: optionalEmail(object.contactEmail, "contactEmail") ?? null,
     sizeLabel: optionalString(object.sizeLabel, "sizeLabel", 60, { nullable: true }) ?? null,
+    profileDetails: organizationDetails(object.profileDetails),
   };
 }
 
@@ -142,6 +161,9 @@ export function parseOrganizationUpdateInput(value: unknown): OrganizationUpdate
 
   const sizeLabel = optionalString(object.sizeLabel, "sizeLabel", 60, { nullable: true });
   if (sizeLabel !== undefined) result.sizeLabel = sizeLabel;
+
+  const profileDetails = organizationDetails(object.profileDetails);
+  if (profileDetails !== undefined) result.profileDetails = profileDetails;
 
   return result;
 }

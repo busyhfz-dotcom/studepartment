@@ -6,5 +6,5 @@ export default async function SignInPage({
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const { callbackUrl } = await searchParams;
-  return <AuthForm mode="sign-in" callbackUrl={callbackUrl} />;
+  return <AuthForm callbackUrl={callbackUrl} />;
 }

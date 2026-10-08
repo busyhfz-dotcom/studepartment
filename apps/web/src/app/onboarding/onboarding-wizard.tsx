@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import type { CollaborationGoalValue, OrganizationOption, ProfileResponse, ProfileUpdateInput } from "@/lib/api-contracts";
+import type { CollaborationGoalValue, IndividualProfileDetails, IndividualProfileRole, OrganizationOption, ProfileResponse, ProfileUpdateInput } from "@/lib/api-contracts";
 import styles from "./onboarding.module.css";
 
 const topics = [
@@ -50,6 +50,8 @@ export function OnboardingWizard({ profile, organizations }: { profile: ProfileR
     availability: profile.availability,
     profilePublic: profile.profilePublic ?? true,
     orcid: profile.orcid ?? null,
+    accountRole: profile.accountRole,
+    profileDetails: profile.profileDetails ?? {},
   });
 
   const steps = useMemo(() => ["Context", "Research focus", "Collaboration", "Trust & visibility"], []);
@@ -60,6 +62,13 @@ export function OnboardingWizard({ profile, organizations }: { profile: ProfileR
       const next = existing.includes(value) ? existing.filter((item) => item !== value) : [...existing, value];
       return { ...current, [key]: next };
     });
+  }
+
+  function updateDetail(key: keyof IndividualProfileDetails, value: string) {
+    setDraft((current) => ({
+      ...current,
+      profileDetails: { ...current.profileDetails, [key]: value || null },
+    }));
   }
 
   async function finish() {
@@ -98,11 +107,15 @@ export function OnboardingWizard({ profile, organizations }: { profile: ProfileR
             <h2>Who are you in the research ecosystem?</h2>
             <div className={styles.grid}>
               <label><span>Full name</span><input value={draft.fullName ?? ""} onChange={(e) => setDraft({ ...draft, fullName: e.target.value })} /></label>
+              <label><span>Your role</span><select value={draft.accountRole ?? "researcher"} onChange={(e) => setDraft({ ...draft, accountRole: e.target.value as IndividualProfileRole })}><option value="student">Student</option><option value="researcher">Researcher</option><option value="professor">Professor / faculty</option></select></label>
               <label><span>Headline</span><input value={draft.headline ?? ""} onChange={(e) => setDraft({ ...draft, headline: e.target.value })} /></label>
               <label><span>Career stage / title</span><input value={draft.careerStage ?? ""} onChange={(e) => setDraft({ ...draft, careerStage: e.target.value })} /></label>
               <label><span>Institution</span><select value={draft.organizationId ?? ""} onChange={(e) => setDraft({ ...draft, organizationId: e.target.value || null })}><option value="">Independent / not listed</option>{organizations.map((org) => <option key={org.id} value={org.id}>{org.name}{org.verified ? " · verified" : ""}</option>)}</select></label>
               <label><span>City</span><input value={draft.city ?? ""} onChange={(e) => setDraft({ ...draft, city: e.target.value || null })} /></label>
               <label><span>Country code</span><input maxLength={2} value={draft.countryCode ?? ""} onChange={(e) => setDraft({ ...draft, countryCode: e.target.value.toUpperCase() || null })} /></label>
+              {draft.accountRole === "student" ? <><label><span>Degree program</span><input value={draft.profileDetails?.degreeProgram ?? ""} onChange={(e) => updateDetail("degreeProgram", e.target.value)} placeholder="PhD, MSc, MD…" /></label><label><span>Expected graduation</span><input value={draft.profileDetails?.graduationYear ?? ""} onChange={(e) => updateDetail("graduationYear", e.target.value)} placeholder="2028" /></label><label className={styles.fullField}><span>Thesis / dissertation topic</span><input value={draft.profileDetails?.thesisTopic ?? ""} onChange={(e) => updateDetail("thesisTopic", e.target.value)} /></label></> : null}
+              {draft.accountRole !== "student" ? <><label><span>Academic title</span><input value={draft.profileDetails?.academicTitle ?? ""} onChange={(e) => updateDetail("academicTitle", e.target.value)} placeholder="Assistant professor, PI…" /></label><label><span>Department</span><input value={draft.profileDetails?.department ?? ""} onChange={(e) => updateDetail("department", e.target.value)} /></label></> : null}
+              {draft.accountRole === "professor" ? <label className={styles.fullField}><span>Student supervision</span><select value={draft.profileDetails?.supervisionStatus ?? ""} onChange={(e) => updateDetail("supervisionStatus", e.target.value)}><option value="">Not specified</option><option value="accepting">Accepting students</option><option value="selective">Selective</option><option value="closed">Not accepting students</option></select></label> : null}
             </div>
           </div>
         ) : null}

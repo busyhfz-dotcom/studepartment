@@ -36,6 +36,18 @@ const collaborationGoalToDb = {
   "position-opportunities": "POSITION_OPPORTUNITIES",
 } as const;
 
+const accountRoleToDb = {
+  student: "STUDENT",
+  researcher: "RESEARCHER",
+  professor: "PROFESSOR",
+} as const;
+
+function mapAccountRole(value: string): ProfileResponse["accountRole"] {
+  if (value === "STUDENT") return "student";
+  if (value === "PROFESSOR") return "professor";
+  return "researcher";
+}
+
 function mapAvailability(value: "OPEN" | "SELECTIVE" | "QUIET" | "CLOSED"): ProfileResponse["availability"] {
   return value.toLowerCase() as ProfileResponse["availability"];
 }
@@ -77,6 +89,8 @@ const fixtureProfile: ProfileResponse = {
   profilePublic: true,
   topicSlugs: ["oncology", "cancer-immunotherapy", "biomarkers"],
   methodSlugs: ["translational-research", "biomarker-analysis"],
+  accountRole: "researcher",
+  profileDetails: {},
 };
 fixtureProfile.completeness = calculateProfileCompleteness(fixtureProfile);
 
@@ -103,6 +117,8 @@ const fixtureRepository: ResearcherRepository = {
         : {}),
       ...(input.topicSlugs !== undefined ? { topicSlugs: input.topicSlugs } : {}),
       ...(input.methodSlugs !== undefined ? { methodSlugs: input.methodSlugs } : {}),
+      ...(input.accountRole !== undefined ? { accountRole: input.accountRole } : {}),
+      ...(input.profileDetails !== undefined ? { profileDetails: input.profileDetails } : {}),
     };
     next.completeness = calculateProfileCompleteness(next);
     return next;
@@ -127,7 +143,7 @@ async function loadProfileByUserId(userId: string) {
   return db.researcherProfile.findUnique({
     where: { userId },
     include: {
-      user: { select: { emailVerified: true } },
+      user: { select: { emailVerified: true, role: true } },
       affiliations: {
         where: { current: true },
         include: { organization: true },
@@ -175,6 +191,8 @@ function mapLoadedProfile(profile: LoadedProfile): ProfileResponse {
     profilePublic: profile.profilePublic,
     topicSlugs: profile.topics.map(({ topic }) => topic.slug),
     methodSlugs: profile.methods.map(({ method }) => method.slug),
+    accountRole: mapAccountRole(profile.user?.role ?? "RESEARCHER"),
+    profileDetails: (profile.profileDetails as ProfileResponse["profileDetails"]) ?? {},
   };
   result.completeness = calculateProfileCompleteness(result);
   return result;
@@ -297,8 +315,15 @@ const prismaRepository: ResearcherRepository = {
           ...(input.collaborationGoals !== undefined
             ? { collaborationGoals: input.collaborationGoals.map((goal) => collaborationGoalToDb[goal]) }
             : {}),
+          ...(input.profileDetails !== undefined
+            ? { profileDetails: input.profileDetails as Prisma.InputJsonValue }
+            : {}),
         },
       });
+
+      if (input.accountRole !== undefined) {
+        await tx.user.update({ where: { id: userId }, data: { role: accountRoleToDb[input.accountRole] } });
+      }
 
       if (input.orcid !== undefined) {
         await tx.evidenceRecord.updateMany({

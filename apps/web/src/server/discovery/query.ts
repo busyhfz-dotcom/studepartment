@@ -11,6 +11,7 @@ const allowedEntityTypes = new Set<InstitutionalEntityType>(["laboratory", "inst
 const allowedOrganizationTypes = new Set<InstitutionalOrganizationType>([
   "university",
   "hospital",
+  "laboratory",
   "research-institute",
   "company",
   "foundation",

@@ -29,6 +29,7 @@ type Candidate = {
 const organizationTypeToDb = {
   university: "UNIVERSITY",
   hospital: "HOSPITAL",
+  laboratory: "LABORATORY",
   "research-institute": "RESEARCH_INSTITUTE",
   company: "COMPANY",
   foundation: "FOUNDATION",
@@ -37,6 +38,7 @@ const organizationTypeToDb = {
 const organizationTypeFromDb = {
   UNIVERSITY: "university",
   HOSPITAL: "hospital",
+  LABORATORY: "laboratory",
   RESEARCH_INSTITUTE: "research-institute",
   COMPANY: "company",
   FOUNDATION: "foundation",

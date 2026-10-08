@@ -44,6 +44,10 @@ export default async function ProfilePage({
     verification: profile.verification,
   };
   const orcidMessage = orcid ? orcidMessages[orcid] : undefined;
+  const roleLabel = profile.accountRole === "student" ? "Student profile" : profile.accountRole === "professor" ? "Professor / faculty profile" : "Researcher profile";
+  const roleDetails = profile.accountRole === "student"
+    ? [["Degree program", profile.profileDetails?.degreeProgram], ["Expected graduation", profile.profileDetails?.graduationYear], ["Thesis topic", profile.profileDetails?.thesisTopic]]
+    : [["Academic title", profile.profileDetails?.academicTitle], ["Department", profile.profileDetails?.department], ...(profile.accountRole === "professor" ? [["Student supervision", profile.profileDetails?.supervisionStatus]] : [])];
 
   return (
     <ProductShell>
@@ -67,6 +71,13 @@ export default async function ProfilePage({
         ) : null}
 
         <ScientificProfileCard identity={identity} />
+        <section className={styles.roleProfile}>
+          <div><span className="sectionLabel">Personalized identity</span><h2>{roleLabel}</h2></div>
+          <div className={styles.roleDetails}>
+            {roleDetails.filter(([, value]) => value).map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}
+            {!roleDetails.some(([, value]) => value) ? <p>Add your role-specific details to make this profile more useful.</p> : null}
+          </div>
+        </section>
         <PublicationEvidencePanel />
 
         {profile.completeness ? (

@@ -34,6 +34,7 @@ const opportunityTypes = new Set<OpportunityIngestionRecord["type"]>([
 const organizationTypes = new Set<OpportunityIngestionRecord["organization"]["type"]>([
   "UNIVERSITY",
   "HOSPITAL",
+  "LABORATORY",
   "RESEARCH_INSTITUTE",
   "COMPANY",
   "FOUNDATION",

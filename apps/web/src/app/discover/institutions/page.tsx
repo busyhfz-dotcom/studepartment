@@ -19,7 +19,7 @@ export default function InstitutionDiscoveryPage() {
         <header className={styles.discoverHeader}>
           <h1>Find research institutions by their scientific ecosystem.</h1>
           <p className="lede">
-            Search universities, hospitals, institutes, companies, and foundations through affiliation-backed research activity rather than brand visibility.
+            Search universities, hospitals, laboratories, institutes, companies, and foundations through affiliation-backed research activity rather than brand visibility.
           </p>
         </header>
 

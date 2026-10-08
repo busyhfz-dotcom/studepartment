@@ -2,16 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { InstitutionalOrganizationType, OrganizationProfileResponse, OrganizationUpdateInput } from "@/lib/api-contracts";
+import type { InstitutionalOrganizationType, OrganizationProfileDetails, OrganizationProfileResponse, OrganizationUpdateInput } from "@/lib/api-contracts";
 import styles from "./organization-profile.module.css";
 
 const organizationTypes: Array<[InstitutionalOrganizationType, string]> = [
   ["university", "University"],
   ["hospital", "Hospital"],
+  ["laboratory", "Laboratory"],
   ["research-institute", "Research institute"],
   ["company", "Company"],
   ["foundation", "Foundation"],
 ];
+
+const typeFields: Record<InstitutionalOrganizationType, Array<[keyof OrganizationProfileDetails, string, string]>> = {
+  hospital: [["services", "Clinical services", "Oncology, pathology, imaging…"], ["accreditations", "Accreditations", "Clinical and research accreditations"], ["capacity", "Clinical / research capacity", "Beds, trials, research units…"]],
+  laboratory: [["primaryFocus", "Research focus", "Core scientific focus"], ["facilities", "Facilities and instruments", "Sequencing, microscopy, biobank…"], ["services", "Research services", "Assays, analysis, sample processing…"]],
+  university: [["primaryFocus", "Academic focus", "Primary disciplines and research areas"], ["facilities", "Research infrastructure", "Core facilities and platforms"]],
+  "research-institute": [["primaryFocus", "Research programs", "Flagship programs and scientific focus"], ["facilities", "Research infrastructure", "Platforms, cohorts, core facilities…"]],
+  company: [["primaryFocus", "Scientific focus", "Therapeutic area, technology, product…"], ["services", "Capabilities", "Research and development capabilities"]],
+  foundation: [["fundingAreas", "Funding areas", "Diseases, methods, regions…"], ["services", "Programs", "Grants, fellowships, partnerships…"]],
+};
 
 export function OrganizationProfileEditor({ organization }: { organization: OrganizationProfileResponse }) {
   const router = useRouter();
@@ -26,7 +36,12 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
     description: organization.description ?? null,
     contactEmail: organization.contactEmail ?? null,
     sizeLabel: organization.sizeLabel ?? null,
+    profileDetails: organization.profileDetails ?? {},
   });
+
+  function updateDetail(key: keyof OrganizationProfileDetails, value: string) {
+    setDraft((current) => ({ ...current, profileDetails: { ...current.profileDetails, [key]: value || null } }));
+  }
 
   async function save() {
     setSaving(true);
@@ -86,6 +101,15 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
           <span>Organization size</span>
           <input value={draft.sizeLabel ?? ""} onChange={(e) => setDraft({ ...draft, sizeLabel: e.target.value || null })} placeholder="e.g. 251–1,000" />
         </label>
+      </div>
+
+      <div className={styles.specialized}>
+        <h3>{organizationTypes.find(([value]) => value === (draft.type ?? organization.type))?.[1]} profile details</h3>
+        <div className={styles.grid}>
+          {typeFields[draft.type ?? organization.type].map(([key, label, placeholder]) => (
+            <label key={key}><span>{label}</span><input value={draft.profileDetails?.[key] ?? ""} onChange={(event) => updateDetail(key, event.target.value)} placeholder={placeholder} /></label>
+          ))}
+        </div>
       </div>
 
       <label className={styles.fullField}>

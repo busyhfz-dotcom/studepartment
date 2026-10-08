@@ -1,5 +1,7 @@
 import type {
   CollaborationGoalValue,
+  IndividualProfileDetails,
+  IndividualProfileRole,
   ProfileUpdateInput,
 } from "@/lib/api-contracts";
 import { assertValidOrcid } from "@/server/integrations/orcid/orcid-id";
@@ -18,6 +20,13 @@ const allowedKeys = new Set([
   "collaborationGoals",
   "topicSlugs",
   "methodSlugs",
+  "accountRole",
+  "profileDetails",
+]);
+
+const accountRoles = new Set<IndividualProfileRole>(["student", "researcher", "professor"]);
+const profileDetailKeys = new Set<keyof IndividualProfileDetails>([
+  "degreeProgram", "graduationYear", "thesisTopic", "academicTitle", "department", "supervisionStatus",
 ]);
 
 const collaborationGoals = new Set<CollaborationGoalValue>([
@@ -91,6 +100,19 @@ function slugList(value: unknown, field: string): string[] | undefined {
       }),
     ),
   );
+}
+
+function individualDetails(value: unknown): IndividualProfileDetails | undefined {
+  if (value === undefined) return undefined;
+  const object = asObject(value);
+  const unknown = Object.keys(object).filter((key) => !profileDetailKeys.has(key as keyof IndividualProfileDetails));
+  if (unknown.length) throw new ProfileValidationError(`Unknown role-specific fields: ${unknown.join(", ")}.`);
+  const result: IndividualProfileDetails = {};
+  for (const key of profileDetailKeys) {
+    const parsed = optionalString(object[key], `profileDetails.${key}`, 240, { nullable: true });
+    if (parsed !== undefined) Object.assign(result, { [key]: parsed });
+  }
+  return result;
 }
 
 export function parseProfileUpdateInput(value: unknown): ProfileUpdateInput {
@@ -188,6 +210,14 @@ export function parseProfileUpdateInput(value: unknown): ProfileUpdateInput {
 
   result.topicSlugs = slugList(object.topicSlugs, "topicSlugs");
   result.methodSlugs = slugList(object.methodSlugs, "methodSlugs");
+
+  if (object.accountRole !== undefined) {
+    if (typeof object.accountRole !== "string" || !accountRoles.has(object.accountRole as IndividualProfileRole)) {
+      throw new ProfileValidationError("accountRole must be student, researcher, or professor.");
+    }
+    result.accountRole = object.accountRole as IndividualProfileRole;
+  }
+  result.profileDetails = individualDetails(object.profileDetails);
 
   return result;
 }

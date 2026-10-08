@@ -9,6 +9,8 @@ type CompletenessInput = Pick<
   | "methods"
   | "collaborationGoals"
   | "verification"
+  | "accountRole"
+  | "profileDetails"
 >;
 
 /**
@@ -21,6 +23,13 @@ export function calculateProfileCompleteness(profile: CompletenessInput): Profil
     profile.verification.some((item) => item.label === label && item.verified);
 
   const dimensions = [
+    {
+      key: "role-context",
+      label: profile.accountRole === "student" ? "Study context" : profile.accountRole === "professor" ? "Faculty context" : "Professional context",
+      complete: profile.accountRole === "student"
+        ? Boolean(profile.profileDetails?.degreeProgram || profile.profileDetails?.thesisTopic)
+        : Boolean(profile.profileDetails?.academicTitle || profile.profileDetails?.department),
+    },
     {
       key: "identity",
       label: "Identity",

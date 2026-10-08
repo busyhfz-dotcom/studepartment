@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState, type FormEvent } from "react";
 import type {
   CollaborationGoalValue,
+  IndividualProfileRole,
   OrganizationOption,
   ProfileResponse,
   ProfileUpdateInput,
@@ -55,6 +56,7 @@ export function ProfileEditor({
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [accountRole, setAccountRole] = useState<IndividualProfileRole>(profile.accountRole);
 
   const collaborationDefaults = useMemo(
     () => new Set(profile.collaborationGoals.map(collaborationValueFromLabel).filter(Boolean)),
@@ -89,6 +91,20 @@ export function ProfileEditor({
       collaborationGoals: checkedValues(form, "collaborationGoals") as CollaborationGoalValue[],
       topicSlugs: checkedValues(form, "topicSlugs"),
       methodSlugs: checkedValues(form, "methodSlugs"),
+      accountRole,
+      profileDetails: accountRole === "student"
+        ? {
+            degreeProgram: String(form.get("degreeProgram") ?? "") || null,
+            graduationYear: String(form.get("graduationYear") ?? "") || null,
+            thesisTopic: String(form.get("thesisTopic") ?? "") || null,
+          }
+        : {
+            academicTitle: String(form.get("academicTitle") ?? "") || null,
+            department: String(form.get("department") ?? "") || null,
+            ...(accountRole === "professor"
+              ? { supervisionStatus: String(form.get("supervisionStatus") ?? "") || null }
+              : {}),
+          },
     };
 
     try {
@@ -131,6 +147,14 @@ export function ProfileEditor({
             <input name="fullName" defaultValue={profile.fullName} maxLength={160} required />
           </label>
           <label className={styles.fieldGroup}>
+            <span>Profile type</span>
+            <select value={accountRole} onChange={(event) => setAccountRole(event.target.value as IndividualProfileRole)}>
+              <option value="student">Student</option>
+              <option value="researcher">Researcher</option>
+              <option value="professor">Professor / faculty</option>
+            </select>
+          </label>
+          <label className={styles.fieldGroup}>
             <span>Professional headline</span>
             <input name="headline" defaultValue={profile.headline} maxLength={220} />
           </label>
@@ -166,6 +190,19 @@ export function ProfileEditor({
               <option value="closed">Not accepting requests</option>
             </select>
           </label>
+          {accountRole === "student" ? (
+            <>
+              <label className={styles.fieldGroup}><span>Degree program</span><input name="degreeProgram" defaultValue={profile.profileDetails?.degreeProgram ?? ""} placeholder="PhD, MSc, MD…" /></label>
+              <label className={styles.fieldGroup}><span>Expected graduation</span><input name="graduationYear" defaultValue={profile.profileDetails?.graduationYear ?? ""} placeholder="2028" /></label>
+              <label className={styles.fieldGroup}><span>Thesis / dissertation topic</span><input name="thesisTopic" defaultValue={profile.profileDetails?.thesisTopic ?? ""} /></label>
+            </>
+          ) : (
+            <>
+              <label className={styles.fieldGroup}><span>Academic title</span><input name="academicTitle" defaultValue={profile.profileDetails?.academicTitle ?? ""} placeholder="Assistant professor, PI…" /></label>
+              <label className={styles.fieldGroup}><span>Department</span><input name="department" defaultValue={profile.profileDetails?.department ?? ""} /></label>
+              {accountRole === "professor" ? <label className={styles.fieldGroup}><span>Student supervision</span><select name="supervisionStatus" defaultValue={profile.profileDetails?.supervisionStatus ?? ""}><option value="">Not specified</option><option value="accepting">Accepting students</option><option value="selective">Selective</option><option value="closed">Not accepting students</option></select></label> : null}
+            </>
+          )}
         </div>
       </section>
 
