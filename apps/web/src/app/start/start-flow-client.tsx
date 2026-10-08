@@ -47,6 +47,12 @@ function deadlineLabel(item: OpportunityResult): string {
   }
 }
 
+function makeRoomForLocationPicker(select: HTMLSelectElement) {
+  const pickerHeight = Math.min(320, window.innerHeight * .55, select.options.length * 38 + 14);
+  const overflow = select.getBoundingClientRect().bottom + pickerHeight + 12 - window.innerHeight;
+  if (overflow > 0) window.scrollBy({ top: overflow, behavior: "instant" });
+}
+
 function Stage({ n }: { n: 1 | 2 | 3 | 4 }) {
   const labels = ["Choose", "Explore", "Review", "Next step"];
   return (
@@ -310,10 +316,15 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
                 setQuery(event.target.value);
               }}
             />
-            <select aria-label="Location" value={country} onChange={(event) => {
-              setLoading(true);
-              setCountry(event.target.value);
-            }}>
+            <select aria-label="Location" data-picker-direction="down" value={country}
+              onPointerDown={(event) => makeRoomForLocationPicker(event.currentTarget)}
+              onKeyDown={(event) => {
+                if ([" ", "Enter", "ArrowDown"].includes(event.key)) makeRoomForLocationPicker(event.currentTarget);
+              }}
+              onChange={(event) => {
+                setLoading(true);
+                setCountry(event.target.value);
+              }}>
               <option value="">Any location</option>
               {countries.map((location) => (
                 <option key={location} value={location}>
