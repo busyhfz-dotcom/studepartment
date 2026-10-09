@@ -5,6 +5,7 @@ import {
   requireCurrentUser,
 } from "@/server/auth/current-user";
 import { recordProductEvent } from "@/server/analytics/product-events";
+import { profileImageAvailableToUser } from "@/server/profile-images";
 import {
   researcherRepository,
   ResearcherRepositoryError,
@@ -49,6 +50,7 @@ export async function PATCH(request: NextRequest) {
     await consumeClientRateLimit(request, "profile:update", { windowSeconds: 3600, max: 60 });
     const user = await requireCurrentUser();
     const input = parseProfileUpdateInput(await request.json());
+    if (!await profileImageAvailableToUser(user.id, input.imageUrl)) return apiError(400, "PHOTO_UNAVAILABLE", "Please upload your photo again before saving.");
     const profile = await researcherRepository.updateProfileForUser(user.id, input);
     await recordProductEvent(user.id, "PROFILE_UPDATED");
     const body: ApiSuccess<ProfileResponse> = { success: true, data: profile };

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
+import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
 import type { InstitutionalOrganizationType, OrganizationCreateInput, OrganizationProfileDetails } from "@/lib/api-contracts";
 import styles from "../onboarding.module.css";
 
@@ -29,6 +30,7 @@ const sizeLabels = ["1–10", "11–50", "51–250", "251–1,000", "1,000+"];
 export function OrganizationOnboardingWizard({ initialType }: { initialType?: InstitutionalOrganizationType }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [draft, setDraft] = useState<OrganizationCreateInput>({
     name: "",
@@ -47,6 +49,7 @@ export function OrganizationOnboardingWizard({ initialType }: { initialType?: In
   }
 
   async function submit() {
+    if (uploading || saving) return;
     setSaving(true);
     setError("");
     try {
@@ -73,11 +76,7 @@ export function OrganizationOnboardingWizard({ initialType }: { initialType?: In
           <h2>What organization are you registering?</h2>
           <div className={styles.photoEditor}>
             <IdentityAvatar name={draft.name || "Organization"} src={draft.logoUrl} kind="organization" size="large" />
-            <label className={styles.fullField}>
-              <span>Organization logo URL</span>
-              <input inputMode="url" value={draft.logoUrl ?? ""} onChange={(event) => setDraft({ ...draft, logoUrl: event.target.value || null })} placeholder="https://institution.org/logo.png" />
-              <small>Use a secure image address. A branded monogram appears automatically when no logo is provided.</small>
-            </label>
+            <ProfileImageUpload kind="organization" value={draft.logoUrl} onChange={(url) => setDraft((current) => ({ ...current, logoUrl: url }))} onBusyChange={setUploading} disabled={saving} />
           </div>
           <div className={styles.grid}>
             <label className={styles.fullField}>
@@ -157,7 +156,7 @@ export function OrganizationOnboardingWizard({ initialType }: { initialType?: In
         {error ? <p className={styles.error} role="alert">{error}</p> : null}
         <footer className={styles.actions}>
           <span />
-          <button type="button" className="primaryButton" disabled={saving || !draft.name.trim()} onClick={submit}>
+          <button type="button" className="primaryButton" disabled={saving || uploading || !draft.name.trim()} onClick={submit}>
             {saving ? "Registering…" : "Create institutional profile"}
           </button>
         </footer>

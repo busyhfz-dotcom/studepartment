@@ -1,3 +1,4 @@
+import { isUploadedProfileImage } from "@/lib/profile-image-url";
 import type {
   CollaborationGoalValue,
   CareerPreferences,
@@ -237,6 +238,7 @@ export function parseProfileUpdateInput(value: unknown): ProfileUpdateInput {
   if (object.imageUrl !== undefined) {
     const imageUrl = optionalString(object.imageUrl, "imageUrl", 2048, { nullable: true });
     if (!imageUrl) result.imageUrl = imageUrl;
+    else if (isUploadedProfileImage(imageUrl)) result.imageUrl = imageUrl;
     else {
       try {
         const url = new URL(imageUrl);

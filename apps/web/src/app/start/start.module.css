@@ -455,11 +455,15 @@
 .topActions>.join{background:transparent;border:0;border-radius:0;box-shadow:none;padding:4px 0;color:#c6d5f5}
 .topActions>.join:hover{background:transparent;color:#f1f5ff}
 @media(max-width:700px){
-  .topbar{height:auto;min-height:68px;flex-wrap:wrap;gap:10px;padding-block:12px}
-  .topActions{gap:16px;font-size:13px}
-  .topActions>a:first-child{font-size:13px}
+  .topbar{height:auto;min-height:68px;flex-wrap:nowrap;gap:10px;padding:12px clamp(12px,3.2vw,20px)}
+  .brand{font-size:16px;gap:7px;white-space:nowrap}
+  .mark{width:30px;height:30px;flex-shrink:0}
+  .mark svg{width:24px;height:24px}
+  .topActions{flex-shrink:0;gap:14px;font-size:12px;white-space:nowrap;margin-left:auto}
+  .topActions>a:first-child{font-size:12px}
 }
 @media(max-width:520px){
-  .topActions{flex-basis:100%;justify-content:flex-end;gap:24px}
+  .topActions{flex-basis:auto;justify-content:flex-end;gap:12px}
   .topActions>a{flex:initial;font-weight:650}
 }
+@media(max-width:360px){.brand{font-size:14px;gap:6px}.mark{width:27px;height:27px}.topActions{gap:10px}.topbar{gap:8px}}

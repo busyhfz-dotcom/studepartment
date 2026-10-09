@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, OrganizationProfileResponse } from "@/lib/api-contracts";
+import { profileImageAvailableToUser } from "@/server/profile-images";
 import {
   AuthenticationRequiredError,
   requireCurrentUser,
@@ -49,6 +50,7 @@ export async function POST(request: NextRequest) {
     await consumeClientRateLimit(request, "organization:create", { windowSeconds: 3600, max: 10 });
     const user = await requireCurrentUser();
     const input = parseOrganizationCreateInput(await request.json());
+    if (!await profileImageAvailableToUser(user.id, input.logoUrl)) return apiError(400, "PHOTO_UNAVAILABLE", "Please upload your organization photo again before saving.");
     const organization = await createOwnedOrganization(user.id, input);
     const body: ApiSuccess<OrganizationProfileResponse> = { success: true, data: organization };
     return NextResponse.json(body, { status: 201 });
@@ -77,6 +79,7 @@ export async function PATCH(request: NextRequest) {
     await consumeClientRateLimit(request, "organization:update", { windowSeconds: 3600, max: 60 });
     const user = await requireCurrentUser();
     const input = parseOrganizationUpdateInput(await request.json());
+    if (!await profileImageAvailableToUser(user.id, input.logoUrl)) return apiError(400, "PHOTO_UNAVAILABLE", "Please upload your organization photo again before saving.");
     const organization = await updateOwnedOrganization(user.id, input);
     const body: ApiSuccess<OrganizationProfileResponse> = { success: true, data: organization };
     return NextResponse.json(body);

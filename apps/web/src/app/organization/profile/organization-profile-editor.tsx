@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
+import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
 import type { InstitutionalOrganizationType, OrganizationProfileDetails, OrganizationProfileResponse, OrganizationUpdateInput } from "@/lib/api-contracts";
 import styles from "./organization-profile.module.css";
 
@@ -38,6 +39,7 @@ const commonProfileFields: Array<[keyof OrganizationProfileDetails, string, stri
 export function OrganizationProfileEditor({ organization }: { organization: OrganizationProfileResponse }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
   const [draft, setDraft] = useState<OrganizationUpdateInput>({
@@ -57,6 +59,7 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
   }
 
   async function save() {
+    if (uploading || saving) return;
     setSaving(true);
     setError("");
     setSaved(false);
@@ -87,11 +90,7 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
 
       <div className={styles.logoEditor}>
         <IdentityAvatar name={draft.name || organization.name} src={draft.logoUrl} kind="organization" size="large" />
-        <label>
-          <span>Organization logo URL</span>
-          <input inputMode="url" value={draft.logoUrl ?? ""} onChange={(event) => setDraft({ ...draft, logoUrl: event.target.value || null })} placeholder="https://institution.org/logo.png" />
-          <small>A branded monogram is used when no logo is provided.</small>
-        </label>
+        <ProfileImageUpload kind="organization" value={draft.logoUrl} onChange={(url) => setDraft((current) => ({ ...current, logoUrl: url }))} onBusyChange={setUploading} disabled={saving} />
       </div>
 
       <div className={styles.grid}>
@@ -157,7 +156,7 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
       {saved && !error ? <p className={styles.success} role="status">Institutional profile saved.</p> : null}
 
       <footer className={styles.actions}>
-        <button type="button" className="primaryButton" disabled={saving} onClick={save}>
+        <button type="button" className="primaryButton" disabled={saving || uploading} onClick={save}>
           {saving ? "Saving…" : "Save institutional profile"}
         </button>
       </footer>

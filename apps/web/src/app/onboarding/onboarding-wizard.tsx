@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import type { CollaborationGoalValue, IndividualProfileDetails, IndividualProfileRole, OrganizationOption, ProfileResponse, ProfileUpdateInput } from "@/lib/api-contracts";
 import styles from "./onboarding.module.css";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
+import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
 
 const topics = [
   ["oncology", "Oncology"],
@@ -37,6 +38,7 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [draft, setDraft] = useState<ProfileUpdateInput>({
     fullName: profile.fullName,
@@ -74,6 +76,7 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
   }
 
   async function finish() {
+    if (uploading || saving) return;
     setSaving(true);
     setError("");
     try {
@@ -109,7 +112,7 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
             <h2>Who are you in the research ecosystem?</h2>
             <div className={styles.photoEditor}>
               <IdentityAvatar name={draft.fullName ?? profile.fullName} src={draft.imageUrl} />
-              <label className={styles.fullField}><span>Professional profile photo URL</span><input type="url" value={draft.imageUrl ?? ""} onChange={(e) => setDraft({ ...draft, imageUrl: e.target.value || null })} placeholder="https://…" /><small>A branded initials avatar is used until you add a square portrait.</small></label>
+              <ProfileImageUpload value={draft.imageUrl} onChange={(url) => setDraft((current) => ({ ...current, imageUrl: url }))} onBusyChange={setUploading} disabled={saving} />
             </div>
             <div className={styles.grid}>
               <label><span>Full name</span><input value={draft.fullName ?? ""} onChange={(e) => setDraft({ ...draft, fullName: e.target.value })} /></label>
@@ -154,8 +157,8 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
 
         {error ? <p className={styles.error} role="alert">{error}</p> : null}
         <footer className={styles.actions}>
-          <button type="button" className="secondaryButton" disabled={step === 0 || saving} onClick={() => setStep((value) => Math.max(0, value - 1))}>Back</button>
-          {step < steps.length - 1 ? <button type="button" className="primaryButton" onClick={() => setStep((value) => value + 1)}>Continue</button> : <button type="button" className="primaryButton" disabled={saving} onClick={finish}>{saving ? "Saving…" : "Create scientific identity"}</button>}
+          <button type="button" className="secondaryButton" disabled={step === 0 || saving || uploading} onClick={() => setStep((value) => Math.max(0, value - 1))}>Back</button>
+          {step < steps.length - 1 ? <button type="button" className="primaryButton" disabled={uploading} onClick={() => setStep((value) => value + 1)}>Continue</button> : <button type="button" className="primaryButton" disabled={saving || uploading} onClick={finish}>{saving ? "Saving…" : "Create scientific identity"}</button>}
         </footer>
       </div>
     </section>

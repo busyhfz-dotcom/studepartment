@@ -12,6 +12,7 @@ import type {
 } from "@/lib/api-contracts";
 import styles from "./page.module.css";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
+import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
 import { ProfessionalProfileFields } from "./professional-profile-fields";
 
 const topicOptions = [
@@ -61,6 +62,7 @@ export function ProfileEditor({
   const [message, setMessage] = useState("");
   const [accountRole, setAccountRole] = useState<IndividualProfileRole>(profile.accountRole);
   const [imageUrl, setImageUrl] = useState(profile.imageUrl ?? "");
+  const [uploading, setUploading] = useState(false);
   const [professionalDetails, setProfessionalDetails] = useState<IndividualProfileDetails>(profile.profileDetails ?? {});
 
   const collaborationDefaults = useMemo(
@@ -78,6 +80,7 @@ export function ProfileEditor({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (uploading || status === "saving") return;
     setStatus("saving");
     setMessage("");
 
@@ -161,11 +164,7 @@ export function ProfileEditor({
         </div>
         <div className={styles.photoEditor}>
           <IdentityAvatar name={profile.fullName} src={imageUrl} />
-          <label className={styles.fieldGroup}>
-            <span>Professional profile photo URL</span>
-            <input type="url" value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="https://…" />
-            <small>Use a square portrait from a secure HTTPS address. A branded initials avatar appears when no photo is provided.</small>
-          </label>
+          <ProfileImageUpload value={imageUrl} onChange={(url) => setImageUrl(url ?? "")} onBusyChange={setUploading} disabled={status === "saving"} />
         </div>
         <div className={styles.editorGrid}>
           <label className={styles.fieldGroup}>
@@ -358,7 +357,7 @@ export function ProfileEditor({
           <span>Saved edits remain attached to the authenticated account and retain provenance context.</span>
           {message ? <p className={status === "error" ? styles.errorMessage : styles.successMessage}>{message}</p> : null}
         </div>
-        <button className="primaryButton" type="submit" disabled={status === "saving"}>
+        <button className="primaryButton" type="submit" disabled={uploading || status === "saving"}>
           {status === "saving" ? "Saving…" : "Save Scientific Identity"}
         </button>
       </footer>

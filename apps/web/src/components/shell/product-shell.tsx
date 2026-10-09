@@ -284,10 +284,11 @@ export function ProductShell({
             <button
               aria-label="Open navigation"
               className={styles.menuButton}
+              aria-expanded={mobileOpen}
               onClick={() => setMobileOpen(true)}
               type="button"
             >
-              <span /><span /><span />
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
             <div className={styles.contextTitle}>
               <Link className={styles.workspaceBrand} href="/start">Studepartment</Link>

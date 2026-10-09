@@ -614,3 +614,9 @@
 
 .workspaceBrand{display:inline-flex;align-items:center;min-height:24px;color:#61739a;font-size:12px;font-weight:750;text-decoration:none}
 .workspaceBrand:hover{color:#3f5ed0}
+.menuButton svg{display:block;width:24px;height:24px;flex-shrink:0}
+@media(max-width:940px){
+  .menuButton{display:grid;place-items:center;flex-shrink:0;min-width:44px;min-height:44px;padding:0;border:1px solid #dbe3f3;border-radius:11px;background:#edf2ff;color:#4968c7;box-shadow:none}
+  .menuButton:hover{background:#e3eaff;color:#2f4da7}
+  .menuButton:focus-visible{outline:2px solid #6685eb;outline-offset:3px}
+}

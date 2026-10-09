@@ -4,6 +4,7 @@ import type {
   OrganizationCreateInput,
   OrganizationUpdateInput,
 } from "@/lib/api-contracts";
+import { isUploadedProfileImage } from "@/lib/profile-image-url";
 
 const organizationTypes = new Set<InstitutionalOrganizationType>([
   "university",
@@ -64,6 +65,7 @@ function optionalCountryCode(value: unknown): string | null | undefined {
 function optionalUrl(value: unknown, field: string): string | null | undefined {
   const parsed = optionalString(value, field, 300, { nullable: true });
   if (!parsed) return parsed;
+  if (field === "logoUrl" && isUploadedProfileImage(parsed)) return parsed;
   try {
     const url = new URL(parsed);
     if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("bad-protocol");
