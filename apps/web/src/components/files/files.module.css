@@ -1,19 +1,20 @@
-.manager { margin-block: 24px; min-width: 0; padding: clamp(18px, 3vw, 30px); border: 1px solid #dce3f1; border-radius: 22px; color: #192740; background: linear-gradient(135deg, #ffffff, #f4f6ff); box-shadow: 0 8px 30px #16213a06; }
+.manager { margin-block: 24px; min-width: 0; max-width: 100%; padding: clamp(16px, 3vw, 30px); border: 1px solid #dce3f1; border-radius: 22px; color: #192740; background: linear-gradient(135deg, #ffffff, #f4f6ff); box-shadow: 0 8px 30px #16213a06; }
+.manager *, .attachmentPicker *, .inlineFile * { box-sizing: border-box; }
 .manager h2 { margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.2; }
 .manager p { line-height: 1.65; color: #566682; }
 .eyebrow { color: #526bac; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; }
 .controls { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px; margin-top: 20px; }
-.controls > label { display: grid; gap: 7px; flex: 1 1 180px; }
+.controls > label { display: grid; gap: 7px; flex: 1 1 180px; min-width: 0; }
 .controls label > span, .search > span { font-size: 12px; font-weight: 600; color: #435573; }
-.manager select, .manager input:not([type=checkbox]) { width: 100%; min-height: 44px; border: 1px solid #ccd7ed; border-radius: 12px; background: #fff; color: #192740; padding: 10px 12px; font: inherit; font-size: 16px; }
-.upload { min-width: 0; align-self: flex-end; }
-.fileInput { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; pointer-events: none; }
+.manager select, .manager input:not([type=checkbox]), .inlineFile select { width: 100%; max-width: 100%; min-width: 0; min-height: 44px; border: 1px solid #ccd7ed; border-radius: 12px; background: #fff; color: #192740; padding: 10px 12px; font: inherit; font-size: 16px; }
+.upload { position: relative; min-width: 0; max-width: 100%; align-self: flex-end; }
+.fileInput { position: absolute; width: 1px !important; height: 1px !important; min-height: 0 !important; padding: 0 !important; border: 0 !important; opacity: 0; overflow: hidden; pointer-events: none; }
 .uploadActions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-.uploadButton { display: inline-flex; gap: 9px; align-items: center; justify-content: center; padding: 11px 17px; min-height: 44px; border: 1px solid #647ce0; border-radius: 12px; background: #4664ce; color: #fff; font: inherit; font-size: 14px; font-weight: 650; cursor: pointer; }
+.uploadButton { display: inline-flex; gap: 9px; align-items: center; justify-content: center; max-width: 100%; padding: 11px 17px; min-height: 44px; border: 1px solid #647ce0; border-radius: 12px; background: #4664ce; color: #fff; font: inherit; font-size: 14px; font-weight: 650; overflow-wrap: anywhere; cursor: pointer; touch-action: manipulation; }
 .uploadButton svg { width: 19px; height: 19px; flex-shrink: 0; }
 .uploadButton:hover { background: #3754bd; }
 .uploadButton:disabled { opacity: .65; cursor: wait; }
-.upload button:focus-visible, .manager button:focus-visible, .manager a:focus-visible { outline: 3px solid #a295eb; outline-offset: 3px; }
+.upload button:focus-visible, .manager button:focus-visible, .manager a:focus-visible, .inlineFile :focus-visible, .attachmentOption input:focus-visible { outline: 3px solid #a295eb; outline-offset: 3px; }
 .message { font-size: 12px; line-height: 1.5; color: #526682; overflow-wrap: anywhere; margin: 8px 0; }
 .progress { width: 100%; height: 5px; accent-color: #6476d5; }
 .hint { font-size: 12px; margin: 14px 0; }
@@ -27,10 +28,10 @@
 .fileCopy { flex: 1; min-width: 0; }
 .fileCopy strong, .publicFile strong { display: block; overflow-wrap: anywhere; font-size: 15px; line-height: 1.5; }
 .fileCopy small, .publicFile small { display: block; color: #687995; font-size: 12px; line-height: 1.6; margin-top: 4px; }
-.rowActions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
-.rowActions a, .rowActions button, .textButton, .inlineActions button, .confirm button, .publicFile a { min-height: 36px; display: inline-flex; align-items: center; background: none; border: 0; padding: 3px 0; color: #3d59b5; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.rowActions { display: flex; gap: 4px 16px; flex-wrap: wrap; margin-top: 8px; }
+.rowActions a, .rowActions button, .textButton, .inlineActions button, .confirm button, .publicFile a { min-height: 44px; max-width: 100%; display: inline-flex; align-items: center; background: none; border: 0; padding: 8px 2px; color: #3d59b5; font: inherit; font-size: 14px; line-height: 1.5; font-weight: 600; cursor: pointer; text-decoration: none; text-align: start; overflow-wrap: anywhere; touch-action: manipulation; }
 .rowActions button:disabled, .confirm button:disabled { opacity: .5; }
-.visibility { display: flex; gap: 9px; align-items: flex-start; margin-top: 10px; color: #566682; font-size: 12px; line-height: 1.6; cursor: pointer; }
+.visibility { display: flex; gap: 9px; align-items: flex-start; min-height: 44px; padding-block: 10px; margin-top: 10px; color: #566682; font-size: 13px; line-height: 1.6; cursor: pointer; }
 .visibility input { margin-top: 3px; width: 17px; height: 17px; flex-shrink: 0; accent-color: #536bcb; }
 .inlineActions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 .inlineActions input { flex: 1 1 180px; }
@@ -42,19 +43,28 @@
 .publicFile { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 14px; border: 1px solid #e0e6f2; border-radius: 14px; }
 .publicFile > div { min-width: 0; }
 .publicFile a { flex-shrink: 0; }
-.attachmentPicker { margin-block: 18px; padding: 18px; border: 1px solid #dce3f1; background: #f7f9ff; border-radius: 14px; color: #192740; }
+.attachmentPicker { margin-block: 18px; padding: 18px; min-width: 0; max-width: 100%; border: 1px solid #dce3f1; background: #f7f9ff; border-radius: 14px; color: #192740; }
 .attachmentPicker h3 { margin: 0 0 8px; }
 .attachmentPicker p { color: #60718b; font-size: 13px; line-height: 1.6; }
-.attachmentOption { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; font-size: 14px; overflow-wrap: anywhere; }
+.attachmentOption { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 12px 0; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; cursor: pointer; }
+.attachmentOption span { min-width: 0; }
 .attachmentOption input { width: 18px; height: 18px; accent-color: #536bcb; flex-shrink: 0; }
-.inlineFile { display: grid; gap: 8px; grid-column: 1 / -1; padding-block: 8px; }
-.inlineFile a { color: #5268be; font-size: 13px; overflow-wrap: anywhere; }
+.inlineFile { display: grid; gap: 8px; grid-column: 1 / -1; min-width: 0; max-width: 100%; padding-block: 8px; }
+.inlineFile a { display: inline-flex; align-items: center; min-height: 44px; color: #5268be; font-size: 14px; overflow-wrap: anywhere; }
 .inlineFile small { color: #687995; font-size: 12px; line-height: 1.5; }
+@media (min-width: 601px) and (max-width: 1100px) {
+  .controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; }
+  .controls > .upload { grid-column: 1 / -1; justify-self: start; }
+}
 @media (max-width: 600px) {
   .controls { display: grid; grid-template-columns: minmax(0, 1fr); }
   .upload, .uploadActions, .uploadButton { width: 100%; }
   .fileRow { padding: 13px; gap: 10px; }
   .fileIcon { width: 32px; height: 38px; }
-  .rowActions { gap: 18px; }
+  .rowActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; }
+  .rowActions > :last-child { grid-column: 1 / -1; }
+  .inlineActions input { flex-basis: 100%; }
+  .attachmentPicker { padding: 14px; }
+  .manager h2 { overflow-wrap: anywhere; }
   .publicFile { flex-wrap: wrap; }
 }

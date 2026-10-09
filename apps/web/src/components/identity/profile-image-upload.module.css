@@ -1,10 +1,13 @@
-.field{display:grid;gap:10px;min-width:0;width:100%;margin:0;padding:0;border:0;color:var(--text,#263857);font:inherit}
+.field{position:relative;display:grid;gap:10px;min-width:0;max-width:100%;width:100%;margin:0;padding:0;border:0;color:var(--text,#263857);font:inherit}
 .field label{font-size:14px;font-weight:700}
-.fileInput{display:block;max-width:100%;width:100%;min-height:48px;padding:6px!important;border:1px solid #cdd8ec!important;border-radius:10px;background:#f7f9ff;font-size:13px;color:#35486c}
-.fileInput::file-selector-button{min-height:36px;margin-right:10px;padding:7px 13px;border:0;border-radius:7px;background:#385cd6;color:#fff;font:inherit;font-weight:650;cursor:pointer}
-.fileInput:focus-visible,.remove:focus-visible{outline:2px solid #5579ef;outline-offset:3px}
+.fileInput{position:absolute;width:1px!important;height:1px!important;min-height:0!important;padding:0!important;opacity:0;overflow:hidden;pointer-events:none}
+.choose{display:inline-flex;align-items:center;justify-content:center;gap:10px;justify-self:start;max-width:100%;min-height:48px;padding:12px 18px;border:1px solid #647ce0;border-radius:12px;background:#4664ce;color:#fff;font:inherit;font-size:16px;font-weight:650;line-height:1.5;cursor:pointer;touch-action:manipulation}
+.choose svg{width:22px;height:22px;flex-shrink:0}
+.choose:hover{background:#3754bd}
+.choose:disabled{cursor:wait}
+.choose:focus-visible,.remove:focus-visible{outline:2px solid #5579ef;outline-offset:3px}
 .field small,.field p{margin:0;font-size:12px;line-height:1.65;color:#637593;overflow-wrap:anywhere}
 .remove{justify-self:start;min-height:44px;padding:7px 0;border:0;background:transparent;color:#425fbd;font:inherit;font-size:13px;cursor:pointer}
 .field .error{color:#b52f4e}
 .field:disabled{opacity:.7}
-@media(max-width:480px){.fileInput{font-size:12px}.fileInput::file-selector-button{padding-inline:10px}}
+@media(max-width:600px){.choose{width:100%}}

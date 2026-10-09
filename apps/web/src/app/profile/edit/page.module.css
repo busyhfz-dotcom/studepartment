@@ -60,6 +60,7 @@
 }
 
 .editorSection {
+  min-width: 0;
   padding: 22px 24px;
   border-bottom: 1px solid var(--line);
 }
@@ -92,7 +93,7 @@
   max-width: 650px;
   margin: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -118,17 +119,19 @@
 
 .fieldGroup {
   display: grid;
+  min-width: 0;
   gap: 6px;
-  color: var(--muted-2);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .035em;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0;
 }
 
 .fieldGroup input,
 .fieldGroup textarea,
 .editorSection select {
   width: 100%;
+  min-width: 0;
   padding: 10px 11px;
   color: var(--text);
   border: 1px solid var(--line);
@@ -137,7 +140,9 @@
   background: #fff;
   box-shadow: var(--shadow-xs);
   font: inherit;
-  font-size: 11px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: normal;
   transition:
     border-color var(--duration-fast) var(--ease),
     box-shadow var(--duration-fast) var(--ease),
@@ -146,7 +151,7 @@
 
 .fieldGroup input,
 .editorSection select {
-  min-height: 40px;
+  min-height: 44px;
 }
 
 .fieldGroup input:focus,
@@ -355,23 +360,23 @@
 }
 
 .collection { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
-.collectionHead { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 10px; }
-.collectionHead h3 { margin: 0; font-size: 13px; }
+.collectionHead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 10px; }
+.collectionHead h3 { margin: 0; font-size: 16px; }
 .collectionHead > button {
-  min-height: 34px;
+  min-height: 44px;
   padding: 0 10px;
   color: var(--accent-strong);
   border: 1px solid rgba(20,52,141,.14);
   border-radius: 8px;
   background: var(--accent-soft);
   font: inherit;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   cursor: pointer;
 }
 .collectionRow {
   display: grid;
-  grid-template-columns: 1.2fr 1.1fr .65fr 1fr auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-top: 8px;
   padding: 11px;
@@ -379,11 +384,11 @@
   border-radius: 11px;
   background: var(--surface-subtle);
 }
-.collectionRow textarea { grid-column: 1 / -2; resize: vertical; }
+.collectionRow textarea { grid-column: 1 / -1; resize: vertical; }
 .collectionRow input,.collectionRow textarea,.compactRows input {
   width: 100%;
   min-width: 0;
-  min-height: 40px;
+  min-height: 44px;
   padding: 9px 10px;
   color: var(--text);
   border: 1px solid var(--line);
@@ -391,18 +396,20 @@
   outline: none;
   background: #fff;
   font: inherit;
-  font-size: 11px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: normal;
 }
 .removeButton {
   align-self: center;
-  min-height: 36px;
+  min-height: 44px;
   padding: 0 9px;
   color: #93444a;
   border: 1px solid rgba(151,66,72,.13);
   border-radius: 8px;
   background: rgba(177,70,77,.055);
   font: inherit;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 760;
   cursor: pointer;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type ChangeEvent } from "react";
+import { useId, useRef, useState, type ChangeEvent } from "react";
 import styles from "./profile-image-upload.module.css";
 
 async function preparePhoto(file: File): Promise<Blob> {
@@ -33,6 +33,7 @@ export function ProfileImageUpload({ value, onChange, onBusyChange, disabled = f
   kind?: "person" | "organization";
 }) {
   const inputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -70,7 +71,11 @@ export function ProfileImageUpload({ value, onChange, onBusyChange, disabled = f
 
   return <fieldset className={styles.field} disabled={disabled || busy} aria-busy={busy}>
     <label htmlFor={inputId}>{kind === "organization" ? "Organization photo or logo" : "Profile photo"}</label>
-    <input id={inputId} className={styles.fileInput} type="file" accept="image/*" onChange={upload} aria-describedby={`${inputId}-help`} />
+    <input ref={inputRef} id={inputId} tabIndex={-1} aria-hidden="true" className={styles.fileInput} type="file" accept="image/*" onChange={upload} aria-describedby={`${inputId}-help`} />
+    <button type="button" className={styles.choose} aria-controls={inputId} aria-describedby={`${inputId}-help`} onClick={() => inputRef.current?.click()}>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><rect x="3" y="3" width="18" height="18" rx="4" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m3 17 5-5 4 4 3-3 6 6" /></svg>
+      {busy ? "Uploading photo…" : value ? "Change photo" : "Choose photo"}
+    </button>
     <small id={`${inputId}-help`}>Choose a photo from your phone, tablet or computer. Up to 10 MB; images are optimized automatically.</small>
     {value ? <button type="button" className={styles.remove} onClick={() => { onChange(null); setError(""); setMessage("Photo removed. Save your profile to confirm."); }}>Remove photo</button> : null}
     {busy ? <p role="status">Uploading photo…</p> : message ? <p role="status">{message}</p> : null}

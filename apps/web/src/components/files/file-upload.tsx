@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { FILE_ACCEPT, FILE_MAX_BYTES, type FileCategory, type FileRecord, type FileScope } from "@/lib/files";
 import styles from "./files.module.css";
 
@@ -15,12 +15,14 @@ type Props = {
   onBusyChange?: (delta: number) => void;
 };
 export function FileUpload({ category = "other", scope = "profile", contextId, multiple, disabled, label = "Upload document", onUploaded, onBusyChange }: Props) {
+  const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const requestRef = useRef<XMLHttpRequest | null>(null);
   const callbacks = useRef({ onUploaded, onBusyChange });
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
+  const [currentFile, setCurrentFile] = useState("");
   useEffect(() => () => requestRef.current?.abort(), []);
   useEffect(() => { callbacks.current = { onUploaded, onBusyChange }; }, [onUploaded, onBusyChange]);
 
@@ -33,7 +35,7 @@ export function FileUpload({ category = "other", scope = "profile", contextId, m
     let completed = 0;
     try {
       for (const file of selected) {
-        setProgress(0);
+        setProgress(0); setCurrentFile(file.name);
         const form = new FormData();
         form.set("file", file); form.set("category", category); form.set("scope", scope);
         if (contextId) form.set("contextId", contextId);
@@ -58,18 +60,19 @@ export function FileUpload({ category = "other", scope = "profile", contextId, m
       }
       setMessage(completed + (completed === 1 ? " file uploaded privately." : " files uploaded privately."));
     } catch (error) { setMessage((completed ? completed + " uploaded. " : "") + (error instanceof Error ? error.message : "Upload failed.")); }
-    finally { requestRef.current = null; setBusy(false); onBusyChange?.(-1); if (inputRef.current) inputRef.current.value = ""; }
+    finally { requestRef.current = null; setBusy(false); setCurrentFile(""); onBusyChange?.(-1); if (inputRef.current) inputRef.current.value = ""; }
   }
-  return <div className={styles.upload}>
-    <input ref={inputRef} className={styles.fileInput} type="file" accept={FILE_ACCEPT} multiple={multiple} disabled={busy || disabled} aria-label={label} onChange={(event) => void upload(event.target.files)} />
+  return <div className={styles.upload} aria-busy={busy}>
+    <input id={inputId} ref={inputRef} tabIndex={-1} aria-hidden="true" className={styles.fileInput} type="file" accept={FILE_ACCEPT} multiple={multiple} disabled={busy || disabled} aria-label={label} onChange={(event) => void upload(event.target.files)} />
     <div className={styles.uploadActions}>
-      <button type="button" className={styles.uploadButton} disabled={busy || disabled} onClick={() => inputRef.current?.click()}>
+      <button type="button" className={styles.uploadButton} disabled={busy || disabled} aria-controls={inputId} onClick={() => inputRef.current?.click()}>
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5" /></svg>
         {busy ? "Uploading… " + progress + "%" : label}
       </button>
       {busy ? <button type="button" className={styles.textButton} onClick={() => requestRef.current?.abort()}>Cancel upload</button> : null}
     </div>
     {busy ? <progress className={styles.progress} max={100} value={progress} aria-label="Upload progress" /> : null}
+    {busy ? <p className={styles.message} role="status">{currentFile}</p> : null}
     {message ? <p className={styles.message} role="status">{message}</p> : null}
   </div>;
 }
