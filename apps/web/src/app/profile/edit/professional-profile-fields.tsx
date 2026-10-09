@@ -18,6 +18,8 @@ type Props = {
   value: IndividualProfileDetails;
   onChange: (next: IndividualProfileDetails) => void;
   onBusyChange?: (delta: number) => void;
+  orcid: string;
+  onOrcidChange: (next: string) => void;
 };
 
 function lines(value: string[] | undefined) {
@@ -112,7 +114,7 @@ function LanguageEditor({ entries, onChange }: { entries: ProfileLanguageEntry[]
   );
 }
 
-export function ProfessionalProfileFields({ value, onChange, onBusyChange }: Props) {
+export function ProfessionalProfileFields({ value, onChange, onBusyChange, orcid, onOrcidChange }: Props) {
   const set = <K extends keyof IndividualProfileDetails>(key: K, next: IndividualProfileDetails[K]) => onChange({ ...value, [key]: next });
   const links = value.links ?? {};
   const preferences = value.careerPreferences ?? {};
@@ -154,6 +156,11 @@ export function ProfessionalProfileFields({ value, onChange, onBusyChange }: Pro
           <p>Open each official service to sign in, then paste your public profile link below and save your profile.</p>
         </div>
         <div className={styles.editorGrid}>
+          <div className={styles.fieldGroup}>
+            <label htmlFor="profile-link-orcid">ORCID</label>
+            <input id="profile-link-orcid" type="text" inputMode="url" value={orcid} onChange={(event) => onOrcidChange(event.target.value)} placeholder="https://orcid.org/0000-0000-0000-0000" />
+            <ResearchProfileActions sourceKey="orcid" value={orcid} />
+          </div>
           {([
             ["website", "Personal website"], ["cv", "CV / résumé link"], ["linkedin", "LinkedIn"],
             ["researchGate", "ResearchGate"], ["googleScholar", "Google Scholar"], ["github", "GitHub / code portfolio"],

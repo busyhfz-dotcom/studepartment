@@ -78,7 +78,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
           </article>
         </section>
 
-        <ProfessionalProfileSections details={researcher.profileDetails ?? undefined} />
+        <ProfessionalProfileSections details={researcher.profileDetails ?? undefined} orcid={researcher.orcid} />
         <PublicDocuments files={researcher.documents} />
 
         <section className={styles.publicationPanel}>

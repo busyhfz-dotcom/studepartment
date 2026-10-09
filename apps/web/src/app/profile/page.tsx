@@ -91,7 +91,7 @@ export default async function ProfilePage({
             {!roleDetails.some(([, value]) => value) ? <p>Add your role-specific details to make this profile more useful.</p> : null}
           </div>
         </section>
-        <ProfessionalProfileSections details={profile.profileDetails} />
+        <ProfessionalProfileSections details={profile.profileDetails} orcid={profile.orcid} />
         <DocumentManager scope="profile" title="CV, certificates & research documents" />
         <PublicationEvidencePanel importAvailable={isOrcidConfigured()} />
 

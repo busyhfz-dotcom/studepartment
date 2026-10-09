@@ -15,6 +15,7 @@ import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
 import { ProfessionalProfileFields } from "./professional-profile-fields";
 import { ResearchProfileActions } from "@/components/scientific/research-profile-actions";
+import { researchProfileUrl } from "@/lib/research-profile-sources";
 
 const topicOptions = [
   ["oncology", "Oncology"],
@@ -63,7 +64,7 @@ export function ProfileEditor({
   const [message, setMessage] = useState("");
   const [accountRole, setAccountRole] = useState<IndividualProfileRole>(profile.accountRole);
   const [imageUrl, setImageUrl] = useState(profile.imageUrl ?? "");
-  const [orcid, setOrcid] = useState(profile.orcid ?? "");
+  const [orcid, setOrcid] = useState(researchProfileUrl("orcid", profile.orcid) ?? "");
   const [uploading, setUploading] = useState(false);
   const [fileUploads, setFileUploads] = useState(0);
   const [professionalDetails, setProfessionalDetails] = useState<IndividualProfileDetails>(profile.profileDetails ?? {});
@@ -236,7 +237,7 @@ export function ProfileEditor({
         </div>
       </section>
 
-      <ProfessionalProfileFields onBusyChange={(delta) => setFileUploads((count) => count + delta)} value={professionalDetails} onChange={setProfessionalDetails} />
+      <ProfessionalProfileFields onBusyChange={(delta) => setFileUploads((count) => count + delta)} value={professionalDetails} onChange={setProfessionalDetails} orcid={orcid} onOrcidChange={setOrcid} />
 
       <section className={styles.editorSection}>
         <div className={styles.sectionHead}>
@@ -315,7 +316,7 @@ export function ProfileEditor({
         <div className={styles.provenanceGrid}>
           <div>
             <label className={styles.fieldGroup}>
-              <span>ORCID iD</span>
+              <span>ORCID iD or record URL</span>
               <input name="orcid" value={orcid} onChange={(event) => setOrcid(event.target.value)} placeholder="0000-0000-0000-0000" />
             </label>
             <p className={styles.sourceNotice}>
@@ -323,7 +324,7 @@ export function ProfileEditor({
             </p>
           </div>
           <div className={styles.provenanceEvidence}>
-            <strong>{orcidVerified && orcid.trim() === profile.orcid ? "Previously verified ORCID iD" : "External profile link"}</strong>
+            <strong>{orcidVerified && researchProfileUrl("orcid", orcid) === researchProfileUrl("orcid", profile.orcid) ? "Previously verified ORCID iD" : "External profile link"}</strong>
             <span>
               Saving a new iD requests a public-data import when the platform connection is active. It does not verify ownership. Use Connect and import to authorize and verify your account.
             </span>

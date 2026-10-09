@@ -79,6 +79,7 @@ export async function getPublicResearcherProfile(researcherId: string) {
     location: [profile.city, profile.countryCode].filter(Boolean).join(" · ") || "Location not shared",
     careerStage: profile.careerStage ?? "Researcher",
     profileDetails: visibleDetails(profile.profileDetails) as IndividualProfileDetails | null,
+    orcid: profile.orcid,
     documents,
     verified: profile.verified,
     availability: profile.availabilityMode.toLowerCase(),
