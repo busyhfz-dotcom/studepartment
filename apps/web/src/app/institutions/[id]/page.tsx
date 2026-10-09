@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicDocuments } from "@/components/files/public-documents";
 import { notFound } from "next/navigation";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProductShell } from "@/components/shell/product-shell";
@@ -38,6 +39,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
 
         {institution.description || publicDetails.length ? <section className={styles.organizationStory}><div><span className="sectionLabel">Institutional profile · organization supplied</span><h2>About this organization</h2>{institution.description ? <p>{institution.description}</p> : null}</div>{publicDetails.length ? <div className={styles.organizationDetails}>{publicDetails.map(([key, value]) => <article key={key}><span>{detailLabels[key as keyof typeof detailLabels] ?? key}</span><p>{value}</p></article>)}</div> : null}</section> : null}
 
+        <PublicDocuments files={institution.documents} />
         <section className={styles.metrics}>
           <div><strong>{institution.researchers.length}</strong><span>public current researchers</span></div>
           <div><strong>{institution.labs.length}</strong><span>canonical laboratories</span></div>

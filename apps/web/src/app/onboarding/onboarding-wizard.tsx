@@ -1,5 +1,7 @@
 "use client";
 
+import { DocumentManager } from "@/components/files/document-manager";
+
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { CollaborationGoalValue, IndividualProfileDetails, IndividualProfileRole, OrganizationOption, ProfileResponse, ProfileUpdateInput } from "@/lib/api-contracts";
@@ -39,6 +41,7 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [fileUploads, setFileUploads] = useState(0);
   const [error, setError] = useState("");
   const [draft, setDraft] = useState<ProfileUpdateInput>({
     fullName: profile.fullName,
@@ -76,7 +79,7 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
   }
 
   async function finish() {
-    if (uploading || saving) return;
+    if (uploading || fileUploads > 0 || saving) return;
     setSaving(true);
     setError("");
     try {
@@ -149,6 +152,7 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
 
         {step === 3 ? (
           <div className={styles.stack}>
+            <DocumentManager scope="profile" title="CV & supporting documents (optional)" onBusyChange={(delta) => setFileUploads((count) => count + delta)} />
             <span className="eyebrow">Step 4 · Trust & visibility</span><h2>Keep assertions separate from verified scientific evidence.</h2>
             <label className={styles.fullField}><span>ORCID iD (optional)</span><input placeholder="0000-0000-0000-0000" value={draft.orcid ?? ""} onChange={(e) => setDraft({ ...draft, orcid: e.target.value || null })} /><small>Manual entry is an assertion. Verification will require the authorized ORCID flow.</small></label>
             <label className={styles.visibility}><input type="checkbox" checked={draft.profilePublic ?? true} onChange={(e) => setDraft({ ...draft, profilePublic: e.target.checked })} /><span><strong>Public scientific profile</strong><small>Make this identity discoverable to other researchers.</small></span></label>
@@ -157,8 +161,8 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
 
         {error ? <p className={styles.error} role="alert">{error}</p> : null}
         <footer className={styles.actions}>
-          <button type="button" className="secondaryButton" disabled={step === 0 || saving || uploading} onClick={() => setStep((value) => Math.max(0, value - 1))}>Back</button>
-          {step < steps.length - 1 ? <button type="button" className="primaryButton" disabled={uploading} onClick={() => setStep((value) => value + 1)}>Continue</button> : <button type="button" className="primaryButton" disabled={saving || uploading} onClick={finish}>{saving ? "Saving…" : "Create scientific identity"}</button>}
+          <button type="button" className="secondaryButton" disabled={step === 0 || saving || uploading || fileUploads > 0} onClick={() => setStep((value) => Math.max(0, value - 1))}>Back</button>
+          {step < steps.length - 1 ? <button type="button" className="primaryButton" disabled={uploading || fileUploads > 0} onClick={() => setStep((value) => value + 1)}>Continue</button> : <button type="button" className="primaryButton" disabled={saving || uploading || fileUploads > 0} onClick={finish}>{saving ? "Saving…" : "Create scientific identity"}</button>}
         </footer>
       </div>
     </section>

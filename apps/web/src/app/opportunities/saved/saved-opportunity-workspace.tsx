@@ -1,5 +1,7 @@
 "use client";
 
+import { DocumentManager } from "@/components/files/document-manager";
+
 import { useEffect, useState } from "react";
 import type { ApiError, ApiSuccess, SavedOpportunityListResponse, SavedOpportunityRecord } from "@/lib/api-contracts";
 import styles from "./page.module.css";
@@ -66,6 +68,11 @@ function ApplicationTracker({ item, onSaved }: { item: SavedOpportunityRecord; o
     <button disabled={saving} onClick={() => void save()} type="button">{saving ? "Saving…" : "Save progress"}</button>
     {message ? <p role="status">{message}</p> : null}
   </div>;
+}
+
+function ApplicationDocuments({ opportunityId }: { opportunityId: string }) {
+  const [open, setOpen] = useState(false);
+  return <details className={styles.documents} onToggle={(event) => setOpen(event.currentTarget.open)}><summary>Application documents</summary>{open ? <DocumentManager scope="application" contextId={opportunityId} title="Private application documents" /> : null}</details>;
 }
 
 export function SavedOpportunityWorkspace() {
@@ -175,6 +182,7 @@ export function SavedOpportunityWorkspace() {
                 <a href={item.opportunity.applicationUrl ?? item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application ↗</a>
                 <button onClick={() => void remove(item.opportunityId)} type="button">Remove from workspace</button>
               </div>
+              <ApplicationDocuments opportunityId={item.opportunityId} />
             </article>
           ))}
         </section>

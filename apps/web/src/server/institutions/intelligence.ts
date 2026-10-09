@@ -1,6 +1,7 @@
 import { getDb } from "@studepartment/db";
 import type { InstitutionFitSnapshot, OrganizationProfileDetails } from "@/lib/api-contracts";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { publicFiles } from "@/server/files/repository";
 
 export async function getInstitutionalIntelligence(organizationId: string) {
   const db = getDb();
@@ -74,6 +75,7 @@ export async function getInstitutionalIntelligence(organizationId: string) {
     verified: organization.verified,
     description: organization.description,
     profileDetails: (organization.profileDetails as OrganizationProfileDetails | null) ?? {},
+    documents: await publicFiles(organization.ownerUserId, "organization"),
     researchers: organization.affiliations.map((item) => ({
       id: item.researcher.id,
       fullName: item.researcher.fullName,

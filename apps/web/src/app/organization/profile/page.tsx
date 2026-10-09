@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DocumentManager } from "@/components/files/document-manager";
 import { redirect } from "next/navigation";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProductShell } from "@/components/shell/product-shell";
@@ -63,6 +64,7 @@ export default async function OrganizationProfilePage() {
         </div>
 
         <OrganizationProfileEditor organization={organization} />
+        <DocumentManager scope="organization" title="Organization documents & accreditations" />
         <OrganizationOpportunities />
       </div>
     </ProductShell>

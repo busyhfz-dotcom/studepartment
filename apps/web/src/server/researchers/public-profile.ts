@@ -1,5 +1,8 @@
 import { getDb } from "@studepartment/db";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { publicFiles } from "@/server/files/repository";
+import { uploadedFileId } from "@/lib/files";
+import type { IndividualProfileDetails } from "@/lib/api-contracts";
 
 function formatGoal(value: string) {
   return value
@@ -47,6 +50,15 @@ export async function getPublicResearcherProfile(researcherId: string) {
   if (!profile) return null;
   const isOwner = Boolean(currentUser && profile.userId === currentUser.id);
   if (!profile.profilePublic && !isOwner) return null;
+  const documents = await publicFiles(profile.userId, "profile");
+  const visibleFileIds = new Set(documents.map((file) => file.id));
+  function visibleDetails(value: unknown): unknown {
+    const id = uploadedFileId(value);
+    if (id) return isOwner || visibleFileIds.has(id) ? value : null;
+    if (Array.isArray(value)) return value.map(visibleDetails);
+    if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, visibleDetails(item)]));
+    return value;
+  }
 
   const affiliation = profile.affiliations[0];
   const orcidVerified = profile.evidence.some(
@@ -66,7 +78,8 @@ export async function getPublicResearcherProfile(researcherId: string) {
     institutionVerified: Boolean(affiliation?.organization.verified),
     location: [profile.city, profile.countryCode].filter(Boolean).join(" · ") || "Location not shared",
     careerStage: profile.careerStage ?? "Researcher",
-    profileDetails: profile.profileDetails as import("@/lib/api-contracts").IndividualProfileDetails | null,
+    profileDetails: visibleDetails(profile.profileDetails) as IndividualProfileDetails | null,
+    documents,
     verified: profile.verified,
     availability: profile.availabilityMode.toLowerCase(),
     collaborationGoals: profile.collaborationGoals.map(formatGoal),

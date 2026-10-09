@@ -12,6 +12,7 @@ import type {
   ScientificIntroductionPreview,
 } from "@/lib/api-contracts";
 import { requireCurrentUser } from "@/server/auth/current-user";
+import { lockFileOwner } from "@/server/files/repository";
 
 const purposeToDb = {
   "research-discussion": "RESEARCH_DISCUSSION",
@@ -347,6 +348,9 @@ export async function createIntroduction(input: CreateIntroductionInput) {
   const expiresAt = new Date(Date.now() + 14 * 86_400_000);
   try {
     return await db.$transaction(async (tx) => {
+      await lockFileOwner(tx, sender.userId!);
+      const attachmentIds = [...new Set(input.attachmentIds ?? [])];
+      if (attachmentIds.length > 5 || await tx.storedFile.count({ where: { id: { in: attachmentIds }, ownerId: sender.userId!, status: "READY" } }) !== attachmentIds.length) throw new InvalidIntroductionError("Choose up to 5 available documents from your own file library.");
       const duplicate = await tx.connectionRequest.findFirst({
         where: { senderId: sender.id, receiverId: input.receiverId, status: "PENDING" },
         select: { id: true },
@@ -361,6 +365,7 @@ export async function createIntroduction(input: CreateIntroductionInput) {
           context,
           contextFingerprint,
           expiresAt,
+          attachments: { create: attachmentIds.map((fileId) => ({ fileId })) },
         },
       });
       await tx.connectionRequestEvent.create({
@@ -391,6 +396,7 @@ function mapRequest(
     id: string;
     purpose: keyof typeof purposeFromDb;
     context: string | null;
+    attachments: Array<{ file: { id: string; name: string } }>;
     status: keyof typeof statusFromDb;
     createdAt: Date;
     expiresAt: Date | null;
@@ -420,6 +426,7 @@ function mapRequest(
     status: statusFromDb[request.status],
     purpose: purposeFromDb[request.purpose],
     context: request.context ?? "",
+    attachments: request.attachments.map(({ file }) => ({ id: file.id, name: file.name, url: "/api/v1/files/" + file.id })),
     createdAt: request.createdAt.toISOString(),
     expiresAt: request.expiresAt?.toISOString(),
     respondedAt: request.respondedAt?.toISOString(),
@@ -441,6 +448,7 @@ export async function listIntroductions(box: "inbox" | "outbox"): Promise<Introd
     orderBy: { createdAt: "desc" },
     take: 100,
     include: {
+      attachments: { where: { file: { status: "READY" } }, include: { file: { select: { id: true, name: true } } } },
       sender: {
         include: {
           affiliations: {

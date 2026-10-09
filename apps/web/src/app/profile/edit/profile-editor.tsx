@@ -63,6 +63,7 @@ export function ProfileEditor({
   const [accountRole, setAccountRole] = useState<IndividualProfileRole>(profile.accountRole);
   const [imageUrl, setImageUrl] = useState(profile.imageUrl ?? "");
   const [uploading, setUploading] = useState(false);
+  const [fileUploads, setFileUploads] = useState(0);
   const [professionalDetails, setProfessionalDetails] = useState<IndividualProfileDetails>(profile.profileDetails ?? {});
 
   const collaborationDefaults = useMemo(
@@ -80,7 +81,7 @@ export function ProfileEditor({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (uploading || status === "saving") return;
+    if (uploading || fileUploads > 0 || status === "saving") return;
     setStatus("saving");
     setMessage("");
 
@@ -233,7 +234,7 @@ export function ProfileEditor({
         </div>
       </section>
 
-      <ProfessionalProfileFields value={professionalDetails} onChange={setProfessionalDetails} />
+      <ProfessionalProfileFields onBusyChange={(delta) => setFileUploads((count) => count + delta)} value={professionalDetails} onChange={setProfessionalDetails} />
 
       <section className={styles.editorSection}>
         <div className={styles.sectionHead}>
@@ -357,7 +358,7 @@ export function ProfileEditor({
           <span>Saved edits remain attached to the authenticated account and retain provenance context.</span>
           {message ? <p className={status === "error" ? styles.errorMessage : styles.successMessage}>{message}</p> : null}
         </div>
-        <button className="primaryButton" type="submit" disabled={uploading || status === "saving"}>
+        <button className="primaryButton" type="submit" disabled={uploading || fileUploads > 0 || status === "saving"}>
           {status === "saving" ? "Saving…" : "Save Scientific Identity"}
         </button>
       </footer>

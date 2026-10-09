@@ -8,7 +8,7 @@ import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { SystemStatus } from "./system-status";
 import styles from "./product-shell.module.css";
 
-type IconName = "overview" | "discover" | "opportunity" | "introduction" | "identity" | "graph" | "assistant" | "scanner" | "conference";
+type IconName = "overview" | "discover" | "opportunity" | "introduction" | "identity" | "graph" | "assistant" | "scanner" | "conference" | "files";
 
 type NavItem = {
   href: string;
@@ -29,15 +29,18 @@ const workspaceItems: NavItem[] = [
 
 const identityItemsIndividual: NavItem[] = [
   { href: "/profile", label: "Scientific Identity", description: "Profile, evidence, provenance", icon: "identity" },
+  { href: "/files", label: "Files & Documents", description: "CV, certificates, applications", icon: "files" },
   { href: "/graph", label: "Evidence Graph", description: "Scientific relationships", icon: "graph" },
 ];
 
 const identityItemsInstitution: NavItem[] = [
   { href: "/organization/profile", label: "Organization Profile", description: "Institutional identity & postings", icon: "identity" },
+  { href: "/files", label: "Files & Documents", description: "Documents and accreditations", icon: "files" },
   { href: "/graph", label: "Evidence Graph", description: "Scientific relationships", icon: "graph" },
 ];
 
 const pageNames: Array<[string, string]> = [
+  ["/files", "Files & Documents"],
   ["/billing", "Studepartment Pro"],
   ["/discover", "Scientific Discovery"],
   ["/assistant", "Research Assistant"],
@@ -68,6 +71,7 @@ function BrandMark() {
 
 function Icon({ name }: { name: IconName }) {
   const paths: Record<IconName, ReactNode> = {
+    files: <><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Zm0 0v6h6M8 13h8m-8 4h5" /></>,
     overview: (
       <>
         <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />

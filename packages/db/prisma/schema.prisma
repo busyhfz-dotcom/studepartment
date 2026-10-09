@@ -233,6 +233,7 @@ model User {
   interestSignals   UserInterestSignal[]
   searchQueries     SearchQueryLog[]
   profileImages     ProfileImage[]
+  storedFiles       StoredFile[]
 }
 
 model ProfileImage {
@@ -243,6 +244,42 @@ model ProfileImage {
   owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@index([ownerId, createdAt])
+}
+
+model StoredFile {
+  id          String   @id @default(cuid())
+  ownerId     String
+  storageKey  String   @unique
+  name        String
+  mediaType   String
+  size        Int
+  category    String
+  scope       String
+  contextId   String?
+  public      Boolean  @default(false)
+  status      String   @default("UPLOADING")
+  createdAt   DateTime @default(now())
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  attachments ConnectionRequestAttachment[]
+
+  @@index([ownerId, createdAt])
+  @@index([ownerId, scope, contextId])
+}
+
+// Survives account deletion so temporary storage outages can be retried.
+model FileDeletion {
+  storageKey String   @id
+  createdAt  DateTime @default(now())
+}
+
+model ConnectionRequestAttachment {
+  requestId String
+  fileId    String
+  request   ConnectionRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  file      StoredFile        @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@id([requestId, fileId])
+  @@index([fileId])
 }
 
 model Session {
@@ -629,6 +666,7 @@ model ConnectionRequest {
   sender             ResearcherProfile        @relation("SentConnectionRequests", fields: [senderId], references: [id], onDelete: Cascade)
   receiver           ResearcherProfile        @relation("ReceivedConnectionRequests", fields: [receiverId], references: [id], onDelete: Cascade)
   events             ConnectionRequestEvent[]
+  attachments        ConnectionRequestAttachment[]
 
   @@index([receiverId, status])
   @@index([senderId, status])

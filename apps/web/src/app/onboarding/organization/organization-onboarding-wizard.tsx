@@ -1,5 +1,7 @@
 "use client";
 
+import { DocumentManager } from "@/components/files/document-manager";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
@@ -31,6 +33,7 @@ export function OrganizationOnboardingWizard({ initialType }: { initialType?: In
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [fileUploads, setFileUploads] = useState(0);
   const [error, setError] = useState("");
   const [draft, setDraft] = useState<OrganizationCreateInput>({
     name: "",
@@ -49,7 +52,7 @@ export function OrganizationOnboardingWizard({ initialType }: { initialType?: In
   }
 
   async function submit() {
-    if (uploading || saving) return;
+    if (uploading || fileUploads > 0 || saving) return;
     setSaving(true);
     setError("");
     try {
@@ -153,10 +156,11 @@ export function OrganizationOnboardingWizard({ initialType }: { initialType?: In
           </label>
         </div>
 
+        <DocumentManager scope="organization" title="Organization documents (optional)" onBusyChange={(delta) => setFileUploads((count) => count + delta)} />
         {error ? <p className={styles.error} role="alert">{error}</p> : null}
         <footer className={styles.actions}>
           <span />
-          <button type="button" className="primaryButton" disabled={saving || uploading || !draft.name.trim()} onClick={submit}>
+          <button type="button" className="primaryButton" disabled={saving || uploading || fileUploads > 0 || !draft.name.trim()} onClick={submit}>
             {saving ? "Registering…" : "Create institutional profile"}
           </button>
         </footer>

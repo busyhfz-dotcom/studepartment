@@ -10,6 +10,8 @@ import { createIntroduction, listIntroductions } from "@/server/introductions/en
 import { canUseProFeature, requireCurrentUser } from "@/server/auth/current-user";
 import { recordProductEvent } from "@/server/analytics/product-events";
 import { introductionErrorResponse } from "@/server/introductions/http";
+import { assertFileOrigin } from "@/server/files/http";
+import { FileError } from "@/server/files/validation";
 import {
   consumeClientRateLimit,
   RateLimitExceededError,
@@ -41,13 +43,15 @@ export async function POST(request: NextRequest) {
   try {
     await consumeClientRateLimit(request, "introductions:create", { windowSeconds: 600, max: 20 });
     const sender = await requireCurrentUser();
+    assertFileOrigin(request);
     if (!canUseProFeature(sender)) return NextResponse.json({ success: false, error: { code: "PRO_REQUIRED", message: "Sending scientific introductions requires Studepartment Pro." } }, { status: 402 });
     const raw = await request.json() as Record<string, unknown>;
     if (
       typeof raw.receiverId !== "string" ||
       typeof raw.purpose !== "string" ||
       !purposes.has(raw.purpose as IntroductionPurpose) ||
-      typeof raw.context !== "string"
+      typeof raw.context !== "string" ||
+      (raw.attachmentIds !== undefined && (!Array.isArray(raw.attachmentIds) || raw.attachmentIds.length > 5 || raw.attachmentIds.some((id) => typeof id !== "string" || !/^[a-zA-Z0-9-]{20,80}$/.test(id))))
     ) {
       const body: ApiError = {
         success: false,
@@ -60,12 +64,15 @@ export async function POST(request: NextRequest) {
       receiverId: raw.receiverId.trim(),
       purpose: raw.purpose as IntroductionPurpose,
       context: raw.context,
+      attachmentIds: raw.attachmentIds as string[] | undefined,
     };
     const data = await createIntroduction(input);
     await recordProductEvent(sender.id, "INTRODUCTION_SENT", { type: "researcher", id: input.receiverId });
     const body: ApiSuccess<typeof data> = { success: true, data };
     return NextResponse.json(body, { status: 201 });
   } catch (error) {
+    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
+    if (error instanceof FileError) return NextResponse.json({ success: false, error: { code: "INVALID_ORIGIN", message: error.message } }, { status: error.status });
     return introductionErrorResponse(error);
   }
 }

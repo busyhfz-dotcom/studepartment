@@ -1,4 +1,5 @@
 import { isUploadedProfileImage } from "@/lib/profile-image-url";
+import { uploadedFileId } from "@/lib/files";
 import type {
   CollaborationGoalValue,
   CareerPreferences,
@@ -129,6 +130,7 @@ function stringList(value: unknown, field: string, limit = 40): string[] | undef
 function safeUrl(value: unknown, field: string): string | null | undefined {
   const parsed = optionalString(value, field, 2048, { nullable: true });
   if (!parsed) return parsed;
+  if (uploadedFileId(parsed)) return parsed;
   try {
     const url = new URL(parsed);
     if (!['https:', 'http:'].includes(url.protocol)) throw new Error('protocol');

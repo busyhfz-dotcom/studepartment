@@ -1,6 +1,7 @@
 import { getDb } from "@studepartment/db";
 import type { AccountActivitySummary } from "@/lib/api-contracts";
 import { recordProductEvent } from "@/server/analytics/product-events";
+import { lockFileOwner } from "@/server/files/repository";
 
 export class AccountPrivacyError extends Error {
   constructor(readonly code: string, message: string, readonly status = 400) {
@@ -55,6 +56,10 @@ export async function exportAccountData(userId: string) {
             },
           },
         },
+      },
+      storedFiles: {
+        select: { id: true, name: true, mediaType: true, size: true, category: true, scope: true, contextId: true, public: true, createdAt: true },
+        orderBy: { createdAt: "asc" },
       },
       discoveryFeedback: true,
       productEvents: {
@@ -118,12 +123,14 @@ export async function exportAccountData(userId: string) {
           introductionPolicy: true,
           sentRequests: {
             include: {
+              attachments: { include: { file: { select: { id: true, name: true, size: true } } } },
               receiver: { select: { id: true, fullName: true } },
               events: true,
             },
           },
           receivedRequests: {
             include: {
+              attachments: { include: { file: { select: { id: true, name: true, size: true } } } },
               sender: { select: { id: true, fullName: true } },
               events: true,
             },
@@ -179,6 +186,9 @@ export async function exportAccountData(userId: string) {
 export async function deleteAccount(userId: string) {
   const db = getDb();
   await db.$transaction(async (tx) => {
+    await lockFileOwner(tx, userId);
+    const files = await tx.storedFile.findMany({ where: { ownerId: userId }, select: { storageKey: true } });
+    if (files.length) await tx.fileDeletion.createMany({ data: files, skipDuplicates: true });
     const profile = await tx.researcherProfile.findUnique({
       where: { userId },
       select: { id: true },

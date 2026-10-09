@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AttachmentPicker } from "@/components/files/attachment-picker";
 import { useEffect, useMemo, useState } from "react";
 import type {
   ApiError,
@@ -25,6 +26,8 @@ const purposeOptions: Array<{ value: IntroductionPurpose; label: string }> = [
 export function IntroductionComposer({ receiverId }: { receiverId: string }) {
   const [purpose, setPurpose] = useState<IntroductionPurpose>("collaboration");
   const [context, setContext] = useState("");
+  const [attachmentIds, setAttachmentIds] = useState<string[]>([]);
+  const [fileUploads, setFileUploads] = useState(0);
   const [preview, setPreview] = useState<ScientificIntroductionPreview | null>(null);
   const [previewLoading, setPreviewLoading] = useState(true);
   const [sendLoading, setSendLoading] = useState(false);
@@ -63,7 +66,7 @@ export function IntroductionComposer({ receiverId }: { receiverId: string }) {
   }, [receiverId, purpose]);
 
   const remaining = 1200 - context.length;
-  const canSend = Boolean(preview?.requestAllowed && context.trim().length >= 80 && context.length <= 1200 && !sendLoading);
+  const canSend = Boolean(preview?.requestAllowed && context.trim().length >= 80 && context.length <= 1200 && !sendLoading && fileUploads === 0);
 
   const relevanceLabel = useMemo(() => {
     if (!preview) return "Evaluating scientific context";
@@ -80,7 +83,7 @@ export function IntroductionComposer({ receiverId }: { receiverId: string }) {
       const response = await fetch("/api/v1/introductions", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ receiverId, purpose, context }),
+        body: JSON.stringify({ receiverId, purpose, context, attachmentIds }),
       });
       const body = (await response.json()) as SendResponse;
       if (!response.ok || !body.success) {
@@ -172,6 +175,7 @@ export function IntroductionComposer({ receiverId }: { receiverId: string }) {
           </small>
         </label>
 
+        <AttachmentPicker selected={attachmentIds} onChange={setAttachmentIds} disabled={sendLoading} onBusyChange={(delta) => setFileUploads((count) => count + delta)} />
         <div className={preview?.requestAllowed ? styles.guardrail : styles.guardrailBlocked}>
           <strong>{preview?.requestAllowed ? "Request guardrails" : "Request currently blocked"}</strong>
           {preview?.blockReason ? <p>{preview.blockReason}</p> : null}

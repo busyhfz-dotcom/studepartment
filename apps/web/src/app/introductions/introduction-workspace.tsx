@@ -274,6 +274,7 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
                   </div>
 
                   <div className={styles.contextQuote}>{request.context}</div>
+                  {(request.status === "pending" || request.status === "accepted" || request.direction === "outgoing") && request.attachments?.length ? <div className={styles.requestActions}>{request.attachments.map((file) => <a className={styles.profileLink} href={file.url} download key={file.id}>Download {file.name}</a>)}</div> : null}
 
                   <div className={styles.requestActions}>
                     <Link className={styles.profileLink} href={"/researchers/" + request.counterpart.id}>View scientific profile</Link>

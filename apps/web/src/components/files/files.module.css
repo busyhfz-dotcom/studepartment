@@ -1,0 +1,60 @@
+.manager { margin-block: 24px; min-width: 0; padding: clamp(18px, 3vw, 30px); border: 1px solid #dce3f1; border-radius: 22px; color: #192740; background: linear-gradient(135deg, #ffffff, #f4f6ff); box-shadow: 0 8px 30px #16213a06; }
+.manager h2 { margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.2; }
+.manager p { line-height: 1.65; color: #566682; }
+.eyebrow { color: #526bac; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; }
+.controls { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px; margin-top: 20px; }
+.controls > label { display: grid; gap: 7px; flex: 1 1 180px; }
+.controls label > span, .search > span { font-size: 12px; font-weight: 600; color: #435573; }
+.manager select, .manager input:not([type=checkbox]) { width: 100%; min-height: 44px; border: 1px solid #ccd7ed; border-radius: 12px; background: #fff; color: #192740; padding: 10px 12px; font: inherit; font-size: 16px; }
+.upload { min-width: 0; align-self: flex-end; }
+.fileInput { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; pointer-events: none; }
+.uploadActions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.uploadButton { display: inline-flex; gap: 9px; align-items: center; justify-content: center; padding: 11px 17px; min-height: 44px; border: 1px solid #647ce0; border-radius: 12px; background: #4664ce; color: #fff; font: inherit; font-size: 14px; font-weight: 650; cursor: pointer; }
+.uploadButton svg { width: 19px; height: 19px; flex-shrink: 0; }
+.uploadButton:hover { background: #3754bd; }
+.uploadButton:disabled { opacity: .65; cursor: wait; }
+.upload button:focus-visible, .manager button:focus-visible, .manager a:focus-visible { outline: 3px solid #a295eb; outline-offset: 3px; }
+.message { font-size: 12px; line-height: 1.5; color: #526682; overflow-wrap: anywhere; margin: 8px 0; }
+.progress { width: 100%; height: 5px; accent-color: #6476d5; }
+.hint { font-size: 12px; margin: 14px 0; }
+.quota { display: grid; gap: 8px; color: #526682; font-size: 12px; margin-block: 18px; }
+.quota progress { width: 100%; height: 6px; accent-color: #6476d5; }
+.search { display: grid; gap: 7px; margin-block: 20px; }
+.list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.fileRow { display: flex; gap: 14px; padding: 16px; background: #fff; border: 1px solid #e0e6f2; border-radius: 15px; min-width: 0; }
+.fileIcon { width: 42px; height: 46px; display: grid; place-items: center; background: #edf1ff; border-radius: 10px; color: #5870c4; flex-shrink: 0; }
+.fileIcon svg { width: 25px; height: 25px; }
+.fileCopy { flex: 1; min-width: 0; }
+.fileCopy strong, .publicFile strong { display: block; overflow-wrap: anywhere; font-size: 15px; line-height: 1.5; }
+.fileCopy small, .publicFile small { display: block; color: #687995; font-size: 12px; line-height: 1.6; margin-top: 4px; }
+.rowActions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+.rowActions a, .rowActions button, .textButton, .inlineActions button, .confirm button, .publicFile a { min-height: 36px; display: inline-flex; align-items: center; background: none; border: 0; padding: 3px 0; color: #3d59b5; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.rowActions button:disabled, .confirm button:disabled { opacity: .5; }
+.visibility { display: flex; gap: 9px; align-items: flex-start; margin-top: 10px; color: #566682; font-size: 12px; line-height: 1.6; cursor: pointer; }
+.visibility input { margin-top: 3px; width: 17px; height: 17px; flex-shrink: 0; accent-color: #536bcb; }
+.inlineActions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.inlineActions input { flex: 1 1 180px; }
+.confirm { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; padding: 12px; border-radius: 10px; background: #fff2f3; color: #883949; font-size: 12px; }
+.confirm span { flex-basis: 100%; }
+.confirm button { color: #883949; }
+.error { color: #a43b53 !important; font-size: 13px; overflow-wrap: anywhere; }
+.empty { border: 1px dashed #cdd8eb; padding: 24px 16px; border-radius: 14px; text-align: center; font-size: 14px; }
+.publicFile { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 14px; border: 1px solid #e0e6f2; border-radius: 14px; }
+.publicFile > div { min-width: 0; }
+.publicFile a { flex-shrink: 0; }
+.attachmentPicker { margin-block: 18px; padding: 18px; border: 1px solid #dce3f1; background: #f7f9ff; border-radius: 14px; color: #192740; }
+.attachmentPicker h3 { margin: 0 0 8px; }
+.attachmentPicker p { color: #60718b; font-size: 13px; line-height: 1.6; }
+.attachmentOption { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; font-size: 14px; overflow-wrap: anywhere; }
+.attachmentOption input { width: 18px; height: 18px; accent-color: #536bcb; flex-shrink: 0; }
+.inlineFile { display: grid; gap: 8px; grid-column: 1 / -1; padding-block: 8px; }
+.inlineFile a { color: #5268be; font-size: 13px; overflow-wrap: anywhere; }
+.inlineFile small { color: #687995; font-size: 12px; line-height: 1.5; }
+@media (max-width: 600px) {
+  .controls { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .upload, .uploadActions, .uploadButton { width: 100%; }
+  .fileRow { padding: 13px; gap: 10px; }
+  .fileIcon { width: 32px; height: 38px; }
+  .rowActions { gap: 18px; }
+  .publicFile { flex-wrap: wrap; }
+}

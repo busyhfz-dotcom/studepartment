@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DocumentManager } from "@/components/files/document-manager";
 import { redirect } from "next/navigation";
 import { ProductShell } from "@/components/shell/product-shell";
 import { ScientificProfileCard } from "@/components/scientific/scientific-profile-card";
@@ -83,6 +84,7 @@ export default async function ProfilePage({
           </div>
         </section>
         <ProfessionalProfileSections details={profile.profileDetails} />
+        <DocumentManager scope="profile" title="CV, certificates & research documents" />
         <PublicationEvidencePanel />
 
         {profile.completeness ? (

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicDocuments } from "@/components/files/public-documents";
 import { notFound } from "next/navigation";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProfessionalProfileSections } from "@/components/scientific/professional-profile-sections";
@@ -78,6 +79,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
         </section>
 
         <ProfessionalProfileSections details={researcher.profileDetails ?? undefined} />
+        <PublicDocuments files={researcher.documents} />
 
         <section className={styles.publicationPanel}>
           <div className={styles.publicationHeading}>

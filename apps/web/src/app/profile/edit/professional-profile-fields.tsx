@@ -8,11 +8,13 @@ import type {
   ProfileTimelineEntry,
 } from "@/lib/api-contracts";
 import { useState } from "react";
+import { FileLinkUpload, FileUploadBusyProvider } from "@/components/files/file-link-upload";
 import styles from "./page.module.css";
 
 type Props = {
   value: IndividualProfileDetails;
   onChange: (next: IndividualProfileDetails) => void;
+  onBusyChange?: (delta: number) => void;
 };
 
 function lines(value: string[] | undefined) {
@@ -44,7 +46,8 @@ function TimelineEditor({ title, addLabel, entries, onChange }: { title: string;
           <input aria-label={`${title} title`} value={entry.title} onChange={(event) => update(index, "title", event.target.value)} placeholder="Title or degree" />
           <input aria-label={`${title} organization`} value={entry.organization ?? ""} onChange={(event) => update(index, "organization", event.target.value)} placeholder="Institution or organization" />
           <input aria-label={`${title} period`} value={entry.period ?? ""} onChange={(event) => update(index, "period", event.target.value)} placeholder="2022 – present" />
-          <input aria-label={`${title} link`} type="url" value={entry.url ?? ""} onChange={(event) => update(index, "url", event.target.value)} placeholder="Supporting link (optional)" />
+          <input aria-label={`${title} link`} type="text" inputMode="url" value={entry.url ?? ""} onChange={(event) => update(index, "url", event.target.value)} placeholder="Supporting link (optional)" />
+          <FileLinkUpload value={entry.url} category={title === "Experience" ? "certificate" : "education"} onChange={(url) => update(index, "url", url)} />
           <textarea aria-label={`${title} description`} rows={2} value={entry.description ?? ""} onChange={(event) => update(index, "description", event.target.value)} placeholder="Responsibilities, methods, outcomes or evidence" />
           <button className={styles.removeButton} type="button" onClick={() => onChange(entries.filter((_, current) => current !== index))}>Remove</button>
         </div>
@@ -62,7 +65,8 @@ function ProjectEditor({ entries, onChange }: { entries: ProfileProjectEntry[]; 
         <input value={entry.title} onChange={(event) => update(index, "title", event.target.value)} placeholder="Project title" />
         <input value={entry.role ?? ""} onChange={(event) => update(index, "role", event.target.value)} placeholder="Your role" />
         <input value={entry.status ?? ""} onChange={(event) => update(index, "status", event.target.value)} placeholder="Active, completed, recruiting…" />
-        <input type="url" value={entry.url ?? ""} onChange={(event) => update(index, "url", event.target.value)} placeholder="Project link" />
+        <input type="text" inputMode="url" value={entry.url ?? ""} onChange={(event) => update(index, "url", event.target.value)} placeholder="Project link" />
+        <FileLinkUpload value={entry.url} category="portfolio" onChange={(url) => update(index, "url", url)} />
         <textarea rows={2} value={entry.description ?? ""} onChange={(event) => update(index, "description", event.target.value)} placeholder="Goal, methods and your contribution" />
         <button className={styles.removeButton} type="button" onClick={() => onChange(entries.filter((_, current) => current !== index))}>Remove</button>
       </div>)}
@@ -80,7 +84,8 @@ function RecognitionEditor({ title, addLabel, entries, onChange }: { title: stri
         <input value={entry.title} onChange={(event) => update(index, "title", event.target.value)} placeholder="Title" />
         <input value={entry.issuer ?? ""} onChange={(event) => update(index, "issuer", event.target.value)} placeholder="Issuer or funder" />
         <input value={entry.year ?? ""} onChange={(event) => update(index, "year", event.target.value)} placeholder="Year / period" />
-        <input type="url" value={entry.url ?? ""} onChange={(event) => update(index, "url", event.target.value)} placeholder="Evidence link" />
+        <input type="text" inputMode="url" value={entry.url ?? ""} onChange={(event) => update(index, "url", event.target.value)} placeholder="Evidence link" />
+        <FileLinkUpload value={entry.url} category={title === "Grants and funded work" ? "proposal" : "certificate"} onChange={(url) => update(index, "url", url)} />
         <textarea rows={2} value={entry.description ?? ""} onChange={(event) => update(index, "description", event.target.value)} placeholder="Context, role, amount or outcome" />
         <button className={styles.removeButton} type="button" onClick={() => onChange(entries.filter((_, current) => current !== index))}>Remove</button>
       </div>)}
@@ -104,13 +109,13 @@ function LanguageEditor({ entries, onChange }: { entries: ProfileLanguageEntry[]
   );
 }
 
-export function ProfessionalProfileFields({ value, onChange }: Props) {
+export function ProfessionalProfileFields({ value, onChange, onBusyChange }: Props) {
   const set = <K extends keyof IndividualProfileDetails>(key: K, next: IndividualProfileDetails[K]) => onChange({ ...value, [key]: next });
   const links = value.links ?? {};
   const preferences = value.careerPreferences ?? {};
 
   return (
-    <>
+    <FileUploadBusyProvider value={onBusyChange}>
       <section className={styles.editorSection}>
         <div className={styles.sectionHead}>
           <div><span className="sectionLabel">Professional profile · free</span><h2>Experience, education and portfolio</h2></div>
@@ -149,8 +154,9 @@ export function ProfessionalProfileFields({ value, onChange }: Props) {
           {([
             ["website", "Personal website"], ["cv", "CV / résumé link"], ["linkedin", "LinkedIn"],
             ["researchGate", "ResearchGate"], ["googleScholar", "Google Scholar"], ["github", "GitHub / code portfolio"],
-          ] as const).map(([key, label]) => <label className={styles.fieldGroup} key={key}><span>{label}</span><input type="url" value={links[key] ?? ""} onChange={(event) => set("links", { ...links, [key]: event.target.value || null })} placeholder="https://…" /></label>)}
+          ] as const).map(([key, label]) => <label className={styles.fieldGroup} key={key}><span>{label}</span><input type="text" inputMode="url" value={links[key] ?? ""} onChange={(event) => set("links", { ...links, [key]: event.target.value || null })} placeholder="https://…" /></label>)}
         </div>
+        <FileLinkUpload value={links.cv} category="cv" onChange={(url) => set("links", { ...links, cv: url })} />
         <div className={styles.textListGrid}>
           <TextList label="Target roles" hint={'Postdoctoral fellow\nClinical research scientist'} value={preferences.targetRoles} onChange={(next) => set("careerPreferences", { ...preferences, targetRoles: next })} />
           <TextList label="Preferred countries" hint={'Germany\nUnited Kingdom\nRemote'} value={preferences.targetCountries} onChange={(next) => set("careerPreferences", { ...preferences, targetCountries: next })} />
@@ -161,6 +167,6 @@ export function ProfessionalProfileFields({ value, onChange }: Props) {
           </div>
         </div>
       </section>
-    </>
+    </FileUploadBusyProvider>
   );
 }

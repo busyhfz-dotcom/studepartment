@@ -431,6 +431,7 @@ export type CreateIntroductionInput = {
   receiverId: string;
   purpose: IntroductionPurpose;
   context: string;
+  attachmentIds?: string[];
 };
 
 export type IntroductionRequestStatus =
@@ -447,6 +448,7 @@ export type IntroductionRequestRecord = {
   status: IntroductionRequestStatus;
   purpose: IntroductionPurpose;
   context: string;
+  attachments?: Array<{ id: string; name: string; url: string }>;
   createdAt: string;
   expiresAt?: string;
   respondedAt?: string;
