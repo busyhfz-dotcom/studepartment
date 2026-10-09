@@ -600,3 +600,14 @@
   .motionLayer{display:none}
 }
 
+/* Keep navigation in the viewport while the workspace document scrolls. */
+.sidebar{height:100vh;height:100dvh}
+.brandRow,.sidebarFooter{flex-shrink:0}
+@media(min-width:941px){
+  .sidebar{position:fixed;inset:0 auto 0 0;width:235px}
+  .workspace{grid-column:2}
+}
+@media(min-width:941px) and (max-width:1200px){
+  .sidebar{width:216px}
+}
+
