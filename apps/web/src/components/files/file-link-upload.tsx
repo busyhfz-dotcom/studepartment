@@ -29,6 +29,7 @@ export function FileLinkUpload({ value, onChange, category, onBusyChange }: { va
     {files && !files.length ? <small>No profile documents yet. Upload a file above.</small> : null}
     {error ? <p className={styles.error} role="alert">{error}</p> : null}
     {uploadedFileId(value) ? <a href={value!} download>Download attached document</a> : null}
+    {uploadedFileId(value) ? <button type="button" className={styles.textButton} onClick={() => onChange("")}>Remove attachment from this field</button> : null}
     <small>Uploads are private. You can publish a selected file from Files &amp; Documents after saving your profile.</small>
   </div>;
 }
