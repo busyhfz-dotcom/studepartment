@@ -29,7 +29,7 @@ const typeFields: Record<InstitutionalOrganizationType, Array<[keyof Organizatio
 
 const sizeLabels = ["1–10", "11–50", "51–250", "251–1,000", "1,000+"];
 
-export function OrganizationOnboardingWizard({ initialType }: { initialType?: InstitutionalOrganizationType }) {
+export function OrganizationOnboardingWizard({ initialType, callbackUrl = "/organization/profile" }: { initialType?: InstitutionalOrganizationType; callbackUrl?: string }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -63,7 +63,7 @@ export function OrganizationOnboardingWizard({ initialType }: { initialType?: In
       });
       const result = (await response.json()) as { success: boolean; error?: { message?: string } };
       if (!response.ok || !result.success) throw new Error(result.error?.message || "Could not register institutional profile.");
-      router.push("/organization/profile");
+      router.push(callbackUrl);
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not register institutional profile.");

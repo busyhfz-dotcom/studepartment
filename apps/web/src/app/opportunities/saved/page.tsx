@@ -2,10 +2,17 @@ import Link from "next/link";
 import { ProductShell } from "@/components/shell/product-shell";
 import { SavedOpportunityWorkspace } from "./saved-opportunity-workspace";
 import styles from "./page.module.css";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/server/auth/current-user";
 
-export default function SavedOpportunitiesPage() {
+export default async function SavedOpportunitiesPage({ searchParams }: { searchParams: Promise<{ save?: string }> }) {
+  const { save } = await searchParams;
+  const pendingId = save && /^[a-zA-Z0-9-]{1,128}$/.test(save) ? save : undefined;
+  const user = await getCurrentUser();
+  const destination = "/opportunities/saved" + (pendingId ? `?save=${pendingId}` : "");
+  if (!user) redirect(`/auth/sign-in?callbackUrl=${encodeURIComponent(destination)}`);
   return (
-    <ProductShell>
+    <ProductShell accountKind={user.accountKind === "INSTITUTION" ? "institution" : "individual"}>
       <div className={styles.shell}>
         <header className={styles.header}>
           <span className="eyebrow">Opportunity Decision Workspace</span>
@@ -16,7 +23,7 @@ export default function SavedOpportunitiesPage() {
           </p>
           <Link href="/opportunities">← Back to Opportunity Intelligence</Link>
         </header>
-        <SavedOpportunityWorkspace />
+        <SavedOpportunityWorkspace pendingOpportunityId={pendingId} />
       </div>
     </ProductShell>
   );

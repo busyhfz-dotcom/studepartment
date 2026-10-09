@@ -4,14 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { authClient } from "@/lib/auth-client";
+import { safeReturnPath } from "@/lib/navigation";
 import type { IndividualProfileRole, InstitutionalOrganizationType } from "@/lib/api-contracts";
 import styles from "./auth.module.css";
 import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
-
-function safeCallback(value: string | undefined, fallback: string) {
-  return value?.startsWith("/") && !value.startsWith("//") ? value : fallback;
-}
 
 type AuthMode = "sign-in" | "sign-up";
 type AccountKind = "individual" | "institution";
@@ -51,10 +48,12 @@ export function AuthForm({
   const [accountKind, setAccountKind] = useState<AccountKind>(initialKind);
   const [accountRole, setAccountRole] = useState<IndividualProfileRole>(initialRole);
   const [organizationType, setOrganizationType] = useState<InstitutionalOrganizationType>(initialOrganizationType);
-  const signInDestination = safeCallback(callbackUrl, "/profile");
-  const signUpDestination = accountKind === "individual"
+  const signInDestination = safeReturnPath(callbackUrl);
+  const onboardingPath = accountKind === "individual"
     ? `/onboarding?role=${encodeURIComponent(accountRole)}`
     : `/onboarding/organization?type=${encodeURIComponent(organizationType)}`;
+  const returnQuery = callbackUrl ? `callbackUrl=${encodeURIComponent(signInDestination)}` : "";
+  const signUpDestination = onboardingPath + (returnQuery ? `&${returnQuery}` : "");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -157,7 +156,7 @@ export function AuthForm({
           </form>
         )}
         <p className={styles.switcher}>
-          {mode === "sign-up" ? <>Already have an account? <Link href="/auth/sign-in">Sign in</Link></> : <>New to Studepartment? <Link href="/auth/sign-up">Create an account</Link></>}
+          {mode === "sign-up" ? <>Already have an account? <Link href={`/auth/sign-in${returnQuery ? `?${returnQuery}` : ""}`}>Sign in</Link></> : <>New to Studepartment? <Link href={`/auth/sign-up${returnQuery ? `?${returnQuery}` : ""}`}>Create an account</Link></>}
         </p>
       </section>
 

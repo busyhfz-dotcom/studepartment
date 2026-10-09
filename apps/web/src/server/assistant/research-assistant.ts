@@ -3,6 +3,7 @@ import type {
   ResearchAssistantResponse,
 } from "@/lib/api-contracts";
 import { buildResearchAssistantContext } from "@/server/assistant/context";
+import { reviewAvailableEvidence } from "./evidence-review";
 import {
   generateGroundedResearchAnswer,
   ResearchAssistantUpstreamError,
@@ -21,7 +22,7 @@ function validateTarget(input: ResearchAssistantRequest["target"]) {
   if (!["institution", "researcher", "opportunity"].includes(input.type)) {
     throw new ResearchAssistantInputError("Unsupported Research Assistant target.");
   }
-  const id = input.id?.trim();
+  const id = typeof input.id === "string" ? input.id.trim() : "";
   if (!id || id.length > 128) {
     throw new ResearchAssistantInputError("Research Assistant target id is invalid.");
   }
@@ -54,7 +55,7 @@ export async function answerResearchQuestion(
   raw: ResearchAssistantRequest,
   authenticatedUserId: string,
 ): Promise<ResearchAssistantResponse> {
-  const question = raw.question?.trim();
+  const question = typeof raw?.question === "string" ? raw.question.trim() : "";
   if (!question || question.length < 8) {
     throw new ResearchAssistantInputError("Ask a research question with at least 8 characters.");
   }
@@ -63,6 +64,14 @@ export async function answerResearchQuestion(
   }
   const target = validateTarget(raw.target);
   const context = await buildResearchAssistantContext(target, authenticatedUserId);
+  if (!process.env.OPENAI_API_KEY?.trim()) {
+    return {
+      ...reviewAvailableEvidence(question, context.citations),
+      generatedAt: new Date().toISOString(),
+      target: context.target,
+      limitations: ["Structured evidence review is active. AI-generated analysis is awaiting platform activation.", ...context.limitations],
+    };
+  }
 
   const input = [
     "USER QUESTION:",
@@ -88,6 +97,7 @@ export async function answerResearchQuestion(
   }
 
   return {
+    mode: "ai-analysis",
     answer: generated.answer,
     citations: context.citations.filter((citation) => referenced.includes(citation.id)),
     referencedCitationIds: referenced,

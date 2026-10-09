@@ -33,15 +33,26 @@ export class OrcidExchangeError extends Error {
 export function getOrcidConfig(): OrcidConfig {
   const clientId = process.env.ORCID_CLIENT_ID?.trim();
   const clientSecret = process.env.ORCID_CLIENT_SECRET?.trim();
-  const redirectUri = process.env.ORCID_REDIRECT_URI?.trim();
+  const siteUrl = process.env.BETTER_AUTH_URL?.trim();
+  const redirectUri = process.env.ORCID_REDIRECT_URI?.trim() || (siteUrl ? new URL("/api/integrations/orcid/callback", siteUrl).href : undefined);
   if (!clientId || !clientSecret || !redirectUri) {
     throw new OrcidConfigurationError(
       "ORCID_CLIENT_ID, ORCID_CLIENT_SECRET, and ORCID_REDIRECT_URI are required for ORCID verification.",
     );
   }
 
-  const environment: OrcidEnvironment =
-    process.env.ORCID_ENVIRONMENT === "production" ? "production" : "sandbox";
+  const environment = process.env.ORCID_ENVIRONMENT?.trim() || "production";
+  if (environment !== "production" && environment !== "sandbox") throw new OrcidConfigurationError("ORCID_ENVIRONMENT must be production or sandbox.");
+  try {
+    const callback = new URL(redirectUri);
+    if (!["http:", "https:"].includes(callback.protocol)
+      || (environment === "production" && callback.protocol !== "https:")
+      || callback.username || callback.password || callback.hash || callback.search
+      || callback.pathname !== "/api/integrations/orcid/callback"
+      || (siteUrl && callback.origin !== new URL(siteUrl).origin)) {
+      throw new Error("Invalid callback");
+    }
+  } catch { throw new OrcidConfigurationError("ORCID redirect must match this site's HTTPS callback URL."); }
   const host = environment === "production" ? "https://orcid.org" : "https://sandbox.orcid.org";
 
   return {
@@ -55,6 +66,11 @@ export function getOrcidConfig(): OrcidConfig {
       ? "https://pub.orcid.org/v3.0"
       : "https://pub.sandbox.orcid.org/v3.0",
   };
+}
+
+export function isOrcidConfigured() {
+  try { getOrcidConfig(); return true; }
+  catch { return false; }
 }
 
 export function buildOrcidAuthorizationUrl(config: OrcidConfig, state: string) {
@@ -87,6 +103,7 @@ export async function exchangeOrcidAuthorizationCode(
     },
     body,
     cache: "no-store",
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!response.ok) {
@@ -107,6 +124,7 @@ export async function exchangeOrcidAuthorizationCode(
 
 
 type OrcidPublicToken = {
+  clientKey: string;
   accessToken: string;
   expiresAt: number;
 };
@@ -157,7 +175,8 @@ function normalizeExternalIdentifier(type: string, value: string) {
 }
 
 async function getOrcidPublicToken(config: OrcidConfig) {
-  if (publicTokenCache && publicTokenCache.expiresAt > Date.now() + 60_000) {
+  const clientKey = `${config.environment}:${config.clientId}`;
+  if (publicTokenCache?.clientKey === clientKey && publicTokenCache.expiresAt > Date.now() + 60_000) {
     return publicTokenCache.accessToken;
   }
 
@@ -175,6 +194,7 @@ async function getOrcidPublicToken(config: OrcidConfig) {
     },
     body,
     cache: "no-store",
+    signal: AbortSignal.timeout(15_000),
   });
   if (!response.ok) {
     throw new OrcidExchangeError(`ORCID public token request failed with HTTP ${response.status}.`);
@@ -186,6 +206,7 @@ async function getOrcidPublicToken(config: OrcidConfig) {
   }
   const expiresIn = typeof payload.expires_in === "number" ? payload.expires_in : 3600;
   publicTokenCache = {
+    clientKey,
     accessToken: payload.access_token,
     expiresAt: Date.now() + Math.max(300, expiresIn) * 1000,
   };
@@ -201,6 +222,7 @@ export async function fetchPublicOrcidWorks(orcid: string): Promise<OrcidWorkSum
       authorization: `Bearer ${token}`,
     },
     cache: "no-store",
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!response.ok) {

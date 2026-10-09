@@ -5,14 +5,17 @@ import { getOwnedOrganization } from "@/server/repositories/organization-reposit
 import { OrganizationOnboardingWizard } from "./organization-onboarding-wizard";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import type { InstitutionalOrganizationType } from "@/lib/api-contracts";
+import { safeReturnPath } from "@/lib/navigation";
 
-export default async function OrganizationOnboardingPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
-  const { type } = await searchParams;
+export default async function OrganizationOnboardingPage({ searchParams }: { searchParams: Promise<{ type?: string; callbackUrl?: string }> }) {
+  const { type, callbackUrl } = await searchParams;
+  const destination = safeReturnPath(callbackUrl, "/organization/profile");
+  const nextPath = "/onboarding/organization?" + new URLSearchParams({ ...(type ? { type } : {}), callbackUrl: destination });
   const user = await getCurrentUser();
-  if (!user) redirect("/auth/sign-in?callbackUrl=/onboarding/organization");
+  if (!user) redirect("/auth/sign-in?callbackUrl=" + encodeURIComponent(nextPath));
 
   const existing = await getOwnedOrganization(user.id);
-  if (existing) redirect("/organization/profile");
+  if (existing) redirect(destination);
 
   return (
     <main className="shell onboardingShell">
@@ -26,11 +29,11 @@ export default async function OrganizationOnboardingPage({ searchParams }: { sea
           opportunity postings, and researcher-facing verification — instead of an individual scientific
           identity.
         </p>
-        <Link className="secondary" href="/onboarding">
+        <Link className="secondary" href={"/onboarding?callbackUrl=" + encodeURIComponent(safeReturnPath(callbackUrl))}>
           Applying as an individual researcher instead? Go back to the researcher path ↗
         </Link>
       </header>
-      <OrganizationOnboardingWizard initialType={type as InstitutionalOrganizationType | undefined} />
+      <OrganizationOnboardingWizard initialType={type as InstitutionalOrganizationType | undefined} callbackUrl={destination} />
     </main>
   );
 }

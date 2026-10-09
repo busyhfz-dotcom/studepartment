@@ -8,7 +8,7 @@ import { ProfileEditor } from "./profile-editor";
 import styles from "./page.module.css";
 
 const statusCopy: Record<string, string> = {
-  "not-configured": "ORCID verification is not configured in this environment yet. Add the ORCID client credentials and registered redirect URI to enable it.",
+  "not-configured": "ORCID verification is awaiting platform activation. Your profile and manually entered ORCID iD remain available.",
   error: "The ORCID verification flow could not be started. No verification state was changed.",
 };
 

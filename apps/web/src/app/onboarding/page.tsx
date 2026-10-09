@@ -5,12 +5,14 @@ import { listOrganizationOptions } from "@/server/repositories/organization-repo
 import { researcherRepository } from "@/server/repositories/researcher-repository";
 import { OnboardingWizard } from "./onboarding-wizard";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
+import { safeReturnPath } from "@/lib/navigation";
 
-export default async function OnboardingPage({ searchParams }: { searchParams: Promise<{ role?: string }> }) {
-  const { role } = await searchParams;
+export default async function OnboardingPage({ searchParams }: { searchParams: Promise<{ role?: string; callbackUrl?: string }> }) {
+  const { role, callbackUrl } = await searchParams;
+  const nextPath = "/onboarding?" + new URLSearchParams({ ...(role ? { role } : {}), callbackUrl: safeReturnPath(callbackUrl) });
   const user = await getCurrentUser();
-  if (!user) redirect("/auth/sign-in?callbackUrl=/onboarding");
-  if (user.accountKind === "INSTITUTION") redirect("/onboarding/organization");
+  if (!user) redirect("/auth/sign-in?callbackUrl=" + encodeURIComponent(nextPath));
+  if (user.accountKind === "INSTITUTION") redirect("/onboarding/organization" + (callbackUrl ? `?callbackUrl=${encodeURIComponent(safeReturnPath(callbackUrl))}` : ""));
 
   const [profile, organizations] = await Promise.all([
     researcherRepository.getProfileForUser(user.id),
@@ -28,11 +30,11 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
         <p className="lede">
           Four focused steps establish your research context, methods, collaboration posture, and evidence visibility without turning identity into a social profile.
         </p>
-        <Link className="secondary" href="/onboarding/organization">
+        <Link className="secondary" href={"/onboarding/organization?callbackUrl=" + encodeURIComponent(safeReturnPath(callbackUrl, "/organization/profile"))}>
           Setting up a lab, hospital, or institution instead? Switch to an institutional profile ↗
         </Link>
       </header>
-      <OnboardingWizard profile={profile} organizations={organizations} initialRole={role === "student" || role === "professor" ? role : role === "researcher" ? role : undefined} />
+      <OnboardingWizard profile={profile} organizations={organizations} callbackUrl={safeReturnPath(callbackUrl)} initialRole={role === "student" || role === "professor" ? role : role === "researcher" ? role : undefined} />
     </main>
   );
 }

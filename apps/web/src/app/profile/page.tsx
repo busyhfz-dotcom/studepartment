@@ -24,6 +24,7 @@ export default async function ProfilePage({
 }) {
   const user = await getCurrentUser();
   if (!user) redirect("/auth/sign-in?callbackUrl=/profile");
+  if (user.accountKind === "INSTITUTION") redirect("/organization/profile");
 
   const [{ orcid }, profile] = await Promise.all([
     searchParams,

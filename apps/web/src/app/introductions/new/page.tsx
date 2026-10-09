@@ -5,6 +5,7 @@ import { ProGate } from "@/components/billing/pro-gate";
 import { ProPreviewNotice } from "@/components/billing/pro-preview-notice";
 import { canUseProFeature, getCurrentUser } from "@/server/auth/current-user";
 import styles from "./page.module.css";
+import { redirect } from "next/navigation";
 
 export default async function NewIntroductionPage({
   searchParams,
@@ -12,11 +13,13 @@ export default async function NewIntroductionPage({
   searchParams: Promise<{ researcher?: string }>;
 }) {
   const user = await getCurrentUser();
-  if (!canUseProFeature(user)) return <ProductShell><ProGate feature="Purpose-led scientific introductions" /></ProductShell>;
   const { researcher } = await searchParams;
+  if (!user) redirect(`/auth/sign-in?callbackUrl=${encodeURIComponent(`/introductions/new${researcher ? `?researcher=${encodeURIComponent(researcher)}` : ""}`)}`);
+  const accountKind = user.accountKind === "INSTITUTION" ? "institution" : "individual";
+  if (!canUseProFeature(user)) return <ProductShell accountKind={accountKind}><ProGate feature="Purpose-led scientific introductions" /></ProductShell>;
 
   return (
-    <ProductShell>
+    <ProductShell accountKind={accountKind}>
       <div className={styles.shell}>
         <ProPreviewNotice user={user} />
         <Link className="backLink" href={researcher ? "/researchers/" + researcher : "/discover"}>

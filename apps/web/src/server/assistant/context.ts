@@ -78,7 +78,8 @@ export async function buildResearchAssistantContext(
     },
   });
 
-  if (!profile) {
+  const organization = !profile ? await db.organization.findUnique({ where: { ownerUserId: userId } }) : null;
+  if (!profile && !organization) {
     throw new ResearchAssistantContextError(
       "SCIENTIFIC_IDENTITY_REQUIRED",
       "Complete your Scientific Identity before using the Research Assistant.",
@@ -94,13 +95,13 @@ export async function buildResearchAssistantContext(
     return full.id;
   }
 
-  const topicNames = profile.topics.map((relation) => relation.topic.name);
-  const methodNames = profile.methods.map((relation) => relation.method.name);
-  const topicIds = profile.topics.map((relation) => relation.topicId);
-  const methodIds = profile.methods.map((relation) => relation.methodId);
-  const affiliations = profile.affiliations.map((relation) => relation.organization.name);
+  const topicNames = profile?.topics.map((relation) => relation.topic.name) ?? [];
+  const methodNames = profile?.methods.map((relation) => relation.method.name) ?? [];
+  const topicIds = profile?.topics.map((relation) => relation.topicId) ?? [];
+  const methodIds = profile?.methods.map((relation) => relation.methodId) ?? [];
+  const affiliations = profile?.affiliations.map((relation) => relation.organization.name) ?? [];
 
-  add({
+  if (profile) add({
     type: "identity",
     label: "Your Scientific Identity",
     evidence: profile.verified ? "verified" : "asserted",
@@ -116,7 +117,12 @@ export async function buildResearchAssistantContext(
     ].filter(Boolean).join(" "),
   });
 
-  for (const relation of profile.publications) {
+  if (organization) add({
+    type: "institution", label: organization.name, evidence: organization.verified ? "verified" : "asserted", href: "/organization/profile",
+    detail: [`Organization type: ${organization.type.toLowerCase().replaceAll("_", " ")}.`, organization.countryCode ? `Country: ${organization.countryCode}.` : "", organization.description ?? "No research description is recorded."].filter(Boolean).join(" "),
+  });
+
+  for (const relation of profile?.publications ?? []) {
     const publication = relation.publication;
     add({
       type: "publication",
@@ -238,7 +244,7 @@ export async function buildResearchAssistantContext(
     const researchers = await db.researcherProfile.findMany({
       where: {
         profilePublic: true,
-        id: { not: profile.id },
+        id: { not: profile?.id },
         OR: overlapFilters,
       },
       orderBy: [{ verified: "desc" }, { updatedAt: "desc" }],

@@ -119,7 +119,8 @@ function StartJourney() {
   const [selectedRecord, setSelected] = useState<OpportunityResult | null>(null);
   const selected = selectedRecord?.id === opportunityId ? selectedRecord : null;
   const [detailFailure, setDetailFailure] = useState<string | null>(null);
-  const [selectedFree, setSelectedFree] = useState(false);
+  const [searchError, setSearchError] = useState("");
+  const [searchAttempt, setSearchAttempt] = useState(0);
 
   function setStep(nextStep: Step, changes: Record<string, string> = {}) {
     const params = nextStep === "welcome" ? new URLSearchParams() : new URLSearchParams(searchParams.toString());
@@ -166,17 +167,19 @@ function StartJourney() {
     fetch(`/api/v1/opportunities?${params.toString()}`, { signal: controller.signal })
       .then((response) => response.json())
       .then((body) => {
-        if (!controller.signal.aborted && body?.success) setResults(body.data.results as OpportunityResult[]);
+        if (controller.signal.aborted) return;
+        if (!body?.success) throw new Error(body.error?.message || "The opportunity search could not be completed.");
+        setResults(body.data.results as OpportunityResult[]); setSearchError("");
       })
-      .catch(() => {
-        /* aborted or transient network error — the empty state covers it */
+      .catch((error) => {
+        if (!controller.signal.aborted) setSearchError(error instanceof Error ? error.message : "Connection interrupted. Try again.");
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
       });
 
     return () => controller.abort();
-  }, [step, kind, query, country]);
+  }, [step, kind, query, country, searchAttempt]);
 
   const countries = useMemo(
     () => Array.from(new Set(results.map((item) => item.location).filter(Boolean))).slice(0, 40),
@@ -365,7 +368,8 @@ function StartJourney() {
           </div>
 
           <div className={styles.results}>
-            {!loading && results.length === 0 ? (
+            {searchError && !loading ? <div className={styles.empty} role="alert">{searchError} <button type="button" className={styles.primary} onClick={() => { setLoading(true); setSearchAttempt((value) => value + 1); }}>Retry search</button></div> : null}
+            {!loading && !searchError && results.length === 0 ? (
               <div className={styles.empty}>No opportunities match this search yet. Try a broader term.</div>
             ) : (
               results.map((item) => (
@@ -473,9 +477,7 @@ function StartJourney() {
               <button type="button" className={styles.primary} onClick={() => setStep("next")}>
                 Track this {isGrant ? "grant" : "position"} <span>↗</span>
               </button>
-              <button type="button" className={styles.sub} onClick={() => setStep("next")}>
-                {isGrant ? "Ask about this funding call" : "Contact the hiring PI"} <span>↗</span>
-              </button>
+              <a className={styles.sub} href={applyHref} target="_blank" rel="noopener noreferrer">View contact details at source <span>↗</span></a>
               <p className={styles.smallprint}>
                 Contact is offered only where the original listing provides an appropriate route. Formal
                 applications use the host&apos;s application portal.
@@ -490,7 +492,7 @@ function StartJourney() {
 
   if (step === "next" && selected) {
     const isGrant = kindOf(selected.type) === "grant";
-    const signUpHref = `/auth/sign-up?kind=individual`;
+    const trackingHref = `/opportunities/saved?save=${encodeURIComponent(selected.id)}`;
     return (
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
@@ -542,9 +544,9 @@ function StartJourney() {
               <strong>Get started at your pace</strong>
               <div className={styles.big}>Profile and application tracking</div>
               <small>Save opportunities, track application stages and keep your research experience ready.</small>
-              <button type="button" onClick={() => setSelectedFree(true)}>
+              <Link className={styles.primary} href={trackingHref}>
                 Continue with Free ↗
-              </button>
+              </Link>
             </section>
             <section className={`${styles.plan} ${styles.premium}`}>
               <span className={styles.label}>Pro intelligence</span>
@@ -554,14 +556,6 @@ function StartJourney() {
               <Link className={styles.primary} href="/billing">View Pro plans ↗</Link>
             </section>
           </div>
-          {selectedFree ? (
-            <div className={`${styles.selection} ${styles.show}`} role="status" aria-live="polite">
-              <strong>Free selected. Create your profile to start tracking.</strong>
-              <Link className={styles.primary} href={signUpHref}>
-                Create your free profile ↗
-              </Link>
-            </div>
-          ) : null}
         </main>
         <FootBar />
       </div>

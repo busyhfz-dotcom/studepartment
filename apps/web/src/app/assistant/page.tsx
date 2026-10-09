@@ -5,6 +5,7 @@ import { ProGate } from "@/components/billing/pro-gate";
 import { ProPreviewNotice } from "@/components/billing/pro-preview-notice";
 import { canUseProFeature, getCurrentUser } from "@/server/auth/current-user";
 import styles from "./page.module.css";
+import { redirect } from "next/navigation";
 
 function targetFromSearch(searchParams: {
   institution?: string;
@@ -23,12 +24,15 @@ export default async function ResearchAssistantPage({
   searchParams: Promise<{ institution?: string; researcher?: string; opportunity?: string }>;
 }) {
   const user = await getCurrentUser();
-  if (!canUseProFeature(user)) return <ProductShell><ProGate feature="Citation-grounded Research Assistant" /></ProductShell>;
   const params = await searchParams;
+  const query = new URLSearchParams(Object.entries(params).filter((entry): entry is [string, string] => typeof entry[1] === "string"));
+  if (!user) redirect(`/auth/sign-in?callbackUrl=${encodeURIComponent(`/assistant${query.size ? `?${query}` : ""}`)}`);
+  const accountKind = user.accountKind === "INSTITUTION" ? "institution" : "individual";
+  if (!canUseProFeature(user)) return <ProductShell accountKind={accountKind}><ProGate feature="Citation-grounded Research Assistant" /></ProductShell>;
   const target = targetFromSearch(params);
 
   return (
-    <ProductShell>
+    <ProductShell accountKind={accountKind}>
       <div className={styles.shell}>
         <ProPreviewNotice user={user} />
         <header className={styles.header}>
@@ -41,7 +45,7 @@ export default async function ResearchAssistantPage({
             Ask about scientific fit, current opportunities, researchers, or institutions. Every answer is constrained to a request-specific Studepartment source ledger and must cite the evidence it uses.
           </p>
         </header>
-        <ResearchAssistantWorkspace target={target} />
+        <ResearchAssistantWorkspace target={target} aiAvailable={Boolean(process.env.OPENAI_API_KEY?.trim())} identityHref={accountKind === "institution" ? "/onboarding/organization" : "/onboarding"} />
       </div>
     </ProductShell>
   );

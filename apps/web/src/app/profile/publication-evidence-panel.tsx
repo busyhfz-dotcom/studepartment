@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type {
   ApiError,
   ApiSuccess,
@@ -101,14 +102,14 @@ export function PublicationEvidencePanel() {
             ORCID establishes the asserted work relationship. PubMed corroboration confirms bibliographic identifiers and metadata without turning citation counts into a researcher score.
           </p>
         </div>
-        <button
+        {data?.orcidVerified ? <button
           className={styles.syncButton}
-          disabled={syncing || loading || !data?.orcidVerified}
+          disabled={syncing || loading}
           onClick={syncPublications}
           type="button"
         >
           {syncing ? "Syncing…" : "Sync ORCID & PubMed"}
-        </button>
+        </button> : <Link className={styles.syncButton} href="/profile/orcid">Connect ORCID →</Link>}
       </div>
 
       {error ? <div className={styles.publicationError}>{error}</div> : null}
@@ -120,6 +121,7 @@ export function PublicationEvidencePanel() {
         <div className={styles.publicationEmpty}>
           <strong>Verified ORCID ownership is required before publication enrichment.</strong>
           <p>Connect ORCID from Scientific Identity settings. Manual ORCID entry is not treated as verified ownership.</p>
+          <Link href="/profile/orcid">Open ORCID connection →</Link>
         </div>
       ) : data.publications.length === 0 ? (
         <div className={styles.publicationEmpty}>

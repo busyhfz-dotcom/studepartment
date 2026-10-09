@@ -3,6 +3,8 @@
 import { DocumentManager } from "@/components/files/document-manager";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { SaveOpportunityButton } from "../save-opportunity-button";
 import type { ApiError, ApiSuccess, SavedOpportunityListResponse, SavedOpportunityRecord } from "@/lib/api-contracts";
 import styles from "./page.module.css";
 
@@ -75,7 +77,7 @@ function ApplicationDocuments({ opportunityId }: { opportunityId: string }) {
   return <details className={styles.documents} onToggle={(event) => setOpen(event.currentTarget.open)}><summary>Application documents</summary>{open ? <DocumentManager scope="application" contextId={opportunityId} title="Private application documents" /> : null}</details>;
 }
 
-export function SavedOpportunityWorkspace() {
+export function SavedOpportunityWorkspace({ pendingOpportunityId }: { pendingOpportunityId?: string }) {
   const [data, setData] = useState<SavedOpportunityListResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -108,15 +110,25 @@ export function SavedOpportunityWorkspace() {
   }, []);
 
   async function remove(opportunityId: string) {
-    const response = await fetch("/api/v1/opportunities/saved?opportunity=" + encodeURIComponent(opportunityId), { method: "DELETE" });
-    if (response.ok) await load();
+    try {
+      const response = await fetch("/api/v1/opportunities/saved?opportunity=" + encodeURIComponent(opportunityId), { method: "DELETE" });
+      if (!response.ok) throw new Error("Unable to remove this opportunity. Please try again.");
+      await load();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to remove this opportunity.");
+    }
   }
 
-  if (error) return <div className={styles.error}>{error}</div>;
+  if (error) return <div className={styles.error} role="alert">{error} <button type="button" onClick={() => void load().then(() => setError(null)).catch((caught) => setError(caught instanceof Error ? caught.message : "Unable to load saved opportunities."))}>Try again</button></div>;
   if (!data) return <div className={styles.loading}>Loading opportunity decision workspace…</div>;
 
   return (
     <>
+      {pendingOpportunityId && !data.saved.some((item) => item.opportunityId === pendingOpportunityId) ? <section className={styles.empty}>
+        <strong>Continue tracking the opportunity you selected</strong>
+        <p>Save it to your private workspace to manage progress, notes and application documents.</p>
+        <SaveOpportunityButton className="primaryButton" opportunityId={pendingOpportunityId} onSaved={load} />
+      </section> : null}
       <section className={styles.summary} aria-label="Opportunity decision summary">
         <div>
           <strong>{data.total}</strong>
@@ -139,6 +151,7 @@ export function SavedOpportunityWorkspace() {
             Add a source-backed opportunity from Opportunity Intelligence when you want to preserve its source,
             deadline context, and private decision notes.
           </p>
+          <Link className="secondary" href="/opportunities">Find opportunities →</Link>
         </section>
       ) : (
         <section className={styles.list} aria-label="Saved opportunity decisions">

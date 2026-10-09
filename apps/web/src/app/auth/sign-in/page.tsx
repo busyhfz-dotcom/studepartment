@@ -3,8 +3,8 @@ import { AuthForm } from "../auth-form";
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; next?: string }>;
 }) {
-  const { callbackUrl } = await searchParams;
-  return <AuthForm callbackUrl={callbackUrl} />;
+  const { callbackUrl, next } = await searchParams;
+  return <AuthForm callbackUrl={callbackUrl ?? next} />;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import Link from "next/link";
 import type {
   ApiError,
   ApiSuccess,
@@ -24,7 +25,7 @@ function targetLabel(target?: ResearchAssistantTarget) {
   return "Opportunity-focused context";
 }
 
-export function ResearchAssistantWorkspace({ target }: { target?: ResearchAssistantTarget }) {
+export function ResearchAssistantWorkspace({ target, aiAvailable = true, identityHref = "/onboarding" }: { target?: ResearchAssistantTarget; aiAvailable?: boolean; identityHref?: string }) {
   const [question, setQuestion] = useState(
     target?.type === "institution"
       ? "How does this institution overlap with my Scientific Identity, and what should I review before deciding whether to pursue its researchers or opportunities?"
@@ -33,6 +34,7 @@ export function ResearchAssistantWorkspace({ target }: { target?: ResearchAssist
   const [data, setData] = useState<ResearchAssistantResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [needsIdentity, setNeedsIdentity] = useState(false);
 
   const canSubmit = question.trim().length >= 8 && !loading;
   const ledgerLabel = useMemo(() => targetLabel(target), [target]);
@@ -42,6 +44,7 @@ export function ResearchAssistantWorkspace({ target }: { target?: ResearchAssist
     if (!canSubmit) return;
     setLoading(true);
     setError(null);
+    setNeedsIdentity(false);
 
     try {
       const response = await fetch("/api/v1/assistant/research", {
@@ -58,6 +61,7 @@ export function ResearchAssistantWorkspace({ target }: { target?: ResearchAssist
       });
       const body = (await response.json()) as AssistantApiResponse;
       if (!response.ok || !body.success) {
+        if (!body.success) setNeedsIdentity(body.error.code === "SCIENTIFIC_IDENTITY_REQUIRED");
         throw new Error(body.success ? "Research Assistant request failed." : body.error.message);
       }
       setData(body.data);
@@ -74,7 +78,7 @@ export function ResearchAssistantWorkspace({ target }: { target?: ResearchAssist
       <section className={styles.composer}>
         <div className={styles.composerMeta}>
           <div>
-            <span className="sectionLabel">Grounded assistant</span>
+            <span className="sectionLabel">{aiAvailable ? "Grounded assistant" : "Structured evidence review"}</span>
             <strong>{ledgerLabel}</strong>
           </div>
           <div className={styles.guardrails}>
@@ -96,7 +100,7 @@ export function ResearchAssistantWorkspace({ target }: { target?: ResearchAssist
           <div className={styles.composerFooter}>
             <span>{question.length}/1200</span>
             <button className="primaryButton" disabled={!canSubmit} type="submit">
-              {loading ? "Analyzing evidence…" : "Ask Research Assistant"}
+              {loading ? "Reviewing evidence…" : aiAvailable ? "Ask Research Assistant" : "Review available evidence"}
             </button>
           </div>
         </form>
@@ -115,18 +119,18 @@ export function ResearchAssistantWorkspace({ target }: { target?: ResearchAssist
       <section className={styles.privacyNote}>
         <strong>Provider boundary</strong>
         <p>
-          When configured, this request sends your question and the displayed Studepartment source context to the configured AI provider. The server requests non-persistent generation and does not enable external web browsing for this assistant.
+          {aiAvailable ? "This request sends your question and the displayed Studepartment source context to the configured AI provider. The server requests non-persistent generation and does not enable external web browsing for this assistant." : "Structured review summarizes the available Studepartment records with source links. AI-generated interpretation is awaiting activation; your question is processed within Studepartment."}
         </p>
       </section>
 
-      {error ? <div className={styles.error}>{error}</div> : null}
+      {error ? <div className={styles.error} role="alert">{error}{needsIdentity ? <p><Link className="secondary" href={identityHref}>Complete your profile →</Link></p> : <p><Link href="/discover">Explore available records →</Link></p>}</div> : null}
 
       {data ? (
         <section className={styles.answerGrid}>
           <article className={styles.answer}>
             <div className={styles.answerTopline}>
-              <span className="sectionLabel">Grounded answer</span>
-              <span>{data.model}</span>
+              <span className="sectionLabel">{data.mode === "evidence-review" ? "Evidence review" : "Grounded answer"}</span>
+              <span>{data.mode === "evidence-review" ? "Structured source summary" : "AI analysis"}</span>
             </div>
             <div className={styles.answerText}>{data.answer}</div>
             <div className={styles.limits}>

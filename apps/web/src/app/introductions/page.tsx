@@ -1,6 +1,8 @@
 import { ProductShell } from "@/components/shell/product-shell";
 import { IntroductionWorkspace } from "./introduction-workspace";
 import styles from "./page.module.css";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/server/auth/current-user";
 
 export default async function IntroductionsPage({
   searchParams,
@@ -9,9 +11,11 @@ export default async function IntroductionsPage({
 }) {
   const { box } = await searchParams;
   const initialBox = box === "outbox" ? "outbox" : "inbox";
+  const user = await getCurrentUser();
+  if (!user) redirect(`/auth/sign-in?callbackUrl=${encodeURIComponent(`/introductions?box=${initialBox}`)}`);
 
   return (
-    <ProductShell>
+    <ProductShell accountKind={user.accountKind === "INSTITUTION" ? "institution" : "individual"}>
       <div className={styles.shell}>
         <header className={styles.header}>
           <div className={styles.headerMeta}>

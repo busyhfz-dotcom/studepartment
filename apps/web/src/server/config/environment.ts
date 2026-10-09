@@ -1,3 +1,5 @@
+import { isOrcidConfigured } from "@/server/integrations/orcid/client";
+
 export type DeploymentEnvironment = "development" | "test" | "ci" | "staging" | "production";
 
 export type CoreRuntimeConfig = {
@@ -81,11 +83,7 @@ export function getCoreRuntimeConfig(): CoreRuntimeConfig {
 
 export function integrationConfiguration() {
   return {
-    orcid: Boolean(
-      process.env.ORCID_CLIENT_ID?.trim()
-      && process.env.ORCID_CLIENT_SECRET?.trim()
-      && process.env.ORCID_REDIRECT_URI?.trim(),
-    ),
+    orcid: isOrcidConfigured(),
     pubmed: Boolean(process.env.NCBI_EUTILS_EMAIL?.trim()),
     semanticRetrieval: Boolean(process.env.OPENAI_API_KEY?.trim()),
     researchAssistant: Boolean(process.env.OPENAI_API_KEY?.trim()),

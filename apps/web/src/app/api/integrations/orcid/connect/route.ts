@@ -32,12 +32,12 @@ export async function GET(request: Request) {
       return NextResponse.redirect(url);
     }
     if (error instanceof OrcidConfigurationError) {
-      const url = new URL("/profile/edit", request.url);
+      const url = new URL("/profile/orcid", request.url);
       url.searchParams.set("orcid", "not-configured");
       return NextResponse.redirect(url);
     }
     console.error("Could not start ORCID OAuth", error);
-    const url = new URL("/profile/edit", request.url);
+    const url = new URL("/profile/orcid", request.url);
     url.searchParams.set("orcid", "error");
     return NextResponse.redirect(url);
   }

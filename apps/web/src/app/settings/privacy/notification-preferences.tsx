@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { ApiError, ApiSuccess, DigestFrequencyValue, NotificationPreferencesResponse } from "@/lib/api-contracts";
 import styles from "./page.module.css";
 
@@ -19,6 +20,7 @@ export function NotificationPreferences() {
   const [preferences, setPreferences] = useState<NotificationPreferencesResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -37,6 +39,7 @@ export function NotificationPreferences() {
   async function setFrequency(digestFrequency: DigestFrequencyValue) {
     setSaving(true);
     setError(null);
+    setNotice("");
     try {
       const response = await fetch("/api/v1/account/notifications", {
         method: "PATCH",
@@ -48,6 +51,7 @@ export function NotificationPreferences() {
         throw new Error(body.success ? "Notification preferences could not be saved." : body.error.message);
       }
       setPreferences(body.data);
+      setNotice(digestFrequency === "off" ? "Weekly digest preference turned off." : body.data.deliveryAvailable ? "Weekly digest preference saved." : "Preference saved. Email delivery will begin after platform activation.");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Notification preferences could not be saved.");
     } finally {
@@ -64,6 +68,8 @@ export function NotificationPreferences() {
           A single weekly email summarizing new positions and grants matched to your scientific profile.
           No engagement pressure, no daily noise — you can turn it off at any time.
         </p>
+        {preferences && !preferences.deliveryAvailable ? <p role="status">Email delivery is awaiting platform activation. You can save your preference now and review opportunities in your workspace. <Link href="/opportunities">Browse opportunities →</Link></p> : null}
+        {notice ? <p role="status">{notice}</p> : null}
         {preferences?.lastDigestSentAt ? (
           <p className={styles.activityNote}>
             Last sent {new Date(preferences.lastDigestSentAt).toLocaleDateString()}.
@@ -78,7 +84,7 @@ export function NotificationPreferences() {
           disabled={saving || !preferences}
           onClick={() => setFrequency("weekly")}
         >
-          Weekly digest on
+          Save weekly preference
         </button>
         <button
           type="button"

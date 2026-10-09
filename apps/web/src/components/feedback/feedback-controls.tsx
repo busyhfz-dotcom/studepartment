@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import type {
   ApiError,
   ApiSuccess,
@@ -38,6 +39,8 @@ export function FeedbackControls({
   entityType: FeedbackEntityTypeValue;
   entityId: string;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [signal, setSignal] = useState<FeedbackSignalValue | "">("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
@@ -52,6 +55,11 @@ export function FeedbackControls({
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ entityType, entityId, signal: nextSignal }),
       });
+      if (response.status === 401) {
+        router.push(`/auth/sign-in?callbackUrl=${encodeURIComponent(pathname + window.location.search)}`);
+        setStatus("idle");
+        return;
+      }
       const body = (await response.json()) as FeedbackResponse;
       if (!response.ok || !body.success) {
         throw new Error(body.success ? "Feedback could not be saved." : body.error.message);

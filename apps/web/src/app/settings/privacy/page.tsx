@@ -11,7 +11,7 @@ export default async function PrivacySettingsPage() {
   if (!user) redirect("/auth/sign-in?next=/settings/privacy");
 
   return (
-    <ProductShell>
+    <ProductShell accountKind={user.accountKind === "INSTITUTION" ? "institution" : "individual"}>
       <div className={styles.shell}>
         <header className={styles.header}>
           <span className="eyebrow">Research Data Control Center</span>
@@ -20,7 +20,7 @@ export default async function PrivacySettingsPage() {
             Review private account activity, export a portable record, or permanently remove your account and
             Scientific Identity with the consequences stated before you act.
           </p>
-          <Link href="/profile">← Back to Scientific Identity</Link>
+          <Link href={user.accountKind === "INSTITUTION" ? "/organization/profile" : "/profile"}>← Back to your profile</Link>
         </header>
         <NotificationPreferences />
         <PrivacyControls />

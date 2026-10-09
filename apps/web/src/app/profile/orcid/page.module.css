@@ -1,0 +1,9 @@
+.page { max-width: 920px; min-width: 0; margin-inline: auto; }
+.header { margin-bottom: 24px; }
+.header h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.15; margin-block: 12px; }
+.header p, .card p { color: var(--muted); font-size: 15px; line-height: 1.8; }
+.card { padding: clamp(18px, 3vw, 32px); margin-bottom: 24px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+.card h2 { margin-top: 0; font-size: clamp(21px, 3vw, 28px); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 22px; }
+.actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; max-width: 100%; font-size: 14px; text-align: center; }
+@media (max-width: 600px) { .actions { display: grid; grid-template-columns: minmax(0, 1fr); } }

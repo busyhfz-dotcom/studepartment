@@ -636,6 +636,7 @@ export type ResearchAssistantCitation = {
 };
 
 export type ResearchAssistantResponse = {
+  mode?: "ai-analysis" | "evidence-review";
   answer: string;
   citations: ResearchAssistantCitation[];
   referencedCitationIds: string[];
@@ -686,6 +687,7 @@ export type DigestFrequencyValue = "weekly" | "off";
 export type NotificationPreferencesResponse = {
   digestFrequency: DigestFrequencyValue;
   lastDigestSentAt: string | null;
+  deliveryAvailable?: boolean;
 };
 
 export type NotificationPreferencesUpdateInput = {

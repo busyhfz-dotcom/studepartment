@@ -36,7 +36,7 @@ function initialGoal(label: string): CollaborationGoalValue | null {
   return goals.some(([value]) => value === candidate) ? candidate : null;
 }
 
-export function OnboardingWizard({ profile, organizations, initialRole }: { profile: ProfileResponse; organizations: OrganizationOption[]; initialRole?: IndividualProfileRole }) {
+export function OnboardingWizard({ profile, organizations, initialRole, callbackUrl = "/profile" }: { profile: ProfileResponse; organizations: OrganizationOption[]; initialRole?: IndividualProfileRole; callbackUrl?: string }) {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -90,7 +90,7 @@ export function OnboardingWizard({ profile, organizations, initialRole }: { prof
       });
       const result = (await response.json()) as { success: boolean; error?: { message?: string } };
       if (!response.ok || !result.success) throw new Error(result.error?.message || "Could not save scientific identity.");
-      router.push("/profile");
+      router.push(callbackUrl);
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not save scientific identity.");
