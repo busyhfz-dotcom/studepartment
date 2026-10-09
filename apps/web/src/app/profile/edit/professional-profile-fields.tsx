@@ -155,12 +155,7 @@ export function ProfessionalProfileFields({ value, onChange, onBusyChange, orcid
           <div><span className="sectionLabel">Career readiness · free</span><h2>Links and opportunity preferences</h2></div>
           <p>Open each official service to sign in, then paste your public profile link below and save your profile.</p>
         </div>
-        <div className={styles.editorGrid}>
-          <div className={styles.fieldGroup}>
-            <label htmlFor="profile-link-orcid">ORCID</label>
-            <input id="profile-link-orcid" type="text" inputMode="url" value={orcid} onChange={(event) => onOrcidChange(event.target.value)} placeholder="https://orcid.org/0000-0000-0000-0000" />
-            <ResearchProfileActions sourceKey="orcid" value={orcid} />
-          </div>
+        <div className={`${styles.editorGrid} ${styles.profileLinksGrid}`}>
           {([
             ["website", "Personal website"], ["cv", "CV / résumé link"], ["linkedin", "LinkedIn"],
             ["researchGate", "ResearchGate"], ["googleScholar", "Google Scholar"], ["github", "GitHub / code portfolio"],
@@ -172,6 +167,11 @@ export function ProfessionalProfileFields({ value, onChange, onBusyChange, orcid
               {source ? <ResearchProfileActions sourceKey={source.key} value={links[key]} /> : null}
             </div>;
           })}
+          <div className={`${styles.fieldGroup} ${styles.orcidLink}`}>
+            <label htmlFor="profile-link-orcid">ORCID</label>
+            <input id="profile-link-orcid" type="text" inputMode="url" value={orcid} onChange={(event) => onOrcidChange(event.target.value)} placeholder="https://orcid.org/0000-0000-0000-0000" />
+            <ResearchProfileActions sourceKey="orcid" value={orcid} />
+          </div>
         </div>
         <FileLinkUpload value={links.cv} category="cv" onChange={(url) => set("links", { ...links, cv: url })} />
         <div className={styles.textListGrid}>
