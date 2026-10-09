@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { OpportunityResult } from "@/lib/api-contracts";
 import styles from "./start.module.css";
 import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
@@ -74,33 +75,18 @@ function Stage({ n }: { n: 1 | 2 | 3 | 4 }) {
   );
 }
 
-function TopBar({ onViewSite }: { onViewSite?: () => void }) {
+function TopBar() {
   return (
     <header className={styles.topbar}>
-      {onViewSite ? (
-        <button type="button" className={styles.brand} onClick={onViewSite} aria-label="Studepartment home">
-          <span className={styles.mark}><BrandSymbol /></span>
-          <span>
-            studepartment<b>.</b>
-          </span>
-        </button>
-      ) : (
-        <Link className={styles.brand} href="/" aria-label="Studepartment home">
+        <Link className={styles.brand} href="/start" aria-label="Studepartment entry">
           <span className={styles.mark}><BrandSymbol /></span>
           <span>
             studepartment<b>.</b>
           </span>
         </Link>
-      )}
       <nav className={styles.topActions} aria-label="Site navigation">
-        {onViewSite ? (
-          <button type="button" onClick={onViewSite}>
-            Main site
-          </button>
-        ) : (
-          <Link href="/main-site">Main site</Link>
-        )}
-        <Link href="/auth/sign-in">Sign in</Link>
+        <Link href="/main-site">Main site</Link>
+        <Link className={styles.join} href="/auth/sign-in">Join free</Link>
       </nav>
     </header>
   );
@@ -115,15 +101,54 @@ function FootBar() {
   );
 }
 
-export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
-  const [step, setStep] = useState<Step>("welcome");
-  const [kind, setKind] = useState<Kind>("position");
-  const [query, setQuery] = useState("");
-  const [country, setCountry] = useState("");
+export function StartFlow() {
+  return <Suspense fallback={<div className={styles.page}><TopBar /><main className={styles.wrap}><p role="status">Loading your page…</p></main></div>}><StartJourney /></Suspense>;
+}
+
+function StartJourney() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedStep = searchParams.get("step");
+  const step: Step = requestedStep === "browse" || requestedStep === "detail" || requestedStep === "next" || requestedStep === "institutions" ? requestedStep : "welcome";
+  const kind: Kind = searchParams.get("kind") === "grant" ? "grant" : "position";
+  const query = searchParams.get("q") ?? "";
+  const country = searchParams.get("country") ?? "";
+  const opportunityId = searchParams.get("opportunity");
   const [results, setResults] = useState<OpportunityResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState<OpportunityResult | null>(null);
+  const [loading, setLoading] = useState(step === "browse");
+  const [selectedRecord, setSelected] = useState<OpportunityResult | null>(null);
+  const selected = selectedRecord?.id === opportunityId ? selectedRecord : null;
+  const [detailFailure, setDetailFailure] = useState<string | null>(null);
   const [selectedFree, setSelectedFree] = useState(false);
+
+  function setStep(nextStep: Step, changes: Record<string, string> = {}) {
+    const params = nextStep === "welcome" ? new URLSearchParams() : new URLSearchParams(searchParams.toString());
+    if (nextStep !== "welcome") params.set("step", nextStep);
+    for (const [key, value] of Object.entries(changes)) value ? params.set(key, value) : params.delete(key);
+    router.push(`/start${params.size ? `?${params}` : ""}`, { scroll: true });
+  }
+
+  function setFilter(key: "q" | "country", value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    value ? params.set(key, value) : params.delete(key);
+    window.history.replaceState(null, "", `/start?${params}`);
+  }
+
+  useEffect(() => {
+    if ((step !== "detail" && step !== "next") || selected) return;
+    if (!opportunityId) return;
+    const controller = new AbortController();
+    fetch(`/api/v1/opportunities?id=${encodeURIComponent(opportunityId)}&includeStale=true&limit=1`, { signal: controller.signal })
+      .then((response) => response.json())
+      .then((body) => {
+        if (controller.signal.aborted) return;
+        const item = body?.success ? body.data.results.find((item: OpportunityResult) => item.id === opportunityId) : null;
+        if (item) setSelected(item);
+        setDetailFailure(item ? null : opportunityId);
+      })
+      .catch(() => { if (!controller.signal.aborted) setDetailFailure(opportunityId); });
+    return () => controller.abort();
+  }, [step, opportunityId, selected]);
 
   useEffect(() => {
     if (step !== "browse") return;
@@ -160,22 +185,20 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
 
   function openBrowse(nextKind: Kind) {
     setLoading(true);
-    setKind(nextKind);
-    setQuery("");
-    setCountry("");
-    setStep("browse");
+    setStep("browse", { kind: nextKind, q: "", country: "", opportunity: "" });
   }
 
   function openDetail(item: OpportunityResult) {
     setSelected(item);
-    setStep("detail");
+    setDetailFailure(null);
+    setStep("detail", { opportunity: item.id });
   }
 
   if (step === "welcome") {
     return (
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
-        <TopBar onViewSite={onViewSite} />
+        <TopBar />
         <main className={`${styles.welcome} ${styles.fade}`}>
           <div className={styles.wrap}>
             <Stage n={1} />
@@ -216,11 +239,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
             <div className={styles.entryFoot}>
               <span>Explore freely. Save or contact a research lead when you&apos;re ready.</span>
               <span className={styles.entryFootLinks}>
-                {onViewSite ? (
-                  <button type="button" onClick={onViewSite}>
-                    Skip — view the full site ↗
-                  </button>
-                ) : null}
+                <Link href="/main-site">View the full site ↗</Link>
                 <button type="button" onClick={() => setStep("institutions")}>
                   For labs and institutions: post an opportunity ↗
                 </button>
@@ -237,7 +256,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
     return (
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
-        <TopBar onViewSite={onViewSite} />
+        <TopBar />
         <main className={`${styles.wrap} ${styles.institutionPage} ${styles.fade}`}>
           <button type="button" className={styles.back} onClick={() => setStep("welcome")}>
             ← Back to choices
@@ -263,7 +282,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
     return (
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
-        <TopBar onViewSite={onViewSite} />
+        <TopBar />
         <section className={styles.heroCompact}>
           <div className={styles.wrap}>
             <Stage n={2} />
@@ -314,7 +333,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
               value={query}
               onChange={(event) => {
                 setLoading(true);
-                setQuery(event.target.value);
+                setFilter("q", event.target.value);
               }}
             />
             <select aria-label="Location" data-picker-direction="down" value={country}
@@ -324,7 +343,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
               }}
               onChange={(event) => {
                 setLoading(true);
-                setCountry(event.target.value);
+                setFilter("country", event.target.value);
               }}>
               <option value="">Any location</option>
               {countries.map((location) => (
@@ -381,7 +400,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
     return (
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
-        <TopBar onViewSite={onViewSite} />
+        <TopBar />
         <section className={styles.hero}>
           <div className={styles.wrap}>
             <Stage n={3} />
@@ -475,7 +494,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
     return (
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
-        <TopBar onViewSite={onViewSite} />
+        <TopBar />
         <main className={`${styles.next} ${styles.fade}`}>
           <Stage n={4} />
           <button type="button" className={styles.back} onClick={() => setStep("detail")}>
@@ -549,16 +568,18 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
     );
   }
 
-  // Fallback: selected opportunity lost (e.g. deep-linked step without state) — go back to welcome.
+  // Restore the selected public listing after refresh without changing the route.
   return (
     <div className={styles.page}>
       <ScientificBackdrop className={styles.scienceBackdrop} />
-      <TopBar onViewSite={onViewSite} />
+      <TopBar />
       <main className={`${styles.wrap} ${styles.fade}`} style={{ padding: "60px 0" }}>
-        <p>Let&apos;s start again.</p>
-        <button type="button" className={styles.primary} onClick={() => setStep("welcome")}>
-          Back to start ↗
-        </button>
+        {opportunityId && detailFailure !== opportunityId ? <p role="status">Loading opportunity details…</p> : (
+          <>
+            <p role="alert">This opportunity is unavailable. You can return to your search or retry this page.</p>
+            <button type="button" className={styles.primary} onClick={() => setStep("browse")}>Back to results ↗</button>
+          </>
+        )}
       </main>
       <FootBar />
     </div>

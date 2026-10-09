@@ -342,6 +342,7 @@ export type OpportunitySourceTypeValue =
   | "import";
 
 export type OpportunityQuery = {
+  id?: string;
   text: string;
   types: OpportunityTypeValue[];
   topicSlugs: string[];

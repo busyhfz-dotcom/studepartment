@@ -310,7 +310,7 @@
 }
 @media (max-width: 520px) {
   .topActions { font-size: 11px; gap: 11px; }
-  .topActions > a:not(.join) { display: none; }
+  .topActions > a { display: inline-flex; }
   .brand { font-size: 18px; gap: 7px; }
   .join { padding: 10px 12px; }
   .stage { gap: 6px; font-size: 8px; letter-spacing: .04em; }
@@ -448,4 +448,16 @@
   .evidencePulse {
     animation: none;
   }
+}
+
+/* Keep the two public destinations visible with comfortable mobile touch targets. */
+.topActions > a { display:inline-flex; align-items:center; justify-content:center; min-height:44px; }
+@media(max-width:700px){
+  .topbar{height:auto;min-height:68px;flex-wrap:wrap;gap:10px;padding-block:12px}
+  .topActions{gap:16px;font-size:13px}
+  .topActions>a:first-child{font-size:13px}
+}
+@media(max-width:520px){
+  .topActions{flex-basis:100%;justify-content:space-between}
+  .topActions>a{flex:1}
 }

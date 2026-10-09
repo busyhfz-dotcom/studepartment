@@ -87,7 +87,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
       <header className={styles.top}>
         <div className={styles.container}>
           <div className={styles.topInner}>
-            <Link className={styles.brand} href="/main-site">
+            <Link className={styles.brand} href="/start" aria-label="Studepartment entry">
               <span className={styles.mark}><BrandSymbol /></span>
               <span>
                 studepartment<b>.</b>
@@ -101,7 +101,8 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
               ]}
             />
             <div className={styles.navActions}>
-              <Link href="/auth/sign-in">Sign in</Link>
+              <Link href="/main-site">Main site</Link>
+              <Link className={styles.join} href="/auth/sign-in">Join free</Link>
             </div>
           </div>
         </div>
@@ -251,7 +252,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
       </main>
 
       <footer className={`${styles.footer} ${styles.container}`}>
-        <Link className={styles.brand} href="/">
+        <Link className={styles.brand} href="/start">
           <span className={styles.mark}><BrandSymbol /></span>
           <span>
             studepartment<b>.</b>

@@ -188,7 +188,7 @@
   .navOpen { display: flex; }
   .mobileToggle { display: block; }
   .navActions { margin-left: auto; }
-  .navActions > a:first-child { display: none; }
+  .navActions > a { display: inline-flex; }
   .join { padding: 10px 12px; }
   .heroTop { padding-top: 26px; font-size: 9px; }
   .heroCopy { padding-block: 54px 42px; }
@@ -310,3 +310,13 @@
   .heroBottom { margin: 7px 0 9px; }
 }
 
+
+/* A second row gives mobile navigation room without hiding any destination. */
+.navActions>a{display:inline-flex;align-items:center;justify-content:center;min-height:44px}
+@media(max-width:650px){
+  .topInner{height:auto;min-height:68px;flex-wrap:wrap;padding-block:12px;gap:10px}
+  .mobileToggle{margin-left:auto;min-width:44px;min-height:44px}
+  .navActions{flex-basis:100%;margin-left:0;gap:16px}
+  .navActions>a{flex:1}
+  .nav{top:100%}
+}

@@ -35,6 +35,7 @@ function readDeadlineWindow(searchParams: URLSearchParams) {
 
 export function parseOpportunityQuery(searchParams: URLSearchParams): OpportunityQuery {
   return {
+    ...(searchParams.get("id") ? { id: searchParams.get("id")!.trim().slice(0, 128) } : {}),
     text: (searchParams.get("q") ?? "").trim().slice(0, 240),
     types: readList(searchParams, "type").filter(
       (value): value is OpportunityTypeValue => allowedTypes.has(value as OpportunityTypeValue),

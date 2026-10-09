@@ -234,7 +234,7 @@ export function ProductShell({
 
       <aside className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ""}`}>
         <div className={styles.brandRow}>
-          <Link className={styles.brand} href="/" onClick={() => setMobileOpen(false)}>
+          <Link className={styles.brand} href="/start" onClick={() => setMobileOpen(false)}>
             <BrandMark />
             <span className={styles.brandCopy}>
               <strong>Studepartment</strong>
@@ -290,7 +290,7 @@ export function ProductShell({
               <span /><span /><span />
             </button>
             <div className={styles.contextTitle}>
-              <span className={styles.topbarEyebrow}>Studepartment / Research workspace</span>
+              <Link className={styles.workspaceBrand} href="/start">Studepartment</Link>
               <strong className={styles.pageName}>{pageName}</strong>
             </div>
           </div>
@@ -310,6 +310,10 @@ export function ProductShell({
             </Link>
           </div>
         </header>
+        <nav className={styles.mobileSiteLinks} aria-label="Site navigation">
+          <Link href="/main-site">Main site</Link>
+          <Link href="/auth/sign-in">Join free</Link>
+        </nav>
 
         <main className={styles.content} id="workspace-content" tabIndex={-1}>
           {children}

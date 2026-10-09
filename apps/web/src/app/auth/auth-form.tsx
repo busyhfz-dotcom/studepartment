@@ -94,7 +94,7 @@ export function AuthForm({
     <main className={styles.page}>
       <ScientificBackdrop className={styles.motionLayer} tone="light" />
       <section className={styles.panel}>
-        <Link className={styles.brand} href="/">
+        <Link className={styles.brand} href="/start">
           <span className={styles.brandMark} aria-hidden="true">
             <svg fill="none" viewBox="0 0 32 32">
               <path d="M9.2 8.8h8.4a5.2 5.2 0 0 1 0 10.4h-3.2a4.6 4.6 0 0 0 0 9.2h8.4" />
@@ -162,7 +162,7 @@ export function AuthForm({
       </section>
 
       <aside className={styles.context}>
-        <Link href="/" className={styles.contextBrand}><span><BrandSymbol /></span>Studepartment.</Link>
+        <Link href="/start" className={styles.contextBrand}><span><BrandSymbol /></span>Studepartment.</Link>
         <ResearchOrbit />
         <span className="eyebrow">Research trust architecture</span>
         <h2>Authentication protects identity. Evidence establishes trust.</h2>

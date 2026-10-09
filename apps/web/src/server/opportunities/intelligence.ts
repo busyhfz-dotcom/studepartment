@@ -229,6 +229,7 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
   const now = new Date();
   const staleCutoff = new Date(now.getTime() - 45 * 86_400_000);
   const where: Prisma.OpportunityWhereInput = {
+    ...(query.id ? { id: query.id } : {}),
     status: "ACTIVE",
     OR: [{ deadline: null }, { deadline: { gte: now } }],
   };
