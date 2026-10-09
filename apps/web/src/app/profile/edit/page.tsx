@@ -6,22 +6,15 @@ import { listOrganizationOptions } from "@/server/repositories/organization-repo
 import { researcherRepository } from "@/server/repositories/researcher-repository";
 import { ProfileEditor } from "./profile-editor";
 import styles from "./page.module.css";
+import { ResearchProfileActions } from "@/components/scientific/research-profile-actions";
+import { isOrcidConfigured } from "@/server/integrations/orcid/client";
 
-const statusCopy: Record<string, string> = {
-  "not-configured": "ORCID verification is awaiting platform activation. Your profile and manually entered ORCID iD remain available.",
-  error: "The ORCID verification flow could not be started. No verification state was changed.",
-};
-
-export default async function EditProfilePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ orcid?: string }>;
-}) {
+export default async function EditProfilePage() {
   const user = await getCurrentUser();
   if (!user) redirect("/auth/sign-in?callbackUrl=/profile/edit");
 
-  const [{ orcid }, profile, organizations] = await Promise.all([
-    searchParams,
+  if (user.accountKind === "INSTITUTION") redirect("/organization/profile");
+  const [profile, organizations] = await Promise.all([
     researcherRepository.getProfileForUser(user.id),
     listOrganizationOptions(),
   ]);
@@ -30,6 +23,7 @@ export default async function EditProfilePage({
   const orcidVerified = profile.verification.some(
     (signal) => signal.verified && signal.label.toLowerCase().includes("orcid"),
   );
+  const configured = isOrcidConfigured();
 
   return (
     <main className="shell onboardingShell">
@@ -48,26 +42,25 @@ export default async function EditProfilePage({
       <section className="orcidPanel" aria-labelledby="orcid-provenance-title">
         <div>
           <div className={styles.provenanceLine}>
-            <span className="eyebrow">ORCID provenance</span>
+            <span className="eyebrow">ORCID profile</span>
             <span className={orcidVerified ? styles.verifiedState : styles.assertedState}>
-              {orcidVerified ? "Ownership verified" : "Manual assertion"}
+              {orcidVerified ? "Ownership verified" : "Profile link"}
             </span>
           </div>
           <h2 id="orcid-provenance-title">
-            {orcidVerified ? "ORCID ownership is connected to this identity." : "Verify ORCID ownership through ORCID."}
+            Bring your ORCID information into your profile.
           </h2>
           <p>
-            Manual ORCID entry is an identity assertion only. OAuth verification records ownership provenance; it does
-            not independently verify every work associated with the ORCID record.
+            Connect on ORCID to verify ownership and import available public information, or save your iD below to request a public-data import. Existing profile edits are preserved.
           </p>
           {profile.orcid ? <code className={styles.orcidIdentifier}>{profile.orcid}</code> : null}
-          {orcid && statusCopy[orcid] ? (
-            <p className={styles.orcidStatus} role="status"><strong>{statusCopy[orcid]}</strong></p>
-          ) : null}
+          <ResearchProfileActions sourceKey="orcid" value={profile.orcid} />
+          {!configured ? <p role="status">Automatic import is awaiting activation of the platform’s ORCID connection.</p> : null}
         </div>
-        <a className="primaryButton" href="/api/integrations/orcid/connect">
-          {orcidVerified ? "Re-verify with ORCID" : "Verify with ORCID"}
-        </a>
+        <div className={styles.sourceActions}>
+          {configured ? <a className="primaryButton" href="/api/integrations/orcid/connect">Connect and import from ORCID →</a> : null}
+          <Link className="secondary" href="/profile/orcid">Research profile services →</Link>
+        </div>
       </section>
 
       <ProfileEditor profile={profile} organizations={organizations} />

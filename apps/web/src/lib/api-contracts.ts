@@ -207,6 +207,7 @@ export type IndividualProfileDetails = {
   labName?: string | null;
   supervisionStatus?: string | null;
   skills?: string[];
+  orcidKeywords?: string[];
   languages?: ProfileLanguageEntry[];
   experience?: ProfileTimelineEntry[];
   education?: ProfileTimelineEntry[];

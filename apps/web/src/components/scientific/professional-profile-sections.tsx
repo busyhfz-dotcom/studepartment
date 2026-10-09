@@ -19,7 +19,7 @@ function Recognition({ title, items }: { title: string; items?: ProfileRecogniti
 export function ProfessionalProfileSections({ details }: { details?: IndividualProfileDetails }) {
   if (!details) return null;
   const hasContent = Boolean(details.experience?.length || details.education?.length || details.projects?.length || details.awards?.length || details.grants?.length || details.skills?.length || details.languages?.length || details.memberships?.length || details.teaching?.length || details.peerReview?.length || Object.values(details.links ?? {}).some(Boolean) || details.careerPreferences?.targetRoles?.length || details.careerPreferences?.targetCountries?.length || details.careerPreferences?.opportunityTypes?.length);
-  if (!hasContent) return null;
+  if (!hasContent && !details.orcidKeywords?.length) return null;
   const links = Object.entries(details.links ?? {}).filter((entry): entry is [string, string] => Boolean(entry[1]));
   const labelForLink: Record<string, string> = { website: "Website", cv: "CV / résumé", linkedin: "LinkedIn", researchGate: "ResearchGate", googleScholar: "Google Scholar", github: "GitHub / portfolio" };
   return <div className={styles.shell}>
@@ -27,6 +27,7 @@ export function ProfessionalProfileSections({ details }: { details?: IndividualP
     <div className={styles.grid}>
       <Timeline title="Experience" items={details.experience} />
       <Timeline title="Education & training" items={details.education} />
+      {details.orcidKeywords?.length ? <section className={styles.panel}><span className="sectionLabel">Research keywords · ORCID</span><div className={styles.tags}>{details.orcidKeywords.map((keyword) => <span key={keyword}>{keyword}</span>)}</div></section> : null}
       {details.projects?.length ? <section className={styles.panel}><span className="sectionLabel">Projects & portfolio</span><div className={styles.cardList}>{details.projects.map((item, index) => <article key={`${item.title}-${index}`}><ExternalTitle href={item.url}>{item.title}</ExternalTitle><small>{[item.role, item.status].filter(Boolean).join(" · ")}</small>{item.description ? <p>{item.description}</p> : null}</article>)}</div></section> : null}
       <Recognition title="Awards & honors" items={details.awards} />
       <Recognition title="Grants & funded work" items={details.grants} />

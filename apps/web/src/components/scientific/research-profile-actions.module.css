@@ -1,0 +1,3 @@
+.actions { display: flex; flex-wrap: wrap; gap: 4px 16px; min-width: 0; }
+.actions a { display: inline-flex; align-items: center; min-height: 44px; max-width: 100%; color: var(--accent-deep); font-size: 14px; font-weight: 600; line-height: 1.5; overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 4px; }
+.actions a:hover { color: var(--accent-strong); }

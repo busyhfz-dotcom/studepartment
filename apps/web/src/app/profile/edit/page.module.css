@@ -6,6 +6,8 @@
   background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
+.sourceActions { display: flex; flex-wrap: wrap; gap: 12px; }
+.sourceActions a { min-height: 44px; }
 
 .provenanceLine {
   display: flex;

@@ -7,6 +7,8 @@ import {
 import { recordProductEvent } from "@/server/analytics/product-events";
 import { profileImageAvailableToUser } from "@/server/profile-images";
 import { filesAvailableToUser } from "@/server/files/repository";
+import { isOrcidConfigured } from "@/server/integrations/orcid/client";
+import { importOwnedOrcidProfile } from "@/server/integrations/orcid/import-profile";
 import {
   researcherRepository,
   ResearcherRepositoryError,
@@ -53,10 +55,22 @@ export async function PATCH(request: NextRequest) {
     const input = parseProfileUpdateInput(await request.json());
     if (!await filesAvailableToUser(user.id, input.profileDetails)) return apiError(400, "DOCUMENT_UNAVAILABLE", "Choose documents from your own profile library before saving.");
     if (!await profileImageAvailableToUser(user.id, input.imageUrl)) return apiError(400, "PHOTO_UNAVAILABLE", "Please upload your photo again before saving.");
-    const profile = await researcherRepository.updateProfileForUser(user.id, input);
+    const previous = input.orcid ? await researcherRepository.getProfileForUser(user.id) : null;
+    let profile = await researcherRepository.updateProfileForUser(user.id, input);
+    let orcidImport: string | undefined;
+    if (input.orcid && input.orcid !== previous?.orcid && user.accountKind === "INDIVIDUAL") {
+      if (!isOrcidConfigured()) orcidImport = "import-unavailable";
+      else {
+        try {
+          const result = await importOwnedOrcidProfile(input.orcid);
+          orcidImport = result.partial ? "import-partial" : "public-imported";
+          profile = await researcherRepository.getProfileForUser(user.id) ?? profile;
+        } catch { orcidImport = "public-import-failed"; }
+      }
+    }
     await recordProductEvent(user.id, "PROFILE_UPDATED");
     const body: ApiSuccess<ProfileResponse> = { success: true, data: profile };
-    return NextResponse.json(body);
+    return NextResponse.json({ ...body, ...(orcidImport ? { orcidImport } : {}) });
   } catch (error) {
     if (error instanceof AuthenticationRequiredError) {
       return apiError(401, error.code, error.message);

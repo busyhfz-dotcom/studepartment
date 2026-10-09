@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { AuthenticationRequiredError, requireCurrentUser } from "@/server/auth/current-user";
 import { assertValidOrcid } from "@/server/integrations/orcid/orcid-id";
+import { importOwnedOrcidProfile } from "@/server/integrations/orcid/import-profile";
 import {
   exchangeOrcidAuthorizationCode,
   getOrcidConfig,
@@ -30,6 +31,7 @@ function redirectWithStatus(request: Request, status: string) {
 export async function GET(request: NextRequest) {
   try {
     const user = await requireCurrentUser();
+    if (user.accountKind !== "INDIVIDUAL") return redirectWithStatus(request, "invalid-state");
     const providerError = request.nextUrl.searchParams.get("error");
     if (providerError) return redirectWithStatus(request, "denied");
 
@@ -55,7 +57,12 @@ export async function GET(request: NextRequest) {
       scope: identity.scope,
     });
 
-    return redirectWithStatus(request, "connected");
+    try {
+      const imported = await importOwnedOrcidProfile(orcid, identity.accessToken);
+      return redirectWithStatus(request, imported.partial ? "import-partial" : "imported");
+    } catch {
+      return redirectWithStatus(request, "import-failed");
+    }
   } catch (error) {
     if (error instanceof AuthenticationRequiredError) {
       const url = new URL("/auth/sign-in", request.url);

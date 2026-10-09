@@ -1,28 +1,17 @@
-import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
+import { randomBytes } from "node:crypto";
 import { AuthenticationRequiredError, requireCurrentUser } from "@/server/auth/current-user";
-import {
-  buildOrcidAuthorizationUrl,
-  getOrcidConfig,
-  OrcidConfigurationError,
-} from "@/server/integrations/orcid/client";
-
-const STATE_COOKIE = "studepartment_orcid_state";
+import { buildOrcidAuthorizationUrl, getOrcidConfig, OrcidConfigurationError } from "@/server/integrations/orcid/client";
 
 export async function GET(request: Request) {
   try {
     const user = await requireCurrentUser();
+    if (user.accountKind !== "INDIVIDUAL") return NextResponse.redirect(new URL("/organization/profile", request.url));
     const config = getOrcidConfig();
     const state = randomBytes(32).toString("base64url");
-    const authorizationUrl = buildOrcidAuthorizationUrl(config, state);
-    const response = NextResponse.redirect(authorizationUrl);
-
-    response.cookies.set(STATE_COOKIE, `${user.id}.${state}`, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-      maxAge: 60 * 10,
+    const response = NextResponse.redirect(buildOrcidAuthorizationUrl(config, state));
+    response.cookies.set("studepartment_orcid_state", `${user.id}.${state}`, {
+      httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 600,
     });
     return response;
   } catch (error) {
@@ -31,14 +20,8 @@ export async function GET(request: Request) {
       url.searchParams.set("callbackUrl", "/api/integrations/orcid/connect");
       return NextResponse.redirect(url);
     }
-    if (error instanceof OrcidConfigurationError) {
-      const url = new URL("/profile/orcid", request.url);
-      url.searchParams.set("orcid", "not-configured");
-      return NextResponse.redirect(url);
-    }
-    console.error("Could not start ORCID OAuth", error);
     const url = new URL("/profile/orcid", request.url);
-    url.searchParams.set("orcid", "error");
+    url.searchParams.set("orcid", error instanceof OrcidConfigurationError ? "not-configured" : "error");
     return NextResponse.redirect(url);
   }
 }

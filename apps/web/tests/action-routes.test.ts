@@ -11,7 +11,7 @@ test("return destinations preserve selected work and reject external or malforme
 });
 
 test("ORCID uses production by default and requires a callback belonging to this site", () => {
-  const names = ["ORCID_CLIENT_ID", "ORCID_CLIENT_SECRET", "ORCID_REDIRECT_URI", "ORCID_ENVIRONMENT", "BETTER_AUTH_URL"];
+  const names = ["ORCID_CLIENT_ID", "ORCID_CLIENT_SECRET", "ORCID_REDIRECT_URI", "ORCID_ENVIRONMENT", "ORCID_API_TYPE", "BETTER_AUTH_URL"];
   const previous = Object.fromEntries(names.map((name) => [name, process.env[name]]));
   try {
     for (const name of names) delete process.env[name];
@@ -22,6 +22,8 @@ test("ORCID uses production by default and requires a callback belonging to this
     process.env.BETTER_AUTH_URL = "https://studepartment.example";
     const config = getOrcidConfig();
     assert.equal(config.environment, "production");
+    assert.equal(config.apiType, "member");
+    assert.equal(config.publicApiUrl, "https://api.orcid.org/v3.0");
     assert.equal(config.redirectUri, "https://studepartment.example/api/integrations/orcid/callback");
     const url = buildOrcidAuthorizationUrl(config, "test-state");
     assert.equal(url.origin, "https://orcid.org");

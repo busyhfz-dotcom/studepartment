@@ -14,6 +14,7 @@ import styles from "./page.module.css";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
 import { ProfessionalProfileFields } from "./professional-profile-fields";
+import { ResearchProfileActions } from "@/components/scientific/research-profile-actions";
 
 const topicOptions = [
   ["oncology", "Oncology"],
@@ -62,6 +63,7 @@ export function ProfileEditor({
   const [message, setMessage] = useState("");
   const [accountRole, setAccountRole] = useState<IndividualProfileRole>(profile.accountRole);
   const [imageUrl, setImageUrl] = useState(profile.imageUrl ?? "");
+  const [orcid, setOrcid] = useState(profile.orcid ?? "");
   const [uploading, setUploading] = useState(false);
   const [fileUploads, setFileUploads] = useState(0);
   const [professionalDetails, setProfessionalDetails] = useState<IndividualProfileDetails>(profile.profileDetails ?? {});
@@ -136,7 +138,7 @@ export function ProfileEditor({
         body: JSON.stringify(payload),
       });
       const result = (await response.json()) as
-        | { success: true; data: ProfileResponse }
+        | { success: true; data: ProfileResponse; orcidImport?: string }
         | { success: false; error: { message: string } };
 
       if (!response.ok || !result.success) {
@@ -146,7 +148,7 @@ export function ProfileEditor({
       setStatus("success");
       setMessage("Scientific identity saved. Provenance for these edits has been recorded.");
       router.refresh();
-      router.push("/profile");
+      router.push(result.orcidImport ? `/profile?orcid=${encodeURIComponent(result.orcidImport)}` : "/profile");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Profile update failed.");
@@ -305,28 +307,27 @@ export function ProfileEditor({
       <section className={styles.editorSection}>
         <div className={styles.sectionHead}>
           <div>
-            <span className="sectionLabel">ORCID provenance</span>
-            <h2>Identifier and ownership state</h2>
+            <span className="sectionLabel">ORCID profile</span>
+            <h2>Your researcher identifier</h2>
           </div>
-          <p>ORCID ownership and publication evidence are separate claims. Bibliographic corroboration is evaluated independently.</p>
+          <p>Find your iD on ORCID and save it here so visitors can open your research record.</p>
         </div>
         <div className={styles.provenanceGrid}>
           <div>
             <label className={styles.fieldGroup}>
               <span>ORCID iD</span>
-              <input name="orcid" defaultValue={profile.orcid ?? ""} placeholder="0000-0000-0000-0000" />
+              <input name="orcid" value={orcid} onChange={(event) => setOrcid(event.target.value)} placeholder="0000-0000-0000-0000" />
             </label>
             <p className={styles.sourceNotice}>
-              Manual entry is recorded as an assertion. Verified ownership requires the authorized ORCID flow.
+              Paste your ORCID iD or the full public record URL, then save your profile.
             </p>
           </div>
           <div className={styles.provenanceEvidence}>
-            <strong>{orcidVerified ? "Ownership provenance: verified" : "Ownership provenance: asserted"}</strong>
+            <strong>{orcidVerified && orcid.trim() === profile.orcid ? "Previously verified ORCID iD" : "External profile link"}</strong>
             <span>
-              {orcidVerified
-                ? "The connected ORCID flow verified control of this ORCID identity. Individual works still carry their own evidence level."
-                : "This identifier has not been ownership-verified through the connected ORCID flow."}
+              Saving a new iD requests a public-data import when the platform connection is active. It does not verify ownership. Use Connect and import to authorize and verify your account.
             </span>
+            <ResearchProfileActions sourceKey="orcid" value={orcid} />
           </div>
         </div>
       </section>

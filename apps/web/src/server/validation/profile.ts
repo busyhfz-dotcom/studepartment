@@ -37,7 +37,7 @@ const accountRoles = new Set<IndividualProfileRole>(["student", "researcher", "p
 const profileDetailKeys = new Set<keyof IndividualProfileDetails>([
   "degreeProgram", "graduationYear", "thesisTopic", "supervisorName", "academicTitle", "department",
   "currentProject", "yearsExperience", "labName", "supervisionStatus",
-  "skills", "languages", "experience", "education", "projects", "awards", "grants",
+  "skills", "orcidKeywords", "languages", "experience", "education", "projects", "awards", "grants",
   "memberships", "teaching", "peerReview", "links", "careerPreferences",
 ]);
 
@@ -197,7 +197,7 @@ function individualDetails(value: unknown): IndividualProfileDetails | undefined
   if (unknown.length) throw new ProfileValidationError(`Unknown role-specific fields: ${unknown.join(", ")}.`);
   const result: IndividualProfileDetails = {};
   const scalarKeys = Array.from(profileDetailKeys).filter((key) => ![
-    "skills", "languages", "experience", "education", "projects", "awards", "grants",
+    "skills", "orcidKeywords", "languages", "experience", "education", "projects", "awards", "grants",
     "memberships", "teaching", "peerReview", "links", "careerPreferences",
   ].includes(key));
   for (const key of scalarKeys) {
@@ -205,6 +205,7 @@ function individualDetails(value: unknown): IndividualProfileDetails | undefined
     if (parsed !== undefined) Object.assign(result, { [key]: parsed });
   }
   result.skills = stringList(object.skills, "profileDetails.skills");
+  result.orcidKeywords = stringList(object.orcidKeywords, "profileDetails.orcidKeywords");
   result.memberships = stringList(object.memberships, "profileDetails.memberships");
   result.teaching = stringList(object.teaching, "profileDetails.teaching");
   result.peerReview = stringList(object.peerReview, "profileDetails.peerReview");
@@ -289,7 +290,8 @@ export function parseProfileUpdateInput(value: unknown): ProfileUpdateInput {
     if (object.orcid === null || object.orcid === "") {
       result.orcid = null;
     } else if (typeof object.orcid === "string") {
-      result.orcid = assertValidOrcid(object.orcid);
+      try { result.orcid = assertValidOrcid(object.orcid); }
+      catch { throw new ProfileValidationError("Enter a valid ORCID iD or public ORCID record URL."); }
     } else {
       throw new ProfileValidationError("orcid must be a valid ORCID iD string.");
     }

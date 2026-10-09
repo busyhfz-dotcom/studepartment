@@ -11,6 +11,8 @@ import { useState } from "react";
 import { uploadedFileId } from "@/lib/files";
 import { FileLinkUpload, FileUploadBusyProvider } from "@/components/files/file-link-upload";
 import styles from "./page.module.css";
+import { ResearchProfileActions } from "@/components/scientific/research-profile-actions";
+import { researchProfileSources } from "@/lib/research-profile-sources";
 
 type Props = {
   value: IndividualProfileDetails;
@@ -149,13 +151,20 @@ export function ProfessionalProfileFields({ value, onChange, onBusyChange }: Pro
       <section className={styles.editorSection}>
         <div className={styles.sectionHead}>
           <div><span className="sectionLabel">Career readiness · free</span><h2>Links and opportunity preferences</h2></div>
-          <p>Keep your scientific footprint and the opportunities you want in one profile.</p>
+          <p>Open each official service to sign in, then paste your public profile link below and save your profile.</p>
         </div>
         <div className={styles.editorGrid}>
           {([
             ["website", "Personal website"], ["cv", "CV / résumé link"], ["linkedin", "LinkedIn"],
             ["researchGate", "ResearchGate"], ["googleScholar", "Google Scholar"], ["github", "GitHub / code portfolio"],
-          ] as const).map(([key, label]) => <label className={styles.fieldGroup} key={key}><span>{label}</span><input type="text" inputMode="url" value={uploadedFileId(links[key]) ? "Uploaded document selected" : links[key] ?? ""} readOnly={Boolean(uploadedFileId(links[key]))} onChange={(event) => set("links", { ...links, [key]: event.target.value || null })} placeholder="https://example.org" /></label>)}
+          ] as const).map(([key, label]) => {
+            const source = researchProfileSources.find((item) => item.key === key);
+            return <div className={styles.fieldGroup} key={key}>
+              <label htmlFor={`profile-link-${key}`}>{label}</label>
+              <input id={`profile-link-${key}`} type="text" inputMode="url" value={uploadedFileId(links[key]) ? "Uploaded document selected" : links[key] ?? ""} readOnly={Boolean(uploadedFileId(links[key]))} onChange={(event) => set("links", { ...links, [key]: event.target.value || null })} placeholder="https://example.org" />
+              {source ? <ResearchProfileActions sourceKey={source.key} value={links[key]} /> : null}
+            </div>;
+          })}
         </div>
         <FileLinkUpload value={links.cv} category="cv" onChange={(url) => set("links", { ...links, cv: url })} />
         <div className={styles.textListGrid}>

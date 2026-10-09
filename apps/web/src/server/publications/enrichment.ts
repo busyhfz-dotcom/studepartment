@@ -60,7 +60,7 @@ function orcidWorkUrl(orcid: string, work: OrcidWorkSummary) {
   return work.url ?? `https://orcid.org/${orcid}`;
 }
 
-async function ownedVerifiedOrcidProfile() {
+async function ownedVerifiedOrcidProfile(requireVerification = true) {
   const user = await requireCurrentUser();
   const profile = await getDb().researcherProfile.findUnique({
     where: { userId: user.id },
@@ -75,7 +75,7 @@ async function ownedVerifiedOrcidProfile() {
   if (!profile) {
     throw new PublicationEnrichmentError("PROFILE_NOT_FOUND", "Complete your Scientific Identity before syncing publications.");
   }
-  if (!profile.orcid || !profile.evidence.length) {
+  if (!profile.orcid || (requireVerification && !profile.evidence.length)) {
     throw new PublicationEnrichmentError(
       "VERIFIED_ORCID_REQUIRED",
       "Verify ownership of your ORCID iD before importing publications.",
@@ -122,10 +122,11 @@ function publicationData(work: OrcidWorkSummary, pubmed: PubMedSummary | undefin
   };
 }
 
-export async function syncOwnedPublications(): Promise<PublicationSyncResult> {
-  const profile = await ownedVerifiedOrcidProfile();
+export async function syncOwnedPublications(importedWorks?: OrcidWorkSummary[], allowAssertedProfile = false, expectedOrcid?: string): Promise<PublicationSyncResult> {
+  const profile = await ownedVerifiedOrcidProfile(!allowAssertedProfile);
+  if (expectedOrcid && profile.orcid !== expectedOrcid) throw new PublicationEnrichmentError("ORCID_CHANGED", "Your ORCID iD changed during import. Please retry.");
   const observedAt = new Date();
-  const works = await fetchPublicOrcidWorks(profile.orcid!);
+  const works = importedWorks ?? await fetchPublicOrcidWorks(profile.orcid!);
   const warnings: string[] = [];
 
   const directPmids = works.map((work) => work.pmid).filter((value): value is string => Boolean(value));
@@ -295,7 +296,8 @@ export async function syncOwnedPublications(): Promise<PublicationSyncResult> {
     });
   }
 
-  const staleResult = await db.researcherPublication.updateMany({
+  // A capped response is incomplete: do not retire works beyond the import window.
+  const staleResult = works.length >= 100 ? { count: 0 } : await db.researcherPublication.updateMany({
     where: {
       researcherId: profile.id,
       sourceType: "ORCID",
@@ -305,7 +307,7 @@ export async function syncOwnedPublications(): Promise<PublicationSyncResult> {
     data: { active: false },
   });
 
-  await db.publicationProvenance.updateMany({
+  if (works.length < 100) await db.publicationProvenance.updateMany({
     where: {
       researcherId: profile.id,
       sourceType: "ORCID",

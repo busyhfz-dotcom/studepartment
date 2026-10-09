@@ -334,7 +334,7 @@ const prismaRepository: ResearcherRepository = {
         });
       }
 
-      if (input.orcid !== undefined) {
+      if (input.orcid !== undefined && input.orcid !== current.orcid) {
         await tx.evidenceRecord.updateMany({
           where: { researcherId: current.id, fieldPath: "orcid", status: "VERIFIED" },
           data: { status: "STALE" },
