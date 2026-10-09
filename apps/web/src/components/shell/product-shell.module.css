@@ -614,9 +614,3 @@
 
 .workspaceBrand{display:inline-flex;align-items:center;min-height:24px;color:#61739a;font-size:12px;font-weight:750;text-decoration:none}
 .workspaceBrand:hover{color:#3f5ed0}
-.mobileSiteLinks{display:none}
-@media(max-width:940px){
-  .mobileSiteLinks{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:8px max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left));background:#fff;border-bottom:1px solid #e6ebf4}
-  .mobileSiteLinks>a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:100px;padding:8px 14px;color:#354e8b;font-size:13px;font-weight:700;text-decoration:none;border:1px solid #d7e0f2;border-radius:9px}
-  .mobileSiteLinks>a:last-child{background:#1d2947;color:#e8efff;border-color:#31405f}
-}

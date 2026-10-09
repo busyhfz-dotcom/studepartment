@@ -100,10 +100,6 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                 { href: "#pathways", label: "Who it's for" },
               ]}
             />
-            <div className={styles.navActions}>
-              <Link href="/main-site">Main site</Link>
-              <Link className={styles.join} href="/auth/sign-in">Join free</Link>
-            </div>
           </div>
         </div>
       </header>

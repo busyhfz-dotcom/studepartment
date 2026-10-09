@@ -310,10 +310,6 @@ export function ProductShell({
             </Link>
           </div>
         </header>
-        <nav className={styles.mobileSiteLinks} aria-label="Site navigation">
-          <Link href="/main-site">Main site</Link>
-          <Link href="/auth/sign-in">Join free</Link>
-        </nav>
 
         <main className={styles.content} id="workspace-content" tabIndex={-1}>
           {children}

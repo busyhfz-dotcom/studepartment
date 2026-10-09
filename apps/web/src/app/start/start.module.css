@@ -452,12 +452,14 @@
 
 /* Keep the two public destinations visible with comfortable mobile touch targets. */
 .topActions > a { display:inline-flex; align-items:center; justify-content:center; min-height:44px; }
+.topActions>.join{background:transparent;border:0;border-radius:0;box-shadow:none;padding:4px 0;color:#c6d5f5}
+.topActions>.join:hover{background:transparent;color:#f1f5ff}
 @media(max-width:700px){
   .topbar{height:auto;min-height:68px;flex-wrap:wrap;gap:10px;padding-block:12px}
   .topActions{gap:16px;font-size:13px}
   .topActions>a:first-child{font-size:13px}
 }
 @media(max-width:520px){
-  .topActions{flex-basis:100%;justify-content:space-between}
-  .topActions>a{flex:1}
+  .topActions{flex-basis:100%;justify-content:flex-end;gap:24px}
+  .topActions>a{flex:initial;font-weight:650}
 }

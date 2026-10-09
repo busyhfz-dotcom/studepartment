@@ -11,8 +11,13 @@ async function page(path) {
 for (const path of ["/start", "/main-site", "/discover"]) {
   const html = await page(path);
   assert.match(html, /href="\/start"/, "brand must link to the entry page");
-  assert.match(html, /href="\/main-site"[^>]*>Main site</, "Main site link must exist");
-  assert.match(html, /href="\/auth\/sign-in"[^>]*>Join free</, "Join free must share the sign-in route");
+  if (path === "/start") {
+    assert.match(html, /href="\/main-site"[^>]*>Main site</, "entry must offer Main site");
+    assert.match(html, /href="\/auth\/sign-in"[^>]*>Join free</, "Join free must share the sign-in route");
+  } else {
+    assert.doesNotMatch(html, />Join free</, "Join free belongs only on the entry page");
+    assert.doesNotMatch(html, />Main site</, "Main site shortcut belongs only on the entry page");
+  }
 }
 
 for (let attempt = 0; attempt < 2; attempt++) {
