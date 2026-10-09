@@ -18,7 +18,7 @@ export default async function OrganizationOnboardingPage({ searchParams }: { sea
     <main className="shell onboardingShell">
       <ScientificBackdrop tone="light" />
       <header className="onboardingHeader">
-        <Link className="backLink" href="/">← Studepartment</Link>
+        <Link className="backLink" href="/start">← Studepartment</Link>
         <span className="eyebrow">Institutional Identity</span>
         <h1>Register the institution, lab, or hospital you represent.</h1>
         <p className="lede">

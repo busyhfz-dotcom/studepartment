@@ -313,10 +313,11 @@
 
 /* A second row gives mobile navigation room without hiding any destination. */
 .navActions>a{display:inline-flex;align-items:center;justify-content:center;min-height:44px}
-@media(max-width:650px){
+@media(max-width:850px){
   .topInner{height:auto;min-height:68px;flex-wrap:wrap;padding-block:12px;gap:10px}
   .mobileToggle{margin-left:auto;min-width:44px;min-height:44px}
   .navActions{flex-basis:100%;margin-left:0;gap:16px}
   .navActions>a{flex:1}
-  .nav{top:100%}
+  .nav{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:flex-start;gap:14px;padding:22px var(--gutter);background:var(--paper);border-bottom:1px solid var(--line);box-shadow:0 15px 25px #142a2914}
+  .navOpen{display:flex}
 }

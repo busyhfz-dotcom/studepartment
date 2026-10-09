@@ -22,7 +22,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
     <main className="shell onboardingShell">
       <ScientificBackdrop tone="light" />
       <header className="onboardingHeader">
-        <Link className="backLink" href="/">← Studepartment</Link>
+        <Link className="backLink" href="/start">← Studepartment</Link>
         <span className="eyebrow">Scientific Identity Calibration</span>
         <h1>Calibrate the scientific context behind every research decision.</h1>
         <p className="lede">
