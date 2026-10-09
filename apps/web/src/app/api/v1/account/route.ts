@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError } from "@/lib/api-contracts";
 import { AuthenticationRequiredError, requireCurrentUser } from "@/server/auth/current-user";
 import { AccountPrivacyError, deleteAccount } from "@/server/account/privacy";
-import { consumeClientRateLimit, RateLimitExceededError, rateLimitErrorResponse } from "@/server/security/rate-limit";
+import { consumeRateLimit, RateLimitExceededError, rateLimitErrorResponse } from "@/server/security/rate-limit";
 
 function failure(status: number, code: string, message: string) {
   const body: ApiError = { success: false, error: { code, message } };
@@ -11,8 +11,8 @@ function failure(status: number, code: string, message: string) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    await consumeClientRateLimit(request, "account:delete", { windowSeconds: 3600, max: 3 });
     const user = await requireCurrentUser();
+    await consumeRateLimit("account:delete", user.id, { windowSeconds: 3600, max: 3 });
     const body = await request.json() as Record<string, unknown>;
     if (body.confirmation !== "DELETE MY ACCOUNT") {
       return failure(400, "DELETE_CONFIRMATION_REQUIRED", 'Type "DELETE MY ACCOUNT" to confirm permanent deletion.');

@@ -26,7 +26,10 @@ export async function readUpload(request: Request) {
   }
   try {
     return await new Response(Buffer.concat(chunks), { headers: { "Content-Type": contentType } }).formData();
-  } catch { throw new FileError("The upload was incomplete. Please choose the file again."); }
+  } catch (error) {
+    console.warn("Multipart upload could not be parsed", { bytes: size, error: error instanceof Error ? error.message : "Invalid form" });
+    throw new FileError("The upload was incomplete. Please choose the file again.");
+  }
 }
 export async function validateFile(file: File) {
   if (!file.size || file.size > FILE_MAX_BYTES) throw new FileError("Choose a non-empty file smaller than 20 MB.", 413);

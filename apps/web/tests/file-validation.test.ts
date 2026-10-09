@@ -29,6 +29,12 @@ test("Office files require the correct package and reject macro documents and ar
   await assert.rejects(validateFile(new File([new Uint8Array(bomb)], "cv.docx")));
 });
 test("multipart requests are bounded and incomplete requests return useful errors", async () => {
+  const form = new FormData();
+  form.set("file", new File(["Valid UTF-8 document"], "resume.txt"));
+  form.set("scope", "profile");
+  const parsed = await readUpload(new Request("https://example.test", { method: "POST", body: form }));
+  assert.equal((parsed.get("file") as File).name, "resume.txt");
+  assert.equal(parsed.get("scope"), "profile");
   await assert.rejects(readUpload(new Request("https://example.test", { method: "POST", headers: { "content-type": "multipart/form-data; boundary=x", "content-length": String(21 * 1024 * 1024) }, body: "x" })));
   await assert.rejects(readUpload(new Request("https://example.test", { method: "POST", headers: { "content-type": "multipart/form-data; boundary=x" }, body: "broken" })));
   await assert.rejects(validateFile(new File([], "empty.pdf")));
