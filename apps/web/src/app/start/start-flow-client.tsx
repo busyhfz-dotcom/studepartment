@@ -123,7 +123,7 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
   const [results, setResults] = useState<OpportunityResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<OpportunityResult | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<"" | "free" | "premium">("");
+  const [selectedFree, setSelectedFree] = useState(false);
 
   useEffect(() => {
     if (step !== "browse") return;
@@ -515,35 +515,29 @@ export function StartFlow({ onViewSite }: { onViewSite?: () => void } = {}) {
           <div className={styles.planIntro}>
             <span className={styles.eyebrow}>Choose your pace</span>
             <h2>Track what matters to you.</h2>
-            <p>Daily tracking limits apply to your shortlist, not to browsing public opportunities.</p>
+            <p>Build your profile and manage applications for free. Explore evidence intelligence only when you need it.</p>
           </div>
           <div className={styles.plans}>
             <section className={styles.plan}>
               <span className={styles.label}>Free</span>
               <strong>Get started at your pace</strong>
-              <div className={styles.big}>5 positions + 2 grants / day</div>
-              <small>Track up to five positions and two grants each day. Public browsing stays open.</small>
-              <button type="button" onClick={() => setSelectedPlan("free")}>
+              <div className={styles.big}>Profile and application tracking</div>
+              <small>Save opportunities, track application stages and keep your research experience ready.</small>
+              <button type="button" onClick={() => setSelectedFree(true)}>
                 Continue with Free ↗
               </button>
             </section>
             <section className={`${styles.plan} ${styles.premium}`}>
-              <span className={styles.label}>Premium</span>
-              <strong>Keep every lead in view</strong>
-              <div className={styles.big}>Unlimited tracking</div>
-              <small>Track positions and grants without a daily cap.</small>
-              <button type="button" onClick={() => setSelectedPlan("premium")}>
-                Explore Premium ↗
-              </button>
+              <span className={styles.label}>Pro intelligence</span>
+              <strong>Reason over scientific evidence</strong>
+              <div className={styles.big}>Evidence Graph and research tools</div>
+              <small>Explore source-grounded research assistance, scientific relationships and controlled introductions.</small>
+              <Link className={styles.primary} href="/billing">View Pro plans ↗</Link>
             </section>
           </div>
-          {selectedPlan ? (
+          {selectedFree ? (
             <div className={`${styles.selection} ${styles.show}`} role="status" aria-live="polite">
-              <strong>
-                {selectedPlan === "free"
-                  ? "Free selected. Create your profile to start tracking."
-                  : "Premium selected. Create your profile to start tracking without a daily cap."}
-              </strong>
+              <strong>Free selected. Create your profile to start tracking.</strong>
               <Link className={styles.primary} href={signUpHref}>
                 Create your free profile ↗
               </Link>

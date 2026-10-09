@@ -1,7 +1,13 @@
 import type {
   CollaborationGoalValue,
+  CareerPreferences,
   IndividualProfileDetails,
   IndividualProfileRole,
+  ProfileLanguageEntry,
+  ProfileLinks,
+  ProfileProjectEntry,
+  ProfileRecognitionEntry,
+  ProfileTimelineEntry,
   ProfileUpdateInput,
 } from "@/lib/api-contracts";
 import { assertValidOrcid } from "@/server/integrations/orcid/orcid-id";
@@ -29,6 +35,8 @@ const accountRoles = new Set<IndividualProfileRole>(["student", "researcher", "p
 const profileDetailKeys = new Set<keyof IndividualProfileDetails>([
   "degreeProgram", "graduationYear", "thesisTopic", "supervisorName", "academicTitle", "department",
   "currentProject", "yearsExperience", "labName", "supervisionStatus",
+  "skills", "languages", "experience", "education", "projects", "awards", "grants",
+  "memberships", "teaching", "peerReview", "links", "careerPreferences",
 ]);
 
 const collaborationGoals = new Set<CollaborationGoalValue>([
@@ -104,16 +112,107 @@ function slugList(value: unknown, field: string): string[] | undefined {
   );
 }
 
+function stringList(value: unknown, field: string, limit = 40): string[] | undefined {
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value) || value.length > limit) {
+    throw new ProfileValidationError(`${field} must contain at most ${limit} items.`);
+  }
+  return Array.from(new Set(value.map((item) => {
+    if (typeof item !== "string") throw new ProfileValidationError(`${field} must contain only text values.`);
+    const normalized = item.trim();
+    if (!normalized || normalized.length > 160) throw new ProfileValidationError(`${field} contains an invalid item.`);
+    return normalized;
+  })));
+}
+
+function safeUrl(value: unknown, field: string): string | null | undefined {
+  const parsed = optionalString(value, field, 2048, { nullable: true });
+  if (!parsed) return parsed;
+  try {
+    const url = new URL(parsed);
+    if (!['https:', 'http:'].includes(url.protocol)) throw new Error('protocol');
+    return parsed;
+  } catch {
+    throw new ProfileValidationError(`${field} must be a valid http(s) URL.`);
+  }
+}
+
+function objectList<T extends object>(
+  value: unknown,
+  field: string,
+  allowed: readonly string[],
+  required: string,
+  limit = 20,
+): T[] | undefined {
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value) || value.length > limit) throw new ProfileValidationError(`${field} must contain at most ${limit} items.`);
+  return value.map((item, index) => {
+    const object = asObject(item);
+    const unknown = Object.keys(object).filter((key) => !allowed.includes(key));
+    if (unknown.length) throw new ProfileValidationError(`${field}[${index}] contains unsupported fields.`);
+    const result: Record<string, string | null> = {};
+    for (const key of allowed) {
+      const parsed = key === "url"
+        ? safeUrl(object[key], `${field}[${index}].${key}`)
+        : optionalString(object[key], `${field}[${index}].${key}`, key === "description" ? 1200 : 240, { nullable: true });
+      if (parsed !== undefined) result[key] = parsed;
+    }
+    if (!result[required]) {
+      if (Object.values(result).some(Boolean)) throw new ProfileValidationError(`${field}[${index}].${required} is required.`);
+      return null;
+    }
+    return result as unknown as T;
+  }).filter((item): item is T => item !== null);
+}
+
+function profileLinks(value: unknown): ProfileLinks | undefined {
+  if (value === undefined) return undefined;
+  const object = asObject(value);
+  const keys: Array<keyof ProfileLinks> = ["website", "cv", "linkedin", "researchGate", "googleScholar", "github"];
+  if (Object.keys(object).some((key) => !keys.includes(key as keyof ProfileLinks))) throw new ProfileValidationError("profileDetails.links contains unsupported fields.");
+  return Object.fromEntries(keys.map((key) => [key, safeUrl(object[key], `profileDetails.links.${key}`)]).filter(([, value]) => value !== undefined)) as ProfileLinks;
+}
+
+function careerPreferences(value: unknown): CareerPreferences | undefined {
+  if (value === undefined) return undefined;
+  const object = asObject(value);
+  const keys = ["targetRoles", "targetCountries", "opportunityTypes", "remotePreference", "relocation"];
+  if (Object.keys(object).some((key) => !keys.includes(key))) throw new ProfileValidationError("profileDetails.careerPreferences contains unsupported fields.");
+  return {
+    targetRoles: stringList(object.targetRoles, "profileDetails.careerPreferences.targetRoles", 20),
+    targetCountries: stringList(object.targetCountries, "profileDetails.careerPreferences.targetCountries", 20),
+    opportunityTypes: stringList(object.opportunityTypes, "profileDetails.careerPreferences.opportunityTypes", 20),
+    remotePreference: optionalString(object.remotePreference, "profileDetails.careerPreferences.remotePreference", 120, { nullable: true }),
+    relocation: optionalString(object.relocation, "profileDetails.careerPreferences.relocation", 120, { nullable: true }),
+  };
+}
+
 function individualDetails(value: unknown): IndividualProfileDetails | undefined {
   if (value === undefined) return undefined;
   const object = asObject(value);
   const unknown = Object.keys(object).filter((key) => !profileDetailKeys.has(key as keyof IndividualProfileDetails));
   if (unknown.length) throw new ProfileValidationError(`Unknown role-specific fields: ${unknown.join(", ")}.`);
   const result: IndividualProfileDetails = {};
-  for (const key of profileDetailKeys) {
+  const scalarKeys = Array.from(profileDetailKeys).filter((key) => ![
+    "skills", "languages", "experience", "education", "projects", "awards", "grants",
+    "memberships", "teaching", "peerReview", "links", "careerPreferences",
+  ].includes(key));
+  for (const key of scalarKeys) {
     const parsed = optionalString(object[key], `profileDetails.${key}`, 240, { nullable: true });
     if (parsed !== undefined) Object.assign(result, { [key]: parsed });
   }
+  result.skills = stringList(object.skills, "profileDetails.skills");
+  result.memberships = stringList(object.memberships, "profileDetails.memberships");
+  result.teaching = stringList(object.teaching, "profileDetails.teaching");
+  result.peerReview = stringList(object.peerReview, "profileDetails.peerReview");
+  result.languages = objectList<ProfileLanguageEntry>(object.languages, "profileDetails.languages", ["name", "proficiency"], "name", 20);
+  result.experience = objectList<ProfileTimelineEntry>(object.experience, "profileDetails.experience", ["title", "organization", "period", "description", "url"], "title");
+  result.education = objectList<ProfileTimelineEntry>(object.education, "profileDetails.education", ["title", "organization", "period", "description", "url"], "title");
+  result.projects = objectList<ProfileProjectEntry>(object.projects, "profileDetails.projects", ["title", "role", "status", "description", "url"], "title");
+  result.awards = objectList<ProfileRecognitionEntry>(object.awards, "profileDetails.awards", ["title", "issuer", "year", "description", "url"], "title");
+  result.grants = objectList<ProfileRecognitionEntry>(object.grants, "profileDetails.grants", ["title", "issuer", "year", "description", "url"], "title");
+  result.links = profileLinks(object.links);
+  result.careerPreferences = careerPreferences(object.careerPreferences);
   return result;
 }
 

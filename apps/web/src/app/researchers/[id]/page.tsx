@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
+import { ProfessionalProfileSections } from "@/components/scientific/professional-profile-sections";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getPublicResearcherProfile } from "@/server/researchers/public-profile";
 import styles from "./page.module.css";
@@ -75,6 +76,8 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
             </ul>
           </article>
         </section>
+
+        <ProfessionalProfileSections details={researcher.profileDetails ?? undefined} />
 
         <section className={styles.publicationPanel}>
           <div className={styles.publicationHeading}>

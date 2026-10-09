@@ -24,6 +24,17 @@ const typeFields: Record<InstitutionalOrganizationType, Array<[keyof Organizatio
   foundation: [["fundingAreas", "Funding areas", "Diseases, methods, regions…"], ["services", "Programs", "Grants, fellowships, partnerships…"]],
 };
 
+const commonProfileFields: Array<[keyof OrganizationProfileDetails, string, string]> = [
+  ["departments", "Departments and teams", "One department or team per line"],
+  ["researchPrograms", "Research programs", "Flagship programs, cohorts and initiatives"],
+  ["notableProjects", "Notable projects and outputs", "Key projects, trials, datasets and publications"],
+  ["partnerships", "Partners and networks", "Consortia, universities, hospitals and industry partners"],
+  ["careers", "Careers and training", "Graduate programs, fellowships, placements and open roles"],
+  ["researcherServices", "Researcher support", "Grant office, mobility, visa, ethics and training support"],
+  ["dataResources", "Data and shared resources", "Repositories, cohorts, biobanks and open infrastructure"],
+  ["ethicsGovernance", "Ethics and governance", "Review boards, consent, data access and governance"],
+];
+
 export function OrganizationProfileEditor({ organization }: { organization: OrganizationProfileResponse }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
@@ -119,6 +130,16 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
         <div className={styles.grid}>
           {typeFields[draft.type ?? organization.type].map(([key, label, placeholder]) => (
             <label key={key}><span>{label}</span><input value={draft.profileDetails?.[key] ?? ""} onChange={(event) => updateDetail(key, event.target.value)} placeholder={placeholder} /></label>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.specialized}>
+        <h3>Complete institutional profile · free</h3>
+        <p className={styles.editorLede}>The organization directory, programs, projects, partnerships, careers and researcher services are included for every institutional account.</p>
+        <div className={styles.grid}>
+          {commonProfileFields.map(([key, label, placeholder]) => (
+            <label key={key}><span>{label}</span><textarea rows={3} maxLength={500} value={draft.profileDetails?.[key] ?? ""} onChange={(event) => updateDetail(key, event.target.value)} placeholder={placeholder} /></label>
           ))}
         </div>
       </div>

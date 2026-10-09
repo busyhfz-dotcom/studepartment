@@ -5,6 +5,7 @@ import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getOwnedOrganization } from "@/server/repositories/organization-repository";
 import { OrganizationProfileEditor } from "./organization-profile-editor";
+import { OrganizationOpportunities } from "./organization-opportunities";
 import styles from "./organization-profile.module.css";
 
 export default async function OrganizationProfilePage() {
@@ -15,7 +16,7 @@ export default async function OrganizationProfilePage() {
   const organization = await getOwnedOrganization(user.id);
   if (!organization) redirect("/onboarding/organization");
   const typeLabel = ({ university: "University", hospital: "Hospital", laboratory: "Laboratory", "research-institute": "Research institute", company: "Company", foundation: "Foundation" } as const)[organization.type];
-  const detailLabels = { primaryFocus: "Primary focus", services: "Services and programs", facilities: "Facilities", accreditations: "Accreditations", capacity: "Capacity", fundingAreas: "Funding areas" } as const;
+  const detailLabels = { primaryFocus: "Primary focus", services: "Services and programs", facilities: "Facilities", accreditations: "Accreditations", capacity: "Capacity", fundingAreas: "Funding areas", departments: "Departments and teams", researchPrograms: "Research programs", notableProjects: "Notable projects", partnerships: "Partners and networks", careers: "Careers and training", researcherServices: "Researcher support", dataResources: "Data and shared resources", ethicsGovernance: "Ethics and governance" } as const;
   const visibleDetails = Object.entries(organization.profileDetails ?? {}).filter(([, value]) => value);
 
   return (
@@ -62,6 +63,7 @@ export default async function OrganizationProfilePage() {
         </div>
 
         <OrganizationProfileEditor organization={organization} />
+        <OrganizationOpportunities />
       </div>
     </ProductShell>
   );

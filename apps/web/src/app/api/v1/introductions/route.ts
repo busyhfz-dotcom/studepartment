@@ -7,7 +7,7 @@ import type {
   IntroductionPurpose,
 } from "@/lib/api-contracts";
 import { createIntroduction, listIntroductions } from "@/server/introductions/engine";
-import { requireCurrentUser } from "@/server/auth/current-user";
+import { canUseProFeature, requireCurrentUser } from "@/server/auth/current-user";
 import { recordProductEvent } from "@/server/analytics/product-events";
 import { introductionErrorResponse } from "@/server/introductions/http";
 import {
@@ -40,6 +40,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     await consumeClientRateLimit(request, "introductions:create", { windowSeconds: 600, max: 20 });
+    const sender = await requireCurrentUser();
+    if (!canUseProFeature(sender)) return NextResponse.json({ success: false, error: { code: "PRO_REQUIRED", message: "Sending scientific introductions requires Studepartment Pro." } }, { status: 402 });
     const raw = await request.json() as Record<string, unknown>;
     if (
       typeof raw.receiverId !== "string" ||
@@ -60,8 +62,7 @@ export async function POST(request: NextRequest) {
       context: raw.context,
     };
     const data = await createIntroduction(input);
-    const user = await requireCurrentUser();
-    await recordProductEvent(user.id, "INTRODUCTION_SENT", { type: "researcher", id: input.receiverId });
+    await recordProductEvent(sender.id, "INTRODUCTION_SENT", { type: "researcher", id: input.receiverId });
     const body: ApiSuccess<typeof data> = { success: true, data };
     return NextResponse.json(body, { status: 201 });
   } catch (error) {

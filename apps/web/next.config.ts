@@ -19,6 +19,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  transpilePackages: ["@studepartment/db"],
   async headers() {
     return [
       {

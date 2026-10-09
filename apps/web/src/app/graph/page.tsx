@@ -1,5 +1,8 @@
 import { ProductShell } from "@/components/shell/product-shell";
 import { ScientificGraphExplorer } from "./scientific-graph-explorer";
+import { ProGate } from "@/components/billing/pro-gate";
+import { ProPreviewNotice } from "@/components/billing/pro-preview-notice";
+import { canUseProFeature, getCurrentUser } from "@/server/auth/current-user";
 import styles from "./page.module.css";
 
 export default async function ScientificGraphPage({
@@ -7,11 +10,14 @@ export default async function ScientificGraphPage({
 }: {
   searchParams: Promise<{ researcher?: string }>;
 }) {
+  const user = await getCurrentUser();
+  if (!canUseProFeature(user)) return <ProductShell><ProGate feature="Scientific Evidence Graph" /></ProductShell>;
   const { researcher } = await searchParams;
 
   return (
     <ProductShell>
       <div className={styles.shell}>
+        <ProPreviewNotice user={user} />
         <header className={styles.header}>
           <div className={styles.headerMeta}>
             <span className="eyebrow">Scientific Evidence Graph</span>

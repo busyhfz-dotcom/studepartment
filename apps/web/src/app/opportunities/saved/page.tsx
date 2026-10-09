@@ -11,7 +11,7 @@ export default function SavedOpportunitiesPage() {
           <span className="eyebrow">Opportunity Decision Workspace</span>
           <h1>Review source-backed opportunities as decisions, not bookmarks.</h1>
           <p>
-            Keep source context, freshness, deadline precision, alerts, and your own notes visible in one place.
+            Track applications from saved to decision while keeping source context, deadlines, alerts and private notes in one place.
             Saving an opportunity never changes scientific relevance or formal eligibility.
           </p>
           <Link href="/opportunities">← Back to Opportunity Intelligence</Link>

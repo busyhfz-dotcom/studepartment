@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { ApiError, ApiSuccess, SavedOpportunityListResponse } from "@/lib/api-contracts";
+import type { ApiError, ApiSuccess, SavedOpportunityListResponse, SavedOpportunityRecord } from "@/lib/api-contracts";
 import styles from "./page.module.css";
 
 type Response = ApiSuccess<SavedOpportunityListResponse> | ApiError;
@@ -25,6 +25,47 @@ function sourceHost(value: string) {
 
 function titleCase(value: string) {
   return value.replaceAll("-", " ").replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+const applicationStages: Array<[SavedOpportunityRecord["applicationStage"], string]> = [
+  ["saved", "Saved"],
+  ["preparing", "Preparing application"],
+  ["applied", "Applied"],
+  ["interview", "Interview / review"],
+  ["decision", "Decision received"],
+  ["closed", "Closed"],
+];
+
+function ApplicationTracker({ item, onSaved }: { item: SavedOpportunityRecord; onSaved: () => Promise<void> }) {
+  const [stage, setStage] = useState(item.applicationStage);
+  const [notes, setNotes] = useState(item.notes ?? "");
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  async function save() {
+    setSaving(true);
+    setMessage("");
+    try {
+      const response = await fetch("/api/v1/opportunities/saved", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ opportunityId: item.opportunityId, applicationStage: stage, notes }),
+      });
+      const body = await response.json() as { success: boolean; error?: { message?: string } };
+      if (!response.ok || !body.success) throw new Error(body.error?.message ?? "Could not save application progress.");
+      await onSaved();
+      setMessage("Progress saved.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not save application progress.");
+    } finally {
+      setSaving(false);
+    }
+  }
+  return <div className={styles.tracker}>
+    <label><span>Application stage</span><select value={stage} onChange={(event) => setStage(event.target.value as SavedOpportunityRecord["applicationStage"])}>{applicationStages.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
+    <label><span>Private application notes</span><textarea maxLength={1000} rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Tasks, contacts, documents, next step…" /></label>
+    <button disabled={saving} onClick={() => void save()} type="button">{saving ? "Saving…" : "Save progress"}</button>
+    {message ? <p role="status">{message}</p> : null}
+  </div>;
 }
 
 export function SavedOpportunityWorkspace() {
@@ -116,6 +157,7 @@ export function SavedOpportunityWorkspace() {
               </div>
 
               <div className={styles.decisionContext}>
+                <ApplicationTracker item={item} onSaved={load} />
                 <div className={styles.fact}>
                   <span>Deadline</span>
                   <strong>{item.opportunity.deadlinePrecision === "rolling" ? "Rolling" : date(item.opportunity.deadline)}</strong>

@@ -93,6 +93,8 @@ const createKeys = new Set(["name", "type", "countryCode", "website", "descripti
 const updateKeys = createKeys;
 const profileDetailKeys = new Set<keyof OrganizationProfileDetails>([
   "primaryFocus", "services", "facilities", "accreditations", "capacity", "fundingAreas",
+  "departments", "researchPrograms", "notableProjects", "partnerships", "careers",
+  "researcherServices", "dataResources", "ethicsGovernance",
 ]);
 
 function organizationDetails(value: unknown): OrganizationProfileDetails | undefined {

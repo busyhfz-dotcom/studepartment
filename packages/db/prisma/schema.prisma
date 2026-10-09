@@ -183,6 +183,27 @@ enum DigestFrequency {
   OFF
 }
 
+enum SubscriptionTier {
+  FREE
+  PRO
+}
+
+enum SubscriptionInterval {
+  MONTHLY
+  QUARTERLY
+  SEMIANNUAL
+  ANNUAL
+}
+
+enum ApplicationStage {
+  SAVED
+  PREPARING
+  APPLIED
+  INTERVIEW
+  DECISION
+  CLOSED
+}
+
 model User {
   id             String           @id @default(cuid())
   name           String           @default("")
@@ -192,6 +213,12 @@ model User {
   role            UserRole         @default(RESEARCHER)
   accountKind     AccountKind      @default(INDIVIDUAL)
   digestFrequency DigestFrequency  @default(WEEKLY)
+  subscriptionTier SubscriptionTier @default(FREE)
+  subscriptionInterval SubscriptionInterval?
+  subscriptionStatus String?
+  subscriptionExpiresAt DateTime?
+  stripeCustomerId String? @unique
+  stripeSubscriptionId String? @unique
   lastDigestSentAt DateTime?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -620,6 +647,7 @@ model SavedOpportunity {
   deadlineAlert   Boolean     @default(true)
   alertLeadDays   Int         @default(7)
   notes           String?
+  applicationStage ApplicationStage @default(SAVED)
   savedAt         DateTime    @default(now())
   lastAlertedAt   DateTime?
   user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -627,6 +655,7 @@ model SavedOpportunity {
 
   @@unique([userId, opportunityId])
   @@index([userId, savedAt])
+  @@index([userId, applicationStage])
   @@index([deadlineAlert, lastAlertedAt])
 }
 

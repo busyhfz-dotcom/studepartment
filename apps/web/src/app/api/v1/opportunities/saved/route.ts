@@ -6,11 +6,29 @@ import {
   removeSavedOpportunity,
   saveOpportunity,
   SavedOpportunityError,
+  updateSavedOpportunity,
 } from "@/server/opportunities/saved-opportunities";
 
 function errorResponse(status: number, code: string, message: string) {
   const body: ApiError = { success: false, error: { code, message } };
   return NextResponse.json(body, { status, headers: { "Cache-Control": "private, no-store" } });
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json() as { opportunityId?: unknown; applicationStage?: unknown; notes?: unknown };
+    if (typeof body.opportunityId !== "string" || typeof body.applicationStage !== "string" || (body.notes !== undefined && body.notes !== null && typeof body.notes !== "string")) {
+      return errorResponse(400, "INVALID_APPLICATION_UPDATE", "Opportunity id, stage and optional notes are required.");
+    }
+    const data = await updateSavedOpportunity({ opportunityId: body.opportunityId, applicationStage: body.applicationStage, notes: body.notes as string | null | undefined });
+    return NextResponse.json({ success: true, data }, { headers: { "Cache-Control": "private, no-store" } });
+  } catch (error) {
+    if (error instanceof AuthenticationRequiredError) return errorResponse(401, error.code, error.message);
+    if (error instanceof SavedOpportunityError) return errorResponse(error.status, error.code, error.message);
+    if (error instanceof SyntaxError) return errorResponse(400, "INVALID_JSON", "Request body must be valid JSON.");
+    console.error("Saved opportunity update failed", error);
+    return errorResponse(500, "APPLICATION_UPDATE_FAILED", "Application stage could not be updated.");
+  }
 }
 
 export async function GET() {

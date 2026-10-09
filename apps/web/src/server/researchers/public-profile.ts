@@ -66,6 +66,7 @@ export async function getPublicResearcherProfile(researcherId: string) {
     institutionVerified: Boolean(affiliation?.organization.verified),
     location: [profile.city, profile.countryCode].filter(Boolean).join(" · ") || "Location not shared",
     careerStage: profile.careerStage ?? "Researcher",
+    profileDetails: profile.profileDetails as import("@/lib/api-contracts").IndividualProfileDetails | null,
     verified: profile.verified,
     availability: profile.availabilityMode.toLowerCase(),
     collaborationGoals: profile.collaborationGoals.map(formatGoal),

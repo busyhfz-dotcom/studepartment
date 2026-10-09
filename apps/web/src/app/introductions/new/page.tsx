@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ProductShell } from "@/components/shell/product-shell";
 import { IntroductionComposer } from "./introduction-composer";
+import { ProGate } from "@/components/billing/pro-gate";
+import { ProPreviewNotice } from "@/components/billing/pro-preview-notice";
+import { canUseProFeature, getCurrentUser } from "@/server/auth/current-user";
 import styles from "./page.module.css";
 
 export default async function NewIntroductionPage({
@@ -8,11 +11,14 @@ export default async function NewIntroductionPage({
 }: {
   searchParams: Promise<{ researcher?: string }>;
 }) {
+  const user = await getCurrentUser();
+  if (!canUseProFeature(user)) return <ProductShell><ProGate feature="Purpose-led scientific introductions" /></ProductShell>;
   const { researcher } = await searchParams;
 
   return (
     <ProductShell>
       <div className={styles.shell}>
+        <ProPreviewNotice user={user} />
         <Link className="backLink" href={researcher ? "/researchers/" + researcher : "/discover"}>
           ← {researcher ? "Back to scientific profile" : "Back to Discovery"}
         </Link>

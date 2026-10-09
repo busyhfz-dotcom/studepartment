@@ -15,6 +15,9 @@ export type CurrentUser = {
   id: string;
   role: AccountRole;
   accountKind: AccountKind;
+  subscriptionTier: "FREE" | "PRO";
+  subscriptionInterval: "MONTHLY" | "QUARTERLY" | "SEMIANNUAL" | "ANNUAL" | null;
+  subscriptionExpiresAt: Date | null;
 };
 
 export interface SessionProvider {
@@ -44,11 +47,11 @@ export const betterAuthSessionProvider: SessionProvider = {
 
     const user = await getDb().user.findUnique({
       where: { id: session.user.id },
-      select: { id: true, role: true, accountKind: true },
+      select: { id: true, role: true, accountKind: true, subscriptionTier: true, subscriptionInterval: true, subscriptionExpiresAt: true },
     });
 
     if (!user) return null;
-    return { id: user.id, role: user.role, accountKind: user.accountKind };
+    return { id: user.id, role: user.role, accountKind: user.accountKind, subscriptionTier: user.subscriptionTier, subscriptionInterval: user.subscriptionInterval, subscriptionExpiresAt: user.subscriptionExpiresAt };
   },
 };
 
@@ -56,6 +59,17 @@ export async function getCurrentUser(
   provider: SessionProvider = betterAuthSessionProvider,
 ): Promise<CurrentUser | null> {
   return provider.getCurrentUser();
+}
+
+export function hasProAccess(user: CurrentUser | null) {
+  if (!user || user.subscriptionTier !== "PRO") return false;
+  return !user.subscriptionExpiresAt || user.subscriptionExpiresAt.getTime() > Date.now();
+}
+
+// Keep the existing research tools usable while paid checkout is unavailable.
+// Enforcement is opt-in only after a real billing flow has been approved and launched.
+export function canUseProFeature(user: CurrentUser | null) {
+  return process.env.PRO_ACCESS_ENFORCED !== "true" || hasProAccess(user);
 }
 
 export async function requireCurrentUser(

@@ -1,6 +1,9 @@
 import { ProductShell } from "@/components/shell/product-shell";
 import type { ResearchAssistantTarget } from "@/lib/api-contracts";
 import { ResearchAssistantWorkspace } from "./research-assistant-workspace";
+import { ProGate } from "@/components/billing/pro-gate";
+import { ProPreviewNotice } from "@/components/billing/pro-preview-notice";
+import { canUseProFeature, getCurrentUser } from "@/server/auth/current-user";
 import styles from "./page.module.css";
 
 function targetFromSearch(searchParams: {
@@ -19,12 +22,15 @@ export default async function ResearchAssistantPage({
 }: {
   searchParams: Promise<{ institution?: string; researcher?: string; opportunity?: string }>;
 }) {
+  const user = await getCurrentUser();
+  if (!canUseProFeature(user)) return <ProductShell><ProGate feature="Citation-grounded Research Assistant" /></ProductShell>;
   const params = await searchParams;
   const target = targetFromSearch(params);
 
   return (
     <ProductShell>
       <div className={styles.shell}>
+        <ProPreviewNotice user={user} />
         <header className={styles.header}>
           <div className={styles.headerMeta}>
             <span className="eyebrow">Research Assistant</span>

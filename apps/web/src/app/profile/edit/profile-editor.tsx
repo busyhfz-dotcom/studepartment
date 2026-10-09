@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState, type FormEvent } from "react";
 import type {
   CollaborationGoalValue,
+  IndividualProfileDetails,
   IndividualProfileRole,
   OrganizationOption,
   ProfileResponse,
@@ -11,6 +12,7 @@ import type {
 } from "@/lib/api-contracts";
 import styles from "./page.module.css";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
+import { ProfessionalProfileFields } from "./professional-profile-fields";
 
 const topicOptions = [
   ["oncology", "Oncology"],
@@ -59,6 +61,7 @@ export function ProfileEditor({
   const [message, setMessage] = useState("");
   const [accountRole, setAccountRole] = useState<IndividualProfileRole>(profile.accountRole);
   const [imageUrl, setImageUrl] = useState(profile.imageUrl ?? "");
+  const [professionalDetails, setProfessionalDetails] = useState<IndividualProfileDetails>(profile.profileDetails ?? {});
 
   const collaborationDefaults = useMemo(
     () => new Set(profile.collaborationGoals.map(collaborationValueFromLabel).filter(Boolean)),
@@ -97,12 +100,14 @@ export function ProfileEditor({
       accountRole,
       profileDetails: accountRole === "student"
         ? {
+            ...professionalDetails,
             degreeProgram: String(form.get("degreeProgram") ?? "") || null,
             graduationYear: String(form.get("graduationYear") ?? "") || null,
             thesisTopic: String(form.get("thesisTopic") ?? "") || null,
             supervisorName: String(form.get("supervisorName") ?? "") || null,
           }
         : {
+            ...professionalDetails,
             academicTitle: String(form.get("academicTitle") ?? "") || null,
             department: String(form.get("department") ?? "") || null,
             ...(accountRole === "researcher"
@@ -228,6 +233,8 @@ export function ProfileEditor({
           )}
         </div>
       </section>
+
+      <ProfessionalProfileFields value={professionalDetails} onChange={setProfessionalDetails} />
 
       <section className={styles.editorSection}>
         <div className={styles.sectionHead}>
@@ -358,4 +365,3 @@ export function ProfileEditor({
     </form>
   );
 }
-

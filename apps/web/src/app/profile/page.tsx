@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ProductShell } from "@/components/shell/product-shell";
 import { ScientificProfileCard } from "@/components/scientific/scientific-profile-card";
+import { ProfessionalProfileSections } from "@/components/scientific/professional-profile-sections";
 import { PublicationEvidencePanel } from "./publication-evidence-panel";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { researcherRepository } from "@/server/repositories/researcher-repository";
@@ -81,6 +82,7 @@ export default async function ProfilePage({
             {!roleDetails.some(([, value]) => value) ? <p>Add your role-specific details to make this profile more useful.</p> : null}
           </div>
         </section>
+        <ProfessionalProfileSections details={profile.profileDetails} />
         <PublicationEvidencePanel />
 
         {profile.completeness ? (

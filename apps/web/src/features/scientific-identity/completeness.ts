@@ -56,6 +56,21 @@ export function calculateProfileCompleteness(profile: CompletenessInput): Profil
       complete: profile.collaborationGoals.length > 0,
     },
     {
+      key: "professional-history",
+      label: "Experience or education",
+      complete: Boolean(profile.profileDetails?.experience?.length || profile.profileDetails?.education?.length),
+    },
+    {
+      key: "capabilities",
+      label: "Skills and languages",
+      complete: Boolean(profile.profileDetails?.skills?.length || profile.profileDetails?.languages?.length),
+    },
+    {
+      key: "career-readiness",
+      label: "Career preferences",
+      complete: Boolean(profile.profileDetails?.careerPreferences?.targetRoles?.length || profile.profileDetails?.links?.cv),
+    },
+    {
       key: "publications",
       label: "Publications",
       complete: hasVerification("Publications"),

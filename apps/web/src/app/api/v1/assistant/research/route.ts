@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess, ResearchAssistantRequest, ResearchAssistantResponse } from "@/lib/api-contracts";
-import { AuthenticationRequiredError, requireCurrentUser } from "@/server/auth/current-user";
+import { AuthenticationRequiredError, canUseProFeature, requireCurrentUser } from "@/server/auth/current-user";
 import { recordProductEvent } from "@/server/analytics/product-events";
 import { ResearchAssistantContextError } from "@/server/assistant/context";
 import {
@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
     });
 
     const user = await requireCurrentUser();
+    if (!canUseProFeature(user)) return errorResponse(402, "PRO_REQUIRED", "Research Assistant is available with Studepartment Pro.");
     await consumeRateLimit("research-assistant-user", "user:" + user.id, {
       windowSeconds: 60 * 60,
       max: 60,

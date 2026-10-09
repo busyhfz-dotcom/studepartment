@@ -38,6 +38,7 @@ const identityItemsInstitution: NavItem[] = [
 ];
 
 const pageNames: Array<[string, string]> = [
+  ["/billing", "Studepartment Pro"],
   ["/discover", "Scientific Discovery"],
   ["/assistant", "Research Assistant"],
   ["/opportunities", "Opportunity Intelligence"],

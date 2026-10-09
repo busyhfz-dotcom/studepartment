@@ -149,6 +149,52 @@ export type OrganizationOption = {
 export type AccountKindValue = "individual" | "institution";
 export type IndividualProfileRole = "student" | "researcher" | "professor";
 
+export type ProfileTimelineEntry = {
+  title: string;
+  organization?: string | null;
+  period?: string | null;
+  description?: string | null;
+  url?: string | null;
+};
+
+export type ProfileProjectEntry = {
+  title: string;
+  role?: string | null;
+  status?: string | null;
+  description?: string | null;
+  url?: string | null;
+};
+
+export type ProfileRecognitionEntry = {
+  title: string;
+  issuer?: string | null;
+  year?: string | null;
+  description?: string | null;
+  url?: string | null;
+};
+
+export type ProfileLanguageEntry = {
+  name: string;
+  proficiency?: string | null;
+};
+
+export type ProfileLinks = {
+  website?: string | null;
+  cv?: string | null;
+  linkedin?: string | null;
+  researchGate?: string | null;
+  googleScholar?: string | null;
+  github?: string | null;
+};
+
+export type CareerPreferences = {
+  targetRoles?: string[];
+  targetCountries?: string[];
+  opportunityTypes?: string[];
+  remotePreference?: string | null;
+  relocation?: string | null;
+};
+
 export type IndividualProfileDetails = {
   degreeProgram?: string | null;
   graduationYear?: string | null;
@@ -160,6 +206,18 @@ export type IndividualProfileDetails = {
   yearsExperience?: string | null;
   labName?: string | null;
   supervisionStatus?: string | null;
+  skills?: string[];
+  languages?: ProfileLanguageEntry[];
+  experience?: ProfileTimelineEntry[];
+  education?: ProfileTimelineEntry[];
+  projects?: ProfileProjectEntry[];
+  awards?: ProfileRecognitionEntry[];
+  grants?: ProfileRecognitionEntry[];
+  memberships?: string[];
+  teaching?: string[];
+  peerReview?: string[];
+  links?: ProfileLinks;
+  careerPreferences?: CareerPreferences;
 };
 
 export type OrganizationProfileDetails = {
@@ -169,6 +227,14 @@ export type OrganizationProfileDetails = {
   accreditations?: string | null;
   capacity?: string | null;
   fundingAreas?: string | null;
+  departments?: string | null;
+  researchPrograms?: string | null;
+  notableProjects?: string | null;
+  partnerships?: string | null;
+  careers?: string | null;
+  researcherServices?: string | null;
+  dataResources?: string | null;
+  ethicsGovernance?: string | null;
 };
 
 export type OrganizationProfileResponse = {
@@ -518,6 +584,7 @@ export type SavedOpportunityRecord = {
   deadlineAlert: boolean;
   alertLeadDays: number;
   notes?: string;
+  applicationStage: "saved" | "preparing" | "applied" | "interview" | "decision" | "closed";
   savedAt: string;
   opportunity: {
     title: string;

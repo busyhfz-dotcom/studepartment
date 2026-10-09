@@ -261,6 +261,8 @@
   line-height: 1.45;
 }
 
+.tracker{display:grid;gap:8px;padding-bottom:13px;border-bottom:1px solid var(--line)}.tracker label{display:grid;gap:5px}.tracker label span{color:var(--muted-2);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.tracker select,.tracker textarea{width:100%;min-width:0;padding:8px 9px;color:var(--text);border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-size:11px}.tracker textarea{resize:vertical}.tracker button{min-height:36px;color:#fff;border:0;border-radius:8px;background:var(--accent-strong);font:inherit;font-size:10px;font-weight:800;cursor:pointer}.tracker button:disabled{opacity:.55;cursor:wait}.tracker p{margin:0;color:var(--muted);font-size:10px}
+
 .actions {
   display: flex;
   min-width: 142px;

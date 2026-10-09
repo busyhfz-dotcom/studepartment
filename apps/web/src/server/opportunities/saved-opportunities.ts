@@ -78,6 +78,27 @@ export async function removeSavedOpportunity(opportunityId: string) {
   await db.savedOpportunity.deleteMany({ where: { userId: user.id, opportunityId } });
 }
 
+const applicationStages = new Set(["saved", "preparing", "applied", "interview", "decision", "closed"]);
+
+export async function updateSavedOpportunity(input: { opportunityId: string; applicationStage: string; notes?: string | null }) {
+  const user = await requireCurrentUser();
+  if (!applicationStages.has(input.applicationStage)) throw new SavedOpportunityError("INVALID_APPLICATION_STAGE", "Choose a valid application stage.");
+  if (input.notes !== undefined && input.notes !== null && (typeof input.notes !== "string" || input.notes.length > 1000)) {
+    throw new SavedOpportunityError("INVALID_NOTES", "Notes must be 1000 characters or fewer.");
+  }
+  const db = getDb();
+  const existing = await db.savedOpportunity.findUnique({ where: { userId_opportunityId: { userId: user.id, opportunityId: input.opportunityId } }, select: { id: true } });
+  if (!existing) throw new SavedOpportunityError("SAVED_OPPORTUNITY_NOT_FOUND", "Saved opportunity not found.", 404);
+  return db.savedOpportunity.update({
+    where: { id: existing.id },
+    data: {
+      applicationStage: input.applicationStage.toUpperCase() as "SAVED" | "PREPARING" | "APPLIED" | "INTERVIEW" | "DECISION" | "CLOSED",
+      ...(input.notes !== undefined ? { notes: input.notes?.trim() || null } : {}),
+    },
+    select: { id: true, applicationStage: true, notes: true },
+  });
+}
+
 export async function listSavedOpportunities(): Promise<SavedOpportunityListResponse> {
   const user = await requireCurrentUser();
   const db = getDb();
@@ -98,6 +119,7 @@ export async function listSavedOpportunities(): Promise<SavedOpportunityListResp
       deadlineAlert: row.deadlineAlert,
       alertLeadDays: row.alertLeadDays,
       notes: row.notes ?? undefined,
+      applicationStage: row.applicationStage.toLowerCase() as SavedOpportunityRecord["applicationStage"],
       savedAt: row.savedAt.toISOString(),
       opportunity: {
         title: opportunity.title,

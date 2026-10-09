@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./identity-avatar.module.css";
 
 function initials(name: string) {
@@ -23,14 +23,12 @@ export function IdentityAvatar({
   kind?: "person" | "organization";
   size?: "small" | "medium" | "large";
 }) {
-  const [showImage, setShowImage] = useState(Boolean(src));
-
-  useEffect(() => setShowImage(Boolean(src)), [src]);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   return (
     <span className={`${styles.avatar} ${styles[size]} ${styles[kind]}`} aria-label={`${name} ${kind === "person" ? "profile photo" : "logo"}`}>
       <span className={styles.fallback} aria-hidden="true">{initials(name)}</span>
-      {src && showImage ? <img alt="" src={src} onError={() => setShowImage(false)} /> : null}
+      {src && failedSrc !== src ? <img alt="" src={src} onError={() => setFailedSrc(src)} /> : null}
     </span>
   );
 }

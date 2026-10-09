@@ -17,6 +17,8 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
     getInstitutionFitSnapshot(id),
   ]);
   if (!institution) notFound();
+  const detailLabels = { primaryFocus: "Primary focus", services: "Services and programs", facilities: "Facilities", accreditations: "Accreditations", capacity: "Capacity", fundingAreas: "Funding areas", departments: "Departments and teams", researchPrograms: "Research programs", notableProjects: "Notable projects", partnerships: "Partners and networks", careers: "Careers and training", researcherServices: "Researcher support", dataResources: "Data and shared resources", ethicsGovernance: "Ethics and governance" } as const;
+  const publicDetails = Object.entries(institution.profileDetails).filter((entry): entry is [string, string] => typeof entry[1] === "string" && Boolean(entry[1].trim()));
 
   return (
     <ProductShell>
@@ -33,6 +35,8 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
           </div>
           {institution.website ? <a href={institution.website} rel="noreferrer" target="_blank">Official website ↗</a> : null}
         </header>
+
+        {institution.description || publicDetails.length ? <section className={styles.organizationStory}><div><span className="sectionLabel">Institutional profile · organization supplied</span><h2>About this organization</h2>{institution.description ? <p>{institution.description}</p> : null}</div>{publicDetails.length ? <div className={styles.organizationDetails}>{publicDetails.map(([key, value]) => <article key={key}><span>{detailLabels[key as keyof typeof detailLabels] ?? key}</span><p>{value}</p></article>)}</div> : null}</section> : null}
 
         <section className={styles.metrics}>
           <div><strong>{institution.researchers.length}</strong><span>public current researchers</span></div>

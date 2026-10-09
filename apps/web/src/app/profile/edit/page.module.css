@@ -342,6 +342,79 @@
 .errorMessage { color: var(--danger); }
 .successMessage { color: var(--success); }
 
+.freeBadge {
+  display: inline-flex;
+  margin: 0 0 16px;
+  padding: 7px 10px;
+  color: #245d50;
+  border: 1px solid rgba(40,132,111,.16);
+  border-radius: 999px;
+  background: rgba(73,181,151,.09);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.collection { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.collectionHead { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 10px; }
+.collectionHead h3 { margin: 0; font-size: 13px; }
+.collectionHead > button {
+  min-height: 34px;
+  padding: 0 10px;
+  color: var(--accent-strong);
+  border: 1px solid rgba(20,52,141,.14);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.collectionRow {
+  display: grid;
+  grid-template-columns: 1.2fr 1.1fr .65fr 1fr auto;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface-subtle);
+}
+.collectionRow textarea { grid-column: 1 / -2; resize: vertical; }
+.collectionRow input,.collectionRow textarea,.compactRows input {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 9px 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  font: inherit;
+  font-size: 11px;
+}
+.removeButton {
+  align-self: center;
+  min-height: 36px;
+  padding: 0 9px;
+  color: #93444a;
+  border: 1px solid rgba(151,66,72,.13);
+  border-radius: 8px;
+  background: rgba(177,70,77,.055);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 760;
+  cursor: pointer;
+}
+.emptyCollection { margin: 0; padding: 13px; color: var(--muted); border: 1px dashed var(--line-strong); border-radius: 9px; font-size: 11px; }
+.collectionColumns,.textListGrid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.collectionColumns > .collection { min-width: 0; }
+.collectionColumns .collectionRow { grid-template-columns: 1fr; }
+.collectionColumns .collectionRow textarea { grid-column: auto; }
+.compactRows { display: grid; gap: 8px; }
+.compactRows > div { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; }
+.preferenceFields { display: grid; gap: 10px; align-content: start; }
+
 @media (max-width: 900px) {
   .choiceGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .sectionHead { grid-template-columns: 1fr; gap: 6px; }
@@ -368,6 +441,11 @@
     align-items: stretch;
     flex-direction: column;
   }
+  .collectionColumns,.textListGrid { grid-template-columns: 1fr; }
+  .collectionRow { grid-template-columns: 1fr; }
+  .collectionRow textarea { grid-column: auto; }
+  .compactRows > div { grid-template-columns: 1fr; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); }
+  .collectionHead { align-items: flex-start; }
 }
 
 /* Shared electric-blue interaction treatment. */
