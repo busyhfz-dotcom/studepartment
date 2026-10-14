@@ -22,9 +22,9 @@ export default async function IntroductionsPage({
             <span className="eyebrow">Scientific Introductions</span>
             <span className={styles.versionPill}>Recipient-controlled outreach</span>
           </div>
-          <h1>Open fewer conversations—with stronger scientific context.</h1>
+          <h1>Fewer messages. Better conversations.</h1>
           <p className="lede">
-            Every request is governed by recipient preferences, scientific context, cooldowns, and anti-noise controls. This is an introduction layer for research—not an unrestricted social inbox.
+            Each request follows the recipient&apos;s preferences and has to state its scientific purpose. It is a way to meet the right researchers, not an open inbox.
           </p>
         </header>
         <IntroductionWorkspace initialBox={initialBox} />
