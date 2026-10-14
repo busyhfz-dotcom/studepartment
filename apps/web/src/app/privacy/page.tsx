@@ -5,14 +5,14 @@ import { SEARCH_LOG_RETENTION_DAYS } from "@/server/personalization/interest-sig
 
 export const metadata: Metadata = {
   title: "Privacy Notice",
-  description: "What Studepartment collects, why, who processes it, and how to export or delete your data.",
+  description: "What Provenant collects, why, who processes it, and how to export or delete your data.",
 };
 
 export default function PrivacyPage() {
   return (
     <LegalPage current="privacy" title="Privacy Notice">
       <p>
-        Studepartment helps medical and biomedical researchers find positions, funding, collaborators and
+        Provenant helps medical and biomedical researchers find positions, funding, collaborators and
         institutions. This notice explains what we collect, why, which services process it, and the controls
         you have. Questions or requests: <LegalContact />.
       </p>
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
       <ul>
         <li><strong>Railway:</strong> application hosting, database and private file storage (EU West region).</li>
         <li><strong>Resend:</strong> delivery of account and notification emails.</li>
-        <li><strong>OpenAI:</strong> semantic search over the text you search for, and Research Assistant answers when you use that feature. The Assistant receives your question plus the relevant Studepartment evidence.</li>
+        <li><strong>OpenAI:</strong> semantic search over the text you search for, and Research Assistant answers when you use that feature. The Assistant receives your question plus the relevant Provenant evidence.</li>
         <li><strong>ORCID and NCBI PubMed:</strong> sources of publication and identity records that you choose to connect or import.</li>
       </ul>
 
