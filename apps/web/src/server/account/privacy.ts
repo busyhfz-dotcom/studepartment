@@ -169,7 +169,7 @@ export async function exportAccountData(userId: string) {
 
   if (!data) throw new AccountPrivacyError("ACCOUNT_NOT_FOUND", "Account not found.", 404);
   return {
-    format: "studepartment-account-export-v1",
+    format: "provenant-account-export-v1",
     exportedAt: new Date().toISOString(),
     data,
     excludedSecrets: [
