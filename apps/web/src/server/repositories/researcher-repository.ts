@@ -87,7 +87,7 @@ const fixtureProfile: ProfileResponse = {
   countryCode: "GB",
   location: "Oxford · GB",
   orcid: "0000-0002-1825-0097",
-  profilePublic: true,
+  profilePublic: false,
   topicSlugs: ["oncology", "cancer-immunotherapy", "biomarkers"],
   methodSlugs: ["translational-research", "biomarker-analysis"],
   accountRole: "researcher",
@@ -139,6 +139,7 @@ async function loadProfileByUserId(userId: string) {
       userId,
       fullName: user.name.trim() || user.email.split("@")[0] || "Researcher",
       collaborationGoals: [],
+      profilePublic: false,
     },
   });
 
@@ -164,6 +165,7 @@ type LoadedProfile = NonNullable<Awaited<ReturnType<typeof loadProfileByUserId>>
 
 function mapLoadedProfile(profile: LoadedProfile): ProfileResponse {
   const affiliation = profile.affiliations[0];
+  const profileDetails = (profile.profileDetails as ProfileResponse["profileDetails"]) ?? {};
   const orcidVerified = profile.evidence.some(
     (record) => record.fieldPath === "orcid" && record.sourceType === "ORCID",
   );
@@ -173,7 +175,7 @@ function mapLoadedProfile(profile: LoadedProfile): ProfileResponse {
     fullName: profile.fullName,
     headline: profile.headline ?? "Medical researcher",
     imageUrl: profile.user?.image ?? null,
-    institution: affiliation?.organization.name ?? "Independent researcher",
+    institution: affiliation?.organization.name ?? (profileDetails.unlistedInstitution ? `${profileDetails.unlistedInstitution} (self-reported)` : "Independent researcher"),
     organizationId: affiliation?.organizationId ?? null,
     careerStage: profile.careerStage ?? "Researcher",
     availability: mapAvailability(profile.availabilityMode),
@@ -195,7 +197,7 @@ function mapLoadedProfile(profile: LoadedProfile): ProfileResponse {
     topicSlugs: profile.topics.map(({ topic }) => topic.slug),
     methodSlugs: profile.methods.map(({ method }) => method.slug),
     accountRole: mapAccountRole(profile.user?.role ?? "RESEARCHER"),
-    profileDetails: (profile.profileDetails as ProfileResponse["profileDetails"]) ?? {},
+    profileDetails,
   };
   result.completeness = calculateProfileCompleteness(result);
   return result;

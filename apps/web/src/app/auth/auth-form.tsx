@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
+import { useRetryCooldown } from "@/lib/use-retry-cooldown";
 import { safeReturnPath } from "@/lib/navigation";
 import type { IndividualProfileRole, InstitutionalOrganizationType } from "@/lib/api-contracts";
 import styles from "./auth.module.css";
@@ -34,14 +35,17 @@ export function AuthForm({
   initialKind = "individual",
   initialRole = "researcher",
   initialOrganizationType = "university",
+  availability,
 }: {
   callbackUrl?: string;
   mode?: AuthMode;
   initialKind?: AccountKind;
   initialRole?: IndividualProfileRole;
   initialOrganizationType?: InstitutionalOrganizationType;
+  availability?: ReactNode;
 }) {
   const router = useRouter();
+  const { remaining, onError } = useRetryCooldown();
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [message, setMessage] = useState("");
   const [signUpStep, setSignUpStep] = useState<"identity" | "credentials">("identity");
@@ -57,6 +61,7 @@ export function AuthForm({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (status === "loading" || remaining > 0) return;
     setStatus("loading");
     setMessage("");
     const form = new FormData(event.currentTarget);
@@ -72,8 +77,8 @@ export function AuthForm({
       }
 
       const result = mode === "sign-up"
-        ? await authClient.signUp.email({ email, password, name, callbackURL: signUpDestination })
-        : await authClient.signIn.email({ email, password, callbackURL: signInDestination });
+        ? await authClient.signUp.email({ email, password, name, callbackURL: signUpDestination }, { onError })
+        : await authClient.signIn.email({ email, password, callbackURL: signInDestination }, { onError });
 
       if (result.error) {
         setStatus("error");
@@ -149,12 +154,15 @@ export function AuthForm({
             {mode === "sign-up" ? <label><span>Confirm password</span><input name="passwordConfirmation" type="password" minLength={12} maxLength={128} autoComplete="new-password" required /></label> : null}
             {mode === "sign-up" ? <p className={styles.selectionSummary}>{accountKind === "individual" ? individualRoles.find(([value]) => value === accountRole)?.[1] : organizationTypes.find(([value]) => value === organizationType)?.[1]} account</p> : null}
             {message ? <p className={styles.error} role="alert">{message}</p> : null}
+            {remaining > 0 ? <p role="status">Too many attempts. Retry in {remaining} seconds. Your entries are retained.</p> : null}
             <div className={styles.formActions}>
               {mode === "sign-up" ? <button className="secondaryButton" type="button" disabled={status === "loading"} onClick={() => setSignUpStep("identity")}>Back</button> : null}
-              <button className="primaryButton" type="submit" disabled={status === "loading"}>{status === "loading" ? "Please wait…" : mode === "sign-up" ? "Create account" : "Sign in"}</button>
+              <button className="primaryButton" type="submit" disabled={status === "loading" || remaining > 0}>{remaining > 0 ? `Retry in ${remaining}s` : status === "loading" ? "Please wait…" : mode === "sign-up" ? "Create account" : "Sign in"}</button>
             </div>
           </form>
         )}
+        {availability}
+        {mode === "sign-in" ? <p className={styles.switcher}><Link href="/auth/forgot-password">Forgot your password?</Link></p> : null}
         <p className={styles.switcher}>
           {mode === "sign-up" ? <>Already have an account? <Link href={`/auth/sign-in${returnQuery ? `?${returnQuery}` : ""}`}>Sign in</Link></> : <>New to Studepartment? <Link href={`/auth/sign-up${returnQuery ? `?${returnQuery}` : ""}`}>Create an account</Link></>}
         </p>

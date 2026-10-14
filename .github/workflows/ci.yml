@@ -60,6 +60,8 @@ jobs:
         run: pnpm lint
       - name: Typecheck
         run: pnpm typecheck
+      - name: Unit and audit regression tests
+        run: node scripts/test-unit.mjs
       - name: Production build
         run: pnpm build
       - name: Production runtime smoke

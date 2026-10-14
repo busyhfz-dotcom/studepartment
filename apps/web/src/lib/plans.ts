@@ -7,6 +7,14 @@ export const proPlans = [
 
 export type ProPlanId = (typeof proPlans)[number]["id"];
 
+export function effectiveMonthlyPrice(plan: { amountCents: number; intervalMonths: number }) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(plan.amountCents / plan.intervalMonths / 100);
+}
+
+export const lowestMonthlyPlan = proPlans.reduce((best, plan) =>
+  plan.amountCents / plan.intervalMonths < best.amountCents / best.intervalMonths ? plan : best,
+);
+
 export const proFeatures = [
   "Evidence Graph across researchers, publications, institutions and opportunities",
   "Citation-grounded Research Assistant",

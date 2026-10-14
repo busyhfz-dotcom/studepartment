@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ProductShell } from "@/components/shell/product-shell";
-import { proFeatures, proPlans } from "@/lib/plans";
+import { effectiveMonthlyPrice, proFeatures, proPlans } from "@/lib/plans";
 import { getCurrentUser } from "@/server/auth/current-user";
 import styles from "./page.module.css";
 
@@ -24,7 +24,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
           <h1>{plan.label} plan</h1>
           <p>Unlock Studepartment&apos;s evidence intelligence when your research needs it. Your profile, public discovery and opportunity tracking stay free.</p>
         </div>
-        <div className={styles.price}><strong>{plan.price}</strong><span>{plan.cadence}</span></div>
+        <div className={styles.price}><strong>{plan.price}</strong><span>{plan.cadence}</span><span>{effectiveMonthlyPrice(plan)} per month equivalent · {plan.intervalMonths} months covered</span></div>
       </section>
       <div className={styles.columns}>
         <section className={styles.card}><span className="sectionLabel">Included in Pro</span><ul>{proFeatures.map((feature) => <li key={feature}>{feature}</li>)}</ul></section>

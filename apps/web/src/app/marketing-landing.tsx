@@ -4,6 +4,7 @@ import { OpportunityTicker, PlatformTabs, MobileNav, Reveal } from "./marketing-
 import styles from "./marketing-landing.module.css";
 import { BrandSymbol, ResearchPreview } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
+import { FeatureAvailability } from "@/components/feature-availability";
 
 /** Public platform overview, retaining the original copy and live opportunity feed. */
 
@@ -136,6 +137,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
             </div>
             <ResearchPreview />
             <OpportunityTicker ticker={ticker} />
+            <FeatureAvailability />
           </div>
         </section>
 

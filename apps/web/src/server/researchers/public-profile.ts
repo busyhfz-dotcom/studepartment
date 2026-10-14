@@ -61,6 +61,7 @@ export async function getPublicResearcherProfile(researcherId: string) {
   }
 
   const affiliation = profile.affiliations[0];
+  const profileDetails = visibleDetails(profile.profileDetails) as IndividualProfileDetails | null;
   const orcidVerified = profile.evidence.some(
     (record) => record.sourceType === "ORCID" && record.fieldPath === "orcid",
   );
@@ -74,11 +75,11 @@ export async function getPublicResearcherProfile(researcherId: string) {
     imageUrl: profile.user?.image ?? null,
     headline: profile.headline ?? profile.careerStage ?? "Medical researcher",
     bio: profile.bio,
-    institution: affiliation?.organization.name ?? "Independent researcher",
+    institution: affiliation?.organization.name ?? (profileDetails?.unlistedInstitution ? `${profileDetails.unlistedInstitution} (self-reported)` : "Independent researcher"),
     institutionVerified: Boolean(affiliation?.organization.verified),
     location: [profile.city, profile.countryCode].filter(Boolean).join(" · ") || "Location not shared",
     careerStage: profile.careerStage ?? "Researcher",
-    profileDetails: visibleDetails(profile.profileDetails) as IndividualProfileDetails | null,
+    profileDetails,
     orcid: profile.orcid,
     documents,
     verified: profile.verified,

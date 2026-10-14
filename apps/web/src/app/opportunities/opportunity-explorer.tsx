@@ -8,6 +8,7 @@ import type {
   OpportunityTypeValue,
 } from "@/lib/api-contracts";
 import { FeedbackControls } from "@/components/feedback/feedback-controls";
+import { researchTopics } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
 import { SaveOpportunityButton } from "./save-opportunity-button";
 
@@ -23,14 +24,7 @@ const typeOptions: Array<{ value: "" | OpportunityTypeValue; label: string }> = 
   { value: "research-assistantship", label: "Research assistantships" },
 ];
 
-const topicOptions = [
-  { value: "", label: "All research topics" },
-  { value: "oncology", label: "Oncology" },
-  { value: "cancer-immunotherapy", label: "Cancer immunotherapy" },
-  { value: "biomarkers", label: "Biomarkers" },
-  { value: "clinical-trials", label: "Clinical trials" },
-  { value: "computational-oncology", label: "Computational oncology" },
-];
+const topicOptions = [{ value: "", label: "All research topics" }, ...researchTopics.map(([value, label]) => ({ value, label }))];
 
 function formatDate(value?: string) {
   if (!value) return "Not published";
@@ -42,11 +36,12 @@ function typeLabel(value: OpportunityTypeValue) {
 }
 
 export function OpportunityExplorer() {
-  const [query, setQuery] = useState("translational oncology");
+  const [query, setQuery] = useState("");
   const [type, setType] = useState<"" | OpportunityTypeValue>("");
-  const [topic, setTopic] = useState("oncology");
+  const [topic, setTopic] = useState("");
   const [country, setCountry] = useState("");
-  const [deadlineWindow, setDeadlineWindow] = useState("90");
+  const [deadlineWindow, setDeadlineWindow] = useState("");
+  const [searchedWithFilters, setSearchedWithFilters] = useState(false);
   const [data, setData] = useState<OpportunityIntelligenceResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +50,7 @@ export function OpportunityExplorer() {
     event?.preventDefault();
     setLoading(true);
     setError(null);
+    setSearchedWithFilters(Boolean(query.trim() || type || topic || country.trim() || deadlineWindow));
 
     const params = new URLSearchParams();
     if (query.trim()) params.set("q", query.trim());
@@ -163,8 +159,9 @@ export function OpportunityExplorer() {
 
         {!loading && data?.results.length === 0 ? (
           <div className={styles.emptyState}>
-            <strong>No current opportunities meet these constraints.</strong>
-            <p>Broaden one scientific or deadline filter rather than receiving stale or low-quality filler records.</p>
+            <strong>{searchedWithFilters ? "No current opportunities match this search." : "No current opportunities are listed."}</strong>
+            <p>{searchedWithFilters ? "Try fewer filters, or browse original sources." : "The current feed is empty. You can browse official position and funding sources in Scanner."}</p>
+            <a href="/scanner">Explore official sources in Scanner →</a>
           </div>
         ) : null}
 
