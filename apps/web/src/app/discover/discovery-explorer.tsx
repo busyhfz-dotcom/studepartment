@@ -142,7 +142,7 @@ export function DiscoveryExplorer() {
 
           <div className={styles.searchMetaRow}>
             <div className={styles.metaPills}>
-              <span>Canonical scientific identity</span>
+              <span>Scientific identity</span>
               <span>Source-aware confidence</span>
               <span>Maximum 8 results</span>
             </div>
@@ -160,7 +160,7 @@ export function DiscoveryExplorer() {
             <h2>{data ? `${data.results.length} focused results` : "Run a focused search"}</h2>
           </div>
           <p>
-            Ordering is based on scientific intent, structured research signals, availability, and source confidence—not popularity.
+            Results are ordered by how closely the research matches, availability and source confidence, not by popularity.
           </p>
         </div>
 
