@@ -24,11 +24,11 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
     <main className="shell onboardingShell">
       <ScientificBackdrop tone="light" />
       <header className="onboardingHeader">
-        <Link className="backLink" href="/start">← Studepartment</Link>
-        <span className="eyebrow">Scientific Identity Calibration</span>
-        <h1>Calibrate the scientific context behind every research decision.</h1>
+        <Link className="backLink" href="/start">← Provenant</Link>
+        <span className="eyebrow">Scientific Identity setup</span>
+        <h1>Set up your research profile.</h1>
         <p className="lede">
-          Four focused steps establish your research context, methods, collaboration posture, and evidence visibility without turning identity into a social profile.
+          Four short steps: your background, your research focus, the collaborations you are open to and what others can see.
         </p>
         <Link className="secondary" href={"/onboarding/organization?callbackUrl=" + encodeURIComponent(safeReturnPath(callbackUrl, "/organization/profile"))}>
           Setting up a lab, hospital, or institution instead? Switch to an institutional profile ↗
