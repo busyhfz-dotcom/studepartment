@@ -1,6 +1,6 @@
-# Studepartment Product Vision
+# Provenant Product Vision
 
-Studepartment is an AI-powered, privacy-first scientific intelligence and connection platform for medical and biomedical research.
+Provenant is an AI-powered, privacy-first scientific intelligence and connection platform for medical and biomedical research.
 
 ## Mission
 
@@ -15,7 +15,7 @@ Reduce the friction involved in finding the right researcher, laboratory, instit
 5. Explainable AI recommendations.
 6. Scientific data provenance and freshness.
 
-## What Studepartment is not
+## What Provenant is not
 
 - A public social feed.
 - A follower competition.
