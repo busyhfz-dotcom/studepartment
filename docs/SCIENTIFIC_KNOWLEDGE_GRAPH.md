@@ -1,6 +1,6 @@
 # Scientific Knowledge Graph v0.9
 
-The Scientific Evidence Graph is a derived read model over Studepartment's canonical relational data.
+The Scientific Evidence Graph is a derived read model over Provenant's canonical relational data.
 
 It is deliberately not a second source of truth and does not introduce a separate graph database in v0.9.
 
