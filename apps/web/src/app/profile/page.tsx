@@ -17,7 +17,7 @@ const orcidMessages: Record<string, { text: string; error?: boolean }> = {
   "import-failed": { text: "ORCID ownership was verified, but importing public information could not finish. Retry from your ORCID connection page.", error: true },
   "public-import-failed": { text: "Your profile and ORCID iD were saved. Public ORCID information could not be retrieved; retry from your ORCID connection page.", error: true },
   "import-unavailable": { text: "Your profile and ORCID iD were saved. Automatic import is awaiting activation of the platform's ORCID connection.", error: true },
-  connected: { text: "ORCID ownership verified. You can now synchronize public works and corroborate matching publication metadata with PubMed." },
+  connected: { text: "ORCID connected. You can now sync your public works and check matching publications against PubMed." },
   denied: { text: "ORCID authorization was cancelled. No profile data or verification state was changed.", error: true },
   "invalid-state": { text: "ORCID verification could not be completed because the authorization state was invalid or expired. Try again from profile settings.", error: true },
   conflict: { text: "That ORCID iD is already connected to another scientific identity. No change was made.", error: true },
