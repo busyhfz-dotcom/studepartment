@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     });
 
     const user = await requireCurrentUser();
-    if (!canUseProFeature(user)) return errorResponse(402, "PRO_REQUIRED", "Research Assistant is available with Studepartment Pro.");
+    if (!canUseProFeature(user)) return errorResponse(402, "PRO_REQUIRED", "Research Assistant is available with Provenant Pro.");
     await consumeRateLimit("research-assistant-user", "user:" + user.id, {
       windowSeconds: 60 * 60,
       max: 60,
