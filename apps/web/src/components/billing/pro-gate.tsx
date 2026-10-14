@@ -5,9 +5,9 @@ import styles from "./pro-gate.module.css";
 export function ProGate({ feature }: { feature: string }) {
   return <section className={styles.shell}>
     <div className={styles.hero}>
-      <span className="eyebrow">Studepartment Pro</span>
+      <span className="eyebrow">Provenant Pro</span>
       <h1>Go deeper when your research needs it.</h1>
-      <p><strong>{feature}</strong> uses Studepartment&apos;s evidence intelligence. Your profile, public discovery and opportunity tracking remain free.</p>
+      <p><strong>{feature}</strong> is part of Provenant Pro. Your profile, public search and opportunity tracking stay free.</p>
       <div className={styles.heroActions}><Link className="secondary" href="/profile">Return to free profile</Link><Link className="secondary" href="/opportunities">Explore opportunities</Link></div>
     </div>
     <div className={styles.features}>
