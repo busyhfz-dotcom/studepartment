@@ -196,6 +196,7 @@ export type CareerPreferences = {
 };
 
 export type IndividualProfileDetails = {
+  unlistedInstitution?: string | null;
   degreeProgram?: string | null;
   graduationYear?: string | null;
   thesisTopic?: string | null;

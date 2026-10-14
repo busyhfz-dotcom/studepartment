@@ -2,6 +2,8 @@ import { getDb } from "@studepartment/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { getCoreRuntimeConfig } from "@/server/config/environment";
+import { after } from "next/server";
+import { isEmailDeliveryConfigured, sendEmail } from "@/server/notifications/email";
 
 const runtime = getCoreRuntimeConfig();
 const trustedOrigin = new URL(runtime.betterAuthUrl).origin;
@@ -18,6 +20,7 @@ export const auth = betterAuth({
   appName: "Studepartment",
   database: prismaAdapter(getDb(), {
     provider: "postgresql",
+    transaction: true,
   }),
   secret: runtime.betterAuthSecret,
   baseURL: runtime.betterAuthUrl,
@@ -26,6 +29,17 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 12,
     maxPasswordLength: 128,
+    revokeSessionsOnPasswordReset: true,
+    ...(isEmailDeliveryConfigured() ? {
+      sendResetPassword: async ({ user, url }: { user: { email: string }; url: string }) => {
+        // Send after responding so account existence cannot be inferred from delivery latency.
+        after(async () => {
+          const safeUrl = url.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+          const result = await sendEmail({ to: user.email, subject: "Reset your Studepartment password", text: `Reset your password: ${url}\nIf you did not request this, ignore this email.`, html: `<p><a href="${safeUrl}">Reset your password</a></p><p>If you did not request this, ignore this email.</p>` });
+          if (!result.sent) console.error("[auth] password reset email delivery failed", result.reason);
+        });
+      },
+    } : {}),
   },
   session: {
     expiresIn: 60 * 60 * 24 * 14,
@@ -41,6 +55,7 @@ export const auth = betterAuth({
       "/sign-in/email": { window: 60, max: 8 },
       "/sign-up/email": { window: 300, max: 5 },
       "/forget-password": { window: 300, max: 5 },
+      "/request-password-reset": { window: 300, max: 5 },
       "/reset-password": { window: 300, max: 8 },
     },
   },

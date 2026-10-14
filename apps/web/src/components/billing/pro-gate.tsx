@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { freeFeatures, proFeatures, proPlans } from "@/lib/plans";
+import { effectiveMonthlyPrice, lowestMonthlyPlan, freeFeatures, proFeatures, proPlans } from "@/lib/plans";
 import styles from "./pro-gate.module.css";
 
 export function ProGate({ feature }: { feature: string }) {
@@ -15,7 +15,8 @@ export function ProGate({ feature }: { feature: string }) {
       <section><span className="sectionLabel">Pro intelligence</span><ul>{proFeatures.map((feature) => <li key={feature}>✦ {feature}</li>)}</ul></section>
     </div>
     <div className={styles.pricingHeading}><span className="sectionLabel">Planned pricing</span><h2>One Pro membership. Four billing options.</h2><p>Prices are in USD. Paid subscriptions are not available yet.</p></div>
-    <div className={styles.plans}>{proPlans.map((plan) => <article className={styles.plan} key={plan.id}><span>{plan.label}</span><strong>{plan.price}</strong><small>{plan.cadence}</small><Link className={styles.planLink} href={`/billing/checkout?plan=${plan.id}`}>View plan details →</Link></article>)}</div>
+    <div className={styles.plans}>{proPlans.map((plan) => <article className={styles.plan} key={plan.id}><span>{plan.label}</span><strong>{plan.price}</strong><small>{plan.cadence} · {plan.intervalMonths} month{plan.intervalMonths > 1 ? "s" : ""} total</small><p>{effectiveMonthlyPrice(plan)} per month equivalent</p>{plan.id === lowestMonthlyPlan.id ? <small>Lowest monthly equivalent in current planned pricing</small> : null}<Link className={styles.planLink} href={`/billing/checkout?plan=${plan.id}`}>View plan details →</Link></article>)}</div>
+    <p className={styles.availability}>Longer billing periods do not currently have a lower monthly price than the three-month option. Compare the monthly equivalents before choosing.</p>
     <p className={styles.availability}>There is no charge or payment form now. Existing research tools are available during the Pro preview.</p>
   </section>;
 }

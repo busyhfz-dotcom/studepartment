@@ -1,22 +1,11 @@
+import { researchTopics, researchMethods } from "../src/taxonomy";
 import { getDb } from "../src/client";
 
 const db = getDb();
 
 async function upsertTaxonomy() {
-  const topics = [
-    ["oncology", "Oncology"],
-    ["cancer-immunotherapy", "Cancer Immunotherapy"],
-    ["biomarkers", "Biomarkers"],
-    ["clinical-trials", "Clinical Trials"],
-    ["computational-oncology", "Computational Oncology"],
-  ] as const;
-
-  const methods = [
-    ["clinical-trial-design", "Clinical trial design"],
-    ["translational-research", "Translational research"],
-    ["biomarker-analysis", "Biomarker analysis"],
-    ["machine-learning", "Machine learning"],
-  ] as const;
+  const topics = researchTopics;
+  const methods = researchMethods;
 
   for (const [slug, name] of topics) {
     await db.researchTopic.upsert({ where: { slug }, update: { name }, create: { slug, name } });

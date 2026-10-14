@@ -370,7 +370,7 @@ function StartJourney() {
           <div className={styles.results}>
             {searchError && !loading ? <div className={styles.empty} role="alert">{searchError} <button type="button" className={styles.primary} onClick={() => { setLoading(true); setSearchAttempt((value) => value + 1); }}>Retry search</button></div> : null}
             {!loading && !searchError && results.length === 0 ? (
-              <div className={styles.empty}>No opportunities match this search yet. Try a broader term.</div>
+              <div className={styles.empty}><p>{query.trim() || country.trim() ? "No opportunities match these filters. Try fewer filters or browse original sources." : `No current ${kind === "grant" ? "grants" : "positions"} are listed.`}</p><Link href="/scanner">Explore official sources in Scanner →</Link></div>
             ) : (
               results.map((item) => (
                 <article className={styles.result} key={item.id}>

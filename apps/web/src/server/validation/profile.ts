@@ -35,7 +35,7 @@ const allowedKeys = new Set([
 
 const accountRoles = new Set<IndividualProfileRole>(["student", "researcher", "professor"]);
 const profileDetailKeys = new Set<keyof IndividualProfileDetails>([
-  "degreeProgram", "graduationYear", "thesisTopic", "supervisorName", "academicTitle", "department",
+  "unlistedInstitution", "degreeProgram", "graduationYear", "thesisTopic", "supervisorName", "academicTitle", "department",
   "currentProject", "yearsExperience", "labName", "supervisionStatus",
   "skills", "orcidKeywords", "languages", "experience", "education", "projects", "awards", "grants",
   "memberships", "teaching", "peerReview", "links", "careerPreferences",

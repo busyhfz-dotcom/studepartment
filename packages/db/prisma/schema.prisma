@@ -347,7 +347,7 @@ model ResearcherProfile {
   careerStage        String?
   orcid              String?                 @unique
   verified           Boolean                 @default(false)
-  profilePublic      Boolean                 @default(true)
+  profilePublic      Boolean                 @default(false)
   availabilityMode   AvailabilityMode        @default(SELECTIVE)
   collaborationGoals CollaborationGoal[]
   profileDetails     Json?

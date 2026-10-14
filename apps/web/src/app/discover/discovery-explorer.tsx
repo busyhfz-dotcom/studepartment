@@ -9,26 +9,14 @@ import type {
   ResearcherDiscoveryResponse,
 } from "@/lib/api-contracts";
 import { FeedbackControls } from "@/components/feedback/feedback-controls";
+import { researchTopics, researchMethods } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
 
 type DiscoveryApiResponse = ApiSuccess<ResearcherDiscoveryResponse> | ApiError;
 
-const topicOptions = [
-  { value: "", label: "All research topics" },
-  { value: "oncology", label: "Oncology" },
-  { value: "cancer-immunotherapy", label: "Cancer immunotherapy" },
-  { value: "biomarkers", label: "Biomarkers" },
-  { value: "clinical-trials", label: "Clinical trials" },
-  { value: "computational-oncology", label: "Computational oncology" },
-];
+const topicOptions = [{ value: "", label: "All research topics" }, ...researchTopics.map(([value, label]) => ({ value, label }))];
 
-const methodOptions = [
-  { value: "", label: "All methods" },
-  { value: "clinical-trial-design", label: "Clinical trial design" },
-  { value: "translational-research", label: "Translational research" },
-  { value: "biomarker-analysis", label: "Biomarker analysis" },
-  { value: "machine-learning", label: "Machine learning" },
-];
+const methodOptions = [{ value: "", label: "All methods" }, ...researchMethods.map(([value, label]) => ({ value, label }))];
 
 const availabilityOptions: Array<{ value: "" | DiscoveryAvailability; label: string }> = [
   { value: "", label: "Any availability" },

@@ -174,7 +174,7 @@ export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker 
     <aside className={`${styles.heroDesk} ${selected ? styles.isSelected : ""} ${paused ? styles.tickerPaused : ""}`} aria-label="Latest position and grant preview">
       <div className={styles.deskHeading}>
         <span>Latest opportunities</span>
-        <span>Live from Studepartment</span>
+        <span>{ticker.available ? `${ticker.stats.totalPositions} positions · ${ticker.stats.totalGrants} grants` : "Feed unavailable"}</span>
         {entries.length ? <button
           type="button"
           className={styles.tickerMotionToggle}
@@ -219,7 +219,7 @@ export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker 
           </div>
         </div>
       ) : (
-        <p className={styles.latestLoading}>New opportunities are being added — check back shortly.</p>
+        <p className={styles.latestLoading}>{ticker.available ? "No current positions or grants are listed." : "The opportunity feed is unavailable right now."} <Link href="/scanner">Explore official sources in Scanner ↗</Link></p>
       )}
 
       {selected ? (
@@ -233,12 +233,12 @@ export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker 
           <h3>{selected.title}</h3>
           <p>{selected.organization}</p>
           <div className={styles.detailDeadline}>{selected.deadlineLabel}</div>
-          <Link href="/opportunities">Browse opportunities ↗</Link>
+          <Link href={`/start?step=detail&kind=${selected.kind === "Grant" ? "grant" : "position"}&opportunity=${encodeURIComponent(selected.id)}`}>Review this opportunity ↗</Link>
         </div>
       ) : null}
 
       <div className={styles.deskFooter}>
-        <span>Refreshed continuously from verified sources.</span>
+        <span>Published listings only. Review each original source and deadline.</span>
         <Link href="/opportunities">Browse all ↗</Link>
       </div>
     </aside>

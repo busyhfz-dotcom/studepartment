@@ -9,6 +9,7 @@ export type PublicTickerItem = {
 };
 
 export type PublicOpportunityTicker = {
+  available: boolean;
   positions: PublicTickerItem[];
   grants: PublicTickerItem[];
   generatedAt: string;
@@ -27,24 +28,21 @@ function formatDeadline(deadline: Date | null, precision: string): string {
   return `Deadline ${deadline.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
 }
 
-const fixtureTicker: PublicOpportunityTicker = {
-  generatedAt: new Date().toISOString(),
-  positions: [
-    { id: "demo-postdoc-1", title: "Postdoctoral Researcher · Cancer Immunotherapy", organization: "Studepartment Demo Research Institute", countryCode: "DE", deadlineLabel: "Deadline in 6 weeks" },
-    { id: "demo-phd-1", title: "PhD Position · Computational Oncology", organization: "Nordic Biomedical Graduate School", countryCode: "SE", deadlineLabel: "Rolling / no fixed deadline" },
-    { id: "demo-fellowship-1", title: "Clinical Research Fellowship · Neuro-oncology", organization: "Alpine University Hospital", countryCode: "CH", deadlineLabel: "Deadline in 3 weeks" },
-  ],
-  grants: [
-    { id: "demo-grant-1", title: "Early-Career Investigator Grant · Translational Immunology", organization: "European Biomedical Research Council", countryCode: "BE", deadlineLabel: "Deadline in 2 months" },
-    { id: "demo-grant-2", title: "Seed Funding · Rare Disease Genomics", organization: "Pacific Genomics Foundation", countryCode: "US", deadlineLabel: "Deadline in 5 weeks" },
-  ],
-  stats: { totalPositions: 3, totalGrants: 2, countries: 4 },
-};
-
 export async function getPublicOpportunityTicker(): Promise<PublicOpportunityTicker> {
-  if (!process.env.DATABASE_URL) return fixtureTicker;
+  const unavailable: PublicOpportunityTicker = {
+    available: false, generatedAt: new Date().toISOString(), positions: [], grants: [],
+    stats: { totalPositions: 0, totalGrants: 0, countries: 0 },
+  };
+  if (!process.env.DATABASE_URL) return unavailable;
+  try {
+    return await loadPublicOpportunityTicker(getDb());
+  } catch (error) {
+    console.error("[opportunities] public ticker unavailable", error);
+    return unavailable;
+  }
+}
 
-  const db = getDb();
+export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof getDb>, "opportunity">): Promise<PublicOpportunityTicker> {
   const now = new Date();
   const activeUpcoming = { status: "ACTIVE" as const, OR: [{ deadline: null }, { deadline: { gte: now } }] };
 
@@ -94,13 +92,14 @@ export async function getPublicOpportunityTicker(): Promise<PublicOpportunityTic
     }));
 
   return {
+    available: true,
     generatedAt: now.toISOString(),
-    positions: map(positions).length ? map(positions) : fixtureTicker.positions,
-    grants: map(grants).length ? map(grants) : fixtureTicker.grants,
+    positions: map(positions),
+    grants: map(grants),
     stats: {
-      totalPositions: totalPositions || fixtureTicker.stats.totalPositions,
-      totalGrants: totalGrants || fixtureTicker.stats.totalGrants,
-      countries: countries.length || fixtureTicker.stats.countries,
+      totalPositions,
+      totalGrants,
+      countries: countries.length,
     },
   };
 }

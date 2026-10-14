@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/client.ts"
+    ".": "./src/client.ts",
+    "./taxonomy": "./src/taxonomy.ts"
   },
   "scripts": {
     "generate": "prisma generate",

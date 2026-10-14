@@ -10,6 +10,7 @@ import type {
   ProfileResponse,
   ProfileUpdateInput,
 } from "@/lib/api-contracts";
+import { researchTopics, researchMethods } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
@@ -17,20 +18,9 @@ import { ProfessionalProfileFields } from "./professional-profile-fields";
 import { ResearchProfileActions } from "@/components/scientific/research-profile-actions";
 import { researchProfileUrl } from "@/lib/research-profile-sources";
 
-const topicOptions = [
-  ["oncology", "Oncology"],
-  ["cancer-immunotherapy", "Cancer immunotherapy"],
-  ["biomarkers", "Biomarkers"],
-  ["clinical-trials", "Clinical trials"],
-  ["computational-oncology", "Computational oncology"],
-] as const;
+const topicOptions = researchTopics;
 
-const methodOptions = [
-  ["clinical-trial-design", "Clinical trial design"],
-  ["translational-research", "Translational research"],
-  ["biomarker-analysis", "Biomarker analysis"],
-  ["machine-learning", "Machine learning"],
-] as const;
+const methodOptions = researchMethods;
 
 const collaborationOptions: Array<[CollaborationGoalValue, string]> = [
   ["research-collaboration", "Research collaboration"],
@@ -60,6 +50,7 @@ export function ProfileEditor({
   organizations: OrganizationOption[];
 }) {
   const router = useRouter();
+  const [focusSearch, setFocusSearch] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [accountRole, setAccountRole] = useState<IndividualProfileRole>(profile.accountRole);
@@ -108,6 +99,7 @@ export function ProfileEditor({
       profileDetails: accountRole === "student"
         ? {
             ...professionalDetails,
+            unlistedInstitution: String(form.get("unlistedInstitution") ?? "") || null,
             degreeProgram: String(form.get("degreeProgram") ?? "") || null,
             graduationYear: String(form.get("graduationYear") ?? "") || null,
             thesisTopic: String(form.get("thesisTopic") ?? "") || null,
@@ -115,6 +107,7 @@ export function ProfileEditor({
           }
         : {
             ...professionalDetails,
+            unlistedInstitution: String(form.get("unlistedInstitution") ?? "") || null,
             academicTitle: String(form.get("academicTitle") ?? "") || null,
             department: String(form.get("department") ?? "") || null,
             ...(accountRole === "researcher"
@@ -237,6 +230,8 @@ export function ProfileEditor({
         </div>
       </section>
 
+      <label className={styles.fieldGroup}><span>Institution not in the directory (optional)</span><input name="unlistedInstitution" defaultValue={profile.profileDetails?.unlistedInstitution ?? ""} maxLength={240} /><small>Self-reported affiliation; this does not verify an institution.</small></label>
+
       <ProfessionalProfileFields onBusyChange={(delta) => setFileUploads((count) => count + delta)} value={professionalDetails} onChange={setProfessionalDetails} orcid={orcid} onOrcidChange={setOrcid} />
 
       <section className={styles.editorSection}>
@@ -259,14 +254,15 @@ export function ProfileEditor({
             <span className="sectionLabel">Canonical research focus</span>
             <h2>Topics and methods</h2>
           </div>
-          <p>Structured terms support explainable retrieval. They are matching inputs, not expertise ratings or reputation signals.</p>
+        <p>Structured terms support explainable retrieval. Search the catalog to narrow the choices. Selected terms remain saved when hidden by a search.</p>
         </div>
+        <label className={styles.fieldGroup}><span>Search topics and methods</span><input type="search" value={focusSearch} onChange={(e) => setFocusSearch(e.target.value)} /></label>
         <div className={styles.choiceColumns}>
           <fieldset className={styles.choiceGroup}>
             <legend>Topics</legend>
             <div className={styles.choiceList}>
               {topicOptions.map(([value, label]) => (
-                <label key={value} className={styles.checkRow}>
+                <label hidden={!label.toLowerCase().includes(focusSearch.toLowerCase())} key={value} className={styles.checkRow}>
                   <input type="checkbox" name="topicSlugs" value={value} defaultChecked={topicDefaults.has(value)} />
                   <span>{label}</span>
                 </label>
@@ -277,7 +273,7 @@ export function ProfileEditor({
             <legend>Methods</legend>
             <div className={styles.choiceList}>
               {methodOptions.map(([value, label]) => (
-                <label key={value} className={styles.checkRow}>
+                <label hidden={!label.toLowerCase().includes(focusSearch.toLowerCase())} key={value} className={styles.checkRow}>
                   <input type="checkbox" name="methodSlugs" value={value} defaultChecked={methodDefaults.has(value)} />
                   <span>{label}</span>
                 </label>
@@ -343,7 +339,7 @@ export function ProfileEditor({
         </div>
         <div className={styles.visibilityGrid}>
           <label className={styles.visibilityToggle}>
-            <input name="profilePublic" type="checkbox" defaultChecked={profile.profilePublic ?? true} />
+            <input name="profilePublic" type="checkbox" defaultChecked={profile.profilePublic ?? false} />
             <span>
               <strong>Include this Scientific Identity in researcher discovery</strong>
               <small>Turn this off to remove the profile from researcher discovery while retaining your account and private workspace.</small>

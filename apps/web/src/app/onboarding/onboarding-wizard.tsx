@@ -5,24 +5,14 @@ import { DocumentManager } from "@/components/files/document-manager";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { CollaborationGoalValue, IndividualProfileDetails, IndividualProfileRole, OrganizationOption, ProfileResponse, ProfileUpdateInput } from "@/lib/api-contracts";
+import { researchTopics, researchMethods } from "@studepartment/db/taxonomy";
 import styles from "./onboarding.module.css";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
 import { ResearchProfileActions } from "@/components/scientific/research-profile-actions";
 
-const topics = [
-  ["oncology", "Oncology"],
-  ["cancer-immunotherapy", "Cancer immunotherapy"],
-  ["biomarkers", "Biomarkers"],
-  ["clinical-trials", "Clinical trials"],
-  ["computational-oncology", "Computational oncology"],
-] as const;
-const methods = [
-  ["clinical-trial-design", "Clinical trial design"],
-  ["translational-research", "Translational research"],
-  ["biomarker-analysis", "Biomarker analysis"],
-  ["machine-learning", "Machine learning"],
-] as const;
+const topics = researchTopics;
+const methods = researchMethods;
 const goals: Array<[CollaborationGoalValue, string]> = [
   ["research-collaboration", "Research collaboration"],
   ["mentorship", "Mentorship"],
@@ -39,6 +29,7 @@ function initialGoal(label: string): CollaborationGoalValue | null {
 
 export function OnboardingWizard({ profile, organizations, initialRole, callbackUrl = "/profile" }: { profile: ProfileResponse; organizations: OrganizationOption[]; initialRole?: IndividualProfileRole; callbackUrl?: string }) {
   const router = useRouter();
+  const [focusSearch, setFocusSearch] = useState("");
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -56,7 +47,7 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
     methodSlugs: profile.methodSlugs ?? [],
     collaborationGoals: profile.collaborationGoals.map(initialGoal).filter((value): value is CollaborationGoalValue => Boolean(value)),
     availability: profile.availability,
-    profilePublic: profile.profilePublic ?? true,
+    profilePublic: profile.profilePublic ?? false,
     orcid: profile.orcid ?? null,
     accountRole: initialRole ?? profile.accountRole,
     profileDetails: profile.profileDetails ?? {},
@@ -124,6 +115,7 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
               <label><span>Headline</span><input value={draft.headline ?? ""} onChange={(e) => setDraft({ ...draft, headline: e.target.value })} /></label>
               <label><span>Career stage / title</span><input value={draft.careerStage ?? ""} onChange={(e) => setDraft({ ...draft, careerStage: e.target.value })} /></label>
               <label><span>Institution</span><select value={draft.organizationId ?? ""} onChange={(e) => setDraft({ ...draft, organizationId: e.target.value || null })}><option value="">Independent / not listed</option>{organizations.map((org) => <option key={org.id} value={org.id}>{org.name}{org.verified ? " · verified" : ""}</option>)}</select></label>
+              <label><span>Institution not in the directory (optional)</span><input value={draft.profileDetails?.unlistedInstitution ?? ""} onChange={(e) => updateDetail("unlistedInstitution", e.target.value)} /><small>Self-reported affiliation; this does not add a verified directory entry.</small></label>
               <label><span>City</span><input value={draft.city ?? ""} onChange={(e) => setDraft({ ...draft, city: e.target.value || null })} /></label>
               <label><span>Country code</span><input maxLength={2} value={draft.countryCode ?? ""} onChange={(e) => setDraft({ ...draft, countryCode: e.target.value.toUpperCase() || null })} /></label>
               {draft.accountRole === "student" ? <><label><span>Degree program</span><input value={draft.profileDetails?.degreeProgram ?? ""} onChange={(e) => updateDetail("degreeProgram", e.target.value)} placeholder="PhD, MSc, MD…" /></label><label><span>Expected graduation</span><input value={draft.profileDetails?.graduationYear ?? ""} onChange={(e) => updateDetail("graduationYear", e.target.value)} placeholder="2028" /></label><label><span>Supervisor</span><input value={draft.profileDetails?.supervisorName ?? ""} onChange={(e) => updateDetail("supervisorName", e.target.value)} /></label><label><span>Thesis / dissertation topic</span><input value={draft.profileDetails?.thesisTopic ?? ""} onChange={(e) => updateDetail("thesisTopic", e.target.value)} /></label></> : null}
@@ -136,9 +128,10 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
         {step === 1 ? (
           <div className={styles.stack}>
             <span className="eyebrow">Step 2 · Research focus</span><h2>Choose the topics and methods that describe your actual work.</h2>
+            <label><span>Search topics and methods</span><input type="search" value={focusSearch} onChange={(e) => setFocusSearch(e.target.value)} /></label>
             <div className={styles.choiceColumns}>
-              <div><h3>Topics</h3>{topics.map(([value, label]) => <button type="button" key={value} className={(draft.topicSlugs ?? []).includes(value) ? styles.selected : ""} onClick={() => toggleList("topicSlugs", value)}>{label}</button>)}</div>
-              <div><h3>Methods</h3>{methods.map(([value, label]) => <button type="button" key={value} className={(draft.methodSlugs ?? []).includes(value) ? styles.selected : ""} onClick={() => toggleList("methodSlugs", value)}>{label}</button>)}</div>
+              <div><h3>Topics</h3>{topics.filter(([value, label]) => (draft.topicSlugs ?? []).includes(value) || label.toLowerCase().includes(focusSearch.toLowerCase())).map(([value, label]) => <button type="button" key={value} aria-pressed={(draft.topicSlugs ?? []).includes(value)} className={(draft.topicSlugs ?? []).includes(value) ? styles.selected : ""} onClick={() => toggleList("topicSlugs", value)}>{label}</button>)}</div>
+              <div><h3>Methods</h3>{methods.filter(([value, label]) => (draft.methodSlugs ?? []).includes(value) || label.toLowerCase().includes(focusSearch.toLowerCase())).map(([value, label]) => <button type="button" key={value} aria-pressed={(draft.methodSlugs ?? []).includes(value)} className={(draft.methodSlugs ?? []).includes(value) ? styles.selected : ""} onClick={() => toggleList("methodSlugs", value)}>{label}</button>)}</div>
             </div>
           </div>
         ) : null}
@@ -156,7 +149,7 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
             <DocumentManager scope="profile" title="CV & supporting documents (optional)" onBusyChange={(delta) => setFileUploads((count) => count + delta)} />
             <span className="eyebrow">Step 4 · Trust & visibility</span><h2>Keep assertions separate from verified scientific evidence.</h2>
             <div className={styles.fullField}><label htmlFor="onboarding-orcid">ORCID iD (optional)</label><input id="onboarding-orcid" placeholder="0000-0000-0000-0000" value={draft.orcid ?? ""} onChange={(e) => setDraft({ ...draft, orcid: e.target.value || null })} /><small>A new iD requests import of public ORCID information when the platform connection is active. Saving an iD does not verify account ownership.</small><ResearchProfileActions sourceKey="orcid" value={draft.orcid} /></div>
-            <label className={styles.visibility}><input type="checkbox" checked={draft.profilePublic ?? true} onChange={(e) => setDraft({ ...draft, profilePublic: e.target.checked })} /><span><strong>Public scientific profile</strong><small>Make this identity discoverable to other researchers.</small></span></label>
+            <label className={styles.visibility}><input type="checkbox" checked={draft.profilePublic ?? false} onChange={(e) => setDraft({ ...draft, profilePublic: e.target.checked })} /><span><strong>Public scientific profile (optional)</strong><small>Profiles start private. Opt in to show your scientific identity in discovery. Saved opportunities, assistant activity and private documents stay private.</small></span></label>
           </div>
         ) : null}
 

@@ -109,15 +109,16 @@ const profile = await request("/api/v1/profile", {
 assert.equal(profile.status, 200, "authenticated profile read must return 200");
 const profileBody = await profile.json();
 assert.equal(profileBody.success, true);
+assert.equal(profileBody.data.profilePublic, false, "new profiles must be private before any edits");
 assert.ok(profileBody.data?.id, "profile read must resolve an owned ResearcherProfile");
 
 // A migrated database must support the real profile choices without demo seeding.
-const topicSlugs = ["oncology", "cancer-immunotherapy", "biomarkers", "clinical-trials", "computational-oncology"];
-const methodSlugs = ["clinical-trial-design", "translational-research", "biomarker-analysis", "machine-learning"];
+const topicSlugs = ["oncology", "cancer-immunotherapy", "biomarkers", "clinical-trials", "computational-oncology", "rare-diseases", "epidemiology", "nursing", "medical-imaging"];
+const methodSlugs = ["clinical-trial-design", "translational-research", "biomarker-analysis", "machine-learning", "systematic-review", "qualitative-research"];
 const profileUpdate = await request("/api/v1/profile", {
   method: "PATCH",
   headers: { Cookie: cookie, Origin: baseUrl, "Content-Type": "application/json" },
-  body: JSON.stringify({ topicSlugs, methodSlugs, profilePublic: false }),
+  body: JSON.stringify({ topicSlugs, methodSlugs, profilePublic: false, profileDetails: { unlistedInstitution: "CI Medical Research Unit" } }),
 });
 assert.equal(profileUpdate.status, 200, "canonical topics and methods must save without running demo seed");
 const updatedProfile = await request("/api/v1/profile", { headers: { Cookie: cookie } });
@@ -126,5 +127,23 @@ const updatedProfileBody = await updatedProfile.json();
 assert.deepEqual([...updatedProfileBody.data.topicSlugs].sort(), [...topicSlugs].sort(), "saved topics must survive a new profile read");
 assert.deepEqual([...updatedProfileBody.data.methodSlugs].sort(), [...methodSlugs].sort(), "saved methods must survive a new profile read");
 assert.equal(updatedProfileBody.data.profilePublic, false);
+assert.equal(updatedProfileBody.data.institution, "CI Medical Research Unit (self-reported)");
+assert.equal(updatedProfileBody.data.verification.find((item) => item.label === "Institution").verified, false);
+
+const publicProfile = await request("/researchers/" + updatedProfileBody.data.id);
+assert.equal(publicProfile.status, 404, "private scientific identities must not be publicly exposed");
+
+const recoveryPage = await fetch(baseUrl + "/auth/forgot-password");
+assert.equal(recoveryPage.status, 200);
+if (!readyBody.integrations?.emailDelivery) {
+  assert.match(await recoveryPage.text(), /email delivery is not enabled/i);
+  const recovery = await request("/api/auth/request-password-reset", { method: "POST", headers: { Origin: baseUrl, "Content-Type": "application/json" }, body: JSON.stringify({ email, redirectTo: baseUrl + "/auth/reset-password" }) });
+  assert.equal(recovery.status, 503, "disabled email must not pretend to send a reset link");
+}
+
+const marketingPage = await fetch(baseUrl + "/main-site");
+const marketingHtml = await marketingPage.text();
+assert.doesNotMatch(marketingHtml, /Nordic Biomedical Graduate School|Pacific Genomics Foundation|Live from Studepartment|Refreshed continuously from verified sources/);
+assert.match(marketingHtml, /What is available today/);
 
 console.log("Runtime smoke checks passed.");

@@ -1,4 +1,5 @@
 import { AuthForm } from "../auth-form";
+import { FeatureAvailability } from "@/components/feature-availability";
 import type { IndividualProfileRole, InstitutionalOrganizationType } from "@/lib/api-contracts";
 
 export default async function SignUpPage({
@@ -11,5 +12,5 @@ export default async function SignUpPage({
   const initialRole: IndividualProfileRole = role === "student" || role === "professor" ? role : "researcher";
   const allowedTypes = new Set<InstitutionalOrganizationType>(["university", "hospital", "laboratory", "research-institute", "company", "foundation"]);
   const initialOrganizationType = allowedTypes.has(type as InstitutionalOrganizationType) ? type as InstitutionalOrganizationType : "university";
-  return <AuthForm callbackUrl={callbackUrl} mode="sign-up" initialKind={initialKind} initialRole={initialRole} initialOrganizationType={initialOrganizationType} />;
+  return <AuthForm callbackUrl={callbackUrl} mode="sign-up" initialKind={initialKind} initialRole={initialRole} initialOrganizationType={initialOrganizationType} availability={<FeatureAvailability />} />;
 }

@@ -1,0 +1,4 @@
+.panel { margin: 1.5rem 0; padding: 1.25rem; border: 1px solid #cbd8d5; border-radius: 12px; background: #f3f7f5; color: #19372e; }
+.panel h2 { font-size: 1.15rem; margin: 0 0 .75rem; }
+.panel p, .panel li { font-size: .9rem; line-height: 1.65; }
+.panel ul { padding-left: 1.2rem; margin: .75rem 0 0; }
