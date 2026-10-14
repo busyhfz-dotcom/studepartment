@@ -5,7 +5,7 @@ import { RateLimitExceededError, rateLimitErrorResponse } from "@/server/securit
 import { FileError } from "./validation";
 
 export function assertFileOrigin(request: Request) {
-  if (request.headers.get("origin") !== new URL(getCoreRuntimeConfig().betterAuthUrl).origin) throw new FileError("Manage files from Studepartment.", 403);
+  if (request.headers.get("origin") !== new URL(getCoreRuntimeConfig().betterAuthUrl).origin) throw new FileError("Manage files from Provenant.", 403);
 }
 export function fileFailure(error: unknown) {
   if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
