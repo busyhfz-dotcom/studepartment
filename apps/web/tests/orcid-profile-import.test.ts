@@ -67,7 +67,7 @@ test("authorized import uses the granted token on the Member API without request
   const calls: string[] = [];
   try {
     for (const name of names) delete process.env[name];
-    Object.assign(process.env, { ORCID_CLIENT_ID: "APP-test", ORCID_CLIENT_SECRET: "test-secret", BETTER_AUTH_URL: "https://studepartment.example" });
+    Object.assign(process.env, { ORCID_CLIENT_ID: "APP-test", ORCID_CLIENT_SECRET: "test-secret", BETTER_AUTH_URL: "https://provenant.example" });
     globalThis.fetch = async (input, options) => {
       const url = String(input); calls.push(url);
       if (url === "https://orcid.org/oauth/token") {
