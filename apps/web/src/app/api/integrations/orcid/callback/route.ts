@@ -12,7 +12,7 @@ import {
   verifyOrcidForUser,
 } from "@/server/repositories/orcid-verification-repository";
 
-const STATE_COOKIE = "studepartment_orcid_state";
+const STATE_COOKIE = "provenant_orcid_state";
 
 function safeEqual(left: string, right: string) {
   const a = Buffer.from(left);
