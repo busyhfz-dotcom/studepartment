@@ -97,6 +97,7 @@ function FootBar() {
     <footer className={styles.footbar}>
       <span>Studepartment · medical research, worldwide</span>
       <Link href="/opportunities">Open the full Opportunity Intelligence workspace ↗</Link>
+      <span><Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link></span>
     </footer>
   );
 }
