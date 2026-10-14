@@ -33,7 +33,7 @@ export function PasswordForm({ mode, available = true, token, invalidToken = fal
     finally { setBusy(false); }
   }
   return <main className={styles.page}><section className={styles.panel}>
-    <Link href="/start">Studepartment</Link>
+    <Link href="/start">Provenant</Link>
     <h1>{mode === "request" ? "Recover your password" : "Choose a new password"}</h1>
     {blocked ? <p role="status">{mode === "request" ? "Password recovery is unavailable because email delivery is not enabled. Please return when delivery has been enabled." : "This reset link is missing, invalid or expired. Request a new link."}</p> : null}
     {done ? <p role="status">{mode === "request" ? "If an account exists for this email, a reset link will be sent. Check your inbox and spam folder." : "Your password has been changed. Sign in with the new password."}</p> : <form className={styles.form} method="post" onSubmit={submit}>
