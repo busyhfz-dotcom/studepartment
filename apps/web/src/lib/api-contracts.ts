@@ -353,7 +353,12 @@ export type OpportunityQuery = {
   deadlineWithinDays: number | null;
   includeStale: boolean;
   limit: number;
+  /** Keep opportunities open to this career stage (or with no published stage limit). */
+  careerStage?: OpportunityCareerStage;
 };
+
+/** Career stages aligned with the EU R1–R4 researcher profiles. */
+export type OpportunityCareerStage = "student" | "phd" | "postdoc" | "early-career-researcher" | "faculty";
 
 export type OpportunityResult = {
   id: string;
