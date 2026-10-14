@@ -29,13 +29,13 @@ const groupConfig: Array<{
   {
     key: "research",
     title: "Research context",
-    description: "Canonical topics and methods attached to the scientific identity.",
+    description: "The research topics and methods on this profile.",
     types: ["topic", "method"],
   },
   {
     key: "outputs",
     title: "Research outputs",
-    description: "Active publication relationships with evidence-aware authorship.",
+    description: "Publications linked to this researcher, with the evidence for authorship.",
     types: ["publication"],
   },
   {
@@ -230,9 +230,9 @@ export function ScientificGraphExplorer({ researcherId }: { researcherId?: strin
       <section className={styles.edgeSection}>
         <div className={styles.edgeHeading}>
           <div>
-            <span className="sectionLabel">Relationship ledger</span>
-            <h2>{visibleEdges.length} explainable edges</h2>
-            <p>Every edge is derived from canonical product data; no separate graph copy or hidden graph score is used.</p>
+            <span className="sectionLabel">Connections</span>
+            <h2>{visibleEdges.length} connections</h2>
+            <p>Every connection comes straight from Provenant records. There is no separate graph copy and no hidden score.</p>
           </div>
           <button className={styles.resetFilter} disabled={activeType === "all"} onClick={() => setActiveType("all")} type="button">
             Clear relation filter
