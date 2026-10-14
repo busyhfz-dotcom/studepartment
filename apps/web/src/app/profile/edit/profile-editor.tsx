@@ -12,6 +12,7 @@ import type {
 } from "@/lib/api-contracts";
 import { researchTopics, researchMethods } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
+import { CountrySelect } from "@/components/forms/country-select";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
 import { ProfessionalProfileFields } from "./professional-profile-fields";
@@ -200,8 +201,8 @@ export function ProfileEditor({
             <input name="city" defaultValue={profile.city ?? ""} maxLength={120} />
           </label>
           <label className={styles.fieldGroup}>
-            <span>Country code</span>
-            <input name="countryCode" defaultValue={profile.countryCode ?? ""} maxLength={2} placeholder="DE" />
+            <span>Country</span>
+            <CountrySelect name="countryCode" defaultValue={profile.countryCode ?? ""} anyLabel="Not shared" />
           </label>
           <label className={styles.fieldGroup}>
             <span>Introduction availability</span>
