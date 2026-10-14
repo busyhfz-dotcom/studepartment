@@ -1,6 +1,6 @@
 # Grounded Research Assistant v1.3
 
-The Studepartment Research Assistant is a synthesis layer over canonical product evidence. It is not an unrestricted chatbot and it does not browse the public web.
+The Provenant Research Assistant is a synthesis layer over canonical product evidence. It is not an unrestricted chatbot and it does not browse the public web.
 
 ## Request boundary
 
@@ -56,7 +56,7 @@ The assistant must not:
 - predict hiring/admission probability
 - provide patient-specific diagnosis or treatment advice
 
-If evidence is missing, the expected answer is that Studepartment does not have enough evidence.
+If evidence is missing, the expected answer is that Provenant does not have enough evidence.
 
 ## Institutional fit
 
