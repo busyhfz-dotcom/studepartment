@@ -42,7 +42,7 @@ export default async function ConferencesPage() {
         ))}
 
         <p className={styles.footnote}>
-          Ranking and accreditation bodies update independently of Studepartment — always confirm current
+          Ranking and accreditation bodies update independently of Provenant — always confirm current
           status directly with the source before relying on it for a submission or credit-tracking decision.
         </p>
       </div>
