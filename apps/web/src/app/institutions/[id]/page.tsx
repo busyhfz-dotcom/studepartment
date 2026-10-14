@@ -3,6 +3,7 @@ import { PublicDocuments } from "@/components/files/public-documents";
 import { notFound } from "next/navigation";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProductShell } from "@/components/shell/product-shell";
+import { getShellViewer } from "@/server/auth/shell-viewer";
 import { getInstitutionalIntelligence, getInstitutionFitSnapshot } from "@/server/institutions/intelligence";
 import styles from "./page.module.css";
 
@@ -13,16 +14,17 @@ function date(value?: string) {
 
 export default async function InstitutionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [institution, fit] = await Promise.all([
+  const [institution, fit, viewer] = await Promise.all([
     getInstitutionalIntelligence(id),
     getInstitutionFitSnapshot(id),
+    getShellViewer(),
   ]);
   if (!institution) notFound();
   const detailLabels = { primaryFocus: "Primary focus", services: "Services and programs", facilities: "Facilities", accreditations: "Accreditations", capacity: "Capacity", fundingAreas: "Funding areas", departments: "Departments and teams", researchPrograms: "Research programs", notableProjects: "Notable projects", partnerships: "Partners and networks", careers: "Careers and training", researcherServices: "Researcher support", dataResources: "Data and shared resources", ethicsGovernance: "Ethics and governance" } as const;
   const publicDetails = Object.entries(institution.profileDetails).filter((entry): entry is [string, string] => typeof entry[1] === "string" && Boolean(entry[1].trim()));
 
   return (
-    <ProductShell>
+    <ProductShell {...viewer}>
       <div className={styles.shell}>
         <Link className="backLink" href="/discover/institutions">← Back to institution discovery</Link>
         <header className={styles.hero}>
