@@ -99,6 +99,8 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                 { href: "#platform", label: "Platform" },
                 { href: "#principles", label: "Our approach" },
                 { href: "#pathways", label: "Who it's for" },
+                { href: "/auth/sign-in", label: "Sign in" },
+                { href: "/auth/sign-up", label: "Join free" },
               ]}
             />
           </div>
@@ -261,6 +263,8 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
           <a href="#platform">Platform</a>
           <a href="#principles">Our approach</a>
           <Link href="/auth/sign-in">Sign in to your workspace</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
         </div>
       </footer>
     </div>
