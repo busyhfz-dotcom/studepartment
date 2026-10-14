@@ -1,20 +1,20 @@
 import { ProductShell } from "@/components/shell/product-shell";
-import { getCurrentUser } from "@/server/auth/current-user";
+import { getShellViewer } from "@/server/auth/shell-viewer";
 import { conferenceCategories } from "./conference-sources";
 import styles from "../scanner/scanner.module.css";
 
 export default async function ConferencesPage() {
-  const user = await getCurrentUser();
+  const viewer = await getShellViewer();
 
   return (
-    <ProductShell accountKind={user?.accountKind === "INSTITUTION" ? "institution" : "individual"}>
+    <ProductShell {...viewer}>
       <div className={styles.shell}>
         <header className={styles.header}>
           <span className="eyebrow">Conferences & Credit</span>
           <h1>Check a conference&apos;s standing before you submit or attend.</h1>
           <p className="lede">
-            Independent ranking, call-for-papers, and continuing-education-credit registries — useful for
-            evaluating a venue&apos;s credibility or tracking CME/CPD credit for clinical work.
+            Credibility checks for venues and journals, and continuing-education-credit registries for tracking
+            CME/CPD credit for clinical work.
           </p>
         </header>
 
