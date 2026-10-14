@@ -78,10 +78,10 @@ function Stage({ n }: { n: 1 | 2 | 3 | 4 }) {
 function TopBar() {
   return (
     <header className={styles.topbar}>
-        <Link className={styles.brand} href="/start" aria-label="Studepartment entry">
+        <Link className={styles.brand} href="/start" aria-label="Provenant home">
           <span className={styles.mark}><BrandSymbol /></span>
           <span>
-            studepartment<b>.</b>
+            provenant<b>.</b>
           </span>
         </Link>
       <nav className={styles.topActions} aria-label="Site navigation">
@@ -95,8 +95,8 @@ function TopBar() {
 function FootBar() {
   return (
     <footer className={styles.footbar}>
-      <span>Studepartment · medical research, worldwide</span>
-      <Link href="/opportunities">Open the full Opportunity Intelligence workspace ↗</Link>
+      <span>Provenant · medical research, worldwide</span>
+      <Link href="/opportunities">Open the full opportunity search ↗</Link>
       <span><Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link></span>
     </footer>
   );
@@ -208,11 +208,11 @@ function StartJourney() {
             <Stage n={1} />
             <div className={styles.entryHead}>
               <ResearchOrbit />
-              <span className={styles.eyebrow}>Welcome / choose your path</span>
+              <span className={styles.eyebrow}>Welcome</span>
               <h1 className={styles.serif}>
                 What are you looking for <em>today?</em>
               </h1>
-              <p>Pick a path and start browsing. No account needed to explore.</p>
+              <p>Choose a path to start browsing. You don&apos;t need an account.</p>
             </div>
             <div className={styles.entryCards}>
               <button type="button" className={styles.choice} onClick={() => openBrowse("position")}>
@@ -241,7 +241,7 @@ function StartJourney() {
               </button>
             </div>
             <div className={styles.entryFoot}>
-              <span>Explore freely. Save or contact a research lead when you&apos;re ready.</span>
+              <span>Browse freely. Sign up only when you want to save or follow up.</span>
               <span className={styles.entryFootLinks}>
                 <Link href="/main-site">View the full site ↗</Link>
                 <button type="button" onClick={() => setStep("institutions")}>
@@ -268,9 +268,9 @@ function StartJourney() {
           <span className={styles.eyebrow}>For institutions</span>
           <h1 className={styles.serif}>Bring an opportunity to the research community.</h1>
           <p>
-            Institutional posting follows its own account route, separate from the applicant journey. Register an
-            institutional profile to post positions and grants — including a directory listing in{" "}
-            <Link href="/discover/institutions">Institution discovery</Link>.
+            Institutions post through their own account, separate from researcher accounts. Create an institutional
+            profile to publish positions and funding calls and to appear in the{" "}
+            <Link href="/discover/institutions">institution directory</Link>.
           </p>
           <Link className={styles.primary} href="/auth/sign-up?kind=institution">
             Create an institutional profile ↗
@@ -295,8 +295,8 @@ function StartJourney() {
             </button>
             <h1 className={styles.serif}>Explore {isGrant ? <em>grants</em> : <em>research positions</em>}.</h1>
             <p>
-              Search live, published opportunities freely. A profile is only needed when you decide to track an
-              opportunity or use personal tools.
+              Search current listings freely. You only need an account to save an opportunity or keep track of its
+              deadline.
             </p>
           </div>
         </section>
@@ -365,7 +365,7 @@ function StartJourney() {
                 {loading ? "Searching…" : `${results.length} ${isGrant ? "grants" : "positions"} to explore`}
               </h2>
             </div>
-            <p>Live listings from Studepartment&apos;s opportunity feed.</p>
+            <p>Current listings, each linked to its original source.</p>
           </div>
 
           <div className={styles.results}>
@@ -418,7 +418,7 @@ function StartJourney() {
             <h1 className={styles.serif}>
               The details, <em>before the decision.</em>
             </h1>
-            <p>Read the published context first. Your account can come later.</p>
+            <p>Read the full listing first. You can sign up later.</p>
           </div>
         </section>
         <main className={`${styles.wrap} ${styles.detail} ${styles.fade}`}>
@@ -472,16 +472,16 @@ function StartJourney() {
               <span className={styles.eyebrow}>Your next move</span>
               <h3>Keep this on your radar.</h3>
               <p>
-                Tracking helps you return to this {isGrant ? "grant" : "position"} and manage deadlines. Creating a
-                profile also lets you prepare your academic CV for relevant outreach.
+                Save this {isGrant ? "grant" : "position"} to come back to it and keep an eye on the deadline. A free
+                profile also keeps your CV ready for when you apply.
               </p>
               <button type="button" className={styles.primary} onClick={() => setStep("next")}>
                 Track this {isGrant ? "grant" : "position"} <span>↗</span>
               </button>
               <a className={styles.sub} href={applyHref} target="_blank" rel="noopener noreferrer">View contact details at source <span>↗</span></a>
               <p className={styles.smallprint}>
-                Contact is offered only where the original listing provides an appropriate route. Formal
-                applications use the host&apos;s application portal.
+                We only show contact details when the original listing includes them. Applications always go through
+                the host&apos;s own portal.
               </p>
             </aside>
           </div>
@@ -506,19 +506,19 @@ function StartJourney() {
           <div className={styles.nextHero}>
             <span className={styles.eyebrow}>A good next step</span>
             <h1 className={styles.serif}>
-              Make your research <em>context</em> ready.
+              Have your profile <em>ready</em> to go.
             </h1>
             <p>
-              You can keep browsing freely. An account is needed when you choose to track this{" "}
-              {isGrant ? "grant" : "position"}, prepare your materials, or use an available research contact.
+              You can keep browsing without an account. You&apos;ll need one to save this{" "}
+              {isGrant ? "grant" : "position"}, store your documents or contact a researcher.
             </p>
           </div>
           <div className={styles.nextGrid}>
             <section className={styles.nextCard}>
               <h2>Your researcher profile</h2>
               <p>
-                Add an academic CV{isGrant ? " or funder-specific biosketch" : ""}, research interests and relevant
-                experience once, then keep them ready for future opportunities.
+                Add your CV{isGrant ? " or funder biosketch" : ""}, research interests and experience once, then reuse
+                them for every application.
               </p>
               <p className={styles.smallprint}>Your documents remain private unless you choose to share them.</p>
             </section>
@@ -530,19 +530,19 @@ function StartJourney() {
                   : "If the vacancy invites it, send a concise Expression of Interest to the Principal Investigator or named lab contact."}
               </p>
               <p className={styles.smallprint}>
-                Tracking is never a formal application — apply through the official portal linked on the opportunity.
+                Saving an opportunity does not apply for it. Apply through the official portal linked on the listing.
               </p>
             </section>
           </div>
           <div className={styles.planIntro}>
-            <span className={styles.eyebrow}>Choose your pace</span>
+            <span className={styles.eyebrow}>Plans</span>
             <h2>Track what matters to you.</h2>
-            <p>Build your profile and manage applications for free. Explore evidence intelligence only when you need it.</p>
+            <p>Your profile and application tracking are free. Pro adds research tools for when you need them.</p>
           </div>
           <div className={styles.plans}>
             <section className={styles.plan}>
               <span className={styles.label}>Free</span>
-              <strong>Get started at your pace</strong>
+              <strong>Everything you need to start</strong>
               <div className={styles.big}>Profile and application tracking</div>
               <small>Save opportunities, track application stages and keep your research experience ready.</small>
               <Link className={styles.primary} href={trackingHref}>
@@ -550,10 +550,10 @@ function StartJourney() {
               </Link>
             </section>
             <section className={`${styles.plan} ${styles.premium}`}>
-              <span className={styles.label}>Pro intelligence</span>
-              <strong>Reason over scientific evidence</strong>
-              <div className={styles.big}>Evidence Graph and research tools</div>
-              <small>Explore source-grounded research assistance, scientific relationships and controlled introductions.</small>
+              <span className={styles.label}>Pro</span>
+              <strong>Deeper research tools</strong>
+              <div className={styles.big}>Assistant, Evidence Graph and introductions</div>
+              <small>Ask the Research Assistant, see how a researcher&apos;s work connects and request introductions.</small>
               <Link className={styles.primary} href="/billing">View Pro plans ↗</Link>
             </section>
           </div>
