@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProfessionalProfileSections } from "@/components/scientific/professional-profile-sections";
 import { ProductShell } from "@/components/shell/product-shell";
+import { getShellViewer } from "@/server/auth/shell-viewer";
 import { getPublicResearcherProfile } from "@/server/researchers/public-profile";
 import styles from "./page.module.css";
 
@@ -15,11 +16,11 @@ function evidenceLabel(value: "MANUAL_ASSERTED" | "ORCID_ASSERTED" | "PUBMED_COR
 
 export default async function ResearcherPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const researcher = await getPublicResearcherProfile(id);
+  const [researcher, viewer] = await Promise.all([getPublicResearcherProfile(id), getShellViewer()]);
   if (!researcher) notFound();
 
   return (
-    <ProductShell>
+    <ProductShell {...viewer}>
       <div className={styles.shell}>
         <Link className="backLink" href="/discover">← Back to scientific discovery</Link>
 
