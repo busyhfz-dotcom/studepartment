@@ -15,7 +15,7 @@ export type ConferenceCategory = {
 /**
  * Curated directory of real conference-ranking, call-for-papers, and
  * continuing-education-credit registries. As with the Scanner directory,
- * Studepartment links to these independent databases rather than claiming
+ * Provenant links to these independent databases rather than claiming
  * to reproduce their data.
  */
 export const conferenceCategories: ConferenceCategory[] = [
