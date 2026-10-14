@@ -31,9 +31,9 @@ export default async function NewIntroductionPage({
             <span className="eyebrow">Scientific Introduction</span>
             <span className={styles.versionPill}>Controlled outreach</span>
           </div>
-          <h1>Give the recipient enough scientific context to decide.</h1>
+          <h1>Give them enough context to say yes.</h1>
           <p className="lede">
-            Every introduction is evaluated against scientific relevance, recipient controls, cooldowns, and anti-noise limits before it can be sent.
+            Before a request is sent, we check that it is relevant, that it respects the recipient&apos;s settings and that you have not written to them too recently.
           </p>
         </header>
 
