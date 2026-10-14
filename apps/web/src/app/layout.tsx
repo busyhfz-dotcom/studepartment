@@ -4,6 +4,9 @@ import { getSiteUrl, siteDescription, siteName, siteTagline } from "@/lib/site";
 import "./globals.css";
 import "./theme.css";
 
+// Proxy issues a fresh nonce for each HTML request. Static HTML cannot carry it.
+export const dynamic = "force-dynamic";
+
 const sans = localFont({
   src: "./fonts/manrope-latin-wght-normal.woff2",
   weight: "200 800",
