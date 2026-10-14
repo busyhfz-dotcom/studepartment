@@ -1,13 +1,13 @@
 import { ProductShell } from "@/components/shell/product-shell";
-import { getCurrentUser } from "@/server/auth/current-user";
+import { getShellViewer } from "@/server/auth/shell-viewer";
 import { scannerCategories } from "./scanner-sources";
 import styles from "./scanner.module.css";
 
 export default async function ScannerPage() {
-  const user = await getCurrentUser();
+  const viewer = await getShellViewer();
 
   return (
-    <ProductShell accountKind={user?.accountKind === "INSTITUTION" ? "institution" : "individual"}>
+    <ProductShell {...viewer}>
       <div className={styles.shell}>
         <header className={styles.header}>
           <span className="eyebrow">Scanner Directory</span>
