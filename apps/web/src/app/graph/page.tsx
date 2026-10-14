@@ -24,12 +24,12 @@ export default async function ScientificGraphPage({
         <ProPreviewNotice user={user} />
         <header className={styles.header}>
           <div className={styles.headerMeta}>
-            <span className="eyebrow">Scientific Evidence Graph</span>
+            <span className="eyebrow">Evidence Graph</span>
             <span className={styles.versionPill}>Derived canonical relationships</span>
           </div>
-          <h1>Map the evidence around a scientific identity.</h1>
+          <h1>See how a researcher&apos;s work connects.</h1>
           <p className="lede">
-            Trace publications, topics, methods, laboratories, institutions, and current opportunities as explicit relationships derived from canonical product data—not as a hidden researcher score.
+            Publications, topics, methods, labs, institutions and current opportunities, shown as clear links drawn from Provenant data. No hidden researcher scores.
           </p>
         </header>
         {accountKind === "institution" && !researcher ? <section className={styles.errorState}><h2>Select a researcher to inspect their evidence graph</h2><p>Open a public scientific identity from Discovery to inspect its publications, affiliations and opportunities.</p><Link className="primaryButton" href="/discover">Choose a researcher →</Link></section> : <ScientificGraphExplorer researcherId={researcher} />}
