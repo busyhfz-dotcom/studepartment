@@ -1,11 +1,13 @@
 import { ProductShell } from "@/components/shell/product-shell";
+import { getShellViewer } from "@/server/auth/shell-viewer";
 import { DiscoveryScopeNav } from "../discovery-scope-nav";
 import { InstitutionalExplorer } from "../institutional-explorer";
 import styles from "../page.module.css";
 
-export default function LaboratoryDiscoveryPage() {
+export default async function LaboratoryDiscoveryPage() {
+  const viewer = await getShellViewer();
   return (
-    <ProductShell>
+    <ProductShell {...viewer}>
       <div className={styles.discoverShell}>
         <DiscoveryScopeNav active="laboratories" />
 
