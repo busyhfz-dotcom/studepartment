@@ -1,6 +1,6 @@
 # Scientific Introduction Engine v0.7
 
-Studepartment introductions are controlled scientific requests, not unrestricted direct messages.
+Provenant introductions are controlled scientific requests, not unrestricted direct messages.
 
 ## Lifecycle
 
