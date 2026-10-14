@@ -25,12 +25,12 @@ export default function ErrorBoundary({
             <circle cx="22.8" cy="23.8" r="2.2" />
           </svg>
         </span>
-        <strong>Studepartment</strong>
+        <strong>Provenant</strong>
       </Link>
       <span className={styles.code}>Something went wrong</span>
       <h1>We hit an unexpected error rendering this page.</h1>
       <p>
-        Your research context and saved data are unaffected — this was a rendering issue, not a data change.
+        Your account and saved work are not affected. Please try again.
         {error.digest ? ` Reference: ${error.digest}.` : ""}
       </p>
       <div className={styles.actions}>
