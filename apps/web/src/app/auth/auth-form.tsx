@@ -52,6 +52,7 @@ export function AuthForm({
   const [accountKind, setAccountKind] = useState<AccountKind>(initialKind);
   const [accountRole, setAccountRole] = useState<IndividualProfileRole>(initialRole);
   const [organizationType, setOrganizationType] = useState<InstitutionalOrganizationType>(initialOrganizationType);
+  const [showPassword, setShowPassword] = useState(false);
   const signInDestination = safeReturnPath(callbackUrl);
   const onboardingPath = accountKind === "individual"
     ? `/onboarding?role=${encodeURIComponent(accountRole)}`
@@ -70,6 +71,12 @@ export function AuthForm({
     const name = String(form.get("name") ?? "").trim();
     const passwordConfirmation = String(form.get("passwordConfirmation") ?? "");
     try {
+      if (mode === "sign-up" && form.get("termsAccepted") !== "on") {
+        setStatus("error");
+        setMessage("Please accept the Terms of Use and acknowledge the Privacy Notice to create an account.");
+        return;
+      }
+
       if (mode === "sign-up" && password !== passwordConfirmation) {
         setStatus("error");
         setMessage("Passwords do not match.");
@@ -144,14 +151,25 @@ export function AuthForm({
             <button className="primaryButton" type="button" onClick={() => setSignUpStep("credentials")}>Continue</button>
           </div>
         ) : (
-          <form className={styles.form} onSubmit={submit}>
+          <form className={styles.form} method="post" onSubmit={submit}>
             {mode === "sign-up" ? <label><span>{accountKind === "individual" ? "Full name" : "Representative name"}</span><input name="name" type="text" autoComplete="name" required /></label> : null}
             <label><span>Email</span><input name="email" type="email" autoComplete="email" required /></label>
             <label>
               <span>Password</span>
-              <input name="password" type="password" minLength={12} maxLength={128} autoComplete={mode === "sign-up" ? "new-password" : "current-password"} required />
+              <input name="password" type={showPassword ? "text" : "password"} minLength={12} maxLength={128} autoComplete={mode === "sign-up" ? "new-password" : "current-password"} aria-describedby={mode === "sign-up" ? "password-requirements" : undefined} required />
+              {mode === "sign-up" ? <small id="password-requirements">Use at least 12 characters. A short passphrase is easier to remember.</small> : null}
             </label>
-            {mode === "sign-up" ? <label><span>Confirm password</span><input name="passwordConfirmation" type="password" minLength={12} maxLength={128} autoComplete="new-password" required /></label> : null}
+            {mode === "sign-up" ? <label><span>Confirm password</span><input name="passwordConfirmation" type={showPassword ? "text" : "password"} minLength={12} maxLength={128} autoComplete="new-password" required /></label> : null}
+            <label className={styles.checkRow}>
+              <input type="checkbox" checked={showPassword} onChange={(event) => setShowPassword(event.target.checked)} />
+              <span>Show password</span>
+            </label>
+            {mode === "sign-up" ? (
+              <label className={styles.checkRow}>
+                <input name="termsAccepted" type="checkbox" required />
+                <span>I agree to the <Link href="/terms" target="_blank">Terms of Use</Link> and have read the <Link href="/privacy" target="_blank">Privacy Notice</Link>.</span>
+              </label>
+            ) : null}
             {mode === "sign-up" ? <p className={styles.selectionSummary}>{accountKind === "individual" ? individualRoles.find(([value]) => value === accountRole)?.[1] : organizationTypes.find(([value]) => value === organizationType)?.[1]} account</p> : null}
             {message ? <p className={styles.error} role="alert">{message}</p> : null}
             {remaining > 0 ? <p role="status">Too many attempts. Retry in {remaining} seconds. Your entries are retained.</p> : null}
