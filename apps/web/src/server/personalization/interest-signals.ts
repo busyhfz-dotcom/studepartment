@@ -4,6 +4,8 @@ const MAX_WEIGHT = 25;
 const SEARCH_INCREMENT = 1;
 const ACTION_INCREMENT = 2;
 const MAX_TOPICS_PER_EVENT = 6;
+/** Raw search text is kept only long enough to derive topic interest weights. */
+export const SEARCH_LOG_RETENTION_DAYS = 30;
 
 function tokenize(text: string): string[] {
   return Array.from(
@@ -55,6 +57,10 @@ export async function recordSearchAndUpdateInterest(userId: string, queryText: s
   try {
     await db.searchQueryLog.create({
       data: { userId, queryText: trimmed.slice(0, 300), context: context.slice(0, 60) },
+    });
+    // The schema documents this log as short-lived; enforce that on every write.
+    await db.searchQueryLog.deleteMany({
+      where: { userId, createdAt: { lt: new Date(Date.now() - SEARCH_LOG_RETENTION_DAYS * 86_400_000) } },
     });
 
     const tokens = tokenize(trimmed);
