@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Studepartment separates account identity from scientific identity. Authentication answers **who is signed in**; the scientific profile answers **who this person is in the research graph**.
+Provenant separates account identity from scientific identity. Authentication answers **who is signed in**; the scientific profile answers **who this person is in the research graph**.
 
 ## Persistence
 
@@ -54,7 +54,7 @@ ORCID is treated primarily as a scientific verification and import channel, not 
 
 Planned flow:
 
-1. User signs in to Studepartment.
+1. User signs in to Provenant.
 2. User explicitly connects ORCID.
 3. ORCID identity is verified through an authorized OAuth flow.
 4. Permitted scientific data is imported with provenance.
