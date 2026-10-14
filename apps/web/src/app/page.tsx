@@ -9,26 +9,26 @@ const intelligenceSurfaces = [
   {
     index: "01",
     label: "Scientific Identity",
-    title: "Make your research context legible.",
-    copy: "Canonical topics, methods, affiliations, ORCID ownership, publication evidence, and provenance form the context behind every recommendation.",
+    title: "Describe your work precisely.",
+    copy: "Topics, methods, affiliations, ORCID and publications. Every match and suggestion Provenant makes starts here.",
     href: "/profile",
     action: "Open identity",
-    signal: "Evidence-aware",
+    signal: "Your profile",
   },
   {
     index: "02",
     label: "Scientific Discovery",
-    title: "Find fit—not popularity.",
-    copy: "Search researchers, laboratories, and institutions by scientific intent, exact methods, geography, and collaboration availability.",
+    title: "Find people by fit, not popularity.",
+    copy: "Search researchers, labs and institutions by topic, method, country and openness to collaboration.",
     href: "/discover",
     action: "Explore discovery",
-    signal: "Explainable retrieval",
+    signal: "Explained matches",
   },
   {
     index: "03",
     label: "Institution Directory",
     title: "See who is behind the work.",
-    copy: "Browse verified research institutions and laboratories — including newly indexed cancer research centers — with provenance you can inspect.",
+    copy: "Browse research institutions and their labs, including newly added cancer research centers, each with its source.",
     href: "/discover/institutions",
     action: "Browse institutions",
     signal: "Verified directory",
@@ -37,41 +37,41 @@ const intelligenceSurfaces = [
     index: "04",
     label: "Opportunity Intelligence",
     title: "Protect your application time.",
-    copy: "Evaluate source freshness, scientific relevance, published eligibility, deadlines, and institutional context before committing effort.",
+    copy: "Check the deadline, eligibility, relevance and source date before you spend time on an application.",
     href: "/opportunities",
     action: "Review opportunities",
-    signal: "Source-backed",
+    signal: "Sourced",
   },
   {
     index: "05",
     label: "Research Assistant",
-    title: "Reason over evidence you can inspect.",
-    copy: "Ask focused questions across your scientific context. Answers stay grounded in a request-specific Studepartment source ledger.",
+    title: "Ask, and see the sources.",
+    copy: "Ask focused questions about your field. Answers cite the Provenant records they rely on.",
     href: "/assistant",
     action: "Ask the assistant",
-    signal: "Citation-grounded",
+    signal: "Cited answers",
   },
 ] as const;
 
 const decisionFlow = [
   {
     number: "01",
-    title: "Establish context",
-    copy: "Build a Scientific Identity that describes what you study, how you work, where you are, and what you are open to.",
+    title: "Set up your profile",
+    copy: "Say what you study, how you work, where you are and what kinds of collaboration you are open to.",
     href: "/profile",
     action: "Review Scientific Identity",
   },
   {
     number: "02",
-    title: "Interrogate the landscape",
-    copy: "Search people, labs, institutions, and opportunities with reasoning that remains inspectable at the result level.",
+    title: "Search",
+    copy: "Look for people, labs, institutions and opportunities. Every result explains why it appeared.",
     href: "/discover",
-    action: "Start a discovery",
+    action: "Start searching",
   },
   {
     number: "03",
-    title: "Act with evidence",
-    copy: "Save opportunities, inspect institutional fit, or request a controlled scientific introduction when the context is strong enough.",
+    title: "Act",
+    copy: "Save opportunities, compare institutions or request an introduction when the fit is strong.",
     href: "/opportunities",
     action: "Open Opportunity Intelligence",
   },
@@ -80,18 +80,18 @@ const decisionFlow = [
 const evidencePrinciples = [
   {
     kicker: "Identity",
-    title: "Owned scientific context",
-    copy: "Authentication resolves to a canonical researcher profile with explicit provenance.",
+    title: "Your profile, your control",
+    copy: "Only you can edit your profile, and imported details keep a record of their source.",
   },
   {
     kicker: "Retrieval",
     title: "Reasons before rank",
-    copy: "Semantic signals augment structured evidence; they do not become an opaque reputation score.",
+    copy: "Search understands meaning as well as keywords, but never turns researchers into a hidden reputation score.",
   },
   {
     kicker: "Action",
-    title: "Control before outreach",
-    copy: "Availability, recipient policy, cooldowns, and purpose protect scientific introductions from becoming social spam.",
+    title: "Considerate outreach",
+    copy: "Recipient settings, waiting periods and a stated purpose keep introductions from turning into spam.",
   },
 ];
 
@@ -109,8 +109,8 @@ export default async function HomePage() {
           ? {
               ...surface,
               label: "Institutional Identity",
-              title: "Present your institution with evidence, not vanity metrics.",
-              copy: "Claimed organization record, opportunity postings, and researcher-facing verification status live in one institutional profile.",
+              title: "Present your institution on the record.",
+              copy: "Your organization record, your postings and your verification status, together in one institutional profile.",
               href: "/organization/profile",
               action: "Open institutional profile",
             }
@@ -126,34 +126,34 @@ export default async function HomePage() {
             <span className="eyebrow">Medical Research Intelligence</span>
             <h1>Research decisions,<br /><em>grounded in evidence.</em></h1>
             <p>
-              Studepartment connects scientific identity, discovery, opportunities, institutions, and trusted introductions into one evidence-aware research workspace.
+              Your profile, searches, saved opportunities and introductions in one workspace, with the source behind every result.
             </p>
             <div className={styles.heroActions}>
-              <Link className="primaryButton" href="/discover">Start scientific discovery</Link>
+              <Link className="primaryButton" href="/discover">Search researchers</Link>
               <Link className="secondary" href={identityHref}>{isInstitution ? "Review Institutional Profile" : "Review Scientific Identity"}</Link>
             </div>
           </div>
 
-          <aside className={styles.heroIndex} aria-label="Platform principles">
+          <aside className={styles.heroIndex} aria-label="How Provenant works">
             <ResearchOrbit />
             <div className={styles.heroIndexTop}>
-              <span>Research operating principles</span>
+              <span>How Provenant works</span>
               <strong>04 / core</strong>
             </div>
             <div className={styles.principleList}>
-              <div><span>01</span><strong>Canonical identity</strong><small>Context belongs to the researcher.</small></div>
-              <div><span>02</span><strong>Source provenance</strong><small>Evidence stays attributable.</small></div>
-              <div><span>03</span><strong>Explainable fit</strong><small>Reasons remain inspectable.</small></div>
-              <div><span>04</span><strong>Controlled action</strong><small>Trust precedes outreach.</small></div>
+              <div><span>01</span><strong>Your profile</strong><small>You control what it says.</small></div>
+              <div><span>02</span><strong>Sourced data</strong><small>Every record shows its origin.</small></div>
+              <div><span>03</span><strong>Clear matches</strong><small>Each result says why.</small></div>
+              <div><span>04</span><strong>Respectful outreach</strong><small>Introductions follow each person&apos;s rules.</small></div>
             </div>
           </aside>
         </header>
 
         <section className={styles.commandDeck}>
           <div className={styles.commandLead}>
-            <span className={styles.commandKicker}>Scientific intent</span>
-            <h2>What are you trying to understand next?</h2>
-            <p>Start with the research question. Add structure only when it improves precision.</p>
+            <span className={styles.commandKicker}>Search</span>
+            <h2>What are you looking for?</h2>
+            <p>Describe it the way you would to a colleague. Add filters only if you need them.</p>
           </div>
 
           <Link className={styles.commandSearch} href="/discover">
@@ -164,7 +164,7 @@ export default async function HomePage() {
               </svg>
             </span>
             <span className={styles.searchText}>
-              <small>Search scientific intelligence</small>
+              <small>Search Provenant</small>
               <strong>e.g. spatial transcriptomics collaborators in pancreatic cancer</strong>
             </span>
             <span className={styles.searchCommand}>Open Discovery <b>↗</b></span>
@@ -182,11 +182,11 @@ export default async function HomePage() {
         <section className={styles.surfaceSection}>
           <div className={styles.sectionIntro}>
             <div>
-              <span className="sectionLabel">Intelligence surfaces</span>
-              <h2>One research context. Multiple ways to act on it.</h2>
+              <span className="sectionLabel">Your workspace</span>
+              <h2>One profile, five tools.</h2>
             </div>
             <p>
-              Each surface uses the same canonical scientific context while keeping provenance, relevance, eligibility, and user control distinct.
+              Every tool works from the same profile, and keeps sources, relevance, eligibility and your privacy settings separate.
             </p>
           </div>
 
@@ -212,10 +212,10 @@ export default async function HomePage() {
           <article className={styles.workflowPanel}>
             <div className={styles.panelHeading}>
               <div>
-                <span className="sectionLabel">Decision workflow</span>
-                <h2>Move from context to action without losing the evidence trail.</h2>
+                <span className="sectionLabel">How it works</span>
+                <h2>From profile to application, with the sources in view.</h2>
               </div>
-              <span className={styles.panelMeta}>Three-stage research loop</span>
+              <span className={styles.panelMeta}>Three steps</span>
             </div>
 
             <div className={styles.workflowList}>
@@ -236,12 +236,12 @@ export default async function HomePage() {
             <div className={styles.evidenceHeader}>
               <span className={styles.evidenceMonogram}>E</span>
               <div>
-                <span className="sectionLabel">Evidence architecture</span>
+                <span className="sectionLabel">Our principles</span>
                 <h2>Confidence should have a source.</h2>
               </div>
             </div>
             <p className={styles.evidenceIntro}>
-              Studepartment is designed to become more useful as evidence quality improves—not as engagement increases.
+              Provenant should get more useful as its sources improve, not as you spend more time on it.
             </p>
             <div className={styles.evidenceStack}>
               {evidencePrinciples.map((item) => (
@@ -252,18 +252,18 @@ export default async function HomePage() {
                 </div>
               ))}
             </div>
-            <Link href="/graph">Inspect the Scientific Evidence Graph <span>↗</span></Link>
+            <Link href="/graph">Open the Evidence Graph <span>↗</span></Link>
           </aside>
         </section>
 
         <section className={styles.closingRail}>
           <div>
             <span className="sectionLabel">Private by default</span>
-            <strong>Your feedback shapes your workspace—not a public reputation score.</strong>
+            <strong>Your feedback improves your own results. It is never made public.</strong>
           </div>
           <div>
-            <span className="sectionLabel">Scientific fit ≠ eligibility</span>
-            <strong>Relevance and formal requirements stay deliberately separate.</strong>
+            <span className="sectionLabel">Fit vs. eligibility</span>
+            <strong>We show relevance and formal requirements separately, on purpose.</strong>
           </div>
           <Link href="/settings/privacy">Privacy & data controls <span>↗</span></Link>
         </section>
