@@ -1,6 +1,6 @@
 # Deployment Runbook
 
-This runbook is the release path for Studepartment after Production Readiness v1.0.
+This runbook is the release path for Provenant after Production Readiness v1.0.
 
 ## 1. Build once
 
@@ -8,7 +8,7 @@ The application is built as a Node.js Next.js service.
 
 Container:
 
-    docker build -t studepartment:<release-sha> .
+    docker build -t provenant:<release-sha> .
 
 The image build uses non-secret placeholder configuration only. Never pass production credentials as Docker build arguments.
 
@@ -138,13 +138,13 @@ If OPENAI_API_KEY is absent, the Research Assistant returns an explicit not-conf
 
 OPENAI_ASSISTANT_MODEL controls the synthesis model. The repository default is gpt-5.6-luna.
 
-The assistant sends only the authenticated user's request-specific Studepartment source ledger and question to the provider, requests store=false, and does not enable external web browsing.
+The assistant sends only the authenticated user's request-specific Provenant source ledger and question to the provider, requests store=false, and does not enable external web browsing.
 
 Verify in staging that:
 
 - anonymous assistant requests return 401
 - authenticated users without a Scientific Identity receive an explicit identity-required response
-- generated answers show valid Studepartment source ids
+- generated answers show valid Provenant source ids
 - provider failures do not produce fabricated fallback answers
 
 ## 10. Opportunity ingestion
