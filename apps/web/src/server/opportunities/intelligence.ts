@@ -7,6 +7,7 @@ import type {
   OpportunityTypeValue,
 } from "@/lib/api-contracts";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { careerStageFilterSlugs } from "./career-stage";
 import { getTopInterestTopicSlugs, recordSearchAndUpdateInterest } from "@/server/personalization/interest-signals";
 
 const typeToDb = {
@@ -242,6 +243,15 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
   }
   if (query.methodSlugs.length) {
     where.methods = { some: { method: { slug: { in: query.methodSlugs } } } };
+  }
+  if (query.careerStage) {
+    // Opportunities that publish no career-stage limit stay visible to everyone.
+    where.AND = [{
+      OR: [
+        { eligibleCareerStages: { isEmpty: true } },
+        { eligibleCareerStages: { hasSome: careerStageFilterSlugs(query.careerStage) } },
+      ],
+    }];
   }
   if (query.deadlineWithinDays) {
     where.deadline = {

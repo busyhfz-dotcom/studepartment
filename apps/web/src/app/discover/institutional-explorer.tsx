@@ -11,6 +11,8 @@ import type {
 } from "@/lib/api-contracts";
 import { FeedbackControls } from "@/components/feedback/feedback-controls";
 import styles from "./institutional.module.css";
+import { CountrySelect } from "@/components/forms/country-select";
+import { researchMethods, researchTopics } from "@studepartment/db/taxonomy";
 
 type DiscoveryApiResponse = ApiSuccess<InstitutionalDiscoveryResponse> | ApiError;
 
@@ -32,8 +34,8 @@ function title(value: string) {
 
 export function InstitutionalExplorer({ entityType }: { entityType: InstitutionalEntityType }) {
   const laboratory = entityType === "laboratory";
-  const [query, setQuery] = useState(laboratory ? "translational oncology biomarkers" : "medical research institutions oncology");
-  const [topic, setTopic] = useState("oncology");
+  const [query, setQuery] = useState("");
+  const [topic, setTopic] = useState("");
   const [method, setMethod] = useState("");
   const [country, setCountry] = useState("");
   const [organizationType, setOrganizationType] = useState<"" | InstitutionalOrganizationType>("");
@@ -103,16 +105,22 @@ export function InstitutionalExplorer({ entityType }: { entityType: Institutiona
 
           <div className={styles.filters}>
             <label>
-              <span>Topic slug</span>
-              <input onChange={(event) => setTopic(event.target.value)} placeholder="oncology" value={topic} />
+              <span>Research topic</span>
+              <select onChange={(event) => setTopic(event.target.value)} value={topic}>
+                <option value="">All research topics</option>
+                {researchTopics.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
             </label>
             <label>
-              <span>Method slug</span>
-              <input onChange={(event) => setMethod(event.target.value)} placeholder="single-cell-profiling" value={method} />
+              <span>Method</span>
+              <select onChange={(event) => setMethod(event.target.value)} value={method}>
+                <option value="">All methods</option>
+                {researchMethods.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
             </label>
             <label>
               <span>Country</span>
-              <input maxLength={2} onChange={(event) => setCountry(event.target.value)} placeholder="DE" value={country} />
+              <CountrySelect ariaLabel="Country" onChange={setCountry} value={country} />
             </label>
             <label>
               <span>Organization type</span>

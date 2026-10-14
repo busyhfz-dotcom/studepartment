@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { ProductShell } from "@/components/shell/product-shell";
+import { getShellViewer } from "@/server/auth/shell-viewer";
 import { OpportunityExplorer } from "./opportunity-explorer";
 import styles from "./page.module.css";
 
-export default function OpportunitiesPage() {
+export default async function OpportunitiesPage() {
+  const viewer = await getShellViewer();
   return (
-    <ProductShell>
+    <ProductShell {...viewer}>
       <div className={styles.shell}>
         <header className={styles.header}>
           <div className={styles.headerMeta}>

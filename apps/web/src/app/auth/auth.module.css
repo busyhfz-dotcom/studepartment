@@ -404,3 +404,36 @@
   .roleChoices { grid-template-columns: 1fr; }
   .roleChoices > span { grid-column: auto; }
 }
+
+/* Inline checkbox rows (show password, terms consent). Declared last so they
+   override the full-width text-input rules above. */
+.form .checkRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #536580;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.form .checkRow input {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  margin: 2px 0 0;
+  padding: 0;
+  border-radius: 4px;
+  box-shadow: none;
+  accent-color: #5678df;
+}
+
+.form .checkRow a {
+  color: #5678df;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

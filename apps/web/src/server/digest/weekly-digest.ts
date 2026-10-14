@@ -1,8 +1,7 @@
 import { getDb } from "@studepartment/db";
 import { getSiteUrl } from "@/lib/site";
 import { sendEmail } from "@/server/notifications/email";
-
-const DIGEST_WINDOW_DAYS = 7;
+import { DIGEST_WINDOW_DAYS, MAX_DEADLINE_LOOKAHEAD_DAYS, escapeHtml, isDeadlineDue } from "./digest-format";
 
 type DigestOpportunity = {
   title: string;
@@ -15,6 +14,7 @@ type DigestContent = {
   subject: string;
   positions: DigestOpportunity[];
   grants: DigestOpportunity[];
+  savedDeadlines: DigestOpportunity[];
 };
 
 const subjectLinesByCount = [
@@ -22,7 +22,10 @@ const subjectLinesByCount = [
   "1 new match this week on Studepartment",
 ];
 
-function subjectLine(total: number): string {
+function subjectLine(total: number, savedDeadlines = 0): string {
+  if (total === 0 && savedDeadlines > 0) {
+    return savedDeadlines === 1 ? "1 saved opportunity closes soon" : `${savedDeadlines} saved opportunities close soon`;
+  }
   if (total === 0) return subjectLinesByCount[0];
   if (total === 1) return subjectLinesByCount[1];
   if (total <= 4) return `${total} new positions & grants worth a look this week`;
@@ -41,9 +44,9 @@ function renderHtml(content: DigestContent, siteUrl: string): string {
       .map(
         (item) =>
           `<tr><td style="padding:10px 0;border-bottom:1px solid #e6e9e7;">
-            <strong style="font-size:14px;color:#101815;">${item.title}</strong><br/>
-            <span style="font-size:12px;color:#5b655f;">${item.organization} · ${item.location}</span><br/>
-            <span style="font-size:12px;color:#0b6c60;font-weight:600;">${item.deadlineLabel}</span>
+            <strong style="font-size:14px;color:#101815;">${escapeHtml(item.title)}</strong><br/>
+            <span style="font-size:12px;color:#5b655f;">${escapeHtml(item.organization)} · ${escapeHtml(item.location)}</span><br/>
+            <span style="font-size:12px;color:#0b6c60;font-weight:600;">${escapeHtml(item.deadlineLabel)}</span>
           </td></tr>`,
       )
       .join("");
@@ -52,7 +55,8 @@ function renderHtml(content: DigestContent, siteUrl: string): string {
 
   return `<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;">
     <p style="font-size:12px;color:#5b655f;">Studepartment · Medical Research Intelligence</p>
-    <h1 style="font-size:20px;color:#101815;">${content.subject}</h1>
+    <h1 style="font-size:20px;color:#101815;">${escapeHtml(content.subject)}</h1>
+    ${section("Saved opportunities closing soon", content.savedDeadlines)}
     ${section("New positions", content.positions)}
     ${section("New grants & funding", content.grants)}
     <p style="margin-top:28px;font-size:11px;color:#8a938e;">
@@ -69,6 +73,7 @@ function renderText(content: DigestContent, siteUrl: string): string {
   };
   return (
     `${content.subject}\n` +
+    section("Saved opportunities closing soon", content.savedDeadlines) +
     section("New positions", content.positions) +
     section("New grants & funding", content.grants) +
     `\nManage notification preferences: ${siteUrl}/settings/privacy\n`
@@ -157,8 +162,27 @@ export async function runWeeklyDigest(): Promise<WeeklyDigestRunSummary> {
       }),
     ]);
 
+    const savedRows = await db.savedOpportunity.findMany({
+      where: {
+        userId: candidate.id,
+        deadlineAlert: true,
+        opportunity: {
+          status: "ACTIVE",
+          deadline: { gte: now, lte: new Date(now.getTime() + MAX_DEADLINE_LOOKAHEAD_DAYS * 86_400_000) },
+        },
+      },
+      orderBy: { opportunity: { deadline: "asc" } },
+      take: 10,
+      select: {
+        id: true,
+        alertLeadDays: true,
+        opportunity: { select: { title: true, city: true, countryCode: true, deadline: true, organization: { select: { name: true } } } },
+      },
+    });
+    const dueSaved = savedRows.filter((row) => row.opportunity.deadline && isDeadlineDue(row.opportunity.deadline, row.alertLeadDays, now));
+
     const total = positions.length + grants.length;
-    if (total === 0) {
+    if (total === 0 && dueSaved.length === 0) {
       summary.emailsSkippedNoContent += 1;
       continue;
     }
@@ -172,9 +196,10 @@ export async function runWeeklyDigest(): Promise<WeeklyDigestRunSummary> {
       }));
 
     const content: DigestContent = {
-      subject: subjectLine(total),
+      subject: subjectLine(total, dueSaved.length),
       positions: map(positions),
       grants: map(grants),
+      savedDeadlines: map(dueSaved.map((row) => row.opportunity)),
     };
 
     const result = await sendEmail({
@@ -187,6 +212,9 @@ export async function runWeeklyDigest(): Promise<WeeklyDigestRunSummary> {
     if (result.sent) {
       summary.emailsSent += 1;
       await db.user.update({ where: { id: candidate.id }, data: { lastDigestSentAt: now } });
+      if (dueSaved.length) {
+        await db.savedOpportunity.updateMany({ where: { id: { in: dueSaved.map((row) => row.id) } }, data: { lastAlertedAt: now } });
+      }
     } else if (result.reason === "EMAIL_DELIVERY_NOT_CONFIGURED") {
       summary.emailsSkippedDeliveryNotConfigured += 1;
     }

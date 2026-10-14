@@ -11,6 +11,7 @@ import type {
 import { FeedbackControls } from "@/components/feedback/feedback-controls";
 import { researchTopics, researchMethods } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
+import { CountrySelect } from "@/components/forms/country-select";
 
 type DiscoveryApiResponse = ApiSuccess<ResearcherDiscoveryResponse> | ApiError;
 
@@ -32,9 +33,9 @@ function confidenceLabel(value: "high" | "medium" | "low") {
 }
 
 export function DiscoveryExplorer() {
-  const [query, setQuery] = useState("translational oncology biomarkers Europe");
-  const [topic, setTopic] = useState("oncology");
-  const [method, setMethod] = useState("translational-research");
+  const [query, setQuery] = useState("");
+  const [topic, setTopic] = useState("");
+  const [method, setMethod] = useState("");
   const [country, setCountry] = useState("");
   const [availability, setAvailability] = useState<"" | DiscoveryAvailability>("");
   const [data, setData] = useState<ResearcherDiscoveryResponse | null>(null);
@@ -124,12 +125,7 @@ export function DiscoveryExplorer() {
             </label>
             <label>
               <span>Country</span>
-              <input
-                maxLength={2}
-                onChange={(event) => setCountry(event.target.value)}
-                placeholder="DE"
-                value={country}
-              />
+              <CountrySelect ariaLabel="Country" onChange={setCountry} value={country} />
             </label>
             <label>
               <span>Availability</span>

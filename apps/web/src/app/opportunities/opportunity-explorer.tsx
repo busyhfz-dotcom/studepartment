@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import type {
   ApiError,
   ApiSuccess,
+  OpportunityCareerStage,
   OpportunityIntelligenceResponse,
   OpportunityTypeValue,
 } from "@/lib/api-contracts";
@@ -11,6 +12,7 @@ import { FeedbackControls } from "@/components/feedback/feedback-controls";
 import { researchTopics } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
 import { SaveOpportunityButton } from "./save-opportunity-button";
+import { CountrySelect } from "@/components/forms/country-select";
 
 type OpportunityApiResponse = ApiSuccess<OpportunityIntelligenceResponse> | ApiError;
 
@@ -22,6 +24,15 @@ const typeOptions: Array<{ value: "" | OpportunityTypeValue; label: string }> = 
   { value: "grant", label: "Grants" },
   { value: "collaboration", label: "Collaborations" },
   { value: "research-assistantship", label: "Research assistantships" },
+];
+
+const careerStageOptions: Array<{ value: "" | OpportunityCareerStage; label: string }> = [
+  { value: "", label: "Any career stage" },
+  { value: "student", label: "Student / research assistant" },
+  { value: "phd", label: "PhD candidate (R1)" },
+  { value: "postdoc", label: "Postdoc (R2)" },
+  { value: "early-career-researcher", label: "Early-career independent (R3)" },
+  { value: "faculty", label: "Faculty / professor (R3–R4)" },
 ];
 
 const topicOptions = [{ value: "", label: "All research topics" }, ...researchTopics.map(([value, label]) => ({ value, label }))];
@@ -41,6 +52,7 @@ export function OpportunityExplorer() {
   const [topic, setTopic] = useState("");
   const [country, setCountry] = useState("");
   const [deadlineWindow, setDeadlineWindow] = useState("");
+  const [careerStage, setCareerStage] = useState<"" | OpportunityCareerStage>("");
   const [searchedWithFilters, setSearchedWithFilters] = useState(false);
   const [data, setData] = useState<OpportunityIntelligenceResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -50,7 +62,7 @@ export function OpportunityExplorer() {
     event?.preventDefault();
     setLoading(true);
     setError(null);
-    setSearchedWithFilters(Boolean(query.trim() || type || topic || country.trim() || deadlineWindow));
+    setSearchedWithFilters(Boolean(query.trim() || type || topic || country.trim() || deadlineWindow || careerStage));
 
     const params = new URLSearchParams();
     if (query.trim()) params.set("q", query.trim());
@@ -58,6 +70,7 @@ export function OpportunityExplorer() {
     if (topic) params.set("topic", topic);
     if (country.trim()) params.set("country", country.trim().toUpperCase());
     if (deadlineWindow) params.set("deadlineWithinDays", deadlineWindow);
+    if (careerStage) params.set("career", careerStage);
     params.set("limit", "12");
 
     try {
@@ -118,7 +131,13 @@ export function OpportunityExplorer() {
             </label>
             <label>
               <span>Country</span>
-              <input maxLength={2} onChange={(event) => setCountry(event.target.value)} placeholder="DE" value={country} />
+              <CountrySelect ariaLabel="Country" onChange={setCountry} value={country} />
+            </label>
+            <label>
+              <span>Career stage</span>
+              <select onChange={(event) => setCareerStage(event.target.value as "" | OpportunityCareerStage)} value={careerStage}>
+                {careerStageOptions.map((option) => <option key={option.value || "any-stage"} value={option.value}>{option.label}</option>)}
+              </select>
             </label>
             <label>
               <span>Deadline</span>

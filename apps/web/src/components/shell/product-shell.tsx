@@ -24,7 +24,7 @@ const workspaceItems: NavItem[] = [
   { href: "/opportunities", label: "Opportunities", description: "Positions, fellowships, grants", icon: "opportunity" },
   { href: "/introductions", label: "Introductions", description: "Purpose-led scientific outreach", icon: "introduction" },
   { href: "/scanner", label: "Scanner", description: "Real-world position & grant databases", icon: "scanner" },
-  { href: "/conferences", label: "Conferences", description: "Rankings, CFPs, and CME credit", icon: "conference" },
+  { href: "/conferences", label: "Conferences", description: "Venue checks and CME credit", icon: "conference" },
 ];
 
 const identityItemsIndividual: NavItem[] = [
@@ -196,9 +196,12 @@ function NavigationGroup({
 export function ProductShell({
   children,
   accountKind = "individual",
+  signedIn = true,
 }: {
   children: ReactNode;
   accountKind?: "individual" | "institution";
+  /** Public pages pass false for visitors, who get Sign in / Join instead of Sign out. */
+  signedIn?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -274,7 +277,20 @@ export function ProductShell({
               <small>Evidence-aware · User controlled</small>
             </span>
           </Link>
-          <SignOutButton />
+          {signedIn ? <SignOutButton /> : (
+            <Link className={styles.trustSummary} href="/auth/sign-up" onClick={() => setMobileOpen(false)}>
+              <span className={styles.trustGlyph} aria-hidden="true">
+                <svg fill="none" viewBox="0 0 24 24">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4.5 21c.6-4.8 3.3-7 7.5-7s6.9 2.2 7.5 7" />
+                </svg>
+              </span>
+              <span>
+                <strong>Join free or sign in</strong>
+                <small>Save opportunities and get weekly matches</small>
+              </span>
+            </Link>
+          )}
           <div className={styles.version}>
             <span>Release candidate</span>
             <strong>v1.4.0-rc.1</strong>
@@ -310,9 +326,13 @@ export function ProductShell({
               <kbd>⌘K</kbd>
             </Link>
             <SystemStatus />
-            <Link aria-label="Open Scientific Identity" className={styles.avatar} href={identityHref}>
-              <span>{accountKind === "institution" ? "IN" : "RI"}</span>
-            </Link>
+            {signedIn ? (
+              <Link aria-label="Open Scientific Identity" className={styles.avatar} href={identityHref}>
+                <span>{accountKind === "institution" ? "IN" : "RI"}</span>
+              </Link>
+            ) : (
+              <Link className={styles.guestSignIn} href="/auth/sign-in">Sign in</Link>
+            )}
           </div>
         </header>
 
