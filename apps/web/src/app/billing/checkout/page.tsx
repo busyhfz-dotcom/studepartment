@@ -20,9 +20,9 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
       <Link className={styles.back} href="/billing">← All plans</Link>
       <section className={styles.hero}>
         <div>
-          <span className="eyebrow">Studepartment Pro · plan details</span>
+          <span className="eyebrow">Provenant Pro · plan details</span>
           <h1>{plan.label} plan</h1>
-          <p>Unlock Studepartment&apos;s evidence intelligence when your research needs it. Your profile, public discovery and opportunity tracking stay free.</p>
+          <p>Add Provenant&apos;s research tools when your work needs them. Your profile, public search and opportunity tracking stay free.</p>
         </div>
         <div className={styles.price}><strong>{plan.price}</strong><span>{plan.cadence}</span><span>{effectiveMonthlyPrice(plan)} per month equivalent · {plan.intervalMonths} months covered</span></div>
       </section>
