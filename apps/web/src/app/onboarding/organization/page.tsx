@@ -21,13 +21,12 @@ export default async function OrganizationOnboardingPage({ searchParams }: { sea
     <main className="shell onboardingShell">
       <ScientificBackdrop tone="light" />
       <header className="onboardingHeader">
-        <Link className="backLink" href="/start">← Studepartment</Link>
+        <Link className="backLink" href="/start">← Provenant</Link>
         <span className="eyebrow">Institutional Identity</span>
         <h1>Register the institution, lab, or hospital you represent.</h1>
         <p className="lede">
-          Institutional accounts get a distinct profile: a claimed organization record, source-of-truth
-          opportunity postings, and researcher-facing verification — instead of an individual scientific
-          identity.
+          Institutional accounts get their own kind of profile: an organization record, the official home for
+          your postings, and a verification status that researchers can see.
         </p>
         <Link className="secondary" href={"/onboarding?callbackUrl=" + encodeURIComponent(safeReturnPath(callbackUrl))}>
           Applying as an individual researcher instead? Go back to the researcher path ↗
