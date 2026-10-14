@@ -1,6 +1,6 @@
-# Studepartment v1.4.0-rc.1 Release Notes
+# Provenant v1.4.0-rc.1 Release Notes
 
-This release candidate represents the completed repository-side product loop for Studepartment.
+This release candidate represents the completed repository-side product loop for Provenant.
 
 ## Scientific Identity
 
@@ -43,7 +43,7 @@ This release candidate represents the completed repository-side product loop for
 - Scientific Evidence Graph.
 - Institutional Intelligence profiles derived from canonical public relationships.
 - Deterministic institution/identity topic, method, and opportunity overlap.
-- Grounded Research Assistant using request-specific Studepartment source ledgers.
+- Grounded Research Assistant using request-specific Provenant source ledgers.
 - Citation validation for assistant output.
 - No assistant web browsing, hidden institutional ranking, or eligibility invention.
 
