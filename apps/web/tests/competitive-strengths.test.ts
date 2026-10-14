@@ -53,12 +53,12 @@ test("robots keeps people out of search engines but lets public directories in",
 
 test("sitemap lists public pages on the configured host, not the build placeholder", () => {
   const previous = process.env.BETTER_AUTH_URL;
-  process.env.BETTER_AUTH_URL = "https://studepartment.example/";
+  process.env.BETTER_AUTH_URL = "https://provenant.example/";
   try {
     const urls = sitemap().map((entry) => entry.url);
-    assert.ok(urls.includes("https://studepartment.example/"));
-    assert.ok(urls.includes("https://studepartment.example/scanner"));
-    assert.ok(urls.every((url) => url.startsWith("https://studepartment.example/")));
+    assert.ok(urls.includes("https://provenant.example/"));
+    assert.ok(urls.includes("https://provenant.example/scanner"));
+    assert.ok(urls.every((url) => url.startsWith("https://provenant.example/")));
   } finally {
     if (previous === undefined) delete process.env.BETTER_AUTH_URL;
     else process.env.BETTER_AUTH_URL = previous;
