@@ -1,11 +1,13 @@
 import { ProductShell } from "@/components/shell/product-shell";
+import { getShellViewer } from "@/server/auth/shell-viewer";
 import { DiscoveryExplorer } from "./discovery-explorer";
 import { DiscoveryScopeNav } from "./discovery-scope-nav";
 import styles from "./page.module.css";
 
-export default function DiscoverPage() {
+export default async function DiscoverPage() {
+  const viewer = await getShellViewer();
   return (
-    <ProductShell>
+    <ProductShell {...viewer}>
       <div className={styles.discoverShell}>
         <DiscoveryScopeNav active="researchers" />
 
