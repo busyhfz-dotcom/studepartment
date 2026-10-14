@@ -114,16 +114,16 @@ export function AuthForm({
             </svg>
           </span>
           <span>
-            <strong>Studepartment</strong>
+            <strong>Provenant</strong>
             <small>Medical Research Intelligence</small>
           </span>
         </Link>
-        <span className="eyebrow">{mode === "sign-up" ? "Create your scientific identity" : "Secure research access"}</span>
-        <h1>{mode === "sign-up" ? "Who are you?" : "Return to your research workspace"}</h1>
+        <span className="eyebrow">{mode === "sign-up" ? "Create your account" : "Sign in"}</span>
+        <h1>{mode === "sign-up" ? "Who is this account for?" : "Welcome back"}</h1>
         <p className={styles.intro}>
           {mode === "sign-up"
-            ? "Choose the account that represents you. The next form will ask only for information relevant to your role or organization."
-            : "Sign in to continue your private Scientific Identity, evidence, opportunity, and introduction workflows."}
+            ? "Pick the account type that fits. We will only ask for details that matter for your role or organization."
+            : "Sign in to pick up where you left off: your profile, saved opportunities and introductions."}
         </p>
 
         {mode === "sign-up" && signUpStep === "identity" ? (
@@ -182,20 +182,20 @@ export function AuthForm({
         {availability}
         {mode === "sign-in" ? <p className={styles.switcher}><Link href="/auth/forgot-password">Forgot your password?</Link></p> : null}
         <p className={styles.switcher}>
-          {mode === "sign-up" ? <>Already have an account? <Link href={`/auth/sign-in${returnQuery ? `?${returnQuery}` : ""}`}>Sign in</Link></> : <>New to Studepartment? <Link href={`/auth/sign-up${returnQuery ? `?${returnQuery}` : ""}`}>Create an account</Link></>}
+          {mode === "sign-up" ? <>Already have an account? <Link href={`/auth/sign-in${returnQuery ? `?${returnQuery}` : ""}`}>Sign in</Link></> : <>New to Provenant? <Link href={`/auth/sign-up${returnQuery ? `?${returnQuery}` : ""}`}>Create an account</Link></>}
         </p>
       </section>
 
       <aside className={styles.context}>
-        <Link href="/start" className={styles.contextBrand}><span><BrandSymbol /></span>Studepartment.</Link>
+        <Link href="/start" className={styles.contextBrand}><span><BrandSymbol /></span>Provenant.</Link>
         <ResearchOrbit />
-        <span className="eyebrow">Research trust architecture</span>
-        <h2>Authentication protects identity. Evidence establishes trust.</h2>
-        <p>Your account determines who can change user-owned research data. Scientific verification, provenance, and source confidence remain separate evidence layers.</p>
+        <span className="eyebrow">Why Provenant</span>
+        <h2>Your account is private. Every listing is sourced.</h2>
+        <p>Only you can edit your profile. Anything imported from outside, such as ORCID records, keeps a note of where it came from.</p>
         <ul>
-          <li>Session → canonical User.id</li>
-          <li>User.id → owned ResearcherProfile</li>
-          <li>External records → provenance, not silent truth</li>
+          <li>Profiles stay private until you choose to publish them</li>
+          <li>Each listing shows its source and when it was last checked</li>
+          <li>Introductions follow each researcher&apos;s own settings</li>
         </ul>
       </aside>
     </main>
