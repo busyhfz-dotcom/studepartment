@@ -37,7 +37,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
           </div>
           <div className={styles.trustCard}>
             <span className="sectionLabel">Evidence & trust</span>
-            <strong>{researcher.verified ? "Verified scientific identity" : "Canonical public identity"}</strong>
+            <strong>{researcher.verified ? "Verified scientific identity" : "Public scientific identity"}</strong>
             <p>Trust signals reflect identity, organization, ORCID, and publication evidence—not social activity or popularity.</p>
             <div className={styles.trustGrid}>
               {researcher.trustSignals.map((signal) => (
@@ -64,7 +64,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
             <ul className="cleanList">
               {researcher.methods.length
                 ? researcher.methods.map((method) => <li key={method}>{method}</li>)
-                : <li>No canonical methods yet</li>}
+                : <li>No methods listed yet</li>}
             </ul>
           </article>
 
@@ -118,7 +118,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
           <div>
             <span className="sectionLabel">Evidence neighborhood</span>
             <h2>Inspect the scientific relationships behind this identity.</h2>
-            <p>The Evidence Graph derives relationships from canonical publications, topics, methods, laboratories, institutions, and current opportunities.</p>
+            <p>The Evidence Graph links this researcher&apos;s publications, topics, methods, labs, institutions and current opportunities.</p>
           </div>
           <Link className={styles.graphButton} href={"/graph?researcher=" + researcher.id}>Explore evidence graph</Link>
         </section>
