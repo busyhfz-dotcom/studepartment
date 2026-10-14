@@ -40,9 +40,9 @@ export default async function ResearchAssistantPage({
             <span className="eyebrow">Research Assistant</span>
             <span className={styles.version}>Citation-grounded</span>
           </div>
-          <h1>Reason over evidence you can inspect.</h1>
+          <h1>Ask a research question. See the sources.</h1>
           <p>
-            Ask about scientific fit, current opportunities, researchers, or institutions. Every answer is constrained to a request-specific Studepartment source ledger and must cite the evidence it uses.
+            Ask about scientific fit, current opportunities, researchers or institutions. Answers draw only on the Provenant records selected for your question, and cite each one they use.
           </p>
         </header>
         <ResearchAssistantWorkspace target={target} aiAvailable={Boolean(process.env.OPENAI_API_KEY?.trim())} identityHref={accountKind === "institution" ? "/onboarding/organization" : "/onboarding"} />
