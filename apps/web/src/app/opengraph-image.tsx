@@ -45,7 +45,7 @@ export default function OpengraphImage() {
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <span style={{ fontSize: 30, fontWeight: 800, color: "#f5f8f6", letterSpacing: "-0.01em" }}>
-              Studepartment
+              Provenant
             </span>
             <span
               style={{
@@ -71,7 +71,7 @@ export default function OpengraphImage() {
               color: "#f5faf8",
             }}
           >
-            Research decisions, grounded in evidence.
+            Every opportunity, with its source.
           </span>
           <span style={{ fontSize: 24, lineHeight: 1.5, color: "#a6b2cb", maxWidth: 860 }}>
             {siteDescription}
