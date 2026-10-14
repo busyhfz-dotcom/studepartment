@@ -1,4 +1,17 @@
-import type { OpportunityQuery, OpportunityTypeValue } from "@/lib/api-contracts";
+import type { OpportunityCareerStage, OpportunityQuery, OpportunityTypeValue } from "@/lib/api-contracts";
+
+const allowedCareerStages = new Set<OpportunityCareerStage>([
+  "student",
+  "phd",
+  "postdoc",
+  "early-career-researcher",
+  "faculty",
+]);
+
+function readCareerStage(searchParams: URLSearchParams): OpportunityCareerStage | undefined {
+  const value = (searchParams.get("career") ?? "").trim().toLowerCase();
+  return allowedCareerStages.has(value as OpportunityCareerStage) ? value as OpportunityCareerStage : undefined;
+}
 
 const allowedTypes = new Set<OpportunityTypeValue>([
   "phd",
@@ -46,5 +59,6 @@ export function parseOpportunityQuery(searchParams: URLSearchParams): Opportunit
     deadlineWithinDays: readDeadlineWindow(searchParams),
     includeStale: searchParams.get("includeStale") === "true",
     limit: readLimit(searchParams),
+    ...(readCareerStage(searchParams) ? { careerStage: readCareerStage(searchParams) } : {}),
   };
 }
