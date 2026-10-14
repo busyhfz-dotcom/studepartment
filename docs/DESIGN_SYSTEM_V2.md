@@ -1,6 +1,6 @@
-# Studepartment Global Product Design System v2
+# Provenant Global Product Design System v2
 
-Studepartment is a global medical research intelligence platform. Its interface should feel closer to a premium scientific instrument and editorial research publication than a generic SaaS dashboard.
+Provenant is a global medical research intelligence platform. Its interface should feel closer to a premium scientific instrument and editorial research publication than a generic SaaS dashboard.
 
 ## Design posture
 
@@ -183,7 +183,7 @@ Do not simply shrink desktop cards.
 
 ## Product boundary
 
-Studepartment must not visually drift toward:
+Provenant must not visually drift toward:
 
 - social network engagement UI
 - public popularity rankings
