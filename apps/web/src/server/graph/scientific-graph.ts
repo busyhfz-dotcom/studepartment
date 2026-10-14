@@ -192,7 +192,7 @@ export async function buildScientificGraph(requestedResearcherId?: string): Prom
     href: "/researchers/" + researcher.id,
     evidence: researcher.verified
       ? verifiedEvidence("Scientific Identity", "Profile carries a verified identity signal.")
-      : sourceEvidence("Scientific Identity", "Canonical Studepartment researcher profile."),
+      : sourceEvidence("Scientific Identity", "Canonical Provenant researcher profile."),
     metadata: {
       careerStage: researcher.careerStage ?? null,
       countryCode: researcher.countryCode ?? null,
