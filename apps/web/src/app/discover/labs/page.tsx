@@ -19,9 +19,9 @@ export default async function LaboratoryDiscoveryPage() {
         </div>
 
         <header className={styles.discoverHeader}>
-          <h1>Find laboratories by the science they can actually do.</h1>
+          <h1>Find labs by the science they do.</h1>
           <p className="lede">
-            Discover research teams through member-derived topics, methods, geography, institutional context, and transparent evidence signals.
+            Find research teams by their members&apos; topics and methods, their location and their institution, with the evidence for each match.
           </p>
         </header>
 
