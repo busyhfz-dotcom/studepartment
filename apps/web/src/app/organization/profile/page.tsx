@@ -37,9 +37,8 @@ export default async function OrganizationProfilePage() {
             </div>
           </div>
           <p className="lede">
-            This is your organization&apos;s canonical record on Studepartment — distinct from an individual
-            researcher profile. Researchers see this identity when evaluating your postings, affiliations,
-            and institutional intelligence.
+            This is your organization&apos;s official record on Provenant, separate from any individual&apos;s
+            profile. Researchers see it when they look at your postings and affiliations.
           </p>
           <div className={styles.headerActions}>
             <Link className="secondary" href={`/institutions/${organization.id}`}>View public institutional page ↗</Link>
