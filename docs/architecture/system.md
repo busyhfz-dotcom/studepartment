@@ -2,7 +2,7 @@
 
 ## v0.1.0 direction
 
-Studepartment starts as a modular monolith rather than a microservice fleet.
+Provenant starts as a modular monolith rather than a microservice fleet.
 
 ```text
 Web (Next.js)
