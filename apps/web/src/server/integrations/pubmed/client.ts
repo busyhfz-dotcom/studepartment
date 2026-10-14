@@ -41,7 +41,7 @@ export function getPubMedConfig(): PubMedConfig {
   return {
     email,
     apiKey: process.env.NCBI_API_KEY?.trim() || undefined,
-    tool: "studepartment",
+    tool: "provenant",
   };
 }
 
