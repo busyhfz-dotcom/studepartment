@@ -82,7 +82,7 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = true, identit
             <strong>{ledgerLabel}</strong>
           </div>
           <div className={styles.guardrails}>
-            <span>Canonical context only</span>
+            <span>Provenant records only</span>
             <span>Inline source IDs</span>
             <span>No hidden ranking</span>
           </div>
@@ -119,7 +119,7 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = true, identit
       <section className={styles.privacyNote}>
         <strong>Provider boundary</strong>
         <p>
-          {aiAvailable ? "This request sends your question and the displayed Studepartment source context to the configured AI provider. The server requests non-persistent generation and does not enable external web browsing for this assistant." : "Structured review summarizes the available Studepartment records with source links. AI-generated interpretation is awaiting activation; your question is processed within Studepartment."}
+          {aiAvailable ? "Your question and the Provenant sources shown here are sent to our AI provider. We ask the provider not to store them, and the assistant does not browse the web." : "For now, the assistant summarizes matching Provenant records with links to their sources. AI-written answers will be switched on later. Your question stays within Provenant."}
         </p>
       </section>
 
@@ -168,7 +168,7 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = true, identit
       ) : (
         <section className={styles.empty}>
           <strong>{loading ? "Building a source-limited answer…" : "No answer generated yet."}</strong>
-          <p>The assistant will only use evidence that appears in the returned source ledger. Missing evidence stays missing instead of being filled from model memory.</p>
+          <p>The assistant only uses evidence listed in the sources below. If something is missing, it says so instead of guessing.</p>
         </section>
       )}
     </>
