@@ -21,32 +21,26 @@ export type ConferenceCategory = {
 export const conferenceCategories: ConferenceCategory[] = [
   {
     id: "ranking-discovery",
-    label: "Conference ranking & discovery",
-    intro: "Where to check whether a conference is credible before submitting or attending.",
+    label: "Check credibility before you submit",
+    intro: "Checks for venues and journals, so a conference abstract or proceedings paper does not end up with a predatory publisher.",
     sources: [
       {
-        name: "CORE Rankings Portal",
-        href: "https://portal.core.edu.au/conf-ranks/",
-        scope: "Computing & informatics",
-        description: "The Computing Research and Education Association of Australasia's widely cited A*/A/B/C conference ranking, the de facto standard in computer science.",
+        name: "Think. Check. Submit.",
+        href: "https://thinkchecksubmit.org/journals/",
+        scope: "Cross-disciplinary",
+        description: "A widely used checklist for deciding whether a journal or publisher, including conference proceedings, can be trusted with your work.",
       },
       {
-        name: "WikiCFP",
-        href: "http://www.wikicfp.com/cfp/",
-        scope: "Cross-disciplinary",
-        description: "A long-running, community-maintained call-for-papers aggregator spanning computer science, engineering, and adjacent fields.",
+        name: "DOAJ",
+        href: "https://doaj.org/",
+        scope: "Open-access journals",
+        description: "The Directory of Open Access Journals, which lists only journals that meet its quality and transparency criteria.",
       },
       {
         name: "Resurchify Conference Ranking",
         href: "https://www.resurchify.com/conference-ranking",
         scope: "Cross-disciplinary",
-        description: "A searchable conference-ranking and impact tool covering a broader set of disciplines than CORE, including engineering and life sciences.",
-      },
-      {
-        name: "DBLP",
-        href: "https://dblp.org/",
-        scope: "Computer science",
-        description: "The canonical bibliographic database for computer science venues — useful for checking a conference's publication history and proceedings record.",
+        description: "A searchable conference-ranking and impact tool covering many disciplines beyond computer science, including the life sciences.",
       },
     ],
   },
