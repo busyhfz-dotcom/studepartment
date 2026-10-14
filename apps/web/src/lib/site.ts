@@ -14,7 +14,7 @@ export function getSiteUrl(): string {
   return configured && configured.length > 0 ? configured.replace(/\/+$/, "") : FALLBACK_SITE_URL;
 }
 
-export const siteName = "Studepartment";
+export const siteName = "Provenant";
 export const siteTagline = "Medical Research Intelligence";
 export const siteDescription =
-  "Evidence-aware scientific intelligence for medical research discovery, opportunity analysis, institutional context, and trusted collaboration.";
+  "Provenant helps medical researchers find positions, funding and collaborators, with the source and date behind every listing.";
