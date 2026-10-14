@@ -1,6 +1,6 @@
 # Public Beta Controls v1.4
 
-Studepartment Public Beta controls complete the private feedback, product-analytics, data portability, and account-deletion surfaces required before a public release candidate.
+Provenant Public Beta controls complete the private feedback, product-analytics, data portability, and account-deletion surfaces required before a public release candidate.
 
 ## Private feedback
 
