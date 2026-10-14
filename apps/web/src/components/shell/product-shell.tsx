@@ -18,19 +18,19 @@ type NavItem = {
 };
 
 const workspaceItems: NavItem[] = [
-  { href: "/", label: "Overview", description: "Research command center", icon: "overview" },
+  { href: "/", label: "Overview", description: "Your workspace at a glance", icon: "overview" },
   { href: "/discover", label: "Discovery", description: "Researchers, labs, institutions", icon: "discover" },
-  { href: "/assistant", label: "Research Assistant", description: "Grounded evidence reasoning", icon: "assistant" },
+  { href: "/assistant", label: "Research Assistant", description: "Answers with sources", icon: "assistant" },
   { href: "/opportunities", label: "Opportunities", description: "Positions, fellowships, grants", icon: "opportunity" },
-  { href: "/introductions", label: "Introductions", description: "Purpose-led scientific outreach", icon: "introduction" },
-  { href: "/scanner", label: "Scanner", description: "Real-world position & grant databases", icon: "scanner" },
+  { href: "/introductions", label: "Introductions", description: "Meet the right researchers", icon: "introduction" },
+  { href: "/scanner", label: "Scanner", description: "Trusted job & funding databases", icon: "scanner" },
   { href: "/conferences", label: "Conferences", description: "Venue checks and CME credit", icon: "conference" },
 ];
 
 const identityItemsIndividual: NavItem[] = [
-  { href: "/profile", label: "Scientific Identity", description: "Profile, evidence, provenance", icon: "identity" },
+  { href: "/profile", label: "Scientific Identity", description: "Your research profile", icon: "identity" },
   { href: "/files", label: "Files & Documents", description: "CV, certificates, applications", icon: "files" },
-  { href: "/graph", label: "Evidence Graph", description: "Scientific relationships", icon: "graph" },
+  { href: "/graph", label: "Evidence Graph", description: "How the work connects", icon: "graph" },
 ];
 
 const identityItemsInstitution: NavItem[] = [
@@ -41,7 +41,7 @@ const identityItemsInstitution: NavItem[] = [
 
 const pageNames: Array<[string, string]> = [
   ["/files", "Files & Documents"],
-  ["/billing", "Studepartment Pro"],
+  ["/billing", "Provenant Pro"],
   ["/discover", "Scientific Discovery"],
   ["/assistant", "Research Assistant"],
   ["/opportunities", "Opportunity Intelligence"],
@@ -244,7 +244,7 @@ export function ProductShell({
           <Link className={styles.brand} href="/start" onClick={() => setMobileOpen(false)}>
             <BrandMark />
             <span className={styles.brandCopy}>
-              <strong>Studepartment</strong>
+              <strong>Provenant</strong>
               <small>Medical Research Intelligence</small>
             </span>
           </Link>
@@ -274,7 +274,7 @@ export function ProductShell({
             </span>
             <span>
               <strong>Privacy-first by design</strong>
-              <small>Evidence-aware · User controlled</small>
+              <small>Sourced · Private by default</small>
             </span>
           </Link>
           {signedIn ? <SignOutButton /> : (
@@ -311,7 +311,7 @@ export function ProductShell({
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
             <div className={styles.contextTitle}>
-              <Link className={styles.workspaceBrand} href="/start">Studepartment</Link>
+              <Link className={styles.workspaceBrand} href="/start">Provenant</Link>
               <strong className={styles.pageName}>{pageName}</strong>
             </div>
           </div>
