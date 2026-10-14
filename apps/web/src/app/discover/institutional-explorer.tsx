@@ -132,7 +132,7 @@ export function InstitutionalExplorer({ entityType }: { entityType: Institutiona
 
           <div className={styles.formFooter}>
             <div className={styles.contextPills}>
-              <span>Canonical affiliations</span>
+              <span>Affiliations</span>
               <span>Member-derived topics</span>
               <span>Explainable ordering</span>
             </div>
@@ -150,7 +150,7 @@ export function InstitutionalExplorer({ entityType }: { entityType: Institutiona
             <h2>{data ? `${data.results.length} focused ${laboratory ? "labs" : "institutions"}` : "Run a focused search"}</h2>
           </div>
           <p>
-            Results are ordered by scientific intent, topic and method evidence, geography, public research activity, and trust signals—not reputation or popularity.
+            Results are ordered by how well topics and methods match, location, public research activity and trust signals, not by reputation or popularity.
           </p>
         </div>
 
