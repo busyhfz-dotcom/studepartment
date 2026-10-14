@@ -150,8 +150,8 @@ export function OrganizationOnboardingWizard({ initialType, callbackUrl = "/orga
               placeholder="What this institution or lab focuses on"
             />
             <small>
-              Shown on your public institutional profile. This is a self-reported description — it is
-              labeled as unverified until Studepartment corroborates it against institutional evidence.
+              Shown on your public institutional profile. It is marked as self-reported until Provenant can
+              confirm it from institutional sources.
             </small>
           </label>
         </div>

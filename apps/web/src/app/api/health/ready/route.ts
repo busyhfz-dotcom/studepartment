@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json(
       {
         status: "ready",
-        service: "studepartment-web",
+        service: "provenant-web",
         environment: runtime.deploymentEnvironment,
         release: runtime.releaseSha ?? null,
         database: "ready",
@@ -30,7 +30,7 @@ export async function GET() {
     return NextResponse.json(
       {
         status: "degraded",
-        service: "studepartment-web",
+        service: "provenant-web",
         environment: runtime.deploymentEnvironment,
         release: runtime.releaseSha ?? null,
         database: "unavailable",

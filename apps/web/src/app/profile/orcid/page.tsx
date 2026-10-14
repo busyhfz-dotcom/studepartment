@@ -25,7 +25,7 @@ export default async function ResearchProfilesPage() {
       </header>
       {!institutional ? <section className={styles.card}>
         <h2>Connect and import from ORCID</h2>
-        <p>Sign in on ORCID and authorize Studepartment to read your public record. We import available biography, country, education, research appointments, keywords, profile links and up to 100 research outputs. Existing profile text and populated sections are preserved.</p>
+        <p>Sign in on ORCID and authorize Provenant to read your public record. We import available biography, country, education, research appointments, keywords, profile links and up to 100 research outputs. Existing profile text and populated sections are preserved.</p>
         <p>We request read access to public information only. Your ORCID password stays with ORCID; no ORCID access token is stored.</p>
         {configured ? <div className={styles.actions}>
           <a className="primaryButton" href="/api/integrations/orcid/connect">Connect and import from ORCID →</a>
@@ -43,7 +43,7 @@ export default async function ResearchProfilesPage() {
       </div>
       <section className={styles.card}>
         <h2>Keep your profile links together</h2>
-        <p>Other external profile links open the source website. They do not import information or verify account ownership. Open each service in a new tab, then paste its public profile URL into your Studepartment profile.</p>
+        <p>Other external profile links open the source website. They do not import information or verify account ownership. Open each service in a new tab, then paste its public profile URL into your Provenant profile.</p>
         <div className={styles.actions}>
           <Link className="primaryButton" href={institutional ? profileHref : "/profile/edit"}>{institutional ? "Open institutional profile" : "Save your profile links"} →</Link>
           <Link className="secondary" href={profileHref}>Back to your profile</Link>

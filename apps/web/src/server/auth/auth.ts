@@ -17,7 +17,7 @@ const trustedOrigin = new URL(runtime.betterAuthUrl).origin;
  * from the authentication vendor.
  */
 export const auth = betterAuth({
-  appName: "Studepartment",
+  appName: "Provenant",
   database: prismaAdapter(getDb(), {
     provider: "postgresql",
     transaction: true,
@@ -35,7 +35,7 @@ export const auth = betterAuth({
         // Send after responding so account existence cannot be inferred from delivery latency.
         after(async () => {
           const safeUrl = url.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-          const result = await sendEmail({ to: user.email, subject: "Reset your Studepartment password", text: `Reset your password: ${url}\nIf you did not request this, ignore this email.`, html: `<p><a href="${safeUrl}">Reset your password</a></p><p>If you did not request this, ignore this email.</p>` });
+          const result = await sendEmail({ to: user.email, subject: "Reset your Provenant password", text: `Reset your password: ${url}\nIf you did not request this, ignore this email.`, html: `<p><a href="${safeUrl}">Reset your password</a></p><p>If you did not request this, ignore this email.</p>` });
           if (!result.sent) console.error("[auth] password reset email delivery failed", result.reason);
         });
       },

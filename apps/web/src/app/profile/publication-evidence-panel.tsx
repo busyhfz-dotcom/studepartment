@@ -99,7 +99,7 @@ export function PublicationEvidencePanel({ importAvailable = false }: { importAv
           <span className="sectionLabel">Publication evidence</span>
           <h2 id="publication-evidence-title">Source-backed research outputs</h2>
           <p>
-            ORCID establishes the asserted work relationship. PubMed corroboration confirms bibliographic identifiers and metadata without turning citation counts into a researcher score.
+            ORCID shows that you claim a work. PubMed confirms its identifiers and details. Citation counts are never turned into a score.
           </p>
         </div>
         {importAvailable && data?.orcidVerified ? <button

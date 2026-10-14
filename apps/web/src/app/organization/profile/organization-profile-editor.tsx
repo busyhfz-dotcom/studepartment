@@ -84,8 +84,8 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
     <section className={styles.editor}>
       <h2>Institutional details</h2>
       <p className={styles.editorLede}>
-        These fields are self-reported by your organization&apos;s administrator and labeled as such until
-        corroborated by institutional evidence (verified domain email, ROR/GRID match, or manual review).
+        These fields are entered by your organization&apos;s administrator and marked as self-reported until
+        confirmed (for example by a verified domain email, a ROR/GRID match or manual review).
       </p>
 
       <div className={styles.logoEditor}>

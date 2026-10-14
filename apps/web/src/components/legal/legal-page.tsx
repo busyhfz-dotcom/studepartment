@@ -27,7 +27,7 @@ export function LegalPage({ current, title, children }: { current: "terms" | "pr
   return (
     <div className={styles.page}>
       <header className={styles.topbar}>
-        <Link className={styles.brand} href="/start">Studepartment</Link>
+        <Link className={styles.brand} href="/start">Provenant</Link>
         <nav aria-label="Legal">
           <Link aria-current={current === "terms" ? "page" : undefined} href="/terms">Terms of Use</Link>
           <Link aria-current={current === "privacy" ? "page" : undefined} href="/privacy">Privacy Notice</Link>
@@ -35,7 +35,7 @@ export function LegalPage({ current, title, children }: { current: "terms" | "pr
         </nav>
       </header>
       <article className={styles.article}>
-        <span className="eyebrow">Studepartment · Medical research, worldwide</span>
+        <span className="eyebrow">Provenant · Medical research, worldwide</span>
         <h1>{title}</h1>
         <p className={styles.updated}>Last updated {LEGAL_LAST_UPDATED}</p>
         {children}

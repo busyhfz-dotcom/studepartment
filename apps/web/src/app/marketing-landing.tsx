@@ -6,77 +6,77 @@ import { BrandSymbol, ResearchPreview } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { FeatureAvailability } from "@/components/feature-availability";
 
-/** Public platform overview, retaining the original copy and live opportunity feed. */
+/** Public platform overview with the live opportunity feed. */
 
 const platformSurfaces = [
   {
     key: "identity",
     number: "01 / Scientific Identity",
-    title: "Let your work speak clearly.",
-    copy: "Bring together research topics, methods, affiliations, ORCID ownership and publication evidence in a profile you control.",
+    title: "A profile that reflects your actual work.",
+    copy: "Your topics, methods, affiliations and publications in one place, linked to ORCID if you choose. You decide who can see it.",
     action: "Explore identity",
     href: "/profile",
-    preview: "A scientific profile with provenance.",
+    preview: "Every detail linked to its source.",
     rows: [
-      ["Research topics", "Canonical context"],
-      ["Methods & affiliations", "Structured evidence"],
-      ["ORCID & publications", "Attributable sources"],
+      ["Research topics", "What you study"],
+      ["Methods & affiliations", "How and where you work"],
+      ["ORCID & publications", "Linked to the record"],
     ],
   },
   {
     key: "discovery",
     number: "02 / Scientific Discovery",
-    title: "Find fit with a reason.",
-    copy: "Search researchers, laboratories and institutions by scientific intent, methods, geography and collaboration availability.",
+    title: "Find people by what they study.",
+    copy: "Search researchers, labs and institutions by topic, method, country and openness to collaboration. Each result tells you why it matched.",
     action: "Explore discovery",
     href: "/discover",
-    preview: "Find collaborators by what they study.",
+    preview: "Results that explain themselves.",
     rows: [
-      ["Scientific intent", "A focused question"],
-      ["Relevant people & labs", "Explainable results"],
-      ["Source context", "Inspect the evidence"],
+      ["Your question", "Start from the science"],
+      ["Researchers & labs", "Matched on topic and method"],
+      ["Sources", "Check the evidence yourself"],
     ],
   },
   {
     key: "institutions",
     number: "03 / Institution Directory",
     title: "See who is behind the work.",
-    copy: "Browse verified research institutions and their laboratories — including newly indexed cancer research centers — before you decide where to apply.",
+    copy: "Browse research institutions and their labs, including newly added cancer research centers, before you decide where to apply.",
     action: "Explore institutions",
     href: "/discover/institutions",
     preview: "An institution directory with lab-level detail.",
     rows: [
-      ["Institutions & labs", "Directory, not a leaderboard"],
+      ["Institutions & labs", "A directory, not a ranking"],
       ["Focus areas", "Matched to your field"],
-      ["Provenance", "Sourced and dated"],
+      ["Sources", "Where each record came from"],
     ],
   },
   {
     key: "opportunities",
     number: "04 / Opportunity Intelligence",
     title: "See beyond the headline.",
-    copy: "Review positions and grants alongside source freshness, scientific relevance, published eligibility and deadlines.",
+    copy: "See each position and grant with its deadline, eligibility, relevance to your work and the date its source was last checked.",
     action: "Browse opportunities",
     href: "/opportunities",
     preview: "A clearer decision before you apply.",
     rows: [
-      ["Published deadline", "Timing matters"],
-      ["Scientific relevance", "Why it fits"],
-      ["Formal eligibility", "Check requirements"],
+      ["Deadline", "Taken from the source"],
+      ["Relevance", "Why it fits your work"],
+      ["Eligibility", "Who can apply"],
     ],
   },
   {
     key: "assistant",
     number: "05 / Research Assistant",
-    title: "Ask with evidence in view.",
-    copy: "Explore focused questions across your scientific context. Answers are designed to point back to the sources behind them.",
+    title: "Ask questions. See the sources.",
+    copy: "Ask about fit, funders or institutions. Answers cite the Provenant records they rely on, so you can check them.",
     action: "Explore assistant",
     href: "/assistant",
-    preview: "A question with an inspectable source trail.",
+    preview: "Every answer shows its sources.",
     rows: [
-      ["Your research question", "Focused prompt"],
-      ["Source ledger", "Grounded response"],
-      ["Next step", "Researcher decides"],
+      ["Your question", "In plain language"],
+      ["Sources", "Cited in the answer"],
+      ["Next step", "Always your decision"],
     ],
   },
 ] as const;
@@ -88,10 +88,10 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
       <header className={styles.top}>
         <div className={styles.container}>
           <div className={styles.topInner}>
-            <Link className={styles.brand} href="/start" aria-label="Studepartment entry">
+            <Link className={styles.brand} href="/start" aria-label="Provenant home">
               <span className={styles.mark}><BrandSymbol /></span>
               <span>
-                studepartment<b>.</b>
+                provenant<b>.</b>
               </span>
             </Link>
             <MobileNav
@@ -100,7 +100,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                 { href: "#principles", label: "Our approach" },
                 { href: "#pathways", label: "Who it's for" },
                 { href: "/auth/sign-in", label: "Sign in" },
-                { href: "/auth/sign-up", label: "Join free" },
+                { href: "/auth/sign-up", label: "Create account" },
               ]}
             />
           </div>
@@ -116,11 +116,11 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
             <div className={styles.heroGrid}>
               <div className={styles.heroCopy}>
                 <h1>
-                  Good research starts with the <em>right connection.</em>
+                  Every opportunity, <em>with its source.</em>
                 </h1>
                 <p>
-                  One place to understand your scientific context, find relevant people and opportunities, and take
-                  the next step with evidence you can inspect.
+                  Positions, funding and collaborators for medical researchers, in one place. Every listing shows where
+                  it came from and when it was last checked, so you can judge what is worth your time.
                 </p>
                 <div className={styles.heroActions}>
                   <a className={styles.primary} href="#platform">
@@ -134,7 +134,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
 
             </div>
             <div className={styles.heroBottom}>
-              <span>Researcher-controlled · source-aware · private by default</span>
+              <span>Sourced listings · private by default · free to browse</span>
               <span>Explore the platform ↓</span>
             </div>
             <ResearchPreview />
@@ -149,14 +149,14 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
               <div>
                 <span className={styles.eyebrow}>The platform</span>
                 <h2>
-                  One research context.
+                  One profile.
                   <br />
-                  More ways to move forward.
+                  Five ways to put it to work.
                 </h2>
               </div>
               <p>
-                Studepartment connects your scientific identity to discovery, opportunities and evidence-led
-                decisions. Explore each part below.
+                Describe what you study and how you work once. Search, opportunities and the research assistant all
+                build on that same profile.
               </p>
             </Reveal>
             <PlatformTabs surfaces={platformSurfaces} />
@@ -168,18 +168,18 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
             <Reveal as="article" className={styles.proofItem}>
               <span className={styles.index}>01 / Provenance</span>
               <h3>Know where it came from.</h3>
-              <p>Sources, dates and institutional context should remain visible when you evaluate a research lead.</p>
+              <p>Every listing shows its source, who published it and when it was last checked.</p>
             </Reveal>
             <Reveal as="article" className={styles.proofItem} delay={80}>
               <span className={styles.index}>02 / Fit</span>
               <h3>Reasons before rank.</h3>
-              <p>Scientific relevance and formal eligibility are different questions. Both deserve a clear answer.</p>
+              <p>Being a good fit and being eligible to apply are different questions. We answer them separately.</p>
             </Reveal>
             <Reveal as="article" className={styles.proofItem} delay={160}>
               <span className={styles.index}>03 / Control</span>
-              <h3>Your context stays yours.</h3>
+              <h3>Your data stays yours.</h3>
               <p>
-                Research interests and private feedback support your decisions without becoming a public score.
+                Your interests and feedback shape your own results. They are never turned into a public score.
               </p>
             </Reveal>
           </div>
@@ -189,12 +189,12 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
           <div className={styles.container}>
             <Reveal className={styles.pathHead}>
               <div>
-                <span className={styles.eyebrow}>A place for each side of research</span>
-                <h2>Find a way in that fits.</h2>
+                <span className={styles.eyebrow}>For researchers and institutions</span>
+                <h2>Two ways in.</h2>
               </div>
               <p>
-                The public entry flow keeps opportunity browsing simple. Institutions have a distinct path to share
-                their openings.
+                Researchers can browse openings without an account. Labs and institutions have their own route for
+                posting roles and funding calls.
               </p>
             </Reveal>
             <div className={styles.pathGrid}>
@@ -206,7 +206,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                   </div>
                   <div>
                     <h3>Explore positions &amp; funding</h3>
-                    <p>Browse publicly first; create an account for personal tracking and research tools.</p>
+                    <p>Browse without signing up. Create a free account when you want to save opportunities and track deadlines.</p>
                   </div>
                   <span className={styles.action}>
                     Start browsing <span>→</span>
@@ -223,8 +223,8 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                     <span>↗</span>
                   </div>
                   <div>
-                    <h3>Share an opportunity</h3>
-                    <p>Build an institutional profile and bring a role or funding call to relevant researchers.</p>
+                    <h3>Post an opportunity</h3>
+                    <p>Set up an institutional profile and put your role or funding call in front of researchers who fit it.</p>
                   </div>
                   <span className={styles.action}>
                     Create an institutional profile <span>→</span>
@@ -238,11 +238,11 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
         <section className={styles.closing}>
           <div className={`${styles.container} ${styles.closingGrid}`}>
             <div>
-              <span className={styles.eyebrow}>Begin with your research</span>
+              <span className={styles.eyebrow}>Get started</span>
               <h2>
-                Make the next move <em>matter.</em>
+                Find your next <em>opportunity.</em>
               </h2>
-              <p>Find context, inspect evidence, and decide on your own terms.</p>
+              <p>Free to browse. You only need an account when you want to save something.</p>
             </div>
             <Link href="/start">
               Explore opportunities <span>↗</span>
@@ -255,7 +255,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
         <Link className={styles.brand} href="/start">
           <span className={styles.mark}><BrandSymbol /></span>
           <span>
-            studepartment<b>.</b>
+            provenant<b>.</b>
           </span>
         </Link>
         <span>Medical research, worldwide.</span>

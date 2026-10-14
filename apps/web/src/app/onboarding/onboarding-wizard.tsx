@@ -104,7 +104,7 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
         {step === 0 ? (
           <div className={styles.stack}>
             <span className="eyebrow">Step 1 · Scientific context</span>
-            <h2>Who are you in the research ecosystem?</h2>
+            <h2>Tell us about yourself.</h2>
             <div className={styles.photoEditor}>
               <IdentityAvatar name={draft.fullName ?? profile.fullName} src={draft.imageUrl} />
               <ProfileImageUpload value={draft.imageUrl} onChange={(url) => setDraft((current) => ({ ...current, imageUrl: url }))} onBusyChange={setUploading} disabled={saving} />
@@ -127,7 +127,7 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
 
         {step === 1 ? (
           <div className={styles.stack}>
-            <span className="eyebrow">Step 2 · Research focus</span><h2>Choose the topics and methods that describe your actual work.</h2>
+            <span className="eyebrow">Step 2 · Research focus</span><h2>Choose the topics and methods you actually work on.</h2>
             <label><span>Search topics and methods</span><input type="search" value={focusSearch} onChange={(e) => setFocusSearch(e.target.value)} /></label>
             <div className={styles.choiceColumns}>
               <div><h3>Topics</h3>{topics.filter(([value, label]) => (draft.topicSlugs ?? []).includes(value) || label.toLowerCase().includes(focusSearch.toLowerCase())).map(([value, label]) => <button type="button" key={value} aria-pressed={(draft.topicSlugs ?? []).includes(value)} className={(draft.topicSlugs ?? []).includes(value) ? styles.selected : ""} onClick={() => toggleList("topicSlugs", value)}>{label}</button>)}</div>
@@ -138,7 +138,7 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
 
         {step === 2 ? (
           <div className={styles.stack}>
-            <span className="eyebrow">Step 3 · Collaboration intent</span><h2>Tell the system what kinds of introductions are useful.</h2>
+            <span className="eyebrow">Step 3 · Collaboration intent</span><h2>Which introductions would be useful to you?</h2>
             <div className={styles.choices}>{goals.map(([value, label]) => <button type="button" key={value} className={(draft.collaborationGoals ?? []).includes(value) ? styles.selected : ""} onClick={() => toggleList("collaborationGoals", value)}>{label}</button>)}</div>
             <label className={styles.fullField}><span>Availability</span><select value={draft.availability ?? "selective"} onChange={(e) => setDraft({ ...draft, availability: e.target.value as ProfileResponse["availability"] })}><option value="open">Open</option><option value="selective">Selective</option><option value="quiet">Quiet mode</option><option value="closed">Not accepting requests</option></select></label>
           </div>
@@ -147,7 +147,7 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
         {step === 3 ? (
           <div className={styles.stack}>
             <DocumentManager scope="profile" title="CV & supporting documents (optional)" onBusyChange={(delta) => setFileUploads((count) => count + delta)} />
-            <span className="eyebrow">Step 4 · Trust & visibility</span><h2>Keep assertions separate from verified scientific evidence.</h2>
+            <span className="eyebrow">Step 4 · Trust & visibility</span><h2>Choose what others can see.</h2>
             <div className={styles.fullField}><label htmlFor="onboarding-orcid">ORCID iD (optional)</label><input id="onboarding-orcid" placeholder="0000-0000-0000-0000" value={draft.orcid ?? ""} onChange={(e) => setDraft({ ...draft, orcid: e.target.value || null })} /><small>A new iD requests import of public ORCID information when the platform connection is active. Saving an iD does not verify account ownership.</small><ResearchProfileActions sourceKey="orcid" value={draft.orcid} /></div>
             <label className={styles.visibility}><input type="checkbox" checked={draft.profilePublic ?? false} onChange={(e) => setDraft({ ...draft, profilePublic: e.target.checked })} /><span><strong>Public scientific profile (optional)</strong><small>Profiles start private. Opt in to show your scientific identity in discovery. Saved opportunities, assistant activity and private documents stay private.</small></span></label>
           </div>

@@ -13,10 +13,9 @@ export default async function ScannerPage() {
           <span className="eyebrow">Scanner Directory</span>
           <h1>Every serious position and grant database, in one place.</h1>
           <p className="lede">
-            A hand-reviewed directory of the independent databases researchers actually use to find PhD,
-            postdoc, and faculty positions and research funding — organized by region so you stop checking
-            five tabs. Studepartment does not scrape or mirror these listings; each link opens the source
-            directly.
+            A hand-checked list of the independent databases researchers actually use to find PhD, postdoc and
+            faculty positions and research funding, grouped by region. Provenant links straight to each
+            source and does not copy its listings.
           </p>
         </header>
 
@@ -46,7 +45,7 @@ export default async function ScannerPage() {
 
         <p className={styles.footnote}>
           Know a database that belongs here, or one of ours that&apos;s posting live opportunities on
-          Studepartment directly? <a href="/opportunities">Search structured Opportunity Intelligence</a> for
+          Provenant directly? <a href="/opportunities">Search structured Opportunity Intelligence</a> for
           postings already ingested with deadlines, eligibility, and source provenance attached.
         </p>
       </div>

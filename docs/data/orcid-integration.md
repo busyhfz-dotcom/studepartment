@@ -14,9 +14,9 @@ ORCID is treated as a scientific identity source, not as the complete user profi
 
 1. User chooses **Connect ORCID**.
 2. OAuth authorization returns an ORCID identifier and access context.
-3. Studepartment fetches permitted public/authorized profile data.
+3. Provenant fetches permitted public/authorized profile data.
 4. Imported entities enter a staging state.
-5. Entity resolution compares imported organizations and publications with canonical Studepartment entities.
+5. Entity resolution compares imported organizations and publications with canonical Provenant entities.
 6. User reviews material conflicts.
 7. Accepted records are linked to the Scientific Identity.
 

@@ -15,13 +15,13 @@ export default async function SavedOpportunitiesPage({ searchParams }: { searchP
     <ProductShell accountKind={user.accountKind === "INSTITUTION" ? "institution" : "individual"}>
       <div className={styles.shell}>
         <header className={styles.header}>
-          <span className="eyebrow">Opportunity Decision Workspace</span>
-          <h1>Review source-backed opportunities as decisions, not bookmarks.</h1>
+          <span className="eyebrow">Saved opportunities</span>
+          <h1>Track every application from saved to decided.</h1>
           <p>
-            Track applications from saved to decision while keeping source context, deadlines, alerts and private notes in one place.
-            Saving an opportunity never changes scientific relevance or formal eligibility.
+            Keep the deadline, source, reminders and your private notes together for each opportunity.
+            Saving something never changes how relevant it is or whether you are eligible.
           </p>
-          <Link href="/opportunities">← Back to Opportunity Intelligence</Link>
+          <Link href="/opportunities">← Back to opportunities</Link>
         </header>
         <SavedOpportunityWorkspace pendingOpportunityId={pendingId} />
       </div>

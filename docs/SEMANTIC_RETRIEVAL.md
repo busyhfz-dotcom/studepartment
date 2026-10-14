@@ -1,6 +1,6 @@
 # Semantic retrieval operations
 
-Studepartment Discovery uses a hybrid retrieval architecture with a safe structured-lexical fallback.
+Provenant Discovery uses a hybrid retrieval architecture with a safe structured-lexical fallback.
 
 ## Storage
 

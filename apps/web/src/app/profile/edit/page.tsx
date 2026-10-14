@@ -31,11 +31,11 @@ export default async function EditProfilePage() {
       <Link className="backLink" href="/profile">← Back to Scientific Identity</Link>
 
       <header className="onboardingHeader">
-        <span className="eyebrow">Scientific Identity Maintenance</span>
-        <h1>Maintain the scientific context behind research decisions.</h1>
+        <span className="eyebrow">Edit Scientific Identity</span>
+        <h1>Keep your profile accurate.</h1>
         <p className="lede">
-          Keep identity, research focus, collaboration intent, provenance, and visibility accurate. These controls inform
-          discovery and decision support without creating a public reputation score.
+          Your research focus, collaboration preferences and visibility settings decide how you appear in search
+          and which opportunities we suggest. None of it becomes a public score.
         </p>
       </header>
 

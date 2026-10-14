@@ -16,9 +16,9 @@ export default async function OpportunitiesPage() {
           </div>
           <h1>Protect your time before you apply.</h1>
           <p className="lede">
-            Compare source freshness, scientific relevance, published eligibility, deadlines, and institutional context before committing serious application effort.
+            Check how recent each listing is, how well it fits, who can apply and when it closes, before you put work into an application.
           </p>
-          <Link href="/opportunities/saved">Open saved workspace ↗</Link>
+          <Link href="/opportunities/saved">Your saved opportunities ↗</Link>
         </header>
         <OpportunityExplorer />
       </div>

@@ -1,6 +1,6 @@
 # Database migration strategy
 
-Studepartment now keeps Prisma migration history in the repository and validates it against a fresh PostgreSQL instance in CI.
+Provenant now keeps Prisma migration history in the repository and validates it against a fresh PostgreSQL instance in CI.
 
 ## Why there is a baseline migration
 

@@ -16,13 +16,13 @@ export default function NotFound() {
             <circle cx="22.8" cy="23.8" r="2.2" />
           </svg>
         </span>
-        <strong>Studepartment</strong>
+        <strong>Provenant</strong>
       </Link>
       <span className={styles.code}>404 · Not found</span>
-      <h1>This page isn&apos;t part of the evidence trail.</h1>
+      <h1>We couldn&apos;t find that page.</h1>
       <p>
-        The page you&apos;re looking for may have moved, been renamed, or never existed. Nothing about your
-        account or research context was affected.
+        It may have moved or been renamed, or the link may be wrong. Your account and saved work are not
+        affected.
       </p>
       <div className={styles.actions}>
         <Link className="primaryButton" href="/">Back to your workspace</Link>

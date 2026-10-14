@@ -37,17 +37,17 @@ const nodes = [
 
 export function ResearchPreview() {
   return <section className={styles.preview} aria-label="Explore the connected research workspace" data-reveal>
-    <div className={styles.windowBar}><span className={styles.dots}><i /><i /><i /></span><span>Studepartment / Research workspace</span><span>Scientific context</span></div>
+    <div className={styles.windowBar}><span className={styles.dots}><i /><i /><i /></span><span>Provenant / Research workspace</span><span>Scientific context</span></div>
     <div className={styles.previewBody}>
       <nav className={styles.rail} aria-label="Research tools">{nodes.map(node => <Link key={node.name} href={node.href} aria-label={node.label}><ResearchSymbol name={node.name} /></Link>)}</nav>
       <div className={styles.canvas}>
-        <div className={styles.canvasTitle}><div><small>Scientific Discovery</small><h2>Find fit with a reason.</h2></div><span>Source-aware</span></div>
+        <div className={styles.canvasTitle}><div><small>Scientific Discovery</small><h2>Find people by what they study.</h2></div><span>Sourced</span></div>
         <div className={styles.map}>
           <svg className={styles.connections} viewBox="0 0 950 280" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M180 65C340 65 250 145 460 145S625 70 780 70" /><path d="M180 223C320 223 300 145 460 145S640 223 780 223" /><circle cx="465" cy="145" r="70" opacity=".15" /></g></svg>
-          <Link href="/profile" className={styles.identity}><span><ResearchSymbol name="identity" /></span><strong>Scientific Identity</strong><small>Your research context</small><em>Topics · methods · affiliations</em></Link>
+          <Link href="/profile" className={styles.identity}><span><ResearchSymbol name="identity" /></span><strong>Scientific Identity</strong><small>Your research profile</small><em>Topics · methods · affiliations</em></Link>
           {nodes.map((node,i) => <Link key={node.name} href={node.href} className={`${styles.mapNode} ${styles[`position${i}`]}`}><span className={styles.mapIcon}><ResearchSymbol name={node.name} /></span><span><small>{node.label}</small><strong>{node.detail}</strong></span></Link>)}
         </div>
-        <div className={styles.mapFooter}><span>Researcher-controlled</span><span>Source-aware</span><span>Private by default</span></div>
+        <div className={styles.mapFooter}><span>You control your profile</span><span>Every listing sourced</span><span>Private by default</span></div>
       </div>
     </div>
   </section>;

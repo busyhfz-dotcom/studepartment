@@ -1,6 +1,6 @@
-# Studepartment
+# Provenant
 
-Studepartment is an AI-powered, privacy-first scientific intelligence and connection platform for medical and biomedical research.
+Provenant is an AI-powered, privacy-first scientific intelligence and connection platform for medical and biomedical research.
 
 It is designed to help researchers discover the right people, laboratories, institutions, positions, grants, and collaborations without the noise of a conventional social network.
 
@@ -60,7 +60,7 @@ v1.4.0-rc.1 contains the complete repository-side product loop:
 5. Controlled scientific introductions with recipient policy and anti-spam controls.
 6. ORCID/PubMed publication enrichment and Scientific Evidence Graph.
 7. Institutional Intelligence and deterministic scientific-fit evidence.
-8. Citation-grounded Research Assistant constrained to canonical Studepartment evidence.
+8. Citation-grounded Research Assistant constrained to canonical Provenant evidence.
 9. Private feedback, data-minimized product analytics, account export, and permanent account deletion.
 10. Production-readiness CI, security headers/CSP, health endpoints, Docker release path, and deployment smoke tooling.
 
@@ -102,4 +102,4 @@ pnpm db:migrate:status
 
 ## Product boundary
 
-Studepartment does not optimize for followers, likes, public researcher rankings, or endless feed engagement. The primary outcome is a meaningful scientific discovery or connection.
+Provenant does not optimize for followers, likes, public researcher rankings, or endless feed engagement. The primary outcome is a meaningful scientific discovery or connection.

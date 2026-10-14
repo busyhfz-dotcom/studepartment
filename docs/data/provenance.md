@@ -29,10 +29,10 @@ ORCID is not treated as a full-text repository. It primarily describes links bet
 Imported data must preserve the difference between:
 
 1. public source data,
-2. data explicitly released to Studepartment through user authorization,
+2. data explicitly released to Provenant through user authorization,
 3. user-controlled private data.
 
-A field becoming available to the application does not automatically make it public on a Studepartment profile.
+A field becoming available to the application does not automatically make it public on a Provenant profile.
 
 ## Canonical entity versus source record
 

@@ -19,9 +19,9 @@ export default async function InstitutionDiscoveryPage() {
         </div>
 
         <header className={styles.discoverHeader}>
-          <h1>Find research institutions by their scientific ecosystem.</h1>
+          <h1>Find institutions by the research they do.</h1>
           <p className="lede">
-            Search universities, hospitals, laboratories, institutes, companies, and foundations through affiliation-backed research activity rather than brand visibility.
+            Search universities, hospitals, labs, institutes, companies and foundations by the work of their researchers, not by how well known their name is.
           </p>
         </header>
 

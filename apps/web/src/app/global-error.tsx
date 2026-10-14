@@ -23,12 +23,12 @@ export default function GlobalError({
           color: "#26302c",
         }}
       >
-        <strong style={{ fontSize: 14, fontWeight: 800, marginBottom: 40 }}>Studepartment</strong>
+        <strong style={{ fontSize: 14, fontWeight: 800, marginBottom: 40 }}>Provenant</strong>
         <h1 style={{ maxWidth: 560, fontSize: 32, lineHeight: 1.15, letterSpacing: "-.03em", margin: "0 0 12px" }}>
           The application failed to load.
         </h1>
         <p style={{ maxWidth: 460, color: "#6f7a74", fontSize: 14, lineHeight: 1.6, margin: "0 0 28px" }}>
-          This was a rendering issue, not a data change — your account and research context are unaffected.
+          Your account and saved work are not affected. Please reload the page.
         </p>
         <button
           onClick={() => reset()}

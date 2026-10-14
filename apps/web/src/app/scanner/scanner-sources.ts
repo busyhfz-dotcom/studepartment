@@ -15,10 +15,10 @@ export type ScannerCategory = {
 
 /**
  * Curated launch points into real, independently-operated position and
- * funding databases. Studepartment does not claim to mirror or scrape these
+ * funding databases. Provenant does not claim to mirror or scrape these
  * sources' live listings — this is a hand-reviewed directory of where to
  * search directly, organized by region and career stage, complementing
- * Studepartment's own structured Opportunity Intelligence once an
+ * Provenant's own structured Opportunity Intelligence once an
  * organization ingests its postings here.
  */
 export const scannerCategories: ScannerCategory[] = [
@@ -263,7 +263,7 @@ export const scannerCategories: ScannerCategory[] = [
   {
     id: "collaborators",
     label: "Find collaborators, experts & funded projects",
-    intro: "Public evidence on who is funded, publishing or running trials in your area. Use it alongside Studepartment Discovery.",
+    intro: "Public evidence on who is funded, publishing or running trials in your area. Use it alongside Provenant Discovery.",
     sources: [
       {
         name: "NIH RePORTER Matchmaker",

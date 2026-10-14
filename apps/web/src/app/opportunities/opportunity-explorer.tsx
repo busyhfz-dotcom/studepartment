@@ -254,7 +254,7 @@ export function OpportunityExplorer() {
 
                 <aside className={styles.sourceRail}>
                   <div className={styles.sourceBlock}>
-                    <span>Canonical source</span>
+                    <span>Original source</span>
                     <strong>{opportunity.source.name}</strong>
                     <small>{opportunity.source.type.replaceAll("-", " ")}</small>
                   </div>

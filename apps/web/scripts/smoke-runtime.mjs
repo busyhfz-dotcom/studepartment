@@ -159,7 +159,7 @@ if (!readyBody.integrations?.emailDelivery) {
 
 const marketingPage = await fetch(baseUrl + "/main-site");
 const marketingHtml = await marketingPage.text();
-assert.doesNotMatch(marketingHtml, /Nordic Biomedical Graduate School|Pacific Genomics Foundation|Live from Studepartment|Refreshed continuously from verified sources/);
+assert.doesNotMatch(marketingHtml, /Nordic Biomedical Graduate School|Pacific Genomics Foundation|Live from Provenant|Refreshed continuously from verified sources/);
 assert.match(marketingHtml, /What is available today/);
 
 console.log("Runtime smoke checks passed.");

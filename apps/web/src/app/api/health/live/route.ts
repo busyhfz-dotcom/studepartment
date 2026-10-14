@@ -6,7 +6,7 @@ export function GET() {
   return NextResponse.json(
     {
       status: "ok",
-      service: "studepartment-web",
+      service: "provenant-web",
       environment: runtime.deploymentEnvironment,
       release: runtime.releaseSha ?? null,
       timestamp: new Date().toISOString(),

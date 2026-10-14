@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     const config = getOrcidConfig();
     const state = randomBytes(32).toString("base64url");
     const response = NextResponse.redirect(buildOrcidAuthorizationUrl(config, state));
-    response.cookies.set("studepartment_orcid_state", `${user.id}.${state}`, {
+    response.cookies.set("provenant_orcid_state", `${user.id}.${state}`, {
       httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 600,
     });
     return response;

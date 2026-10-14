@@ -347,7 +347,7 @@ export async function buildResearchAssistantContext(
     citations,
     target,
     limitations: [
-      "The assistant only receives the canonical Studepartment context listed in the source ledger for this request.",
+      "The assistant only receives the canonical Provenant context listed in the source ledger for this request.",
       "Scientific relevance is not formal eligibility, hiring probability, institutional quality, or researcher reputation.",
       "The assistant is for research navigation and does not provide patient-specific diagnosis or treatment advice.",
     ],

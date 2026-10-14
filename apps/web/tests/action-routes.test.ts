@@ -19,12 +19,12 @@ test("ORCID uses production by default and requires a callback belonging to this
     assert.throws(getOrcidConfig, OrcidConfigurationError);
     process.env.ORCID_CLIENT_ID = "APP-test-client";
     process.env.ORCID_CLIENT_SECRET = "test-only-secret";
-    process.env.BETTER_AUTH_URL = "https://studepartment.example";
+    process.env.BETTER_AUTH_URL = "https://provenant.example";
     const config = getOrcidConfig();
     assert.equal(config.environment, "production");
     assert.equal(config.apiType, "member");
     assert.equal(config.publicApiUrl, "https://api.orcid.org/v3.0");
-    assert.equal(config.redirectUri, "https://studepartment.example/api/integrations/orcid/callback");
+    assert.equal(config.redirectUri, "https://provenant.example/api/integrations/orcid/callback");
     const url = buildOrcidAuthorizationUrl(config, "test-state");
     assert.equal(url.origin, "https://orcid.org");
     assert.equal(url.searchParams.get("state"), "test-state");
@@ -33,7 +33,7 @@ test("ORCID uses production by default and requires a callback belonging to this
     assert(!url.href.includes("test-only-secret"));
     process.env.ORCID_REDIRECT_URI = "https://another.example/api/integrations/orcid/callback";
     assert.equal(isOrcidConfigured(), false);
-    process.env.ORCID_REDIRECT_URI = "http://studepartment.example/api/integrations/orcid/callback";
+    process.env.ORCID_REDIRECT_URI = "http://provenant.example/api/integrations/orcid/callback";
     assert.equal(isOrcidConfigured(), false);
     delete process.env.ORCID_REDIRECT_URI;
     process.env.ORCID_ENVIRONMENT = "sandbox";

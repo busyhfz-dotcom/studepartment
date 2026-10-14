@@ -4,7 +4,7 @@ Publication enrichment strengthens Scientific Identity with source-backed resear
 
 ## Evidence model
 
-Studepartment keeps three evidence levels separate:
+Provenant keeps three evidence levels separate:
 
 - MANUAL_ASSERTED
 - ORCID_ASSERTED
@@ -33,7 +33,7 @@ Configuration:
 - NCBI_EUTILS_EMAIL is required for PubMed enrichment.
 - NCBI_API_KEY is optional.
 
-The implementation includes tool=studepartment and the configured contact email on E-utilities requests.
+The implementation includes tool=provenant and the configured contact email on E-utilities requests.
 
 ORCID PMIDs are fetched directly. ORCID works that only have a DOI are searched through PubMed's Article Identifier field, then resolved through ESummary.
 

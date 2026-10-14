@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   try {
     await consumeClientRateLimit(request, "graph:read", { windowSeconds: 60, max: 90 });
     const user = await getCurrentUser();
-    if (!canUseProFeature(user)) return apiError(402, "PRO_REQUIRED", "The Evidence Graph is available with Studepartment Pro.");
+    if (!canUseProFeature(user)) return apiError(402, "PRO_REQUIRED", "The Evidence Graph is available with Provenant Pro.");
     const researcherId = request.nextUrl.searchParams.get("researcher")?.trim() || undefined;
     const data = await buildScientificGraph(researcherId);
     const body: ApiSuccess<ScientificGraphNeighborhoodResponse> = { success: true, data };

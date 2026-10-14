@@ -31,7 +31,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
           <div className={styles.identityBlock}>
             <IdentityAvatar name={institution.name} src={institution.logoUrl} kind="organization" size="large" />
             <div>
-              <span className="eyebrow">Institutional Research Intelligence</span>
+              <span className="eyebrow">Institution profile</span>
               <h1>{institution.name}</h1>
               <p>{institution.type}{institution.countryCode ? " · " + institution.countryCode : ""}{institution.verified ? " · Verified organization" : ""}</p>
             </div>
@@ -44,7 +44,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
         <PublicDocuments files={institution.documents} />
         <section className={styles.metrics}>
           <div><strong>{institution.researchers.length}</strong><span>public current researchers</span></div>
-          <div><strong>{institution.labs.length}</strong><span>canonical laboratories</span></div>
+          <div><strong>{institution.labs.length}</strong><span>labs</span></div>
           <div><strong>{institution.opportunities.length}</strong><span>current opportunities</span></div>
           <div><strong>{institution.topics.length}</strong><span>observed research topics</span></div>
         </section>
@@ -54,7 +54,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
             <div className={styles.fitCopy}>
               <span className="sectionLabel">Identity-to-institution overlap</span>
               <h2>Where your Scientific Identity intersects this institution</h2>
-              <p>This view compares canonical topics, methods, and current opportunities. It is not a prestige score, institutional ranking, or hiring prediction.</p>
+              <p>This view compares research topics, methods and current opportunities. It is not a prestige score, a ranking or a hiring prediction.</p>
             </div>
             <div className={styles.fitSignals}>
               <div><strong>{fit.sharedTopics.length}</strong><span>shared topics</span></div>
@@ -105,10 +105,10 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
         <section className={styles.grid}>
           <article className={styles.panel}>
             <span className="sectionLabel">Laboratories</span>
-            <h2>Canonical labs</h2>
+            <h2>Labs</h2>
             <div className={styles.stack}>
               {institution.labs.map((lab) => <div key={lab.id}><strong>{lab.name}</strong><span>{lab.memberCount} members{lab.verified ? " · Verified" : ""}</span>{lab.description ? <p>{lab.description}</p> : null}</div>)}
-              {!institution.labs.length ? <p>No canonical labs connected yet.</p> : null}
+              {!institution.labs.length ? <p>No labs linked yet.</p> : null}
             </div>
           </article>
           <article className={styles.panel}>

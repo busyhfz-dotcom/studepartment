@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data, {
       headers: {
         "Cache-Control": "private, no-store",
-        "Content-Disposition": 'attachment; filename="studepartment-account-export-' + date + '.json"',
+        "Content-Disposition": 'attachment; filename="provenant-account-export-' + date + '.json"',
       },
     });
   } catch (error) {

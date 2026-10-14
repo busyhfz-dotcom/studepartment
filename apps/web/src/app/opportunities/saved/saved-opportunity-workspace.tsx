@@ -23,7 +23,7 @@ function sourceHost(value: string) {
   try {
     return new URL(value).hostname.replace(/^www\./, "");
   } catch {
-    return "Canonical source";
+    return "Original source";
   }
 }
 

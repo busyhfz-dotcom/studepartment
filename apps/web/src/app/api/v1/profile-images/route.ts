@@ -15,7 +15,7 @@ function failure(status: number, message: string) {
 export async function POST(request: NextRequest) {
   try {
     const user = await requireCurrentUser();
-    if (request.headers.get("origin") !== new URL(getCoreRuntimeConfig().betterAuthUrl).origin) return failure(403, "Upload this photo from Studepartment.");
+    if (request.headers.get("origin") !== new URL(getCoreRuntimeConfig().betterAuthUrl).origin) return failure(403, "Upload this photo from Provenant.");
     await consumeRateLimit("profile-image:upload", user.id, { windowSeconds: 3600, max: 20 });
     if (!request.headers.get("content-type")?.startsWith("multipart/form-data;")) return failure(400, "Choose an image file.");
     const reader = request.body?.getReader();

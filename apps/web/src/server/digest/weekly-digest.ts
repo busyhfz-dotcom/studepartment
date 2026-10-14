@@ -18,8 +18,8 @@ type DigestContent = {
 };
 
 const subjectLinesByCount = [
-  "Your Studepartment weekly digest — nothing new this week",
-  "1 new match this week on Studepartment",
+  "Your Provenant weekly digest — nothing new this week",
+  "1 new match this week on Provenant",
 ];
 
 function subjectLine(total: number, savedDeadlines = 0): string {
@@ -54,13 +54,13 @@ function renderHtml(content: DigestContent, siteUrl: string): string {
   };
 
   return `<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;">
-    <p style="font-size:12px;color:#5b655f;">Studepartment · Medical Research Intelligence</p>
+    <p style="font-size:12px;color:#5b655f;">Provenant · Medical Research Intelligence</p>
     <h1 style="font-size:20px;color:#101815;">${escapeHtml(content.subject)}</h1>
     ${section("Saved opportunities closing soon", content.savedDeadlines)}
     ${section("New positions", content.positions)}
     ${section("New grants & funding", content.grants)}
     <p style="margin-top:28px;font-size:11px;color:#8a938e;">
-      You are receiving this because your Studepartment weekly digest is turned on.
+      You are receiving this because your Provenant weekly digest is turned on.
       <a href="${siteUrl}/settings/privacy" style="color:#0b6c60;">Manage notification preferences</a>.
     </p>
   </div>`;

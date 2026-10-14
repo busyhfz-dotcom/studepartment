@@ -19,9 +19,9 @@ export default async function DiscoverPage() {
         </div>
 
         <header className={styles.discoverHeader}>
-          <h1>Find the researchers whose work fits the question.</h1>
+          <h1>Find researchers whose work fits your question.</h1>
           <p className="lede">
-            Search by scientific intent, methods, geography, and collaboration context. Each result exposes the evidence behind the match instead of hiding it inside a score.
+            Search by topic, method, country and openness to collaboration. Each result shows the evidence behind the match instead of hiding it in a score.
           </p>
         </header>
 

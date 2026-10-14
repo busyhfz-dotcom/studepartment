@@ -4,20 +4,20 @@ import { LegalContact, LegalPage } from "@/components/legal/legal-page";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
-  description: "The rules for using Studepartment, including accuracy of listings, acceptable use and accounts.",
+  description: "The rules for using Provenant, including accuracy of listings, acceptable use and accounts.",
 };
 
 export default function TermsPage() {
   return (
     <LegalPage current="terms" title="Terms of Use">
       <p>
-        These terms apply to your use of Studepartment. By creating an account you agree to them. Please also read
+        These terms apply to your use of Provenant. By creating an account you agree to them. Please also read
         the <Link href="/privacy">Privacy Notice</Link>. Questions: <LegalContact />.
       </p>
 
-      <h2>What Studepartment is</h2>
+      <h2>What Provenant is</h2>
       <p>
-        Studepartment is a research-intelligence service. It helps you find positions, funding, conferences,
+        Provenant is a research-intelligence service. It helps you find positions, funding, conferences,
         collaborators and institutions, and explains why each result may be relevant. It is not a recruiter, a funder
         or an employer, and it does not take part in any selection decision.
       </p>
@@ -27,7 +27,7 @@ export default function TermsPage() {
         <li>Opportunities show their source and when they were last checked. Deadlines, eligibility and funding terms can change, so always confirm them with the official source before you apply.</li>
         <li>Relevance and eligibility indications are guidance, not a guarantee of eligibility or of success.</li>
         <li>Scanner and Conferences link to independent services. We do not control their content, availability or terms.</li>
-        <li>Research Assistant answers are based on the evidence held in Studepartment and may be incomplete. Check important facts.</li>
+        <li>Research Assistant answers are based on the evidence held in Provenant and may be incomplete. Check important facts.</li>
       </ul>
 
       <h2>Your account</h2>
@@ -56,7 +56,7 @@ export default function TermsPage() {
 
       <h2>Availability and liability</h2>
       <p>
-        We work to keep Studepartment accurate and available but provide it &quot;as is&quot;, without guarantees of
+        We work to keep Provenant accurate and available but provide it &quot;as is&quot;, without guarantees of
         uninterrupted service or of the completeness of third-party information. To the extent permitted by law, we are
         not liable for decisions made on the basis of listings or recommendations.
       </p>

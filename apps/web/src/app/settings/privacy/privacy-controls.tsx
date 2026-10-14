@@ -108,8 +108,8 @@ export function PrivacyControls() {
           <span className="sectionLabel">Account deletion</span>
           <h2>Permanently delete the account and Scientific Identity</h2>
           <p>
-            Deletion removes the user-owned account and research identity relationships. The distinction below explains
-            what is removed and what can remain as non-personal canonical research metadata.
+            Deleting your account removes it together with your research profile and everything linked to you. Below is
+            exactly what is removed, and what may remain as non-personal research records.
           </p>
         </div>
 
@@ -117,15 +117,15 @@ export function PrivacyControls() {
           <div className={styles.deletionFact}>
             <strong>Removed with the account</strong>
             <span>
-              Sessions, Scientific Identity, authorship relationships, private feedback, saved opportunities,
-              introduction relationships, and personal provenance attached to the account.
+              Sign-ins, your Scientific Identity, authorship links, private feedback, saved opportunities,
+              introductions and any source notes attached to your account.
             </span>
           </div>
           <div className={styles.deletionFact}>
-            <strong>Canonical records may remain</strong>
+            <strong>Shared records may remain</strong>
             <span>
-              Shared bibliographic publication records may remain as non-personal canonical metadata after the
-              account-specific relationship to those records is removed.
+              Public publication records (title, journal, identifiers) may remain after your link to them is
+              removed. They no longer point to you.
             </span>
           </div>
         </div>

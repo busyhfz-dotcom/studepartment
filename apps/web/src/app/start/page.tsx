@@ -4,9 +4,9 @@ import { StartFlow } from "./start-flow-client";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Start browsing — Studepartment",
+  title: "Start browsing — Provenant",
   description:
-    "Browse real positions and grants on Studepartment before creating an account — pick a path, explore, and decide when to sign up.",
+    "Browse medical research positions and grants on Provenant. No account needed to start.",
 };
 
 /**
