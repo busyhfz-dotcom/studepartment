@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     await consumeClientRateLimit(request, "introductions:create", { windowSeconds: 600, max: 20 });
     const sender = await requireCurrentUser();
     assertFileOrigin(request);
-    if (!canUseProFeature(sender)) return NextResponse.json({ success: false, error: { code: "PRO_REQUIRED", message: "Sending scientific introductions requires Studepartment Pro." } }, { status: 402 });
+    if (!canUseProFeature(sender)) return NextResponse.json({ success: false, error: { code: "PRO_REQUIRED", message: "Sending scientific introductions requires Provenant Pro." } }, { status: 402 });
     const raw = await request.json() as Record<string, unknown>;
     if (
       typeof raw.receiverId !== "string" ||
