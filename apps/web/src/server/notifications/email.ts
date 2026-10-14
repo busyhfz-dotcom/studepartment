@@ -1,7 +1,7 @@
 /**
  * Minimal outbound-email boundary.
  *
- * Studepartment does not bundle an email-provider SDK. When RESEND_API_KEY
+ * Provenant does not bundle an email-provider SDK. When RESEND_API_KEY
  * and DIGEST_FROM_EMAIL are configured, this sends through the Resend HTTP
  * API (a plain fetch call, no extra dependency). When they are not
  * configured, sends are logged and reported as unsent rather than silently
