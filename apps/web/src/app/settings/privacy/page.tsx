@@ -14,11 +14,11 @@ export default async function PrivacySettingsPage() {
     <ProductShell accountKind={user.accountKind === "INSTITUTION" ? "institution" : "individual"}>
       <div className={styles.shell}>
         <header className={styles.header}>
-          <span className="eyebrow">Research Data Control Center</span>
-          <h1>Control the data attached to your research activity.</h1>
+          <span className="eyebrow">Privacy and data</span>
+          <h1>Your data, your decisions.</h1>
           <p>
-            Review private account activity, export a portable record, or permanently remove your account and
-            Scientific Identity with the consequences stated before you act.
+            See your account activity, download a copy of your data, or permanently delete your account and
+            Scientific Identity. We explain exactly what happens before you confirm.
           </p>
           <Link href={user.accountKind === "INSTITUTION" ? "/organization/profile" : "/profile"}>← Back to your profile</Link>
         </header>
