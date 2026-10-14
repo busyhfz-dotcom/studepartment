@@ -133,6 +133,22 @@ assert.equal(updatedProfileBody.data.verification.find((item) => item.label === 
 const publicProfile = await request("/researchers/" + updatedProfileBody.data.id);
 assert.equal(publicProfile.status, 404, "private scientific identities must not be publicly exposed");
 
+const evidenceReview = await request("/api/v1/assistant/research", { method: "POST", headers: { Cookie: cookie, Origin: baseUrl, "Content-Type": "application/json" }, body: JSON.stringify({ question: "Review my nursing and medical imaging research context and methods." }) });
+assert.equal(evidenceReview.status, 200, "saved medical context must be usable by the structured assistant");
+const evidenceReviewBody = await evidenceReview.json();
+assert.equal(evidenceReviewBody.success, true);
+assert.ok(evidenceReviewBody.data.citations.some((citation) => citation.type === "identity" && /Nursing/.test(citation.detail)), "the assistant must use the saved topics as identity evidence");
+
+const visibilityOptIn = await request("/api/v1/profile", { method: "PATCH", headers: { Cookie: cookie, Origin: baseUrl, "Content-Type": "application/json" }, body: JSON.stringify({ profilePublic: true }) });
+assert.equal(visibilityOptIn.status, 200);
+const optedInProfile = await request("/researchers/" + updatedProfileBody.data.id);
+assert.equal(optedInProfile.status, 200);
+assert.match(await optedInProfile.text(), /CI Medical Research Unit \(self-reported\)/, "an explicitly public profile must display its unlisted affiliation as self-reported");
+const unrelatedEdit = await request("/api/v1/profile", { method: "PATCH", headers: { Cookie: cookie, Origin: baseUrl, "Content-Type": "application/json" }, body: JSON.stringify({ city: "CI Test City" }) });
+assert.equal(unrelatedEdit.status, 200);
+const preservedVisibility = await request("/api/v1/profile", { headers: { Cookie: cookie } });
+assert.equal((await preservedVisibility.json()).data.profilePublic, true, "unrelated edits must preserve existing visibility choices");
+
 const recoveryPage = await fetch(baseUrl + "/auth/forgot-password");
 assert.equal(recoveryPage.status, 200);
 if (!readyBody.integrations?.emailDelivery) {

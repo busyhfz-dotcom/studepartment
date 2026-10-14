@@ -39,6 +39,7 @@ test("Retry-After accepts seconds, dates, vendor header and invalid values", () 
   assert.equal(retryAfterSeconds(new Headers({ "retry-after": "Wed, 14 Oct 2026 10:01:30 GMT" }), now), 90);
   assert.equal(retryAfterSeconds(new Headers({ "retry-after": "Wed, 14 Oct 2026 09:00:00 GMT" }), now), 0);
   assert.equal(retryAfterSeconds(new Headers({ "retry-after": "invalid" }), now), 60);
+  assert.equal(retryAfterSeconds(new Headers({ "retry-after": "-1" }), now), 60);
   assert.equal(retryAfterSeconds(new Headers(), now), 60);
   assert.equal(retryAfterSeconds(new Headers({ "retry-after": "0", "x-retry-after": "42" }), now), 0);
 });
