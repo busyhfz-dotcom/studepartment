@@ -123,6 +123,7 @@ type TickerEntry = {
   organization: string;
   deadline: string | null;
   deadlineLabel: string;
+  isNew: boolean;
 };
 
 function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
@@ -133,6 +134,7 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
     deadline: item.deadline,
     deadlineLabel: item.deadlineLabel,
+    isNew: Boolean(item.isNew),
   }));
   const grants: TickerEntry[] = ticker.grants.map((item) => ({
     id: item.id,
@@ -141,6 +143,7 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
     deadline: item.deadline,
     deadlineLabel: item.deadlineLabel,
+    isNew: Boolean(item.isNew),
   }));
   const merged: TickerEntry[] = [];
   const max = Math.max(positions.length, grants.length);
@@ -159,13 +162,82 @@ function badgeStatus(deadline: string | null): "urgent" | "soon" | "open" {
   return "open";
 }
 
+const REFRESH_MS = 3 * 60_000;
+
+function tickerSignature(ticker: PublicOpportunityTicker) {
+  return [ticker.stats.totalPositions, ticker.stats.totalGrants, ...ticker.positions.map((item) => item.id), ...ticker.grants.map((item) => item.id)].join("|");
+}
+
+function updatedLabel(value: string | null, now: number) {
+  if (!value) return null;
+  const minutes = Math.max(0, Math.round((now - new Date(value).getTime()) / 60_000));
+  if (minutes < 2) return "updated just now";
+  if (minutes < 90) return `updated ${minutes} min ago`;
+  return `updated ${Math.round(minutes / 60)} h ago`;
+}
+
+/**
+ * Keeps the feed current while the page is open: re-reads it every few
+ * minutes while the tab is visible, and as soon as the tab is shown again.
+ */
+function useLiveTicker(initial: PublicOpportunityTicker) {
+  const [ticker, setTicker] = useState(initial);
+  const [now, setNow] = useState<number | null>(null);
+  const lastFetch = useRef(0);
+  const signature = useRef(tickerSignature(initial));
+
+  useEffect(() => {
+    let cancelled = false;
+    lastFetch.current = Date.now();
+    async function refresh() {
+      lastFetch.current = Date.now();
+      try {
+        const response = await fetch("/api/v1/opportunities/ticker", { cache: "no-store" });
+        if (!response.ok) return;
+        const body = await response.json() as { success: boolean; data?: PublicOpportunityTicker };
+        if (cancelled || !body.success || !body.data?.available) return;
+        const next = tickerSignature(body.data);
+        if (next !== signature.current) {
+          signature.current = next;
+          setTicker(body.data);
+        } else {
+          setTicker((current) => ({ ...current, lastCollectedAt: body.data!.lastCollectedAt }));
+        }
+      } catch {
+        // Keep showing the current feed; the next refresh will try again.
+      } finally {
+        if (!cancelled) setNow(Date.now());
+      }
+    }
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible") void refresh();
+    }, REFRESH_MS);
+    const clock = setInterval(() => setNow(Date.now()), 60_000);
+    function onVisible() {
+      if (document.visibilityState === "visible" && Date.now() - lastFetch.current > REFRESH_MS) void refresh();
+    }
+    document.addEventListener("visibilitychange", onVisible);
+    const first = setTimeout(() => setNow(Date.now()), 0);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+      clearInterval(clock);
+      clearTimeout(first);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+
+  return { ticker, updated: now === null ? null : updatedLabel(ticker.lastCollectedAt, now) };
+}
+
 /**
  * The hero "desk" widget: a continuously scrolling list of real live
  * opportunities pulled from the public ticker, click-to-expand into a
  * detail panel — same interaction as the design concept, real data instead
  * of the concept's illustrative sample rows.
  */
-export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker }) {
+export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpportunityTicker }) {
+  const { ticker, updated } = useLiveTicker(initialTicker);
   const entries = buildEntries(ticker);
   const [selected, setSelected] = useState<TickerEntry | null>(null);
   const [paused, setPaused] = useState(false);
@@ -173,7 +245,7 @@ export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker 
   return (
     <aside className={`${styles.heroDesk} ${selected ? styles.isSelected : ""} ${paused ? styles.tickerPaused : ""}`} aria-label="Latest position and grant preview">
       <div className={styles.deskHeading}>
-        <span>Latest opportunities</span>
+        <span className={styles.liveLabel}>{ticker.available ? <i className={styles.liveDot} aria-hidden="true" /> : null}Latest opportunities</span>
         <span>{ticker.available ? `${ticker.stats.totalPositions} positions · ${ticker.stats.totalGrants} grants` : "Feed unavailable"}</span>
         {entries.length ? <button
           type="button"
@@ -203,7 +275,7 @@ export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker 
                       onClick={() => setSelected(entry)}
                     >
                       <span>
-                        <span className={styles.kind}>{entry.kind}</span>
+                        <span className={styles.kind}>{entry.kind}{entry.isNew ? <b className={styles.newChip}>New</b> : null}</span>
                         <strong>{entry.title}</strong>
                         <small>{entry.organization}</small>
                       </span>
@@ -238,7 +310,7 @@ export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker 
       ) : null}
 
       <div className={styles.deskFooter}>
-        <span>Collected from official funders and employers. <Link href="/sources">See sources</Link></span>
+        <span>Collected around the clock from official funders and employers{updated ? `, ${updated}` : ""}. <Link href="/sources">See sources</Link></span>
         <Link href="/opportunities">Browse all ↗</Link>
       </div>
     </aside>

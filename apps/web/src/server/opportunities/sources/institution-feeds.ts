@@ -67,7 +67,7 @@ export const institutionFeedSources: OpportunitySourceConnector[] = INSTITUTION_
   homepage: feed.homepage,
   description: `Biomedical PhD, postdoc and research posts from ${feed.name}'s official vacancy feed.`,
   completeSnapshot: true,
-  intervalHours: 6,
+  intervalMinutes: 60,
   isEnabled: () => true,
   async collect(context) {
     const items = parseFeed(await requestText(context.fetch, feed.feedUrl));

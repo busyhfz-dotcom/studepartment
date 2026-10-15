@@ -26,6 +26,16 @@ A batch identifies the source, whether the batch is a complete source snapshot, 
 
 The ingestion boundary is source-agnostic. Crawlers, institutional APIs, funder feeds, and manual imports should normalize into this contract rather than writing directly to Prisma.
 
+## Continuous collection
+
+Built-in connectors (`apps/web/src/server/opportunities/sources/`) read official publisher APIs and feeds around the clock:
+
+- The web server starts the collector on boot in production and staging (`instrumentation.ts`). Every 10 minutes it runs the sources that are due; most are due hourly, so a new listing normally appears within an hour of publication. The first check runs about 90 seconds after boot.
+- A source that fails is retried after 30 minutes; its existing listings stay up in the meantime. Listings leave search when their deadline passes, when the publisher drops them, or after 45 days without being seen.
+- Grants.gov notice texts are cached in memory, so an hourly check reads only new or changed notices in full.
+- Backup trigger: `.github/workflows/opportunity-sync.yml` calls `POST /api/internal/jobs/opportunity-sync` every 30 minutes when the repository secrets `PROVENANT_BASE_URL` and `OPPORTUNITY_INGEST_TOKEN` are set. Add `?force=true` to re-read every source.
+- `OPPORTUNITY_SYNC=off` disables the in-process collector (for example when only an external scheduler should run it). `GET /api/v1/opportunities/sources` and `/sources` show each source's open listings, new listings today and last check.
+
 ## Deadline normalization
 
 The source value is preserved in `deadlineRaw`. The normalized record also carries a precision:

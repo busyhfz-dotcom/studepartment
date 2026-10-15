@@ -8,7 +8,7 @@ import { parseProfileUpdateInput } from "../src/server/validation/profile";
 import { loadPublicOpportunityTicker } from "../src/server/opportunities/public-ticker";
 
 test("an empty ticker retains real zero counts and never supplies demo opportunities", async () => {
-  const db = { opportunity: { findMany: async () => [], count: async () => 0 } } as unknown as Parameters<typeof loadPublicOpportunityTicker>[0];
+  const db = { opportunity: { findMany: async () => [], count: async () => 0, aggregate: async () => ({ _max: { lastSeenAt: null } }) } } as unknown as Parameters<typeof loadPublicOpportunityTicker>[0];
   const ticker = await loadPublicOpportunityTicker(db);
   assert.equal(ticker.available, true);
   assert.deepEqual(ticker.positions, []);
@@ -17,7 +17,7 @@ test("an empty ticker retains real zero counts and never supplies demo opportuni
 });
 
 test("a real position does not fabricate a grant feed or overwrite zero totals", async () => {
-  const row = { id: "test-position", title: "Synthetic nursing research position", countryCode: "IR", deadline: null, deadlinePrecision: "ROLLING", organization: { name: "Synthetic Medical Unit" } };
+  const row = { id: "test-position", title: "Synthetic nursing research position", countryCode: "IR", deadline: null, deadlinePrecision: "ROLLING", firstSeenAt: new Date(), organization: { name: "Synthetic Medical Unit" } };
   const db = { opportunity: {
     findMany: async ({ where }: { where: { status: string; type?: unknown; countryCode?: unknown } }) => {
       assert.equal(where.status, "ACTIVE");
@@ -25,9 +25,12 @@ test("a real position does not fabricate a grant feed or overwrite zero totals",
       return where.type === "GRANT" ? [] : [row];
     },
     count: async ({ where }: { where: { type: unknown } }) => where.type === "GRANT" ? 0 : 1,
+    aggregate: async () => ({ _max: { lastSeenAt: new Date() } }),
   } } as unknown as Parameters<typeof loadPublicOpportunityTicker>[0];
   const ticker = await loadPublicOpportunityTicker(db);
   assert.equal(ticker.positions[0].id, row.id);
+  assert.equal(ticker.positions[0].isNew, true, "a listing collected today is flagged as new");
+  assert.ok(ticker.lastCollectedAt);
   assert.deepEqual(ticker.grants, []);
   assert.deepEqual(ticker.stats, { totalPositions: 1, totalGrants: 0, countries: 1 });
 });

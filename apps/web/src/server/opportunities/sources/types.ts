@@ -31,8 +31,11 @@ export type OpportunitySourceConnector = {
    * items must leave this false.
    */
   completeSnapshot: boolean;
-  /** Minimum hours between automatic runs. */
-  intervalHours: number;
+  /**
+   * Minutes between automatic checks. Kept short so new listings appear within
+   * the hour, but long enough to be a light, polite load on the publisher.
+   */
+  intervalMinutes: number;
   isEnabled(env: NodeJS.ProcessEnv): boolean;
   collect(context: SourceContext): Promise<OpportunityIngestionRecord[]>;
 };

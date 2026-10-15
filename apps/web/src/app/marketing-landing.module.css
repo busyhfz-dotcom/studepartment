@@ -356,3 +356,10 @@
   .latestGroup[aria-hidden=true]{display:none}
   .tickerMotionToggle{display:none}
 }
+
+/* Live feed indicators */
+.liveLabel { display: inline-flex; align-items: center; gap: 8px; }
+.liveDot { width: 7px; height: 7px; border-radius: 50%; background: #5fd38d; box-shadow: 0 0 0 0 #5fd38d88; animation: livePulse 2.4s ease-out infinite; }
+.newChip { display: inline-block; margin-left: 6px; padding: 1px 5px; border-radius: 3px; background: #2f6b4a; color: #d9ffe8; font-size: 8px; font-weight: 800; letter-spacing: .08em; vertical-align: 1px; }
+@keyframes livePulse { 0% { box-shadow: 0 0 0 0 #5fd38d88; } 70% { box-shadow: 0 0 0 7px #5fd38d00; } 100% { box-shadow: 0 0 0 0 #5fd38d00; } }
+@media (prefers-reduced-motion: reduce) { .liveDot { animation: none; } }

@@ -1,0 +1,55 @@
+name: Opportunity Sync Watchdog
+
+# The web server collects new positions and grants by itself, around the
+# clock. This job is a backup: every 30 minutes it asks the server to check
+# any source that is due, so collection continues even if the server's own
+# timer stops (for example after a crash loop or if the service was asleep).
+# The server skips sources that were checked recently, so most calls do
+# nothing. Needs two repository secrets; without them the job does nothing.
+#   PROVENANT_BASE_URL        e.g. https://www.example.com
+#   OPPORTUNITY_INGEST_TOKEN  the same value as the server's variable
+
+on:
+  schedule:
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Re-read every source now, even if checked recently"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: opportunity-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BASE_URL: ${{ secrets.PROVENANT_BASE_URL }}
+      TOKEN: ${{ secrets.OPPORTUNITY_INGEST_TOKEN }}
+      FORCE: ${{ inputs.force && 'true' || 'false' }}
+    steps:
+      - name: Ask the server to check due sources
+        shell: bash
+        run: |
+          if [ -z "$BASE_URL" ] || [ -z "$TOKEN" ]; then
+            echo "::notice::PROVENANT_BASE_URL or OPPORTUNITY_INGEST_TOKEN is not set; skipping."
+            exit 0
+          fi
+          case "$BASE_URL" in https://*) ;; *) echo "::error::PROVENANT_BASE_URL must start with https://"; exit 1 ;; esac
+          status=$(curl -sS -o response.json -w "%{http_code}" --max-time 840 \
+            -X POST "${BASE_URL%/}/api/internal/jobs/opportunity-sync?force=${FORCE}" \
+            -H "Authorization: Bearer ${TOKEN}")
+          echo "HTTP $status"
+          head -c 4000 response.json; echo
+          # 409 means a sync is already running on the server, which is fine.
+          if [ "$status" != "200" ] && [ "$status" != "409" ]; then
+            echo "::error::Opportunity sync returned HTTP $status"
+            exit 1
+          fi

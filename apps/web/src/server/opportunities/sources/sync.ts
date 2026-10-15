@@ -5,6 +5,10 @@ import { opportunitySources } from "./registry";
 import type { FetchLike, OpportunitySourceConnector } from "./types";
 
 const MAX_RECORDS_PER_SOURCE = 3000;
+/** A source that failed is tried again sooner than its normal interval, but not every tick. */
+const FAILURE_RETRY_MINUTES = 30;
+/** Ticks are not exact; a source counts as due slightly early rather than a whole tick late. */
+const DUE_SLACK_MS = 2 * 60_000;
 /** Listings not seen for this long drop out of search (matches the search cutoff). */
 export const LISTING_STALE_AFTER_DAYS = 45;
 
@@ -56,6 +60,25 @@ async function lastSyncedAt(connector: OpportunitySourceConnector): Promise<Date
   return latest?.lastSeenAt ?? null;
 }
 
+/**
+ * Whether a source should be checked now. Uses this process's last run of the
+ * source; after a restart, falls back to the newest listing it supplied, so a
+ * deploy does not trigger a full re-read of every publisher.
+ */
+export async function isSourceDue(
+  connector: OpportunitySourceConnector,
+  now: Date,
+  lastRun: SourceRunResult | undefined = lastSourceRuns().get(connector.id),
+  lastSeen?: Date | null,
+): Promise<boolean> {
+  if (lastRun) {
+    const waitMinutes = lastRun.status === "failed" ? Math.min(connector.intervalMinutes, FAILURE_RETRY_MINUTES) : connector.intervalMinutes;
+    return now.getTime() - Date.parse(lastRun.startedAt) >= waitMinutes * 60_000 - DUE_SLACK_MS;
+  }
+  const seen = lastSeen === undefined ? await lastSyncedAt(connector) : lastSeen;
+  return !seen || now.getTime() - seen.getTime() >= connector.intervalMinutes * 60_000 - DUE_SLACK_MS;
+}
+
 function dedupe(records: OpportunityIngestionRecord[]) {
   const unique = new Map<string, OpportunityIngestionRecord>();
   for (const record of records) {
@@ -74,11 +97,8 @@ export async function runSource(
   const started = Date.now();
   const base = { id: connector.id, name: connector.source.name, startedAt: new Date(started).toISOString() };
   if (!connector.isEnabled(process.env)) return { ...base, status: "disabled", durationMs: 0 };
-  if (!force) {
-    const last = await lastSyncedAt(connector);
-    if (last && now.getTime() - last.getTime() < connector.intervalHours * 3_600_000) {
-      return { ...base, status: "skipped", durationMs: Date.now() - started };
-    }
+  if (!force && !(await isSourceDue(connector, now))) {
+    return { ...base, status: "skipped", durationMs: Date.now() - started };
   }
   try {
     const records = dedupe(await connector.collect({ fetch: fetchImpl, now, env: process.env, log }));
@@ -129,31 +149,52 @@ export type PublicSourceStatus = {
   description: string;
   enabled: boolean;
   activeListings: number;
+  /** Listings first seen in the last 24 hours. */
+  newToday: number;
+  /** How often the source is checked, in minutes. */
+  intervalMinutes: number;
+  /** When the source was last checked, successfully or not. */
   lastSyncedAt: string | null;
+  lastStatus: "ok" | "failed" | null;
 };
 
 /** What each source currently contributes, for the public sources page. */
 export async function getOpportunitySourceStatus(now = new Date()): Promise<PublicSourceStatus[]> {
   const db = getDb();
   const cutoff = new Date(now.getTime() - LISTING_STALE_AFTER_DAYS * 86_400_000);
-  const [counts, latest] = await Promise.all([
+  const dayAgo = new Date(now.getTime() - 86_400_000);
+  const [counts, fresh, latest] = await Promise.all([
     db.opportunity.groupBy({
       by: ["sourceName"],
       where: { status: "ACTIVE", lastSeenAt: { gte: cutoff }, OR: [{ deadline: null }, { deadline: { gte: now } }] },
       _count: { _all: true },
     }),
+    db.opportunity.groupBy({
+      by: ["sourceName"],
+      where: { status: "ACTIVE", firstSeenAt: { gte: dayAgo } },
+      _count: { _all: true },
+    }),
     db.opportunity.groupBy({ by: ["sourceName"], _max: { lastSeenAt: true } }),
   ]);
   const countBy = new Map(counts.map((row) => [row.sourceName, row._count._all]));
+  const freshBy = new Map(fresh.map((row) => [row.sourceName, row._count._all]));
   const latestBy = new Map(latest.map((row) => [row.sourceName, row._max.lastSeenAt]));
-  return opportunitySources.map((connector) => ({
-    id: connector.id,
-    name: connector.source.name,
-    kind: connector.kind,
-    homepage: connector.homepage,
-    description: connector.description,
-    enabled: connector.isEnabled(process.env),
-    activeListings: countBy.get(connector.source.name) ?? 0,
-    lastSyncedAt: latestBy.get(connector.source.name)?.toISOString() ?? null,
-  }));
+  return opportunitySources.map((connector) => {
+    const run = lastSourceRuns().get(connector.id);
+    const seen = latestBy.get(connector.source.name)?.toISOString() ?? null;
+    const ran = run && (run.status === "ok" || run.status === "failed") ? run : null;
+    return {
+      id: connector.id,
+      name: connector.source.name,
+      kind: connector.kind,
+      homepage: connector.homepage,
+      description: connector.description,
+      enabled: connector.isEnabled(process.env),
+      activeListings: countBy.get(connector.source.name) ?? 0,
+      newToday: freshBy.get(connector.source.name) ?? 0,
+      intervalMinutes: connector.intervalMinutes,
+      lastSyncedAt: ran && (!seen || ran.startedAt > seen) ? ran.startedAt : seen,
+      lastStatus: ran ? (ran.status === "failed" ? "failed" : "ok") : seen ? "ok" : null,
+    };
+  });
 }

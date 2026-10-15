@@ -106,6 +106,24 @@ export function toGrantsGovRecord(hit: SearchHit, synopsis: Synopsis | undefined
   };
 }
 
+type CachedDetail = { synopsis?: Synopsis; closeDate?: string; fetchedAt: number };
+
+const DETAIL_REFRESH_MS = 24 * 3_600_000;
+const detailState = globalThis as unknown as { grantsGovDetails?: Map<string, CachedDetail> };
+
+/**
+ * Full notice text, kept between runs so that an hourly check only reads the
+ * notices that are new, whose deadline changed, or that were read over a day ago.
+ */
+function detailCache() {
+  detailState.grantsGovDetails ??= new Map();
+  return detailState.grantsGovDetails;
+}
+
+export function detailNeedsRefresh(cached: CachedDetail, hit: Pick<SearchHit, "closeDate">, now: Date): boolean {
+  return !cached.synopsis || cached.closeDate !== hit.closeDate || now.getTime() - cached.fetchedAt > DETAIL_REFRESH_MS;
+}
+
 async function search(context: SourceContext, filter: Record<string, string>) {
   const hits: SearchHit[] = [];
   for (let start = 0; start < 3000; start += 250) {
@@ -128,7 +146,7 @@ export const grantsGovSource: OpportunitySourceConnector = {
   homepage: "https://www.grants.gov",
   description: "US federal funding opportunities in health, including every open NIH notice of funding opportunity.",
   completeSnapshot: true,
-  intervalHours: 12,
+  intervalMinutes: 60,
   isEnabled: () => true,
   async collect(context) {
     const [health, nih] = await Promise.all([
@@ -138,20 +156,28 @@ export const grantsGovSource: OpportunitySourceConnector = {
     const unique = new Map<string, SearchHit>();
     for (const hit of [...health, ...nih]) unique.set(hit.id, hit);
     const hits = [...unique.values()].filter((hit) => hit.agencyCode.startsWith("HHS") || isMedicalText(hit.title));
-    context.log(`Grants.gov: ${hits.length} posted health opportunities`);
-    return mapWithConcurrency(hits, 4, async (hit) => {
-      let synopsis: Synopsis | undefined;
+    const cache = detailCache();
+    for (const id of cache.keys()) if (!unique.has(id)) cache.delete(id);
+    let fetched = 0;
+    const records = await mapWithConcurrency(hits, 4, async (hit) => {
+      const cached = cache.get(hit.id);
+      if (cached && !detailNeedsRefresh(cached, hit, context.now)) return toGrantsGovRecord(hit, cached.synopsis);
+      let synopsis = cached?.synopsis;
       try {
         const detail = await requestJson<DetailResponse>(context.fetch, `${API}/fetchOpportunity`, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ opportunityId: Number(hit.id) }),
         });
-        synopsis = detail.data?.synopsis;
+        synopsis = detail.data?.synopsis ?? synopsis;
+        cache.set(hit.id, { synopsis, closeDate: hit.closeDate, fetchedAt: context.now.getTime() });
+        fetched += 1;
       } catch {
-        // The listing is still worth showing; the description just stays short.
+        // Keep the last good description; a new notice still shows, just with a short one.
       }
       return toGrantsGovRecord(hit, synopsis);
     });
+    context.log(`Grants.gov: ${hits.length} posted health opportunities (${fetched} notices read in full)`);
+    return records;
   },
 };
