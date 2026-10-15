@@ -12,6 +12,7 @@ const publicPages: Array<{ path: string; changeFrequency: "daily" | "weekly" | "
   { path: "/opportunities", changeFrequency: "daily", priority: 0.8 },
   { path: "/scanner", changeFrequency: "monthly", priority: 0.7 },
   { path: "/conferences", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/sources", changeFrequency: "daily", priority: 0.5 },
   { path: "/auth/sign-up", changeFrequency: "monthly", priority: 0.5 },
   { path: "/auth/sign-in", changeFrequency: "monthly", priority: 0.4 },
   { path: "/terms", changeFrequency: "monthly", priority: 0.2 },
