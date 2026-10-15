@@ -1,6 +1,6 @@
 import { runOpportunitySync } from "./sync";
 
-const TICK_MINUTES = 30;
+const TICK_MINUTES = 10;
 const FIRST_RUN_DELAY_MS = 90_000;
 
 const state = globalThis as unknown as { opportunitySyncTimer?: ReturnType<typeof setInterval> };
@@ -20,8 +20,9 @@ export function opportunitySyncEnabled(env: NodeJS.ProcessEnv = process.env): bo
 }
 
 /**
- * Checks every 30 minutes for sources that are due. Each source decides its
- * own interval, so a tick usually does little or nothing.
+ * Runs around the clock: every 10 minutes it checks which sources are due
+ * (most are read hourly) and reads only those, so a new listing usually
+ * reaches the site within an hour of being published.
  */
 export function startOpportunitySync() {
   if (state.opportunitySyncTimer || !opportunitySyncEnabled()) return;
