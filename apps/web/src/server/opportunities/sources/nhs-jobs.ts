@@ -65,7 +65,7 @@ export const nhsJobsSource: OpportunitySourceConnector = {
   homepage: "https://www.jobs.nhs.uk",
   description: "Clinical research fellowships, research assistant and associate posts, and PhD posts across NHS trusts in England and Wales.",
   completeSnapshot: false,
-  intervalHours: 12,
+  intervalMinutes: 60,
   isEnabled: () => true,
   async collect(context) {
     const vacancies = new Map<string, Vacancy>();
