@@ -7,7 +7,7 @@ import {
   isMedicalText,
   topicSlugsFor,
 } from "../src/server/opportunities/sources/classify";
-import { activityCode, grantsGovDate, grantsGovType, toGrantsGovRecord } from "../src/server/opportunities/sources/grants-gov";
+import { activityCode, detailNeedsRefresh, grantsGovDate, grantsGovType, grantsGovSource, toGrantsGovRecord } from "../src/server/opportunities/sources/grants-gov";
 import { isHealthTopic, nextDeadline, toEuRecord } from "../src/server/opportunities/sources/eu-funding-tenders";
 import { maxPlanckInstitute, toMaxPlanckRecord } from "../src/server/opportunities/sources/max-planck";
 import { parseNhsJobs, toNhsRecord } from "../src/server/opportunities/sources/nhs-jobs";
@@ -17,6 +17,7 @@ import { deadlineFromText } from "../src/server/opportunities/sources/positions"
 import { htmlToText } from "../src/server/opportunities/sources/text";
 import { opportunitySyncEnabled } from "../src/server/opportunities/sources/scheduler";
 import { opportunitySources } from "../src/server/opportunities/sources/registry";
+import { isSourceDue, type SourceRunResult } from "../src/server/opportunities/sources/sync";
 import { searchTerms } from "../src/server/opportunities/search-terms";
 
 const now = new Date("2026-10-15T12:00:00Z");
@@ -193,4 +194,26 @@ test("sources have stable unique ids and names, and the scheduler stays off outs
 test("search terms drop filler words and fold simple plurals", () => {
   assert.deepEqual(searchTerms("Postdoc positions in cancer grants"), ["postdoc", "cancer", "grant"]);
   assert.deepEqual(searchTerms("an RNA job"), ["rna"]);
+});
+
+test("sources are checked around the clock: hourly when healthy, sooner after a failure", async () => {
+  const hourly = { ...grantsGovSource, intervalMinutes: 60 };
+  const run = (minutesAgo: number, status: SourceRunResult["status"]): SourceRunResult => ({
+    id: hourly.id, name: hourly.source.name, status, durationMs: 1, startedAt: new Date(now.getTime() - minutesAgo * 60_000).toISOString(),
+  });
+  assert.equal(await isSourceDue(hourly, now, run(20, "ok"), null), false);
+  assert.equal(await isSourceDue(hourly, now, run(59, "ok"), null), true, "a tick a minute early still counts");
+  assert.equal(await isSourceDue(hourly, now, run(20, "failed"), null), false);
+  assert.equal(await isSourceDue(hourly, now, run(30, "failed"), null), true, "failures retry after 30 minutes");
+  assert.equal(await isSourceDue(hourly, now, undefined, null), true, "never checked");
+  assert.equal(await isSourceDue(hourly, now, undefined, new Date(now.getTime() - 15 * 60_000)), false, "a restart does not re-read a fresh source");
+  assert.ok(opportunitySources.every((source) => source.intervalMinutes <= 180), "no source waits more than three hours");
+});
+
+test("Grants.gov notice texts are re-read only when new, changed or a day old", () => {
+  const fresh = { synopsis: { synopsisDesc: "x" }, closeDate: "11/17/2026", fetchedAt: now.getTime() - 3_600_000 };
+  assert.equal(detailNeedsRefresh(fresh, { closeDate: "11/17/2026" }, now), false);
+  assert.equal(detailNeedsRefresh(fresh, { closeDate: "12/01/2026" }, now), true, "deadline changed");
+  assert.equal(detailNeedsRefresh({ ...fresh, fetchedAt: now.getTime() - 25 * 3_600_000 }, { closeDate: "11/17/2026" }, now), true);
+  assert.equal(detailNeedsRefresh({ ...fresh, synopsis: undefined }, { closeDate: "11/17/2026" }, now), true);
 });
