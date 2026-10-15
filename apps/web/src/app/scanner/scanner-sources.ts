@@ -14,12 +14,10 @@ export type ScannerCategory = {
 };
 
 /**
- * Curated launch points into real, independently-operated position and
- * funding databases. Provenant does not claim to mirror or scrape these
- * sources' live listings — this is a hand-reviewed directory of where to
- * search directly, organized by region and career stage, complementing
- * Provenant's own structured Opportunity Intelligence once an
- * organization ingests its postings here.
+ * Curated launch points into independently operated position and funding
+ * databases, organized by region. Publishers that offer an open feed are also
+ * read automatically (see server/opportunities/sources); the rest are linked
+ * here only.
  */
 export const scannerCategories: ScannerCategory[] = [
   {
@@ -61,6 +59,69 @@ export const scannerCategories: ScannerCategory[] = [
         region: "Europe",
         coverage: "PhD · Postdoc · Faculty",
         description: "A pan-European academic job board with filtering by discipline and country, complementary to EURAXESS.",
+      },
+      {
+        name: "FindAPostDoc",
+        href: "https://www.findapostdoc.com/",
+        region: "UK & international",
+        coverage: "Postdoc",
+        description: "The postdoctoral counterpart of FindAPhD, with listings filterable by subject, including medicine and the life sciences.",
+      },
+      {
+        name: "EuroScienceJobs",
+        href: "https://www.eurosciencejobs.com/",
+        region: "Europe",
+        coverage: "PhD · Postdoc · Research staff",
+        description: "A European job board for science, with a large share of life-science and biomedical research positions.",
+      },
+      {
+        name: "THE Unijobs",
+        href: "https://www.timeshighereducation.com/unijobs/",
+        region: "Global, Europe-heavy",
+        coverage: "Postdoc · Faculty · Research staff",
+        description: "Times Higher Education's academic job board, with strong coverage of European universities.",
+      },
+      {
+        name: "Max Planck Society job board",
+        href: "https://www.mpg.de/jobboard",
+        region: "Germany (+ institutes abroad)",
+        coverage: "PhD · Postdoc · Research staff",
+        description: "Positions across the Max Planck institutes. Life and medical science positions also appear in Provenant search.",
+      },
+      {
+        name: "Helmholtz Association careers",
+        href: "https://www.helmholtz.de/en/career/",
+        region: "Germany",
+        coverage: "PhD · Postdoc · Research staff",
+        description: "Germany's largest research organization, including the German Cancer Research Center (DKFZ) and other health research centres.",
+      },
+      {
+        name: "CNRS jobs",
+        href: "https://emploi.cnrs.fr/",
+        region: "France",
+        coverage: "PhD · Postdoc · Research staff",
+        description: "The French National Centre for Scientific Research job portal, including positions in biology and health.",
+      },
+      {
+        name: "Karolinska Institutet vacancies",
+        href: "https://ki.se/en/vacancies",
+        region: "Sweden",
+        coverage: "PhD · Postdoc · Faculty",
+        description: "Open positions at one of Europe's leading medical universities.",
+      },
+      {
+        name: "ETH Zurich jobs",
+        href: "https://jobs.ethz.ch/",
+        region: "Switzerland",
+        coverage: "PhD · Postdoc · Research staff",
+        description: "Doctoral, postdoctoral and scientific positions at ETH Zurich, including health sciences and technology.",
+      },
+      {
+        name: "NHS Jobs",
+        href: "https://www.jobs.nhs.uk/",
+        region: "United Kingdom",
+        coverage: "Clinical research · Research staff",
+        description: "The National Health Service job site, the main route to clinical research and research-support roles in the NHS.",
       },
     ],
   },
@@ -104,6 +165,41 @@ export const scannerCategories: ScannerCategory[] = [
         coverage: "Postdoc · Faculty · Industry",
         description: "The AAAS science jobs board, with email job alerts and career advice from the publisher of Science.",
       },
+      {
+        name: "HERC",
+        href: "https://www.hercjobs.org/",
+        region: "United States",
+        coverage: "Postdoc · Faculty · Research staff",
+        description: "The Higher Education Recruitment Consortium's job board, used by many US universities and medical centres.",
+      },
+      {
+        name: "Chronicle of Higher Education Jobs",
+        href: "https://jobs.chronicle.com/",
+        region: "United States",
+        coverage: "Postdoc · Faculty",
+        description: "A long-standing US academic job board, including medical and health science faculties.",
+      },
+      {
+        name: "National Postdoctoral Association",
+        href: "https://www.nationalpostdoc.org/",
+        region: "United States",
+        coverage: "Postdoc",
+        description: "The professional association for US postdocs, with a career centre and resources for finding and negotiating positions.",
+      },
+      {
+        name: "University Affairs careers",
+        href: "https://universityaffairs.ca/",
+        region: "Canada",
+        coverage: "Postdoc · Faculty",
+        description: "The main job board for Canadian universities, including faculties of medicine and health sciences.",
+      },
+      {
+        name: "FAPESP postdoctoral fellowships",
+        href: "https://fapesp.br/en/postdoc",
+        region: "Brazil",
+        coverage: "Postdoc",
+        description: "São Paulo Research Foundation postdoctoral fellowships, open to researchers of any nationality, including in biomedical sciences.",
+      },
     ],
   },
   {
@@ -138,6 +234,41 @@ export const scannerCategories: ScannerCategory[] = [
         region: "Australia",
         coverage: "Fellowships · Project grants",
         description: "Australia's main medical research funder, with Ideas Grants, Investigator Grants and other schemes on a published funding calendar.",
+      },
+      {
+        name: "China University Jobs",
+        href: "https://www.chinauniversityjobs.com/",
+        region: "China",
+        coverage: "Postdoc · Faculty",
+        description: "Postdoctoral and faculty positions at Chinese universities, advertised in English.",
+      },
+      {
+        name: "China Scholarship Council",
+        href: "https://www.csc.edu.cn/laihua",
+        region: "China",
+        coverage: "Master's · PhD",
+        description: "Chinese government scholarships for international students, including medical degrees.",
+      },
+      {
+        name: "A*STAR careers",
+        href: "https://www.a-star.edu.sg/careers",
+        region: "Singapore",
+        coverage: "PhD · Postdoc · Research staff",
+        description: "Positions at Singapore's Agency for Science, Technology and Research, strong in biomedical sciences.",
+      },
+      {
+        name: "NRF Korea",
+        href: "https://www.nrf.re.kr/eng",
+        region: "South Korea",
+        coverage: "Fellowships · Research funding",
+        description: "The National Research Foundation of Korea's programmes for researchers and international exchange.",
+      },
+      {
+        name: "GulfTalent education jobs",
+        href: "https://www.gulftalent.com/",
+        region: "Middle East",
+        coverage: "Faculty · Research staff",
+        description: "Academic and medical positions in the Gulf states, including university hospitals.",
       },
     ],
   },
@@ -229,6 +360,125 @@ export const scannerCategories: ScannerCategory[] = [
         region: "United States",
         coverage: "Project grants (all federal agencies)",
         description: "The unified US federal government grants portal, covering NIH, NSF, DoD, and other agency funding opportunities in one search interface.",
+      },
+    ],
+  },
+  {
+    id: "national-funders",
+    label: "National funders & disease foundations",
+    intro: "National research agencies and charities that fund medical research, plus databases that search across them.",
+    sources: [
+      {
+        name: "NSF funding search",
+        href: "https://www.nsf.gov/funding",
+        region: "United States",
+        coverage: "Project grants",
+        description: "US National Science Foundation programmes, including biological and biomedical-engineering research.",
+      },
+      {
+        name: "PCORI funding opportunities",
+        href: "https://www.pcori.org/funding-opportunities",
+        region: "United States",
+        coverage: "Project grants",
+        description: "Patient-Centered Outcomes Research Institute funding for comparative clinical effectiveness research.",
+      },
+      {
+        name: "American Heart Association research",
+        href: "https://professional.heart.org/en/research-programs",
+        region: "United States",
+        coverage: "Fellowships · Project grants",
+        description: "AHA research awards in cardiovascular and stroke science, from predoctoral fellowships to established investigator awards.",
+      },
+      {
+        name: "NIHR funding",
+        href: "https://www.nihr.ac.uk/",
+        region: "United Kingdom",
+        coverage: "Fellowships · Project grants",
+        description: "The UK National Institute for Health and Care Research, the main funder of clinical and applied health research in the NHS.",
+      },
+      {
+        name: "Cancer Research UK funding",
+        href: "https://www.cancerresearchuk.org/funding-for-researchers",
+        region: "United Kingdom",
+        coverage: "Fellowships · Project grants",
+        description: "Funding schemes from the world's largest independent cancer research charity.",
+      },
+      {
+        name: "DFG funding",
+        href: "https://www.dfg.de/en",
+        region: "Germany",
+        coverage: "Project grants · Fellowships",
+        description: "The German Research Foundation, Germany's largest research funder, including medicine and the life sciences.",
+      },
+      {
+        name: "ANR calls",
+        href: "https://anr.fr/en/",
+        region: "France",
+        coverage: "Project grants",
+        description: "The French National Research Agency's calls, including health and biology.",
+      },
+      {
+        name: "NWO calls",
+        href: "https://www.nwo.nl/en/calls",
+        region: "Netherlands",
+        coverage: "Project grants · Talent schemes",
+        description: "Calls from the Dutch Research Council; health research is also funded through ZonMw.",
+      },
+      {
+        name: "SNSF funding",
+        href: "https://www.snf.ch/en",
+        region: "Switzerland",
+        coverage: "Project grants · Careers",
+        description: "The Swiss National Science Foundation's project and career funding, including biology and medicine.",
+      },
+      {
+        name: "CORDIS",
+        href: "https://cordis.europa.eu/",
+        region: "European Union",
+        coverage: "Funded projects",
+        description: "The EU's record of funded research projects, useful for finding consortia and collaborators before a call.",
+      },
+      {
+        name: "AMED",
+        href: "https://www.amed.go.jp/en/",
+        region: "Japan",
+        coverage: "Project grants",
+        description: "The Japan Agency for Medical Research and Development, Japan's main funder of medical research.",
+      },
+      {
+        name: "NSFC",
+        href: "https://www.nsfc.gov.cn/",
+        region: "China",
+        coverage: "Project grants · International programmes",
+        description: "The National Natural Science Foundation of China, including joint international programmes.",
+      },
+      {
+        name: "ICMR",
+        href: "https://www.icmr.gov.in/",
+        region: "India",
+        coverage: "Project grants · Fellowships",
+        description: "The Indian Council of Medical Research, India's apex body for biomedical research funding.",
+      },
+      {
+        name: "KACST",
+        href: "https://kacst.gov.sa/",
+        region: "Saudi Arabia",
+        coverage: "Research funding",
+        description: "King Abdulaziz City for Science and Technology, a major research funder in the Middle East.",
+      },
+      {
+        name: "Candid Foundation Directory",
+        href: "https://candid.org/find-funding",
+        region: "United States (+ international)",
+        coverage: "Foundation grants (subscription)",
+        description: "The largest database of private foundations and their grants. Full access needs a subscription or a partner library.",
+      },
+      {
+        name: "Pivot-RP",
+        href: "https://pivot.proquest.com/",
+        region: "Global",
+        coverage: "Funding search (institutional)",
+        description: "A funding-opportunity database usually available through a university subscription, with profile-based alerts.",
       },
     ],
   },
