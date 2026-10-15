@@ -50,7 +50,7 @@ export const greenhouseSources: OpportunitySourceConnector[] = GREENHOUSE_BOARDS
   homepage: `https://job-boards.greenhouse.io/${board.token}`,
   description: `Research positions from ${board.name}'s official careers board.`,
   completeSnapshot: true,
-  intervalHours: 12,
+  intervalMinutes: 180,
   isEnabled: () => true,
   async collect(context) {
     const response = await requestJson<{ jobs?: GreenhouseJob[] }>(
