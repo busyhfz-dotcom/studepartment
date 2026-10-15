@@ -55,7 +55,7 @@ export const usaJobsSource: OpportunitySourceConnector = {
   homepage: "https://www.usajobs.gov",
   description: "Postdoctoral, fellowship and research staff positions at US federal health agencies such as NIH, CDC, FDA and the VA, from the official USAJOBS API.",
   completeSnapshot: true,
-  intervalHours: 12,
+  intervalMinutes: 120,
   // The API requires a free key registered at developer.usajobs.gov.
   isEnabled: (env) => Boolean(env.USAJOBS_API_KEY?.trim() && env.USAJOBS_USER_AGENT?.trim()),
   async collect(context) {
