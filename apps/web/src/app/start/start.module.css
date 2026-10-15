@@ -208,7 +208,7 @@
 .detailSide { position: sticky; top: 20px; background: #e7f0e9; }
 .detailSide h3 { font: 400 30px/1.1 var(--font-editorial), Georgia, serif; margin: 9px 0 14px; }
 .detailSide p { color: #526e5a; line-height: 1.65; }
-.smallprint { font-size: 12px !important; color: #728775 !important; margin-top: 16px; }
+.smallprint { font-size: 12px !important; color: var(--muted); margin-top: 16px; }
 
 .primary {
   display: inline-flex;
@@ -374,6 +374,8 @@
 
 .page {
   --select-menu-bg: #14213c;
+  --text: #d1defa;
+  --text-strong: #eef3ff;
   --select-menu-border: #40547d;
   --select-menu-text: #dce6ff;
   --select-menu-hover: #25365c;
@@ -385,6 +387,10 @@
     radial-gradient(ellipse at 85% 3%, rgba(53, 67, 121, .22), transparent 48%),
     radial-gradient(ellipse at 8% 55%, rgba(63, 51, 155, .14), transparent 45%),
     #080e20;
+}
+
+.result h3 {
+  color: var(--text-strong);
 }
 
 .page > :not(.scienceBackdrop) {

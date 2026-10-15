@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { OpportunityResult } from "@/lib/api-contracts";
 import styles from "./start.module.css";
 import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
-import { countryName } from "@/lib/countries";
+import { CountrySelect } from "@/components/forms/country-select";
 
 type Kind = "position" | "grant";
 type Step = "welcome" | "browse" | "detail" | "next" | "institutions";
@@ -48,12 +48,6 @@ function deadlineLabel(item: OpportunityResult): string {
   } catch {
     return "See source for deadline";
   }
-}
-
-function makeRoomForLocationPicker(select: HTMLSelectElement) {
-  const pickerHeight = Math.min(320, window.innerHeight * .55, select.options.length * 38 + 14);
-  const overflow = select.getBoundingClientRect().bottom + pickerHeight + 12 - window.innerHeight;
-  if (overflow > 0) window.scrollBy({ top: overflow, behavior: "instant" });
 }
 
 function Stage({ n }: { n: 1 | 2 | 3 | 4 }) {
@@ -183,15 +177,6 @@ function StartJourney() {
 
     return () => controller.abort();
   }, [step, kind, query, country, searchAttempt]);
-
-  const countries = useMemo(() => {
-    const codes = new Set(results.map((item) => item.countryCode).filter((code): code is string => Boolean(code)));
-    if (country) codes.add(country.toUpperCase());
-    return Array.from(codes)
-      .map((code) => [code, countryName(code) ?? code] as const)
-      .sort((a, b) => a[1].localeCompare(b[1]))
-      .slice(0, 60);
-  }, [results, country]);
 
   function openBrowse(nextKind: Kind) {
     setLoading(true);
@@ -346,22 +331,11 @@ function StartJourney() {
                 setFilter("q", event.target.value);
               }}
             />
-            <select aria-label="Location" data-picker-direction="down" value={country}
-              onPointerDown={(event) => makeRoomForLocationPicker(event.currentTarget)}
-              onKeyDown={(event) => {
-                if ([" ", "Enter", "ArrowDown"].includes(event.key)) makeRoomForLocationPicker(event.currentTarget);
-              }}
-              onChange={(event) => {
+            <CountrySelect ariaLabel="Location" anyLabel="Any location" value={country}
+              onChange={(value) => {
                 setLoading(true);
-                setFilter("country", event.target.value);
-              }}>
-              <option value="">Any location</option>
-              {countries.map(([code, name]) => (
-                <option key={code} value={code}>
-                  {name}
-                </option>
-              ))}
-            </select>
+                setFilter("country", value);
+              }} />
           </div>
 
           <div className={styles.listHead}>
