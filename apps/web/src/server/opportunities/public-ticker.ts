@@ -7,6 +7,8 @@ export type PublicTickerItem = {
   countryCode: string | null;
   deadline: string | null;
   deadlineLabel: string;
+  /** First collected in the last 24 hours. */
+  isNew: boolean;
 };
 
 export type PublicOpportunityTicker = {
@@ -14,6 +16,8 @@ export type PublicOpportunityTicker = {
   positions: PublicTickerItem[];
   grants: PublicTickerItem[];
   generatedAt: string;
+  /** When the collector last saw any listing at its source. */
+  lastCollectedAt: string | null;
   stats: {
     totalPositions: number;
     totalGrants: number;
@@ -31,7 +35,7 @@ function formatDeadline(deadline: Date | null, precision: string): string {
 
 export async function getPublicOpportunityTicker(): Promise<PublicOpportunityTicker> {
   const unavailable: PublicOpportunityTicker = {
-    available: false, generatedAt: new Date().toISOString(), positions: [], grants: [],
+    available: false, generatedAt: new Date().toISOString(), lastCollectedAt: null, positions: [], grants: [],
     stats: { totalPositions: 0, totalGrants: 0, countries: 0 },
   };
   if (!process.env.DATABASE_URL) return unavailable;
@@ -54,7 +58,7 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
   };
   const newestFirst = [{ publishedAt: { sort: "desc" as const, nulls: "last" as const } }, { firstSeenAt: "desc" as const }];
 
-  const [positions, grants, totalPositions, totalGrants, countries] = await Promise.all([
+  const [positions, grants, totalPositions, totalGrants, countries, latest] = await Promise.all([
     db.opportunity.findMany({
       where: { ...activeUpcoming, type: { not: "GRANT" } },
       orderBy: newestFirst,
@@ -65,6 +69,7 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
         countryCode: true,
         deadline: true,
         deadlinePrecision: true,
+        firstSeenAt: true,
         organization: { select: { name: true } },
       },
     }),
@@ -78,6 +83,7 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
         countryCode: true,
         deadline: true,
         deadlinePrecision: true,
+        firstSeenAt: true,
         organization: { select: { name: true } },
       },
     }),
@@ -88,7 +94,9 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
       distinct: ["countryCode"],
       select: { countryCode: true },
     }),
+    db.opportunity.aggregate({ _max: { lastSeenAt: true } }),
   ]);
+  const newSince = now.getTime() - 86_400_000;
 
   const map = (rows: typeof positions): PublicTickerItem[] =>
     rows.map((row) => ({
@@ -98,11 +106,13 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
       countryCode: row.countryCode,
       deadline: row.deadline?.toISOString() ?? null,
       deadlineLabel: formatDeadline(row.deadline, row.deadlinePrecision),
+      isNew: row.firstSeenAt.getTime() >= newSince,
     }));
 
   return {
     available: true,
     generatedAt: now.toISOString(),
+    lastCollectedAt: latest._max.lastSeenAt?.toISOString() ?? null,
     positions: map(positions),
     grants: map(grants),
     stats: {
