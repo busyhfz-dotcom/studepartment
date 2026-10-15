@@ -117,7 +117,7 @@ export const euFundingTendersSource: OpportunitySourceConnector = {
   homepage: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/calls-for-proposals",
   description: "Open and forthcoming EU calls in health: Horizon Europe Cluster 1, the Cancer Mission, IHI, EU4Health, EDCTP3, ERC and MSCA.",
   completeSnapshot: true,
-  intervalHours: 12,
+  intervalMinutes: 120,
   isEnabled: () => true,
   async collect(context) {
     const results: SearchResult[] = [];
