@@ -13,8 +13,8 @@ export default async function ConferencesPage() {
           <span className="eyebrow">Conferences & Credit</span>
           <h1>Check a conference&apos;s standing before you submit or attend.</h1>
           <p className="lede">
-            Credibility checks for venues and journals, and continuing-education-credit registries for tracking
-            CME/CPD credit for clinical work.
+            Credibility checks for venues and journals, the societies behind the major specialty congresses, and
+            the registries clinicians use to track CME/CPD credit.
           </p>
         </header>
 
