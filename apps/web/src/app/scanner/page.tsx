@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getShellViewer } from "@/server/auth/shell-viewer";
 import { scannerCategories } from "./scanner-sources";
@@ -14,8 +15,9 @@ export default async function ScannerPage() {
           <h1>Every serious position and grant database, in one place.</h1>
           <p className="lede">
             A hand-checked list of the independent databases researchers actually use to find PhD, postdoc and
-            faculty positions and research funding, grouped by region. Provenant links straight to each
-            source and does not copy its listings.
+            faculty positions and research funding, grouped by region. Each link opens the source itself. Where a
+            publisher offers an open feed, its listings also appear in Provenant search; see{" "}
+            <Link href="/sources">Data sources</Link>.
           </p>
         </header>
 
@@ -44,9 +46,9 @@ export default async function ScannerPage() {
         ))}
 
         <p className={styles.footnote}>
-          Know a database that belongs here, or one of ours that&apos;s posting live opportunities on
-          Provenant directly? <a href="/opportunities">Search structured Opportunity Intelligence</a> for
-          postings already ingested with deadlines, eligibility, and source provenance attached.
+          Looking for listings you can filter by topic, deadline and eligibility?{" "}
+          <Link href="/opportunities">Search Opportunity Intelligence</Link>, which collects open positions and
+          funding calls from the publishers listed on <Link href="/sources">Data sources</Link>.
         </p>
       </div>
     </ProductShell>

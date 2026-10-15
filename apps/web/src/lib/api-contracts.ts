@@ -393,6 +393,8 @@ export type OpportunityIntelligenceResponse = {
   query: OpportunityQuery;
   results: OpportunityResult[];
   totalConsidered: number;
+  /** Listings matching the filters, before the result limit. */
+  totalMatching: number;
   cappedAt: number;
   personalized: boolean;
   profileContext: {

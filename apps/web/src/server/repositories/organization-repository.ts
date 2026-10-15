@@ -16,6 +16,8 @@ export async function listOrganizationOptions(): Promise<OrganizationOption[]> {
   if (!process.env.DATABASE_URL) return fixtureOrganizations;
 
   const organizations = await getDb().organization.findMany({
+    // Funders and employers known only from listings are not offered as affiliations.
+    where: { OR: [{ verified: true }, { ownerUserId: { not: null } }, { labs: { some: {} } }, { affiliations: { some: {} } }] },
     orderBy: [{ verified: "desc" }, { name: "asc" }],
     take: 100,
     select: { id: true, name: true, type: true, countryCode: true, verified: true },

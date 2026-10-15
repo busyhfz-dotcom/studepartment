@@ -7,6 +7,7 @@ import type { OpportunityResult } from "@/lib/api-contracts";
 import styles from "./start.module.css";
 import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
+import { countryName } from "@/lib/countries";
 
 type Kind = "position" | "grant";
 type Step = "welcome" | "browse" | "detail" | "next" | "institutions";
@@ -37,7 +38,7 @@ function typeLabel(type: OpportunityResult["type"]): string {
 }
 
 function deadlineLabel(item: OpportunityResult): string {
-  if (!item.deadline) return "Rolling / no fixed deadline";
+  if (!item.deadline) return item.deadlinePrecision === "rolling" ? "Rolling deadline" : "Deadline on the listing";
   try {
     return new Date(item.deadline).toLocaleDateString(undefined, {
       month: "short",
@@ -116,6 +117,7 @@ function StartJourney() {
   const country = searchParams.get("country") ?? "";
   const opportunityId = searchParams.get("opportunity");
   const [results, setResults] = useState<OpportunityResult[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(step === "browse");
   const [selectedRecord, setSelected] = useState<OpportunityResult | null>(null);
   const selected = selectedRecord?.id === opportunityId ? selectedRecord : null;
@@ -170,7 +172,7 @@ function StartJourney() {
       .then((body) => {
         if (controller.signal.aborted) return;
         if (!body?.success) throw new Error(body.error?.message || "The opportunity search could not be completed.");
-        setResults(body.data.results as OpportunityResult[]); setSearchError("");
+        setResults(body.data.results as OpportunityResult[]); setTotal(Number(body.data.totalMatching ?? body.data.results.length)); setSearchError("");
       })
       .catch((error) => {
         if (!controller.signal.aborted) setSearchError(error instanceof Error ? error.message : "Connection interrupted. Try again.");
@@ -182,10 +184,14 @@ function StartJourney() {
     return () => controller.abort();
   }, [step, kind, query, country, searchAttempt]);
 
-  const countries = useMemo(
-    () => Array.from(new Set(results.map((item) => item.location).filter(Boolean))).slice(0, 40),
-    [results],
-  );
+  const countries = useMemo(() => {
+    const codes = new Set(results.map((item) => item.countryCode).filter((code): code is string => Boolean(code)));
+    if (country) codes.add(country.toUpperCase());
+    return Array.from(codes)
+      .map((code) => [code, countryName(code) ?? code] as const)
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .slice(0, 60);
+  }, [results, country]);
 
   function openBrowse(nextKind: Kind) {
     setLoading(true);
@@ -350,9 +356,9 @@ function StartJourney() {
                 setFilter("country", event.target.value);
               }}>
               <option value="">Any location</option>
-              {countries.map((location) => (
-                <option key={location} value={location}>
-                  {location}
+              {countries.map(([code, name]) => (
+                <option key={code} value={code}>
+                  {name}
                 </option>
               ))}
             </select>
@@ -362,7 +368,7 @@ function StartJourney() {
             <div>
               <span className={styles.eyebrow}>{isGrant ? "Funding calls" : "Research roles"}</span>
               <h2>
-                {loading ? "Searching…" : `${results.length} ${isGrant ? "grants" : "positions"} to explore`}
+                {loading ? "Searching…" : `${total.toLocaleString("en")} ${isGrant ? (total === 1 ? "grant" : "grants") : (total === 1 ? "position" : "positions")} to explore`}
               </h2>
             </div>
             <p>Current listings, each linked to its original source.</p>
@@ -392,6 +398,12 @@ function StartJourney() {
                 </article>
               ))
             )}
+            {!loading && !searchError && total > results.length ? (
+              <p className={styles.smallprint}>
+                Showing the {results.length} most relevant of {total.toLocaleString("en")}. Narrow the search above, or{" "}
+                <Link href="/opportunities">open the full opportunity search</Link> for more filters.
+              </p>
+            ) : null}
           </div>
         </main>
         <FootBar />

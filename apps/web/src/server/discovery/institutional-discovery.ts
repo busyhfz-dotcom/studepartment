@@ -234,8 +234,22 @@ function fixtureCandidates(entityType: InstitutionalDiscoveryQuery["entityType"]
   ];
 }
 
+/**
+ * Organizations created only because a funder or employer published a listing
+ * are not institution profiles. The directory shows verified or claimed
+ * institutions and those with labs or affiliated researchers.
+ */
+export const listedInstitutionWhere: Prisma.OrganizationWhereInput = {
+  OR: [
+    { verified: true },
+    { ownerUserId: { not: null } },
+    { labs: { some: {} } },
+    { affiliations: { some: { current: true } } },
+  ],
+};
+
 function buildInstitutionWhere(query: InstitutionalDiscoveryQuery): Prisma.OrganizationWhereInput {
-  const where: Prisma.OrganizationWhereInput = {};
+  const where: Prisma.OrganizationWhereInput = { AND: [listedInstitutionWhere] };
   if (query.countryCodes.length) where.countryCode = { in: query.countryCodes };
   if (query.organizationTypes.length) {
     where.type = { in: query.organizationTypes.map((value) => organizationTypeToDb[value]) };

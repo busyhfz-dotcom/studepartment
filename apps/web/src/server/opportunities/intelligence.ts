@@ -7,6 +7,7 @@ import type {
   OpportunityTypeValue,
 } from "@/lib/api-contracts";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { searchTerms } from "./search-terms";
 import { careerStageFilterSlugs } from "./career-stage";
 import { getTopInterestTopicSlugs, recordSearchAndUpdateInterest } from "@/server/personalization/interest-signals";
 
@@ -186,6 +187,7 @@ function fixtureResponse(query: OpportunityQuery): OpportunityIntelligenceRespon
   return {
     query,
     totalConsidered: 1,
+    totalMatching: 1,
     cappedAt: query.limit,
     personalized: false,
     profileContext: null,
@@ -260,16 +262,31 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     };
   }
 
-  const rows = await db.opportunity.findMany({
+  // Every search term must appear somewhere in the listing, so a search over
+  // thousands of listings returns the matching ones rather than the latest few.
+  const textFilters = searchTerms(query.text).map((term) => ({
+    OR: [
+      { title: { contains: term, mode: "insensitive" as const } },
+      { description: { contains: term, mode: "insensitive" as const } },
+      { city: { contains: term, mode: "insensitive" as const } },
+      { organization: { name: { contains: term, mode: "insensitive" as const } } },
+      { topics: { some: { topic: { name: { contains: term, mode: "insensitive" as const } } } } },
+    ],
+  }));
+  if (textFilters.length) {
+    where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), ...textFilters];
+  }
+
+  const [rows, totalMatching] = await Promise.all([db.opportunity.findMany({
     where,
     take: Math.min(150, Math.max(50, query.limit * 8)),
-    orderBy: [{ lastVerifiedAt: "desc" }, { deadline: "asc" }],
+    orderBy: [{ publishedAt: { sort: "desc", nulls: "last" } }, { firstSeenAt: "desc" }],
     include: {
       organization: true,
       topics: { include: { topic: true }, orderBy: { weight: "desc" } },
       methods: { include: { method: true } },
     },
-  });
+  }), db.opportunity.count({ where })]);
 
   const requestedTopics = query.topicSlugs.length
     ? query.topicSlugs
@@ -368,6 +385,7 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     query,
     results: scored.slice(0, query.limit),
     totalConsidered: rows.length,
+    totalMatching,
     cappedAt: query.limit,
     personalized: Boolean(profile) || interestTopicSlugs.length > 0,
     profileContext: profile,

@@ -263,6 +263,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
           <a href="#platform">Platform</a>
           <a href="#principles">Our approach</a>
           <Link href="/auth/sign-in">Sign in to your workspace</Link>
+          <Link href="/sources">Data sources</Link>
           <Link href="/terms">Terms</Link>
           <Link href="/privacy">Privacy</Link>
         </div>

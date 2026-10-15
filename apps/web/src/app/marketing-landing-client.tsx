@@ -121,6 +121,7 @@ type TickerEntry = {
   kind: "Position" | "Grant";
   title: string;
   organization: string;
+  deadline: string | null;
   deadlineLabel: string;
 };
 
@@ -130,6 +131,7 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     kind: "Position",
     title: item.title,
     organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
+    deadline: item.deadline,
     deadlineLabel: item.deadlineLabel,
   }));
   const grants: TickerEntry[] = ticker.grants.map((item) => ({
@@ -137,6 +139,7 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     kind: "Grant",
     title: item.title,
     organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
+    deadline: item.deadline,
     deadlineLabel: item.deadlineLabel,
   }));
   const merged: TickerEntry[] = [];
@@ -145,17 +148,14 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     if (positions[i]) merged.push(positions[i]);
     if (grants[i]) merged.push(grants[i]);
   }
-  return merged.slice(0, 8);
+  return merged.slice(0, 12);
 }
 
-function badgeStatus(label: string): "urgent" | "soon" | "open" {
-  const lower = label.toLowerCase();
-  if (lower.includes("rolling")) return "open";
-  const weekMatch = lower.match(/(\d+)\s*week/);
-  const dayMatch = lower.match(/(\d+)\s*day/);
-  if (dayMatch && Number(dayMatch[1]) <= 14) return "urgent";
-  if (weekMatch && Number(weekMatch[1]) <= 2) return "urgent";
-  if (weekMatch && Number(weekMatch[1]) <= 6) return "soon";
+function badgeStatus(deadline: string | null): "urgent" | "soon" | "open" {
+  if (!deadline) return "open";
+  const days = (new Date(deadline).getTime() - Date.now()) / 86_400_000;
+  if (days <= 14) return "urgent";
+  if (days <= 42) return "soon";
   return "open";
 }
 
@@ -191,7 +191,7 @@ export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker 
             {[false, true].map((duplicate) => (
               <div className={styles.latestGroup} aria-hidden={duplicate || undefined} key={duplicate ? "dup" : "orig"}>
                 {entries.map((entry, index) => {
-                  const status = badgeStatus(entry.deadlineLabel);
+                  const status = badgeStatus(entry.deadline);
                   const label = status === "urgent" ? "Closing soon" : status === "soon" ? "Plan ahead" : "Time to prepare";
                   return (
                     <button
@@ -238,7 +238,7 @@ export function OpportunityTicker({ ticker }: { ticker: PublicOpportunityTicker 
       ) : null}
 
       <div className={styles.deskFooter}>
-        <span>Published listings only. Review each original source and deadline.</span>
+        <span>Collected from official funders and employers. <Link href="/sources">See sources</Link></span>
         <Link href="/opportunities">Browse all ↗</Link>
       </div>
     </aside>

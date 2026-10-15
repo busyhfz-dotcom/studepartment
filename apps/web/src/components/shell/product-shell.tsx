@@ -49,6 +49,7 @@ const pageNames: Array<[string, string]> = [
   ["/graph", "Scientific Evidence Graph"],
   ["/scanner", "Scanner Directory"],
   ["/conferences", "Conferences & Credit"],
+  ["/sources", "Data sources"],
   ["/institutions", "Institutional Intelligence"],
   ["/researchers", "Researcher Profile"],
   ["/settings", "Settings"],
