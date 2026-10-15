@@ -44,7 +44,7 @@ export const maxPlanckSource: OpportunitySourceConnector = {
   homepage: "https://www.mpg.de/jobboard",
   description: "PhD, postdoc and research positions in the life and medical sciences at the Max Planck institutes, from the Society's own job feed.",
   completeSnapshot: false,
-  intervalHours: 6,
+  intervalMinutes: 60,
   isEnabled: () => true,
   async collect(context) {
     const xml = await requestText(context.fetch, FEED_URL);
