@@ -36,6 +36,11 @@ export type OpportunityIngestionRecord = {
 export type OpportunityIngestionBatch = {
   source: OpportunityIngestionSource;
   completeSnapshot?: boolean;
+  /**
+   * With a complete snapshot, only listings last seen before this time are
+   * marked stale, so a source that briefly omits a listing does not hide it.
+   */
+  staleBefore?: Date;
   records: OpportunityIngestionRecord[];
 };
 
@@ -274,6 +279,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
         sourceName: batch.source.name.trim(),
         sourceRecordId: { notIn: Array.from(seenRecordIds) },
         status: "ACTIVE",
+        ...(batch.staleBefore ? { lastSeenAt: { lt: batch.staleBefore } } : {}),
       },
       data: { status: "STALE" },
     });

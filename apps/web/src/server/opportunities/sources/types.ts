@@ -36,6 +36,12 @@ export type OpportunitySourceConnector = {
    * the hour, but long enough to be a light, polite load on the publisher.
    */
   intervalMinutes: number;
+  /**
+   * For complete snapshots: hours a listing must be missing from the source
+   * before it is taken down. Absorbs APIs whose result pages vary between
+   * calls. Defaults to 6.
+   */
+  staleGraceHours?: number;
   isEnabled(env: NodeJS.ProcessEnv): boolean;
   collect(context: SourceContext): Promise<OpportunityIngestionRecord[]>;
 };
