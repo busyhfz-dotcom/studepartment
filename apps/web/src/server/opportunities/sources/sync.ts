@@ -9,6 +9,8 @@ const MAX_RECORDS_PER_SOURCE = 3000;
 const FAILURE_RETRY_MINUTES = 30;
 /** Ticks are not exact; a source counts as due slightly early rather than a whole tick late. */
 const DUE_SLACK_MS = 2 * 60_000;
+/** A listing missing from a complete snapshot stays up this long before it is taken down. */
+const DEFAULT_STALE_GRACE_HOURS = 6;
 /** Listings not seen for this long drop out of search (matches the search cutoff). */
 export const LISTING_STALE_AFTER_DAYS = 45;
 
@@ -105,7 +107,8 @@ export async function runSource(
     // An empty full snapshot is far more likely an outage than a real empty list;
     // never let it mark every listing stale.
     const completeSnapshot = connector.completeSnapshot && records.length > 0;
-    const result = await ingestOpportunityBatch({ source: connector.source, completeSnapshot, records });
+    const staleBefore = new Date(now.getTime() - (connector.staleGraceHours ?? DEFAULT_STALE_GRACE_HOURS) * 3_600_000);
+    const result = await ingestOpportunityBatch({ source: connector.source, completeSnapshot, staleBefore, records });
     log(`${connector.source.name}: ${result.created} new, ${result.updated} updated, ${result.unchanged} unchanged, ${result.markedStale} no longer listed`);
     return { ...base, status: "ok", durationMs: Date.now() - started, ...result };
   } catch (error) {
