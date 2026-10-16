@@ -208,6 +208,7 @@ test("sources are checked around the clock: hourly when healthy, sooner after a 
   assert.equal(await isSourceDue(hourly, now, undefined, null), true, "never checked");
   assert.equal(await isSourceDue(hourly, now, undefined, new Date(now.getTime() - 15 * 60_000)), false, "a restart does not re-read a fresh source");
   assert.ok(opportunitySources.every((source) => source.intervalMinutes <= 180), "no source waits more than three hours");
+  assert.equal(opportunitySources.find((source) => source.id === "eu-funding-tenders")?.staleGraceHours, 24, "EU topics that drop out of one search page are not taken down");
 });
 
 test("Grants.gov notice texts are re-read only when new, changed or a day old", () => {
