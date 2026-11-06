@@ -7,7 +7,7 @@ services:
     branch: codex/provenant-render-migration
     dockerfilePath: ./Dockerfile
     autoDeployTrigger: "off"
-    healthCheckPath: /api/health/ready
+    healthCheckPath: /api/health/live
     dockerCommand: /app/scripts/start-web-container.sh
     envVars:
       - key: PORT
