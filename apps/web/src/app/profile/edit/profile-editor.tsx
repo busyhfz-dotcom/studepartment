@@ -16,7 +16,6 @@ import { CountrySelect } from "@/components/forms/country-select";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
 import { ProfessionalProfileFields } from "./professional-profile-fields";
-import { ResearchProfileActions } from "@/components/scientific/research-profile-actions";
 import { researchProfileUrl } from "@/lib/research-profile-sources";
 
 const topicOptions = researchTopics;
@@ -67,13 +66,6 @@ export function ProfileEditor({
   );
   const topicDefaults = useMemo(() => new Set(profile.topicSlugs ?? []), [profile.topicSlugs]);
   const methodDefaults = useMemo(() => new Set(profile.methodSlugs ?? []), [profile.methodSlugs]);
-  const orcidVerified = useMemo(
-    () => profile.verification.some(
-      (signal) => signal.verified && signal.label.toLowerCase().includes("orcid"),
-    ),
-    [profile.verification],
-  );
-
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (uploading || fileUploads > 0 || status === "saving") return;
@@ -90,7 +82,7 @@ export function ProfileEditor({
       countryCode: String(form.get("countryCode") ?? "") || null,
       careerStage: String(form.get("careerStage") ?? "") || null,
       organizationId: String(form.get("organizationId") ?? "") || null,
-      orcid: String(form.get("orcid") ?? "") || null,
+      orcid: orcid.trim() || null,
       availability: String(form.get("availability") ?? "selective") as ProfileResponse["availability"],
       profilePublic: form.get("profilePublic") === "on",
       collaborationGoals: checkedValues(form, "collaborationGoals") as CollaborationGoalValue[],
@@ -133,7 +125,7 @@ export function ProfileEditor({
         body: JSON.stringify(payload),
       });
       const result = (await response.json()) as
-        | { success: true; data: ProfileResponse; orcidImport?: string }
+        | { success: true; data: ProfileResponse }
         | { success: false; error: { message: string } };
 
       if (!response.ok || !result.success) {
@@ -143,7 +135,7 @@ export function ProfileEditor({
       setStatus("success");
       setMessage("Scientific identity saved. Provenance for these edits has been recorded.");
       router.refresh();
-      router.push(result.orcidImport ? `/profile?orcid=${encodeURIComponent(result.orcidImport)}` : "/profile");
+      router.push("/profile");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Profile update failed.");
@@ -299,34 +291,6 @@ export function ProfileEditor({
               <span>{label}</span>
             </label>
           ))}
-        </div>
-      </section>
-
-      <section className={styles.editorSection}>
-        <div className={styles.sectionHead}>
-          <div>
-            <span className="sectionLabel">ORCID profile</span>
-            <h2>Your researcher identifier</h2>
-          </div>
-          <p>Find your iD on ORCID and save it here so visitors can open your research record.</p>
-        </div>
-        <div className={styles.provenanceGrid}>
-          <div>
-            <label className={styles.fieldGroup}>
-              <span>ORCID iD or record URL</span>
-              <input name="orcid" value={orcid} onChange={(event) => setOrcid(event.target.value)} placeholder="0000-0000-0000-0000" />
-            </label>
-            <p className={styles.sourceNotice}>
-              Paste your ORCID iD or the full public record URL, then save your profile.
-            </p>
-          </div>
-          <div className={styles.provenanceEvidence}>
-            <strong>{orcidVerified && researchProfileUrl("orcid", orcid) === researchProfileUrl("orcid", profile.orcid) ? "Previously verified ORCID iD" : "External profile link"}</strong>
-            <span>
-              Saving a new iD requests a public-data import when the platform connection is active. It does not verify ownership. Use Connect and import to authorize and verify your account.
-            </span>
-            <ResearchProfileActions sourceKey="orcid" value={orcid} />
-          </div>
         </div>
       </section>
 

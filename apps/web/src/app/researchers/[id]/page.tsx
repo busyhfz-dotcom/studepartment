@@ -79,7 +79,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
           </article>
         </section>
 
-        <ProfessionalProfileSections details={researcher.profileDetails ?? undefined} orcid={researcher.orcid} />
+        <ProfessionalProfileSections details={researcher.profileDetails ?? undefined} orcid={researcher.orcid} orcidVerified={researcher.trustSignals.some((signal) => signal.label === "ORCID" && signal.verified)} />
         <PublicDocuments files={researcher.documents} />
 
         <section className={styles.publicationPanel}>

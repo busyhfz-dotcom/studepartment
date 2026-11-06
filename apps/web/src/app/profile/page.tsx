@@ -8,35 +8,13 @@ import { PublicationEvidencePanel } from "./publication-evidence-panel";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { researcherRepository } from "@/server/repositories/researcher-repository";
 import styles from "./profile.module.css";
-import { isOrcidConfigured } from "@/server/integrations/orcid/client";
 
-const orcidMessages: Record<string, { text: string; error?: boolean }> = {
-  imported: { text: "ORCID ownership verified. Available public profile information and research outputs were imported. Your existing profile edits were preserved." },
-  "public-imported": { text: "Public ORCID information and research outputs were imported. Existing profile edits were preserved. Entering an iD does not verify account ownership." },
-  "import-partial": { text: "Available ORCID profile information was imported. Some publications could not be imported; retry from your ORCID connection page.", error: true },
-  "import-failed": { text: "ORCID ownership was verified, but importing public information could not finish. Retry from your ORCID connection page.", error: true },
-  "public-import-failed": { text: "Your profile and ORCID iD were saved. Public ORCID information could not be retrieved; retry from your ORCID connection page.", error: true },
-  "import-unavailable": { text: "Your profile and ORCID iD were saved. Automatic import is awaiting activation of the platform's ORCID connection.", error: true },
-  connected: { text: "ORCID connected. You can now sync your public works and check matching publications against PubMed." },
-  denied: { text: "ORCID authorization was cancelled. No profile data or verification state was changed.", error: true },
-  "invalid-state": { text: "ORCID verification could not be completed because the authorization state was invalid or expired. Try again from profile settings.", error: true },
-  conflict: { text: "That ORCID iD is already connected to another scientific identity. No change was made.", error: true },
-  error: { text: "ORCID verification failed. No verification state was changed.", error: true },
-};
-
-export default async function ProfilePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ orcid?: string }>;
-}) {
+export default async function ProfilePage() {
   const user = await getCurrentUser();
   if (!user) redirect("/auth/sign-in?callbackUrl=/profile");
   if (user.accountKind === "INSTITUTION") redirect("/organization/profile");
 
-  const [{ orcid }, profile] = await Promise.all([
-    searchParams,
-    researcherRepository.getProfileForUser(user.id),
-  ]);
+  const profile = await researcherRepository.getProfileForUser(user.id);
   if (!profile) redirect("/onboarding");
 
   const identity = {
@@ -54,7 +32,6 @@ export default async function ProfilePage({
     availabilityMode: profile.availability,
     verification: profile.verification,
   };
-  const orcidMessage = orcid ? orcidMessages[orcid] : undefined;
   const roleLabel = profile.accountRole === "student" ? "Student profile" : profile.accountRole === "professor" ? "Professor / faculty profile" : "Researcher profile";
   const roleDetails = profile.accountRole === "student"
     ? [["Degree program", profile.profileDetails?.degreeProgram], ["Expected graduation", profile.profileDetails?.graduationYear], ["Supervisor", profile.profileDetails?.supervisorName], ["Thesis topic", profile.profileDetails?.thesisTopic]]
@@ -77,12 +54,6 @@ export default async function ProfilePage({
           </div>
         </div>
 
-        {orcidMessage ? (
-          <p className={`${styles.notice} ${orcidMessage.error ? styles.noticeError : ""}`} role="status">
-            {orcidMessage.text}
-          </p>
-        ) : null}
-
         <ScientificProfileCard identity={identity} />
         <section className={styles.roleProfile}>
           <div><span className="sectionLabel">Personalized identity</span><h2>{roleLabel}</h2></div>
@@ -91,9 +62,9 @@ export default async function ProfilePage({
             {!roleDetails.some(([, value]) => value) ? <p>Add your role-specific details to make this profile more useful.</p> : null}
           </div>
         </section>
-        <ProfessionalProfileSections details={profile.profileDetails} orcid={profile.orcid} />
+        <ProfessionalProfileSections details={profile.profileDetails} orcid={profile.orcid} orcidVerified={profile.verification.some((signal) => signal.label === "ORCID" && signal.verified)} />
         <DocumentManager scope="profile" title="CV, certificates & research documents" />
-        <PublicationEvidencePanel importAvailable={isOrcidConfigured()} />
+        <PublicationEvidencePanel />
 
         {profile.completeness ? (
           <section className={styles.guidance} aria-labelledby="profile-guidance-title">

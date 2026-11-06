@@ -7,12 +7,10 @@ import type {
   ApiSuccess,
   PublicationListResponse,
   PublicationRecord,
-  PublicationSyncResult,
 } from "@/lib/api-contracts";
 import styles from "./profile.module.css";
 
 type ListResponse = ApiSuccess<PublicationListResponse> | ApiError;
-type SyncResponse = ApiSuccess<PublicationSyncResult> | ApiError;
 
 function formatDate(value?: string) {
   if (!value) return "Date not published";
@@ -37,12 +35,10 @@ async function fetchPublications() {
   return body.data;
 }
 
-export function PublicationEvidencePanel({ importAvailable = false }: { importAvailable?: boolean }) {
+export function PublicationEvidencePanel() {
   const [data, setData] = useState<PublicationListResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -62,36 +58,6 @@ export function PublicationEvidencePanel({ importAvailable = false }: { importAv
     };
   }, []);
 
-  async function syncPublications() {
-    setSyncing(true);
-    setError(null);
-    setNotice(null);
-
-    try {
-      const response = await fetch("/api/v1/profile/publications/sync", {
-        method: "POST",
-        headers: { Accept: "application/json" },
-      });
-      const body = (await response.json()) as SyncResponse;
-      if (!response.ok || !body.success) {
-        throw new Error(body.success ? "Publication sync failed." : body.error.message);
-      }
-
-      const next = await fetchPublications();
-      setData(next);
-      const warning = body.data.warnings[0];
-      setNotice(
-        warning
-          ? `Synced ${body.data.orcidWorksSeen} ORCID works. ${warning}`
-          : `Synced ${body.data.orcidWorksSeen} ORCID works; ${body.data.pubmedCorroborated} corroborated with PubMed.`,
-      );
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Publication sync failed.");
-    } finally {
-      setSyncing(false);
-    }
-  }
-
   return (
     <section className={styles.publications} aria-labelledby="publication-evidence-title">
       <div className={styles.publicationHeader}>
@@ -99,36 +65,25 @@ export function PublicationEvidencePanel({ importAvailable = false }: { importAv
           <span className="sectionLabel">Publication evidence</span>
           <h2 id="publication-evidence-title">Source-backed research outputs</h2>
           <p>
-            ORCID shows that you claim a work. PubMed confirms its identifiers and details. Citation counts are never turned into a score.
+            Previously recorded research outputs retain their source and evidence labels.
           </p>
         </div>
-        {importAvailable && data?.orcidVerified ? <button
-          className={styles.syncButton}
-          disabled={syncing || loading}
-          onClick={syncPublications}
-          type="button"
-        >
-          {syncing ? "Syncing…" : "Sync ORCID & PubMed"}
-        </button> : <Link className={styles.syncButton} href="/profile/orcid">ORCID and research sources →</Link>}
+        <Link className={styles.syncButton} href="/profile/orcid">Research profile links →</Link>
       </div>
 
       {error ? <div className={styles.publicationError}>{error}</div> : null}
-      {notice ? <div className={styles.publicationNotice}>{notice}</div> : null}
 
       {loading ? (
         <div className={styles.publicationSkeleton} />
       ) : !data?.publications.length ? (
         <div className={styles.publicationEmpty}>
           <strong>No research outputs have been imported yet.</strong>
-          <p>{importAvailable ? "Connect ORCID to import public works, or save a new ORCID iD to request a public-data import." : "Automatic ORCID import is awaiting platform activation. Your saved iD and links to the official research services remain available."}</p>
-          <Link href="/profile/orcid">Open ORCID and research services →</Link>
         </div>
       ) : (
         <>
           <div className={styles.publicationSummary}>
             <strong>{data.total}</strong>
             <span>active research outputs</span>
-            <span className={styles.orcidId}>ORCID {data.orcid}{data.orcidVerified ? " · Ownership verified" : " · Self-reported iD"}</span>
           </div>
           <div className={styles.publicationList}>
             {data.publications.slice(0, 12).map((publication) => (

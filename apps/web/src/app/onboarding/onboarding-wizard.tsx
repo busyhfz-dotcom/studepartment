@@ -9,7 +9,6 @@ import { researchTopics, researchMethods } from "@studepartment/db/taxonomy";
 import styles from "./onboarding.module.css";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 import { ProfileImageUpload } from "@/components/identity/profile-image-upload";
-import { ResearchProfileActions } from "@/components/scientific/research-profile-actions";
 
 const topics = researchTopics;
 const methods = researchMethods;
@@ -48,7 +47,6 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
     collaborationGoals: profile.collaborationGoals.map(initialGoal).filter((value): value is CollaborationGoalValue => Boolean(value)),
     availability: profile.availability,
     profilePublic: profile.profilePublic ?? false,
-    orcid: profile.orcid ?? null,
     accountRole: initialRole ?? profile.accountRole,
     profileDetails: profile.profileDetails ?? {},
   });
@@ -80,9 +78,9 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
         headers: { "content-type": "application/json" },
         body: JSON.stringify(draft),
       });
-      const result = (await response.json()) as { success: boolean; orcidImport?: string; error?: { message?: string } };
+      const result = (await response.json()) as { success: boolean; error?: { message?: string } };
       if (!response.ok || !result.success) throw new Error(result.error?.message || "Could not save scientific identity.");
-      router.push(result.orcidImport && callbackUrl === "/profile" ? `/profile?orcid=${encodeURIComponent(result.orcidImport)}` : callbackUrl);
+      router.push(callbackUrl);
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not save scientific identity.");
@@ -148,7 +146,6 @@ export function OnboardingWizard({ profile, organizations, initialRole, callback
           <div className={styles.stack}>
             <DocumentManager scope="profile" title="CV & supporting documents (optional)" onBusyChange={(delta) => setFileUploads((count) => count + delta)} />
             <span className="eyebrow">Step 4 · Trust & visibility</span><h2>Choose what others can see.</h2>
-            <div className={styles.fullField}><label htmlFor="onboarding-orcid">ORCID iD (optional)</label><input id="onboarding-orcid" placeholder="0000-0000-0000-0000" value={draft.orcid ?? ""} onChange={(e) => setDraft({ ...draft, orcid: e.target.value || null })} /><small>A new iD requests import of public ORCID information when the platform connection is active. Saving an iD does not verify account ownership.</small><ResearchProfileActions sourceKey="orcid" value={draft.orcid} /></div>
             <label className={styles.visibility}><input type="checkbox" checked={draft.profilePublic ?? false} onChange={(e) => setDraft({ ...draft, profilePublic: e.target.checked })} /><span><strong>Public scientific profile (optional)</strong><small>Profiles start private. Opt in to show your scientific identity in discovery. Saved opportunities, assistant activity and private documents stay private.</small></span></label>
           </div>
         ) : null}

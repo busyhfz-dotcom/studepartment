@@ -17,13 +17,13 @@ function Recognition({ title, items }: { title: string; items?: ProfileRecogniti
   return <section className={styles.panel}><span className="sectionLabel">{title}</span><div className={styles.cardList}>{items.map((item, index) => <article key={`${item.title}-${index}`}><ExternalTitle href={item.url}>{item.title}</ExternalTitle><small>{[item.issuer, item.year].filter(Boolean).join(" · ")}</small>{item.description ? <p>{item.description}</p> : null}</article>)}</div></section>;
 }
 
-export function ProfessionalProfileSections({ details = {}, orcid }: { details?: IndividualProfileDetails; orcid?: string | null }) {
+export function ProfessionalProfileSections({ details = {}, orcid, orcidVerified = false }: { details?: IndividualProfileDetails; orcid?: string | null; orcidVerified?: boolean }) {
   const orcidHref = researchProfileUrl("orcid", orcid);
   const hasContent = Boolean(details.experience?.length || details.education?.length || details.projects?.length || details.awards?.length || details.grants?.length || details.skills?.length || details.languages?.length || details.memberships?.length || details.teaching?.length || details.peerReview?.length || Object.values(details.links ?? {}).some(Boolean) || details.careerPreferences?.targetRoles?.length || details.careerPreferences?.targetCountries?.length || details.careerPreferences?.opportunityTypes?.length);
   if (!hasContent && !details.orcidKeywords?.length && !orcidHref) return null;
   const links = Object.entries(details.links ?? {}).filter((entry): entry is [string, string] => Boolean(entry[1]));
   if (orcidHref) links.unshift(["orcid", orcidHref]);
-  const labelForLink: Record<string, string> = { orcid: "ORCID", website: "Website", cv: "CV / résumé", linkedin: "LinkedIn", researchGate: "ResearchGate", googleScholar: "Google Scholar", github: "GitHub / portfolio" };
+  const labelForLink: Record<string, string> = { orcid: orcidVerified ? "ORCID" : "ORCID (unauthenticated)", website: "Website", cv: "CV / résumé", linkedin: "LinkedIn", researchGate: "ResearchGate", googleScholar: "Google Scholar", github: "GitHub / portfolio" };
   return <div className={styles.shell}>
     <div className={styles.heading}><div><span className="sectionLabel">Professional profile</span><h2>Experience, work and career context</h2></div><span>Free profile</span></div>
     <div className={styles.grid}>

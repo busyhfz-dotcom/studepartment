@@ -26,10 +26,6 @@ Required:
 Optional integrations:
 
     AUTH_TRUSTED_PROXIES=
-    ORCID_ENVIRONMENT=production
-    ORCID_CLIENT_ID=
-    ORCID_CLIENT_SECRET=
-    ORCID_REDIRECT_URI=https://<production-host>/api/integrations/orcid/callback
     NCBI_EUTILS_EMAIL=
     NCBI_API_KEY=
     OPENAI_API_KEY=
@@ -98,26 +94,16 @@ Also manually verify the critical authenticated flow in staging before the first
 2. Confirm session persistence after navigation/reload.
 3. Open Scientific Identity.
 4. Complete profile onboarding.
-5. Verify ORCID using the environment-appropriate ORCID application.
+5. Save an ORCID link in a test profile and open the public record.
 6. Run publication sync if PubMed is configured.
 7. Search researchers, labs, institutions, and opportunities.
 8. Open a canonical researcher profile and Evidence Graph.
 9. Send a controlled Introduction to a test recipient.
 10. Accept/decline/withdraw using the intended actor account.
 
-## 6. ORCID production cutover
+## 6. ORCID profile links
 
-Production requirements:
-
-- ORCID_ENVIRONMENT=production
-- ORCID_API_TYPE=member
-- production client id/secret
-- exact HTTPS callback registered at ORCID
-- ORCID_REDIRECT_URI exactly matches the registered callback
-
-A manually typed ORCID remains asserted. Only OAuth ownership verification creates the verified ORCID provenance signal.
-
-Use credentials issued for this integration. The personal Developer tools page issues Public API credentials, whose terms restrict commercial use. For a new Member integration, use ORCID's [production application](https://info.orcid.org/register-a-client-application-production-member-api/) and follow their sandbox demonstration requirements. Store secrets in Render's private environment settings.
+Researchers can save an optional ORCID iD or record URL in their profile links. Provenant validates the format and links to the public record. This requires no ORCID credentials or OAuth setup.
 
 ## 7. PubMed
 
@@ -125,7 +111,7 @@ Set NCBI_EUTILS_EMAIL to an operational contact address.
 
 NCBI_API_KEY is optional.
 
-Publication synchronization still completes with ORCID assertions if PubMed is unavailable; it returns an explicit warning and does not downgrade existing PubMed-corroborated metadata.
+Existing publication evidence retains its recorded sources.
 
 ## 8. Semantic retrieval
 
@@ -191,7 +177,6 @@ Rotate immediately if any of these are exposed:
 
 - BETTER_AUTH_SECRET
 - DATABASE_URL credentials
-- ORCID_CLIENT_SECRET
 - OPENAI_API_KEY
 - OPPORTUNITY_INGEST_TOKEN
 - NCBI_API_KEY
@@ -210,7 +195,7 @@ Production go-live requires all of the following:
 - readiness HTTP 200
 - deployment smoke green
 - Better Auth signup/session smoke passed in CI
-- ORCID production callback validated if ORCID is enabled
+- Optional ORCID profile link saves and opens the public record
 - logs and database monitoring visible to operators
 
 A successful build alone is not a go-live signal.

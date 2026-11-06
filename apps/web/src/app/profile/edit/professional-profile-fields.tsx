@@ -168,8 +168,9 @@ export function ProfessionalProfileFields({ value, onChange, onBusyChange, orcid
             </div>;
           })}
           <div className={`${styles.fieldGroup} ${styles.orcidLink}`}>
-            <label htmlFor="profile-link-orcid">ORCID</label>
-            <input id="profile-link-orcid" type="text" inputMode="url" value={orcid} onChange={(event) => onOrcidChange(event.target.value)} placeholder="https://orcid.org/0000-0000-0000-0000" />
+            <label htmlFor="profile-link-orcid">ORCID iD or profile URL (optional)</label>
+            <input id="profile-link-orcid" type="text" inputMode="url" aria-describedby="profile-link-orcid-help" value={orcid} onChange={(event) => onOrcidChange(event.target.value)} placeholder="https://orcid.org/0000-0000-0000-0000" />
+            <small id="profile-link-orcid-help">Save your ORCID record as a self-reported profile link.</small>
             <ResearchProfileActions sourceKey="orcid" value={orcid} />
           </div>
         </div>
