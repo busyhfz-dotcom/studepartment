@@ -305,7 +305,7 @@ export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpp
           <h3>{selected.title}</h3>
           <p>{selected.organization}</p>
           <div className={styles.detailDeadline}>{selected.deadlineLabel}</div>
-          <Link href={`/start?step=detail&kind=${selected.kind === "Grant" ? "grant" : "position"}&opportunity=${encodeURIComponent(selected.id)}`}>Review this opportunity ↗</Link>
+          <Link className={styles.detailAction} href={`/start?step=detail&kind=${selected.kind === "Grant" ? "grant" : "position"}&opportunity=${encodeURIComponent(selected.id)}`}>Review this opportunity ↗</Link>
         </div>
       ) : null}
 

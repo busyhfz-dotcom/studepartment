@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useState, type FormEvent } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRetryCooldown } from "@/lib/use-retry-cooldown";
 import { safeReturnPath } from "@/lib/navigation";
@@ -34,14 +34,12 @@ export function AuthForm({
   initialKind = "individual",
   initialRole = "researcher",
   initialOrganizationType = "university",
-  availability,
 }: {
   callbackUrl?: string;
   mode?: AuthMode;
   initialKind?: AccountKind;
   initialRole?: IndividualProfileRole;
   initialOrganizationType?: InstitutionalOrganizationType;
-  availability?: ReactNode;
 }) {
   const { remaining, onError } = useRetryCooldown();
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -183,7 +181,6 @@ export function AuthForm({
             </div>
           </form>
         )}
-        {availability}
         {mode === "sign-in" ? <p className={styles.switcher}><Link href="/auth/forgot-password">Forgot your password?</Link></p> : null}
         <p className={styles.switcher}>
           {mode === "sign-up" ? <>Already have an account? <Link href={`/auth/sign-in${returnQuery ? `?${returnQuery}` : ""}`}>Sign in</Link></> : <>New to Provenant? <Link href={`/auth/sign-up${returnQuery ? `?${returnQuery}` : ""}`}>Create an account</Link></>}
