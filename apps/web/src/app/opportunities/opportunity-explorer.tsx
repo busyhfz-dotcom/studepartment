@@ -1,18 +1,21 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import type {
   ApiError,
   ApiSuccess,
-  OpportunityCareerStage,
   OpportunityIntelligenceResponse,
   OpportunityTypeValue,
 } from "@/lib/api-contracts";
+import type { OpportunityCareerStage } from "@/lib/api-contracts";
+import { readOpportunityPage, readOpportunitySort } from "@/lib/opportunity-pagination";
 import { FeedbackControls } from "@/components/feedback/feedback-controls";
 import { researchTopics } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
 import { SaveOpportunityButton } from "./save-opportunity-button";
 import { CountrySelect } from "@/components/forms/country-select";
+import { OpportunityPager } from "@/components/forms/opportunity-pager";
 
 type OpportunityApiResponse = ApiSuccess<OpportunityIntelligenceResponse> | ApiError;
 
@@ -37,6 +40,25 @@ const careerStageOptions: Array<{ value: "" | OpportunityCareerStage; label: str
 
 const topicOptions = [{ value: "", label: "All research topics" }, ...researchTopics.map(([value, label]) => ({ value, label }))];
 
+const filterKeys = ["q", "type", "topic", "country", "deadlineWithinDays", "career", "funder", "sourceRecordId", "eligibilityCountry"] as const;
+type FilterKey = (typeof filterKeys)[number] | "sort";
+type SearchFilters = Record<FilterKey, string>;
+
+function readFilters(params: URLSearchParams): SearchFilters {
+  return {
+    q: params.get("q") ?? "",
+    type: params.get("type") ?? "",
+    topic: params.get("topic") ?? "",
+    country: params.get("country") ?? "",
+    deadlineWithinDays: params.get("deadlineWithinDays") ?? "",
+    career: params.get("career") ?? "",
+    funder: params.get("funder") ?? "",
+    sourceRecordId: params.get("sourceRecordId") ?? "",
+    eligibilityCountry: params.get("eligibilityCountry") ?? "",
+    sort: readOpportunitySort(params.get("sort")),
+  };
+}
+
 function formatDate(value?: string) {
   if (!value) return "Not published";
   return new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
@@ -47,46 +69,71 @@ function typeLabel(value: OpportunityTypeValue) {
 }
 
 export function OpportunityExplorer() {
-  const [query, setQuery] = useState("");
-  const [type, setType] = useState<"" | OpportunityTypeValue>("");
-  const [topic, setTopic] = useState("");
-  const [country, setCountry] = useState("");
-  const [deadlineWindow, setDeadlineWindow] = useState("");
-  const [careerStage, setCareerStage] = useState<"" | OpportunityCareerStage>("");
-  const [searchedWithFilters, setSearchedWithFilters] = useState(false);
-  const [data, setData] = useState<OpportunityIntelligenceResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const searchKey = useSearchParams().toString();
+  const appliedParams = new URLSearchParams(searchKey);
+  const searchedWithFilters = filterKeys.some((key) => Boolean(appliedParams.get(key)));
+  const hasSearch = searchedWithFilters || appliedParams.has("page");
+  const [draft, setDraft] = useState<{ key: string; filters: SearchFilters }>();
+  const filters = draft?.key === searchKey ? draft.filters : readFilters(appliedParams);
+  const [attempt, setAttempt] = useState(0);
+  const [response, setResponse] = useState<{ key: string; data?: OpportunityIntelligenceResponse; error?: string }>();
+  const requestKey = searchKey + "#" + attempt;
+  const loading = hasSearch && response?.key !== requestKey;
+  const data = hasSearch && !loading ? response?.data : undefined;
+  const error = hasSearch && !loading ? response?.error : undefined;
 
-  async function runSearch(event?: FormEvent) {
-    event?.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSearchedWithFilters(Boolean(query.trim() || type || topic || country.trim() || deadlineWindow || careerStage));
-
+  useEffect(() => {
+    if (!hasSearch) return;
+    const controller = new AbortController();
+    const fromUrl = new URLSearchParams(searchKey);
     const params = new URLSearchParams();
-    if (query.trim()) params.set("q", query.trim());
-    if (type) params.set("type", type);
-    if (topic) params.set("topic", topic);
-    if (country.trim()) params.set("country", country.trim().toUpperCase());
-    if (deadlineWindow) params.set("deadlineWithinDays", deadlineWindow);
-    if (careerStage) params.set("career", careerStage);
+    for (const key of filterKeys) {
+      const value = fromUrl.get(key);
+      if (value) params.set(key, value);
+    }
+    params.set("sort", readOpportunitySort(fromUrl.get("sort")));
+    params.set("page", String(readOpportunityPage(fromUrl.get("page"))));
     params.set("limit", "12");
 
-    try {
-      const response = await fetch("/api/v1/opportunities?" + params.toString(), {
-        headers: { Accept: "application/json" },
-      });
-      const body = (await response.json()) as OpportunityApiResponse;
-      if (!response.ok || !body.success) {
-        throw new Error(body.success ? "Opportunity intelligence request failed." : body.error.message);
+    async function fetchPage() {
+      try {
+        const result = await fetch("/api/v1/opportunities?" + params, { signal: controller.signal });
+        const body = (await result.json()) as OpportunityApiResponse;
+        if (!result.ok || !body.success) {
+          throw new Error(body.success ? "Opportunity intelligence request failed." : body.error.message);
+        }
+        if (!controller.signal.aborted) setResponse({ key: requestKey, data: body.data });
+      } catch (error) {
+        if (!controller.signal.aborted) setResponse({ key: requestKey, error: error instanceof Error ? error.message : "Opportunity intelligence request failed." });
       }
-      setData(body.data);
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Opportunity intelligence request failed.");
-    } finally {
-      setLoading(false);
     }
+
+    void fetchPage();
+    return () => controller.abort();
+  }, [hasSearch, requestKey, searchKey]);
+
+  function changeFilter(key: FilterKey, value: string) {
+    setDraft({ key: searchKey, filters: { ...filters, [key]: value } });
+  }
+
+  function runSearch(event: FormEvent) {
+    event.preventDefault();
+    const params = new URLSearchParams(searchKey);
+    for (const key of filterKeys) {
+      const value = filters[key].trim();
+      if (value) params.set(key, value);
+      else params.delete(key);
+    }
+    params.set("sort", filters.sort);
+    params.set("page", "1");
+    if (params.toString() === searchKey) setAttempt((previous) => previous + 1);
+    else window.history.pushState(null, "", "/opportunities?" + params);
+  }
+
+  function pageHref(page: number) {
+    const params = new URLSearchParams(searchKey);
+    params.set("page", String(page));
+    return "/opportunities?" + params + "#opportunity-results";
   }
 
   return (
@@ -100,15 +147,17 @@ export function OpportunityExplorer() {
           <div className={styles.systemBadge}>Source-aware intelligence</div>
         </div>
 
-        <form className={styles.searchForm} onSubmit={runSearch}>
+        <form className={styles.searchForm} action="/opportunities" method="get" onSubmit={runSearch}>
+          <input type="hidden" name="page" value="1" />
           <div className={styles.intentRow}>
             <label className={styles.intentField}>
               <span className={styles.srOnly}>Opportunity search intent</span>
               <input
+                name="q"
                 maxLength={240}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => changeFilter("q", event.target.value)}
                 placeholder="e.g. translational oncology postdoc in Europe"
-                value={query}
+                value={filters.q}
               />
             </label>
             <button className={styles.searchButton} disabled={loading} type="submit">
@@ -119,29 +168,29 @@ export function OpportunityExplorer() {
           <div className={styles.filterGrid}>
             <label>
               <span>Type</span>
-              <select onChange={(event) => setType(event.target.value as "" | OpportunityTypeValue)} value={type}>
+              <select name="type" onChange={(event) => changeFilter("type", event.target.value)} value={filters.type}>
                 {typeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
             </label>
             <label>
               <span>Research topic</span>
-              <select onChange={(event) => setTopic(event.target.value)} value={topic}>
+              <select name="topic" onChange={(event) => changeFilter("topic", event.target.value)} value={filters.topic}>
                 {topicOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
             </label>
             <label>
               <span>Country</span>
-              <CountrySelect ariaLabel="Country" onChange={setCountry} value={country} />
+              <CountrySelect name="country" ariaLabel="Country" onChange={(value) => changeFilter("country", value)} value={filters.country} />
             </label>
             <label>
               <span>Career stage</span>
-              <select onChange={(event) => setCareerStage(event.target.value as "" | OpportunityCareerStage)} value={careerStage}>
+              <select name="career" onChange={(event) => changeFilter("career", event.target.value)} value={filters.career}>
                 {careerStageOptions.map((option) => <option key={option.value || "any-stage"} value={option.value}>{option.label}</option>)}
               </select>
             </label>
             <label>
               <span>Deadline</span>
-              <select onChange={(event) => setDeadlineWindow(event.target.value)} value={deadlineWindow}>
+              <select name="deadlineWithinDays" onChange={(event) => changeFilter("deadlineWithinDays", event.target.value)} value={filters.deadlineWithinDays}>
                 <option value="">Any future deadline</option>
                 <option value="30">Next 30 days</option>
                 <option value="60">Next 60 days</option>
@@ -149,17 +198,42 @@ export function OpportunityExplorer() {
                 <option value="180">Next 6 months</option>
               </select>
             </label>
+            <label>
+              <span>Order results</span>
+              <select name="sort" onChange={(event) => changeFilter("sort", event.target.value)} value={filters.sort}>
+                <option value="newest">Newest published</option>
+                <option value="deadline">Closing soon</option>
+              </select>
+            </label>
           </div>
+          <details className={styles.advancedFilters} open={filters.funder || filters.sourceRecordId || filters.eligibilityCountry ? true : undefined}>
+            <summary>More funding and eligibility filters</summary>
+            <div className={styles.filterGrid}>
+              <label>
+                <span>Funder or institution</span>
+                <input name="funder" value={filters.funder} maxLength={120} onChange={(event) => changeFilter("funder", event.target.value)} />
+              </label>
+              <label>
+                <span>Source record ID</span>
+                <input name="sourceRecordId" value={filters.sourceRecordId} maxLength={128} onChange={(event) => changeFilter("sourceRecordId", event.target.value)} />
+              </label>
+              <label>
+                <span>Published eligible country</span>
+                <CountrySelect name="eligibilityCountry" ariaLabel="Published eligible country" value={filters.eligibilityCountry} onChange={(value) => changeFilter("eligibilityCountry", value)} />
+              </label>
+            </div>
+            <p>The eligible-country filter includes records that explicitly list that country. Location and eligibility are separate.</p>
+          </details>
         </form>
       </section>
 
-      {error ? <div className={styles.errorBanner}>{error}</div> : null}
+      {error ? <div className={styles.errorBanner} role="alert">{error} <button type="button" onClick={() => setAttempt((previous) => previous + 1)}>Retry search</button></div> : null}
 
-      <section className={styles.resultsSection}>
+      <section className={styles.resultsSection} id="opportunity-results" aria-busy={loading}>
         <div className={styles.resultsHeader}>
           <div>
             <span className="sectionLabel">Decision queue</span>
-            <h2>{data ? data.results.length + " opportunities worth reviewing" : "Run a source-aware search"}</h2>
+            <h2>{data ? data.totalMatching.toLocaleString("en") + " matching opportunities" : "Run a source-aware search"}</h2>
           </div>
           {data ? (
             <div className={styles.contextBadge}>
@@ -184,7 +258,7 @@ export function OpportunityExplorer() {
           </div>
         ) : null}
 
-        {!loading && !data ? (
+        {!loading && !data && !error ? (
           <div className={styles.emptyState}>
             <strong>Opportunity Intelligence is ready.</strong>
             <p>Search to compare scientific relevance, published eligibility criteria, source freshness, and application timing.</p>
@@ -268,6 +342,7 @@ export function OpportunityExplorer() {
             ))}
           </div>
         ) : null}
+        {data?.pagination ? <OpportunityPager pagination={data.pagination} pageHref={pageHref} /> : null}
       </section>
     </>
   );

@@ -208,6 +208,20 @@
 .detailSide { position: sticky; top: 20px; background: #e7f0e9; }
 .detailSide h3 { font: 400 30px/1.1 var(--font-editorial), Georgia, serif; margin: 9px 0 14px; }
 .detailSide p { color: #526e5a; line-height: 1.65; }
+.detailActions {
+  display: grid;
+  gap: 12px;
+  margin-block: 16px;
+}
+.detailActions > .primary,
+.detailActions > .sub {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  position: static;
+  white-space: normal;
+}
 .smallprint { font-size: 12px !important; color: var(--muted); margin-top: 16px; }
 
 .primary {

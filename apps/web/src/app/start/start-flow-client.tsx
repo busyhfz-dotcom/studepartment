@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import type { OpportunityResult } from "@/lib/api-contracts";
+import type { OpportunityIntelligenceResponse, OpportunityResult } from "@/lib/api-contracts";
+import { readOpportunityPage } from "@/lib/opportunity-pagination";
 import styles from "./start.module.css";
 import { BrandSymbol, ResearchOrbit } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { CountrySelect } from "@/components/forms/country-select";
+import { OpportunityPager } from "@/components/forms/opportunity-pager";
 
 type Kind = "position" | "grant";
 type Step = "welcome" | "browse" | "detail" | "next" | "institutions";
@@ -109,15 +111,19 @@ function StartJourney() {
   const kind: Kind = searchParams.get("kind") === "grant" ? "grant" : "position";
   const query = searchParams.get("q") ?? "";
   const country = searchParams.get("country") ?? "";
+  const page = readOpportunityPage(searchParams.get("page"));
   const opportunityId = searchParams.get("opportunity");
-  const [results, setResults] = useState<OpportunityResult[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(step === "browse");
+  const [browseResult, setBrowseResult] = useState<{ key: string; data?: OpportunityIntelligenceResponse; error?: string }>();
   const [selectedRecord, setSelected] = useState<OpportunityResult | null>(null);
   const selected = selectedRecord?.id === opportunityId ? selectedRecord : null;
   const [detailFailure, setDetailFailure] = useState<string | null>(null);
-  const [searchError, setSearchError] = useState("");
   const [searchAttempt, setSearchAttempt] = useState(0);
+  const browseKey = JSON.stringify([kind, query, country, page, searchAttempt]);
+  const loading = step === "browse" && browseResult?.key !== browseKey;
+  const results = loading ? [] : browseResult?.data?.results ?? [];
+  const total = loading ? 0 : browseResult?.data?.totalMatching ?? 0;
+  const searchError = loading ? undefined : browseResult?.error;
+  const pagination = loading ? undefined : browseResult?.data?.pagination;
 
   function setStep(nextStep: Step, changes: Record<string, string> = {}) {
     const params = nextStep === "welcome" ? new URLSearchParams() : new URLSearchParams(searchParams.toString());
@@ -129,7 +135,15 @@ function StartJourney() {
   function setFilter(key: "q" | "country", value: string) {
     const params = new URLSearchParams(searchParams.toString());
     value ? params.set(key, value) : params.delete(key);
+    params.delete("page");
     window.history.replaceState(null, "", `/start?${params}`);
+  }
+
+  function pageHref(nextPage: number) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(nextPage));
+    params.delete("opportunity");
+    return `/start?${params}#browse-results`;
   }
 
   useEffect(() => {
@@ -160,27 +174,29 @@ function StartJourney() {
     if (query.trim()) params.set("q", query.trim());
     if (country.trim()) params.set("country", country.trim());
     params.set("limit", "24");
+    params.set("page", String(page));
 
-    fetch(`/api/v1/opportunities?${params.toString()}`, { signal: controller.signal })
+    const timeout = window.setTimeout(() => {
+      fetch(`/api/v1/opportunities?${params.toString()}`, { signal: controller.signal })
       .then((response) => response.json())
       .then((body) => {
         if (controller.signal.aborted) return;
         if (!body?.success) throw new Error(body.error?.message || "The opportunity search could not be completed.");
-        setResults(body.data.results as OpportunityResult[]); setTotal(Number(body.data.totalMatching ?? body.data.results.length)); setSearchError("");
+        setBrowseResult({ key: browseKey, data: body.data });
       })
       .catch((error) => {
-        if (!controller.signal.aborted) setSearchError(error instanceof Error ? error.message : "Connection interrupted. Try again.");
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) setBrowseResult({ key: browseKey, error: error instanceof Error ? error.message : "Connection interrupted. Try again." });
       });
+    }, 180);
 
-    return () => controller.abort();
-  }, [step, kind, query, country, searchAttempt]);
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [step, kind, query, country, page, browseKey]);
 
   function openBrowse(nextKind: Kind) {
-    setLoading(true);
-    setStep("browse", { kind: nextKind, q: "", country: "", opportunity: "" });
+    setStep("browse", { kind: nextKind, q: "", country: "", opportunity: "", page: "" });
   }
 
   function openDetail(item: OpportunityResult) {
@@ -327,13 +343,11 @@ function StartJourney() {
               placeholder="Search a topic, role or institution"
               value={query}
               onChange={(event) => {
-                setLoading(true);
                 setFilter("q", event.target.value);
               }}
             />
             <CountrySelect ariaLabel="Location" anyLabel="Any location" value={country}
               onChange={(value) => {
-                setLoading(true);
                 setFilter("country", value);
               }} />
           </div>
@@ -348,8 +362,8 @@ function StartJourney() {
             <p>Current listings, each linked to its original source.</p>
           </div>
 
-          <div className={styles.results}>
-            {searchError && !loading ? <div className={styles.empty} role="alert">{searchError} <button type="button" className={styles.primary} onClick={() => { setLoading(true); setSearchAttempt((value) => value + 1); }}>Retry search</button></div> : null}
+          <div className={styles.results} id="browse-results" aria-busy={loading}>
+            {searchError ? <div className={styles.empty} role="alert">{searchError} <button type="button" className={styles.primary} onClick={() => setSearchAttempt((value) => value + 1)}>Retry search</button></div> : null}
             {!loading && !searchError && results.length === 0 ? (
               <div className={styles.empty}><p>{query.trim() || country.trim() ? "No opportunities match these filters. Try fewer filters or browse original sources." : `No current ${kind === "grant" ? "grants" : "positions"} are listed.`}</p><Link href="/scanner">Explore official sources in Scanner →</Link></div>
             ) : (
@@ -372,12 +386,7 @@ function StartJourney() {
                 </article>
               ))
             )}
-            {!loading && !searchError && total > results.length ? (
-              <p className={styles.smallprint}>
-                Showing the {results.length} most relevant of {total.toLocaleString("en")}. Narrow the search above, or{" "}
-                <Link href="/opportunities">open the full opportunity search</Link> for more filters.
-              </p>
-            ) : null}
+            {pagination ? <OpportunityPager pagination={pagination} pageHref={pageHref} /> : null}
           </div>
         </main>
         <FootBar />
@@ -392,19 +401,16 @@ function StartJourney() {
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
         <TopBar />
-        <section className={styles.hero}>
+        <section className={styles.heroCompact}>
           <div className={styles.wrap}>
             <Stage n={3} />
             <button type="button" className={styles.back} onClick={() => {
-              setLoading(true);
               setStep("browse");
             }}>
               ← Back to {isGrant ? "grants" : "positions"}
             </button>
-            <h1 className={styles.serif}>
-              The details, <em>before the decision.</em>
-            </h1>
-            <p>Read the full listing first. You can sign up later.</p>
+            <h1 className={styles.serif}>{selected.title}</h1>
+            <p>{[selected.organization, selected.location, deadlineLabel(selected)].filter(Boolean).join(" · ")}</p>
           </div>
         </section>
         <main className={`${styles.wrap} ${styles.detail} ${styles.fade}`}>
@@ -413,14 +419,6 @@ function StartJourney() {
               <span className={styles.eyebrow}>
                 {typeLabel(selected.type)} / {selected.location}
               </span>
-              <h2 className={styles.detailTitle}>{selected.title}</h2>
-              <div className={styles.detailMeta}>
-                <span>{selected.organization}</span>
-                <span>·</span>
-                <span>{selected.location}</span>
-                <span>·</span>
-                <span>{deadlineLabel(selected)}</span>
-              </div>
               {selected.description ? (
                 <>
                   <h2>About this {isGrant ? "funding call" : "role"}</h2>
@@ -461,10 +459,12 @@ function StartJourney() {
                 Save this {isGrant ? "grant" : "position"} to come back to it and keep an eye on the deadline. A free
                 profile also keeps your CV ready for when you apply.
               </p>
-              <button type="button" className={styles.primary} onClick={() => setStep("next")}>
-                Track this {isGrant ? "grant" : "position"} <span>↗</span>
-              </button>
-              <a className={styles.sub} href={applyHref} target="_blank" rel="noopener noreferrer">View contact details at source <span>↗</span></a>
+              <div className={styles.detailActions}>
+                <button type="button" className={styles.primary} onClick={() => setStep("next")}>
+                  Track this {isGrant ? "grant" : "position"} <span>↗</span>
+                </button>
+                <a className={styles.sub} href={applyHref} target="_blank" rel="noopener noreferrer">View contact details at source <span>↗</span></a>
+              </div>
               <p className={styles.smallprint}>
                 We only show contact details when the original listing includes them. Applications always go through
                 the host&apos;s own portal.

@@ -84,11 +84,15 @@ function optionalEmail(value: unknown, field: string): string | null | undefined
   return parsed;
 }
 
+export function isInstitutionalOrganizationType(value: unknown): value is InstitutionalOrganizationType {
+  return typeof value === "string" && organizationTypes.has(value as InstitutionalOrganizationType);
+}
+
 function requireType(value: unknown): InstitutionalOrganizationType {
-  if (typeof value !== "string" || !organizationTypes.has(value as InstitutionalOrganizationType)) {
+  if (!isInstitutionalOrganizationType(value)) {
     throw new OrganizationValidationError("type must be one of university, hospital, laboratory, research-institute, company, foundation.");
   }
-  return value as InstitutionalOrganizationType;
+  return value;
 }
 
 const createKeys = new Set(["name", "type", "countryCode", "website", "description", "logoUrl", "contactEmail", "sizeLabel", "profileDetails"]);
@@ -112,15 +116,15 @@ function organizationDetails(value: unknown): OrganizationProfileDetails | undef
   return result;
 }
 
-export function parseOrganizationCreateInput(value: unknown): OrganizationCreateInput {
+function parseOrganizationFields(value: unknown, requireName: boolean): OrganizationCreateInput {
   const object = asObject(value);
   const unknownKeys = Object.keys(object).filter((key) => !createKeys.has(key));
   if (unknownKeys.length > 0) {
     throw new OrganizationValidationError(`Unknown organization fields: ${unknownKeys.join(", ")}.`);
   }
 
-  const name = optionalString(object.name, "name", 200, { requiredWhenPresent: true });
-  if (!name) throw new OrganizationValidationError("name is required.");
+  const name = optionalString(object.name, "name", 200, { requiredWhenPresent: requireName }) ?? "";
+  if (requireName && !name) throw new OrganizationValidationError("name is required.");
 
   return {
     name,
@@ -133,6 +137,14 @@ export function parseOrganizationCreateInput(value: unknown): OrganizationCreate
     sizeLabel: optionalString(object.sizeLabel, "sizeLabel", 60, { nullable: true }) ?? null,
     profileDetails: organizationDetails(object.profileDetails),
   };
+}
+
+export function parseOrganizationCreateInput(value: unknown): OrganizationCreateInput {
+  return parseOrganizationFields(value, true);
+}
+
+export function parseOrganizationDraftInput(value: unknown): OrganizationCreateInput {
+  return parseOrganizationFields(value, false);
 }
 
 export function parseOrganizationUpdateInput(value: unknown): OrganizationUpdateInput {

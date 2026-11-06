@@ -212,6 +212,8 @@ model User {
   image           String?
   role            UserRole         @default(RESEARCHER)
   accountKind     AccountKind      @default(INDIVIDUAL)
+  organizationTypePreference String?
+  organizationDraft Json          @default("{}")
   digestFrequency DigestFrequency  @default(WEEKLY)
   subscriptionTier SubscriptionTier @default(FREE)
   subscriptionInterval SubscriptionInterval?

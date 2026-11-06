@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRetryCooldown } from "@/lib/use-retry-cooldown";
@@ -44,7 +43,6 @@ export function AuthForm({
   initialOrganizationType?: InstitutionalOrganizationType;
   availability?: ReactNode;
 }) {
-  const router = useRouter();
   const { remaining, onError } = useRetryCooldown();
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -84,8 +82,15 @@ export function AuthForm({
       }
 
       const result = mode === "sign-up"
-        ? await authClient.signUp.email({ email, password, name, callbackURL: signUpDestination }, { onError })
-        : await authClient.signIn.email({ email, password, callbackURL: signInDestination }, { onError });
+        ? await authClient.signUp.email({
+            email,
+            password,
+            name,
+            callbackURL: signUpDestination,
+            accountKind: accountKind === "institution" ? "INSTITUTION" : "INDIVIDUAL",
+            ...(accountKind === "institution" ? { organizationTypePreference: organizationType } : {}),
+          }, { onError })
+        : await authClient.signIn.email({ email, password }, { onError });
 
       if (result.error) {
         setStatus("error");
@@ -93,8 +98,7 @@ export function AuthForm({
         return;
       }
 
-      router.push(mode === "sign-up" ? signUpDestination : signInDestination);
-      router.refresh();
+      window.location.assign(mode === "sign-up" ? signUpDestination : signInDestination);
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Authentication failed.");

@@ -9,6 +9,7 @@ import type {
   ResearchAssistantTarget,
 } from "@/lib/api-contracts";
 import styles from "./page.module.css";
+import { SaveOpportunityButton } from "../opportunities/save-opportunity-button";
 
 type AssistantApiResponse = ApiSuccess<ResearchAssistantResponse> | ApiError;
 
@@ -160,6 +161,7 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = true, identit
                       </a>
                     ) : null}
                   </footer>
+                  {citation.opportunityId ? <SaveOpportunityButton className="secondary" opportunityId={citation.opportunityId} /> : null}
                 </article>
               ))}
             </div>

@@ -1,9 +1,12 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { StartFlow } from "./start/start-flow-client";
 import styles from "./page.module.css";
 import { ResearchOrbit } from "@/components/design/research-art";
+
+export const metadata: Metadata = { alternates: { canonical: "/start" } };
 
 const intelligenceSurfaces = [
   {

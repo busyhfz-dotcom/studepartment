@@ -16,11 +16,20 @@ function errorResponse(status: number, code: string, message: string) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const body = await request.json() as { opportunityId?: unknown; applicationStage?: unknown; notes?: unknown };
-    if (typeof body.opportunityId !== "string" || typeof body.applicationStage !== "string" || (body.notes !== undefined && body.notes !== null && typeof body.notes !== "string")) {
-      return errorResponse(400, "INVALID_APPLICATION_UPDATE", "Opportunity id, stage and optional notes are required.");
+    const body = await request.json() as { opportunityId?: unknown; applicationStage?: unknown; notes?: unknown; deadlineAlert?: unknown; alertLeadDays?: unknown } | null;
+    if (!body || typeof body.opportunityId !== "string" || typeof body.applicationStage !== "string"
+      || (body.notes !== undefined && body.notes !== null && typeof body.notes !== "string")
+      || (body.deadlineAlert !== undefined && typeof body.deadlineAlert !== "boolean")
+      || (body.alertLeadDays !== undefined && typeof body.alertLeadDays !== "number")) {
+      return errorResponse(400, "INVALID_APPLICATION_UPDATE", "Choose a valid opportunity, application stage and reminder settings.");
     }
-    const data = await updateSavedOpportunity({ opportunityId: body.opportunityId, applicationStage: body.applicationStage, notes: body.notes as string | null | undefined });
+    const data = await updateSavedOpportunity({
+      opportunityId: body.opportunityId,
+      applicationStage: body.applicationStage,
+      notes: body.notes,
+      deadlineAlert: body.deadlineAlert,
+      alertLeadDays: body.alertLeadDays,
+    });
     return NextResponse.json({ success: true, data }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     if (error instanceof AuthenticationRequiredError) return errorResponse(401, error.code, error.message);

@@ -7,6 +7,8 @@ import type {
   OpportunityTypeValue,
 } from "@/lib/api-contracts";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { suppressedFeedbackIds } from "@/server/feedback/private-feedback";
+import { opportunityPagination } from "@/lib/opportunity-pagination";
 import { searchTerms } from "./search-terms";
 import { careerStageFilterSlugs } from "./career-stage";
 import { getTopInterestTopicSlugs, recordSearchAndUpdateInterest } from "@/server/personalization/interest-signals";
@@ -157,13 +159,9 @@ function evaluateEligibility(
   return { status: "likely" as const, reasons, gaps };
 }
 
-async function currentProfileContext(): Promise<ProfileContext | null> {
-  if (!process.env.DATABASE_URL) return null;
-  const user = await getCurrentUser();
-  if (!user) return null;
-
+async function currentProfileContext(userId: string): Promise<ProfileContext | null> {
   const profile = await getDb().researcherProfile.findUnique({
-    where: { userId: user.id },
+    where: { userId },
     select: {
       careerStage: true,
       countryCode: true,
@@ -189,6 +187,7 @@ function fixtureResponse(query: OpportunityQuery): OpportunityIntelligenceRespon
     totalConsidered: 1,
     totalMatching: 1,
     cappedAt: query.limit,
+    ...(query.page !== undefined ? { pagination: opportunityPagination(1, query.page, query.limit) } : {}),
     personalized: false,
     profileContext: null,
     results: [{
@@ -221,10 +220,10 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
   if (!process.env.DATABASE_URL) return fixtureResponse(query);
 
   const db = getDb();
-  const profile = await currentProfileContext();
   const currentUser = await getCurrentUser();
+  const profile = currentUser ? await currentProfileContext(currentUser.id) : null;
 
-  if (currentUser && query.text.trim()) {
+  if (currentUser && query.text.trim() && (query.page === undefined || query.page === 1)) {
     await recordSearchAndUpdateInterest(currentUser.id, query.text, "opportunities");
   }
   const interestTopicSlugs = currentUser ? await getTopInterestTopicSlugs(currentUser.id) : [];
@@ -240,6 +239,13 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
   if (!query.includeStale) where.lastSeenAt = { gte: staleCutoff };
   if (query.types.length) where.type = { in: query.types.map((type) => typeToDb[type]) };
   if (query.countryCodes.length) where.countryCode = { in: query.countryCodes };
+  if (query.funder) where.organization = { name: { contains: query.funder, mode: "insensitive" } };
+  if (query.sourceRecordId) where.sourceRecordId = { contains: query.sourceRecordId, mode: "insensitive" };
+  if (query.eligibilityCountry) where.eligibleCountryCodes = { has: query.eligibilityCountry };
+  if (currentUser && query.page !== undefined && !query.id) {
+    const hidden = await suppressedFeedbackIds(currentUser.id, "opportunity");
+    if (hidden.length) where.id = { notIn: hidden };
+  }
   if (query.topicSlugs.length) {
     where.topics = { some: { topic: { slug: { in: query.topicSlugs } } } };
   }
@@ -277,16 +283,28 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), ...textFilters];
   }
 
+  const count = query.page !== undefined ? await db.opportunity.count({ where }) : undefined;
+  const pagination = count !== undefined && query.page !== undefined
+    ? opportunityPagination(count, query.page, query.limit)
+    : undefined;
+  const publishedOrder: Prisma.OpportunityOrderByWithRelationInput[] = [
+    { publishedAt: { sort: "desc", nulls: "last" } }, { firstSeenAt: "desc" }, { id: "asc" },
+  ];
+  const orderBy: Prisma.OpportunityOrderByWithRelationInput[] = query.sort === "deadline"
+    ? [{ deadline: { sort: "asc", nulls: "last" } }, ...publishedOrder]
+    : publishedOrder;
   const [rows, totalMatching] = await Promise.all([db.opportunity.findMany({
     where,
-    take: Math.min(150, Math.max(50, query.limit * 8)),
-    orderBy: [{ publishedAt: { sort: "desc", nulls: "last" } }, { firstSeenAt: "desc" }],
+    ...(pagination
+      ? { skip: (pagination.page - 1) * pagination.pageSize, take: pagination.pageSize }
+      : { take: Math.min(150, Math.max(50, query.limit * 8)) }),
+    orderBy,
     include: {
       organization: true,
       topics: { include: { topic: true }, orderBy: { weight: "desc" } },
       methods: { include: { method: true } },
     },
-  }), db.opportunity.count({ where })]);
+  }), count ?? db.opportunity.count({ where })]);
 
   const requestedTopics = query.topicSlugs.length
     ? query.topicSlugs
@@ -372,7 +390,7 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     };
   });
 
-  scored.sort((a, b) => {
+  if (!pagination) scored.sort((a, b) => {
     if (a.relevanceScore !== b.relevanceScore) return b.relevanceScore - a.relevanceScore;
     if (a.freshness !== b.freshness) {
       const order = { fresh: 0, aging: 1, stale: 2 } as const;
@@ -387,6 +405,7 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     totalConsidered: rows.length,
     totalMatching,
     cappedAt: query.limit,
+    ...(pagination ? { pagination } : {}),
     personalized: Boolean(profile) || interestTopicSlugs.length > 0,
     profileContext: profile,
   };

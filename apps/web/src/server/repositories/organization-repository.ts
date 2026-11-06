@@ -6,6 +6,7 @@ import type {
   OrganizationProfileResponse,
   OrganizationUpdateInput,
 } from "@/lib/api-contracts";
+import { isInstitutionalOrganizationType, parseOrganizationDraftInput } from "@/server/validation/organization";
 
 const fixtureOrganizations: OrganizationOption[] = [
   { id: "org-oxford", name: "University of Oxford", type: "UNIVERSITY", countryCode: "GB", verified: true },
@@ -120,8 +121,45 @@ export async function getOwnedOrganization(userId: string): Promise<Organization
   return organization ? mapOwnedOrganization(organization) : null;
 }
 
+export async function getOrganizationDraft(userId: string) {
+  const user = await getDb().user.findUnique({
+    where: { id: userId },
+    select: { organizationDraft: true, organizationTypePreference: true },
+  });
+  const stored = user?.organizationDraft;
+  const draft = stored && typeof stored === "object" && !Array.isArray(stored) && "type" in stored
+    ? parseOrganizationDraftInput(stored)
+    : null;
+  return {
+    draft,
+    typePreference: isInstitutionalOrganizationType(user?.organizationTypePreference) ? user.organizationTypePreference : undefined,
+  };
+}
+
+export async function saveOrganizationDraft(userId: string, input: OrganizationCreateInput) {
+  return getDb().$transaction(async (tx) => {
+    await lockOrganizationAccount(tx, userId);
+    const updated = await tx.user.updateMany({
+      where: { id: userId, ownedOrganization: null },
+      data: { organizationDraft: { ...input }, organizationTypePreference: input.type },
+    });
+    if (!updated.count) {
+      throw new OrganizationRepositoryError("ORGANIZATION_ALREADY_CLAIMED", "An institutional profile is already registered for this account.");
+    }
+    return input;
+  });
+}
+
+export async function clearOrganizationDraft(userId: string) {
+  await getDb().user.update({ where: { id: userId }, data: { organizationDraft: {} } });
+}
+
 function normalizedName(name: string) {
   return name.trim().toLowerCase().replaceAll(/\s+/g, " ");
+}
+
+async function lockOrganizationAccount(tx: Prisma.TransactionClient, userId: string) {
+  await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
 }
 
 export async function createOwnedOrganization(
@@ -152,12 +190,12 @@ export async function createOwnedOrganization(
   }
 
   const db = getDb();
-  const existing = await db.organization.findUnique({ where: { ownerUserId: userId }, select: { id: true } });
-  if (existing) {
-    throw new OrganizationRepositoryError("ORGANIZATION_ALREADY_CLAIMED", "An institutional profile is already registered for this account.");
-  }
-
   const created = await db.$transaction(async (tx) => {
+    await lockOrganizationAccount(tx, userId);
+    const existing = await tx.organization.findUnique({ where: { ownerUserId: userId }, select: { id: true } });
+    if (existing) {
+      throw new OrganizationRepositoryError("ORGANIZATION_ALREADY_CLAIMED", "An institutional profile is already registered for this account.");
+    }
     const organization = await tx.organization.create({
       data: {
         name: input.name,
@@ -175,7 +213,10 @@ export async function createOwnedOrganization(
       },
       select: ownedOrganizationSelect,
     });
-    await tx.user.update({ where: { id: userId }, data: { accountKind: "INSTITUTION" } });
+    await tx.user.update({
+      where: { id: userId },
+      data: { accountKind: "INSTITUTION", organizationDraft: {}, organizationTypePreference: input.type },
+    });
     return organization;
   });
 

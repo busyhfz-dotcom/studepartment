@@ -1,23 +1,30 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getShellViewer } from "@/server/auth/shell-viewer";
 import { scannerCategories } from "./scanner-sources";
+import { getOpportunitySourceStatus } from "@/server/opportunities/sources/sync";
 import styles from "./scanner.module.css";
 
+export const metadata: Metadata = {
+  title: "Research opportunity source directory",
+  description: "Find official research job boards and funding portals, and see which feeds Provenant searches.",
+  alternates: { canonical: "/scanner" },
+};
+
 export default async function ScannerPage() {
-  const viewer = await getShellViewer();
+  const [viewer, feeds] = await Promise.all([getShellViewer(), getOpportunitySourceStatus().catch(() => [])]);
+  const statusById = new Map(feeds.map((feed) => [feed.id, feed]));
 
   return (
     <ProductShell {...viewer}>
       <div className={styles.shell}>
         <header className={styles.header}>
           <span className="eyebrow">Scanner Directory</span>
-          <h1>Every serious position and grant database, in one place.</h1>
+          <h1>Find official research job and funding sources.</h1>
           <p className="lede">
-            A hand-checked list of the independent databases researchers actually use to find PhD, postdoc and
-            faculty positions and research funding, grouped by region. Each link opens the source itself. Where a
-            publisher offers an open feed, its listings also appear in Provenant search; see{" "}
-            <Link href="/sources">Data sources</Link>.
+            Browse independent job boards and funding portals by region. Directory links open the original publisher.
+            See <Link href="/sources">Data sources</Link> for connected feeds, listing counts and the latest checks.
           </p>
         </header>
 
@@ -28,7 +35,12 @@ export default async function ScannerPage() {
               <p>{category.intro}</p>
             </div>
             <div className={styles.sourceGrid}>
-              {category.sources.map((source) => (
+              {category.sources.map((source) => {
+                const feed = source.connectorId ? statusById.get(source.connectorId) : undefined;
+                const coverage = feed?.enabled
+                  ? feed.activeListings > 0 ? `${feed.activeListings.toLocaleString("en")} listings in Provenant` : "Connected feed"
+                  : source.connectorId ? "Check feed status" : "Publisher directory";
+                return (
                 <a className={styles.sourceCard} href={source.href} key={source.name} rel="noreferrer noopener" target="_blank">
                   <div className={styles.sourceTop}>
                     <strong>{source.name}</strong>
@@ -38,9 +50,11 @@ export default async function ScannerPage() {
                   <div className={styles.sourceMeta}>
                     <span>{source.region}</span>
                     <span>{source.coverage}</span>
+                    <span>{coverage}</span>
                   </div>
                 </a>
-              ))}
+                );
+              })}
             </div>
           </section>
         ))}

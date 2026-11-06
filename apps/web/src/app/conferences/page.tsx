@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getShellViewer } from "@/server/auth/shell-viewer";
 import { conferenceCategories } from "./conference-sources";
 import styles from "../scanner/scanner.module.css";
+
+export const metadata: Metadata = {
+  title: "Conference credibility and continuing education",
+  description: "Find specialty society calendars and official registries for conference standing and CME or CPD credit.",
+  alternates: { canonical: "/conferences" },
+};
 
 export default async function ConferencesPage() {
   const viewer = await getShellViewer();
