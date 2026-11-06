@@ -1,7 +1,7 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-export function GET(request: NextRequest) {
-  const response = NextResponse.redirect(new URL("/profile/edit#profile-link-orcid", request.url));
+export function GET() {
+  const response = new NextResponse(null, { status: 307, headers: { Location: "/profile/edit#profile-link-orcid" } });
   response.cookies.delete("provenant_orcid_state");
   return response;
 }

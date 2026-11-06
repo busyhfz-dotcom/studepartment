@@ -1,5 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-export function GET(request: NextRequest) {
-  return NextResponse.redirect(new URL("/profile/edit#profile-link-orcid", request.url));
+export function GET() {
+  return new NextResponse(null, { status: 307, headers: { Location: "/profile/edit#profile-link-orcid" } });
 }
