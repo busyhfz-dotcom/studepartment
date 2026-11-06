@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess } from "@/lib/api-contracts";
 import { runOpportunitySync, type SyncSummary } from "@/server/opportunities/sources/sync";
+import { hasSchedulerSignature } from "@/server/opportunities/sources/scheduler-signature";
 import { consumeRateLimit, RateLimitExceededError, rateLimitErrorResponse } from "@/server/security/rate-limit";
 
 export const maxDuration = 900;
@@ -24,15 +25,18 @@ function unauthorized() {
  */
 export async function POST(request: NextRequest) {
   const configuredToken = process.env.OPPORTUNITY_INGEST_TOKEN;
-  if (!configuredToken) {
-    const body: ApiError = { success: false, error: { code: "INGEST_NOT_CONFIGURED", message: "Opportunity sync is not configured." } };
-    return NextResponse.json(body, { status: 503 });
-  }
+  const scheduled = request.nextUrl.search === "" && hasSchedulerSignature(request.headers);
   const authorization = request.headers.get("authorization");
-  if (!authorization?.startsWith("Bearer ") || !secureEqual(authorization.slice(7), configuredToken)) return unauthorized();
+  if (!scheduled) {
+    if (!configuredToken) {
+      const body: ApiError = { success: false, error: { code: "INGEST_NOT_CONFIGURED", message: "Opportunity sync is not configured." } };
+      return NextResponse.json(body, { status: 503 });
+    }
+    if (!authorization?.startsWith("Bearer ") || !secureEqual(authorization.slice(7), configuredToken)) return unauthorized();
+  }
 
   try {
-    await consumeRateLimit("jobs:opportunity-sync", "token:" + configuredToken, { windowSeconds: 300, max: 6 });
+    await consumeRateLimit("jobs:opportunity-sync", scheduled ? "neon-scheduler" : "token:" + configuredToken, { windowSeconds: 300, max: 6 });
     const only = request.nextUrl.searchParams.get("source")?.split(",").map((value) => value.trim()).filter(Boolean);
     const force = request.nextUrl.searchParams.get("force") === "true";
     const data = await runOpportunitySync({ only, force });
