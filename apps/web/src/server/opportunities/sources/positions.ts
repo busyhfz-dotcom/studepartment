@@ -79,7 +79,8 @@ export function deadlineFromText(text: string | null | undefined, now: Date): st
   }
   if (!date || Number.isNaN(date.getTime())) return null;
   const iso = date.toISOString().slice(0, 10);
-  // Ignore dates that are clearly not a future deadline (e.g. a start date years away).
+  // Preserve past deadlines so a source that still lists a closed position
+  // cannot make it appear open by losing its deadline during import.
   const days = (date.getTime() - now.getTime()) / 86_400_000;
-  return days > -1 && days < 400 ? iso : null;
+  return days < 400 ? iso : null;
 }

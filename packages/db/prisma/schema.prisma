@@ -598,6 +598,15 @@ model Opportunity {
   @@index([lastSeenAt])
 }
 
+model OpportunitySourceRun {
+  sourceId    String    @id
+  startedAt   DateTime?
+  status      String?
+  durationMs  Int?
+  leaseToken  String?
+  leaseUntil  DateTime?
+}
+
 model OpportunityTopic {
   opportunityId String
   topicId       String

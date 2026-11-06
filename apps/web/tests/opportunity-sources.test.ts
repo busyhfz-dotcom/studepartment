@@ -174,7 +174,7 @@ test("deadlines in free text are read only when plausible", () => {
   assert.equal(deadlineFromText("Closing date: December 5, 2026", now), "2026-12-05");
   assert.equal(deadlineFromText("Deadline 01.12.2026", now), "2026-12-01");
   assert.equal(deadlineFromText("Start date: January 2028", now), null);
-  assert.equal(deadlineFromText("Deadline: 1 January 2020", now), null);
+  assert.equal(deadlineFromText("Deadline: 1 January 2020", now), "2020-01-01");
   assert.equal(htmlToText("<p>A&nbsp;&amp;&nbsp;B</p><script>x()</script>"), "A & B");
 });
 

@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { getDb } from "@studepartment/db";
 import { researchMethods, researchTopics } from "@studepartment/db/taxonomy";
 import { ingestOpportunityBatch, type OpportunityIngestionRecord } from "../ingestion";
@@ -11,6 +12,7 @@ const FAILURE_RETRY_MINUTES = 30;
 const DUE_SLACK_MS = 2 * 60_000;
 /** A listing missing from a complete snapshot stays up this long before it is taken down. */
 const DEFAULT_STALE_GRACE_HOURS = 6;
+const SOURCE_LEASE_MS = 15 * 60_000;
 /** Listings not seen for this long drop out of search (matches the search cutoff). */
 export const LISTING_STALE_AFTER_DAYS = 45;
 
@@ -32,13 +34,9 @@ export type SyncSummary = { ran: boolean; reason?: string; results: SourceRunRes
 
 const state = globalThis as unknown as {
   opportunitySyncRunning?: boolean;
-  opportunitySyncLastRuns?: Map<string, SourceRunResult>;
 };
 
-export function lastSourceRuns(): Map<string, SourceRunResult> {
-  state.opportunitySyncLastRuns ??= new Map();
-  return state.opportunitySyncLastRuns;
-}
+type PreviousRun = Pick<SourceRunResult, "startedAt" | "status">;
 
 /** Makes sure the topic and method vocabulary exists, so listings can be tagged. */
 async function ensureTaxonomy() {
@@ -63,14 +61,13 @@ async function lastSyncedAt(connector: OpportunitySourceConnector): Promise<Date
 }
 
 /**
- * Whether a source should be checked now. Uses this process's last run of the
- * source; after a restart, falls back to the newest listing it supplied, so a
- * deploy does not trigger a full re-read of every publisher.
+ * Whether a source is due. Until it has a recorded run, fall back to the
+ * newest listing it supplied before durable run tracking was introduced.
  */
 export async function isSourceDue(
   connector: OpportunitySourceConnector,
   now: Date,
-  lastRun: SourceRunResult | undefined = lastSourceRuns().get(connector.id),
+  lastRun?: PreviousRun,
   lastSeen?: Date | null,
 ): Promise<boolean> {
   if (lastRun) {
@@ -97,11 +94,31 @@ export async function runSource(
   { force?: boolean; fetchImpl?: FetchLike; now?: Date; log?: (message: string) => void } = {},
 ): Promise<SourceRunResult> {
   const started = Date.now();
-  const base = { id: connector.id, name: connector.source.name, startedAt: new Date(started).toISOString() };
+  const startedAt = new Date(started);
+  const base = { id: connector.id, name: connector.source.name, startedAt: startedAt.toISOString() };
   if (!connector.isEnabled(process.env)) return { ...base, status: "disabled", durationMs: 0 };
-  if (!force && !(await isSourceDue(connector, now))) {
-    return { ...base, status: "skipped", durationMs: Date.now() - started };
-  }
+  const db = getDb();
+  const previous = await db.opportunitySourceRun.findUnique({ where: { sourceId: connector.id } });
+  const lastRun: PreviousRun | undefined = previous?.startedAt && (previous.status === "ok" || previous.status === "failed")
+    ? { startedAt: previous.startedAt.toISOString(), status: previous.status }
+    : undefined;
+  const skipped = () => ({ ...base, status: "skipped" as const, durationMs: Date.now() - started });
+  if (!force && !(await isSourceDue(connector, now, lastRun))) return skipped();
+
+  // An atomic lease prevents another instance from fetching the same source.
+  // Compare the last completed run as well so a stale due check cannot claim it.
+  const token = randomUUID();
+  const claimed = await db.$executeRaw`
+    INSERT INTO "OpportunitySourceRun" ("sourceId", "leaseToken", "leaseUntil")
+    VALUES (${connector.id}, ${token}, ${new Date(started + SOURCE_LEASE_MS)})
+    ON CONFLICT ("sourceId") DO UPDATE
+    SET "leaseToken" = EXCLUDED."leaseToken", "leaseUntil" = EXCLUDED."leaseUntil"
+    WHERE ("OpportunitySourceRun"."leaseUntil" IS NULL OR "OpportunitySourceRun"."leaseUntil" <= ${startedAt})
+      AND (${force} OR "OpportunitySourceRun"."startedAt" IS NOT DISTINCT FROM ${previous?.startedAt ?? null}::timestamp)
+  `;
+  if (!claimed) return skipped();
+
+  let run: SourceRunResult;
   try {
     const records = dedupe(await connector.collect({ fetch: fetchImpl, now, env: process.env, log }));
     // An empty full snapshot is far more likely an outage than a real empty list;
@@ -110,12 +127,17 @@ export async function runSource(
     const staleBefore = new Date(now.getTime() - (connector.staleGraceHours ?? DEFAULT_STALE_GRACE_HOURS) * 3_600_000);
     const result = await ingestOpportunityBatch({ source: connector.source, completeSnapshot, staleBefore, records });
     log(`${connector.source.name}: ${result.created} new, ${result.updated} updated, ${result.unchanged} unchanged, ${result.markedStale} no longer listed`);
-    return { ...base, status: "ok", durationMs: Date.now() - started, ...result };
+    run = { ...base, status: "ok", durationMs: Date.now() - started, ...result };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     log(`${connector.source.name} failed: ${message}`);
-    return { ...base, status: "failed", durationMs: Date.now() - started, error: message.slice(0, 300) };
+    run = { ...base, status: "failed", durationMs: Date.now() - started, error: message.slice(0, 300) };
   }
+  await db.opportunitySourceRun.updateMany({
+    where: { sourceId: connector.id, leaseToken: token },
+    data: { startedAt, status: run.status, durationMs: run.durationMs, leaseToken: null, leaseUntil: null },
+  });
+  return run;
 }
 
 /**
@@ -130,13 +152,15 @@ export async function runOpportunitySync(
   if (state.opportunitySyncRunning) return { ran: false, reason: "A sync is already running.", results: [] };
   state.opportunitySyncRunning = true;
   try {
+    await getDb().opportunity.updateMany({
+      where: { status: "ACTIVE", deadline: { lt: new Date() } },
+      data: { status: "EXPIRED" },
+    });
     await ensureTaxonomy();
     const results: SourceRunResult[] = [];
     for (const connector of opportunitySources) {
       if (only?.length && !only.includes(connector.id)) continue;
-      const result = await runSource(connector, { force, fetchImpl, log });
-      if (result.status !== "skipped") lastSourceRuns().set(connector.id, result);
-      results.push(result);
+      results.push(await runSource(connector, { force, fetchImpl, log }));
     }
     return { ran: true, results };
   } finally {
@@ -166,26 +190,29 @@ export async function getOpportunitySourceStatus(now = new Date()): Promise<Publ
   const db = getDb();
   const cutoff = new Date(now.getTime() - LISTING_STALE_AFTER_DAYS * 86_400_000);
   const dayAgo = new Date(now.getTime() - 86_400_000);
-  const [counts, fresh, latest] = await Promise.all([
+  const open = { status: "ACTIVE" as const, lastSeenAt: { gte: cutoff }, OR: [{ deadline: null }, { deadline: { gte: now } }] };
+  const [counts, fresh, latest, runs] = await Promise.all([
     db.opportunity.groupBy({
       by: ["sourceName"],
-      where: { status: "ACTIVE", lastSeenAt: { gte: cutoff }, OR: [{ deadline: null }, { deadline: { gte: now } }] },
+      where: open,
       _count: { _all: true },
     }),
     db.opportunity.groupBy({
       by: ["sourceName"],
-      where: { status: "ACTIVE", firstSeenAt: { gte: dayAgo } },
+      where: { ...open, firstSeenAt: { gte: dayAgo } },
       _count: { _all: true },
     }),
     db.opportunity.groupBy({ by: ["sourceName"], _max: { lastSeenAt: true } }),
+    db.opportunitySourceRun.findMany({ select: { sourceId: true, startedAt: true, status: true } }),
   ]);
   const countBy = new Map(counts.map((row) => [row.sourceName, row._count._all]));
   const freshBy = new Map(fresh.map((row) => [row.sourceName, row._count._all]));
   const latestBy = new Map(latest.map((row) => [row.sourceName, row._max.lastSeenAt]));
+  const runBy = new Map(runs.map((run) => [run.sourceId, run]));
   return opportunitySources.map((connector) => {
-    const run = lastSourceRuns().get(connector.id);
-    const seen = latestBy.get(connector.source.name)?.toISOString() ?? null;
-    const ran = run && (run.status === "ok" || run.status === "failed") ? run : null;
+    const run = runBy.get(connector.id);
+    const seen = latestBy.get(connector.source.name) ?? null;
+    const lastSyncedAt = run?.startedAt && (!seen || run.startedAt > seen) ? run.startedAt : seen;
     return {
       id: connector.id,
       name: connector.source.name,
@@ -196,8 +223,8 @@ export async function getOpportunitySourceStatus(now = new Date()): Promise<Publ
       activeListings: countBy.get(connector.source.name) ?? 0,
       newToday: freshBy.get(connector.source.name) ?? 0,
       intervalMinutes: connector.intervalMinutes,
-      lastSyncedAt: ran && (!seen || ran.startedAt > seen) ? ran.startedAt : seen,
-      lastStatus: ran ? (ran.status === "failed" ? "failed" : "ok") : seen ? "ok" : null,
+      lastSyncedAt: lastSyncedAt?.toISOString() ?? null,
+      lastStatus: run?.status === "failed" ? "failed" : run?.status === "ok" || seen ? "ok" : null,
     };
   });
 }
