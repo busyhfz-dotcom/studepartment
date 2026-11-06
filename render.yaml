@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: provenant-web
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: codex/provenant-render-migration
+    dockerfilePath: ./Dockerfile
+    autoDeployTrigger: "off"
+    healthCheckPath: /api/health/ready
+    dockerCommand: >-
+      sh -c 'export BETTER_AUTH_URL="${BETTER_AUTH_URL:-$RENDER_EXTERNAL_URL}"
+      RELEASE_SHA="${RELEASE_SHA:-$RENDER_GIT_COMMIT}";
+      pnpm db:migrate:deploy &&
+      pnpm db:seed:cancer-centers &&
+      exec pnpm --filter @studepartment/web start'
+    envVars:
+      - key: PORT
+        value: "3000"
+      - key: DEPLOYMENT_ENV
+        value: staging
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: FILE_STORAGE_ENDPOINT
+        sync: false
+      - key: FILE_STORAGE_BUCKET
+        value: provenant-files
+      - key: FILE_STORAGE_REGION
+        value: eu-central-1
+      - key: FILE_STORAGE_FORCE_PATH_STYLE
+        value: "true"
+      - key: FILE_STORAGE_ACCESS_KEY_ID
+        sync: false
+      - key: FILE_STORAGE_SECRET_ACCESS_KEY
+        sync: false
+      - key: OPPORTUNITY_SYNC
+        value: "off"
+      - key: OPPORTUNITY_INGEST_TOKEN
+        generateValue: true
