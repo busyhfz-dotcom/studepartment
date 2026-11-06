@@ -110,11 +110,14 @@ Also manually verify the critical authenticated flow in staging before the first
 Production requirements:
 
 - ORCID_ENVIRONMENT=production
+- ORCID_API_TYPE=member
 - production client id/secret
 - exact HTTPS callback registered at ORCID
 - ORCID_REDIRECT_URI exactly matches the registered callback
 
 A manually typed ORCID remains asserted. Only OAuth ownership verification creates the verified ORCID provenance signal.
+
+Use credentials issued for this integration. The personal Developer tools page issues Public API credentials, whose terms restrict commercial use. For a new Member integration, use ORCID's [production application](https://info.orcid.org/register-a-client-application-production-member-api/) and follow their sandbox demonstration requirements. Store secrets in Render's private environment settings.
 
 ## 7. PubMed
 
@@ -211,3 +214,17 @@ Production go-live requires all of the following:
 - logs and database monitoring visible to operators
 
 A successful build alone is not a go-live signal.
+
+## 14. Recovery email and research reminders
+
+1. Verify the sender domain in Resend and create a sending-only API key scoped to that domain.
+2. Set `RESEND_API_KEY` and `DIGEST_FROM_EMAIL` in the private Render service environment. Keep `EMAIL_DIGEST_ENABLED=false` while testing password recovery and verification with a controlled account.
+3. Confirm that a recovery link reaches the test mailbox, opens the current site, works once, and revokes the old sessions after the reset. Confirm account email verification separately.
+4. Set `EMAIL_DIGEST_ENABLED=true` and enable the Neon schedule named `email-digest` on the same branch as the opportunity scanner. It calls `/digest` on the signed scheduler daily. Configure only one digest scheduler. A bearer-token scheduler can instead use `DIGEST_JOB_TOKEN` and `POST /api/internal/jobs/weekly-digest`.
+5. Verify that only a verified account with research emails enabled receives its deadline reminder and that a second run does not send the same reminder again. The daily job attempts at most 60 emails, leaving capacity for recovery and verification.
+
+## 15. Pro payment activation
+
+The four planned prices in `apps/web/src/lib/plans.ts` are USD 8 monthly, USD 15 every three months, USD 45 every six months, and USD 90 annually. The plan details page is available while the workspace remains in Pro preview.
+
+Once the payment provider and merchant account are selected, configure the four recurring prices and their intervals in the provider's test environment. Create checkout sessions on the server for signed-in accounts. Use the provider's signed webhook to apply entitlements only after confirmed payment, validate the account and plan mapping, and handle retry, cancellation, expiration, and renewal. Keep live credentials private. Enable billing enforcement only after sandbox checkout and webhook tests pass and the owner approves activation.

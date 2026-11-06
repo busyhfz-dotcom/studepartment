@@ -49,11 +49,11 @@ test("saved deadlines are reminded across the weekly digest gap but not after cl
   const now = new Date("2026-10-14T09:00:00Z");
   const inDays = (days: number) => new Date(now.getTime() + days * 86_400_000);
   assert.equal(isDeadlineDue(inDays(6), 7, now), true);
-  assert.equal(isDeadlineDue(inDays(7), 3, now), true, "a 3-day lead still needs the weekly window");
+  assert.equal(isDeadlineDue(inDays(7), 3, now), false, "a 3-day reminder does not send early");
   assert.equal(isDeadlineDue(inDays(12), 7, now), false);
   assert.equal(isDeadlineDue(inDays(12), 14, now), true);
   assert.equal(isDeadlineDue(inDays(-1), 7, now), false);
-  assert.equal(isDeadlineDue(inDays(45), 90, now), false, "lookahead is capped at 30 days");
+  assert.equal(isDeadlineDue(inDays(45), 90, now), true, "the full 90-day setting is honored");
 });
 
 test("country list is complete, unique and maps names", () => {

@@ -85,14 +85,14 @@ export function NotificationPreferences() {
     <section className={styles.exportPanel}>
       <div>
         <span className={styles.privateMarker}>Private</span>
-        <h2>Weekly research digest</h2>
+        <h2>Research emails and reminders</h2>
         <p>
-          A single weekly email summarizing new positions and grants matched to your scientific profile.
-          No engagement pressure, no daily noise — you can turn it off at any time.
+          Get a weekly summary of new positions and grants, plus reminders for saved deadlines at the lead time you choose.
+          Turn research emails off at any time.
         </p>
-        {preferences && !preferences.deliveryAvailable ? <p role="status">Weekly email delivery is awaiting platform activation. You can review deadline reminders in <Link href="/opportunities/saved">your saved opportunities</Link>.</p> : null}
+        {preferences && !preferences.deliveryAvailable ? <p role="status">Email delivery is awaiting platform activation. You can review deadline reminders in <Link href="/opportunities/saved">your saved opportunities</Link>.</p> : null}
         {preferences?.verificationAvailable && !preferences.emailVerified && preferences.digestFrequency === "weekly" ? (
-          <p>Verify your account email to receive the weekly digest. <button type="button" className="secondary" disabled={saving} onClick={() => void requestVerification()}>Verify email</button></p>
+          <p>Verify your account email to receive the digest and reminders. <button type="button" className="secondary" disabled={saving} onClick={() => void requestVerification()}>Verify email</button></p>
         ) : null}
         {notice ? <p role="status">{notice}</p> : null}
         {preferences?.lastDigestSentAt ? (
@@ -109,7 +109,7 @@ export function NotificationPreferences() {
           disabled={saving || !preferences}
           onClick={() => setFrequency("weekly")}
         >
-          Save weekly preference
+          Enable research emails
         </button>
         <button
           type="button"

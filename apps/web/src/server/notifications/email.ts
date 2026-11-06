@@ -19,6 +19,7 @@ export type EmailMessage = {
   subject: string;
   html: string;
   text: string;
+  idempotencyKey?: string;
 };
 
 export function isEmailDeliveryConfigured(): boolean {
@@ -40,6 +41,7 @@ export async function sendEmail(message: EmailMessage): Promise<EmailSendResult>
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        ...(message.idempotencyKey ? { "Idempotency-Key": message.idempotencyKey } : {}),
       },
       body: JSON.stringify({
         from,

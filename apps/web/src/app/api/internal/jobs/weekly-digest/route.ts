@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { ApiError, ApiSuccess } from "@/lib/api-contracts";
 import { runWeeklyDigest } from "@/server/digest/weekly-digest";
 import { consumeRateLimit, RateLimitExceededError, rateLimitErrorResponse } from "@/server/security/rate-limit";
+import { hasSchedulerSignature } from "@/server/opportunities/sources/scheduler-signature";
+import { isEmailDeliveryConfigured } from "@/server/notifications/email";
 
 function secureEqual(left: string, right: string) {
   const a = Buffer.from(left);
@@ -16,13 +18,13 @@ function unauthorized(message = "Unauthorized.") {
 }
 
 /**
- * Triggered by an external scheduler (e.g. a weekly cron on the deployment
- * platform) hitting this route with a bearer token. This process never
- * schedules itself — there is no in-process cron here.
+ * Called daily by the signed Neon scheduler or an existing bearer-token
+ * scheduler. Weekly matches keep their per-account cadence.
  */
 export async function POST(request: NextRequest) {
-  const configuredToken = process.env.DIGEST_JOB_TOKEN;
-  if (!configuredToken) {
+  const configuredToken = process.env.DIGEST_JOB_TOKEN?.trim();
+  const neonEnabled = process.env.EMAIL_DIGEST_ENABLED === "true";
+  if (!isEmailDeliveryConfigured() || (!configuredToken && !neonEnabled)) {
     const body: ApiError = {
       success: false,
       error: { code: "DIGEST_JOB_NOT_CONFIGURED", message: "Weekly digest job is not configured." },
@@ -30,12 +32,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(body, { status: 503 });
   }
 
+  const scheduled = neonEnabled && request.nextUrl.search === "" && hasSchedulerSignature(request.headers, "email-digest");
   const authorization = request.headers.get("authorization");
-  if (!authorization?.startsWith("Bearer ")) return unauthorized();
-  if (!secureEqual(authorization.slice(7), configuredToken)) return unauthorized();
+  if (!scheduled && (!configuredToken || !authorization?.startsWith("Bearer ") || !secureEqual(authorization.slice(7), configuredToken))) return unauthorized();
 
   try {
-    await consumeRateLimit("jobs:weekly-digest", "token:" + configuredToken, { windowSeconds: 60, max: 4 });
+    await consumeRateLimit("jobs:weekly-digest", scheduled ? "neon-scheduler" : "token:" + configuredToken, { windowSeconds: 60, max: 4 });
     const data = await runWeeklyDigest();
     const body: ApiSuccess<typeof data> = { success: true, data };
     return NextResponse.json(body);
