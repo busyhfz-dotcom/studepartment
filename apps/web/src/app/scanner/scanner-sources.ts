@@ -4,6 +4,7 @@ export type ScannerSource = {
   region: string;
   coverage: string;
   description: string;
+  connectorId?: string;
 };
 
 export type ScannerCategory = {
@@ -83,6 +84,7 @@ export const scannerCategories: ScannerCategory[] = [
       },
       {
         name: "Max Planck Society job board",
+        connectorId: "max-planck",
         href: "https://www.mpg.de/jobboard",
         region: "Germany (+ institutes abroad)",
         coverage: "PhD · Postdoc · Research staff",
@@ -118,6 +120,7 @@ export const scannerCategories: ScannerCategory[] = [
       },
       {
         name: "NHS Jobs",
+        connectorId: "nhs-jobs",
         href: "https://www.jobs.nhs.uk/",
         region: "United Kingdom",
         coverage: "Clinical research · Research staff",
@@ -286,6 +289,7 @@ export const scannerCategories: ScannerCategory[] = [
       },
       {
         name: "EU Funding & Tenders Portal",
+        connectorId: "eu-funding-tenders",
         href: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/home",
         region: "European Union",
         coverage: "Horizon Europe grants · ERC · Fellowships",
@@ -356,6 +360,7 @@ export const scannerCategories: ScannerCategory[] = [
       },
       {
         name: "Grants.gov",
+        connectorId: "grants-gov",
         href: "https://www.grants.gov/",
         region: "United States",
         coverage: "Project grants (all federal agencies)",

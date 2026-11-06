@@ -18,7 +18,7 @@ import {
   ProfileValidationError,
 } from "@/server/validation/profile";
 import {
-  consumeClientRateLimit,
+  consumeRateLimit,
   RateLimitExceededError,
   rateLimitErrorResponse,
 } from "@/server/security/rate-limit";
@@ -39,7 +39,6 @@ export async function GET() {
     const body: ApiSuccess<ProfileResponse> = { success: true, data: profile };
     return NextResponse.json(body);
   } catch (error) {
-    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     if (error instanceof AuthenticationRequiredError) {
       return apiError(401, error.code, error.message);
     }
@@ -50,8 +49,8 @@ export async function GET() {
 
 export async function PATCH(request: NextRequest) {
   try {
-    await consumeClientRateLimit(request, "profile:update", { windowSeconds: 3600, max: 60 });
     const user = await requireCurrentUser();
+    await consumeRateLimit("profile:update", "user:" + user.id, { windowSeconds: 3600, max: 60 });
     const input = parseProfileUpdateInput(await request.json());
     if (!await filesAvailableToUser(user.id, input.profileDetails)) return apiError(400, "DOCUMENT_UNAVAILABLE", "Choose documents from your own profile library before saving.");
     if (!await profileImageAvailableToUser(user.id, input.imageUrl)) return apiError(400, "PHOTO_UNAVAILABLE", "Please upload your photo again before saving.");
@@ -72,6 +71,7 @@ export async function PATCH(request: NextRequest) {
     const body: ApiSuccess<ProfileResponse> = { success: true, data: profile };
     return NextResponse.json({ ...body, ...(orcidImport ? { orcidImport } : {}) });
   } catch (error) {
+    if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     if (error instanceof AuthenticationRequiredError) {
       return apiError(401, error.code, error.message);
     }

@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 import { parseOpportunityQuery } from "../src/server/opportunities/query";
+import { opportunityPagination } from "../src/lib/opportunity-pagination";
+import { parseOrganizationCreateInput, parseOrganizationDraftInput } from "../src/server/validation/organization";
 import { careerStageFilterSlugs } from "../src/server/opportunities/career-stage";
 import { escapeHtml, isDeadlineDue } from "../src/server/digest/digest-format";
 import { countries, countryName, isCountryCode } from "../src/lib/countries";
@@ -17,6 +19,26 @@ test("career-stage filter accepts only known stages and expands to eligibility a
   assert.equal("careerStage" in parseOpportunityQuery(new URLSearchParams("")), false);
   assert.ok(careerStageFilterSlugs("phd").includes("phd-student"));
   assert.ok(careerStageFilterSlugs("faculty").includes("professor"));
+});
+
+test("opportunity pagination preserves URL filters and bounds the last page", () => {
+  const legacy = parseOpportunityQuery(new URLSearchParams("q=clinical+trials"));
+  assert.equal(legacy.page, undefined);
+  const params = new URLSearchParams("q=clinical+trials&page=999&sort=deadline&country=GB&eligibilityCountry=US");
+  const query = parseOpportunityQuery(params);
+  assert.equal(query.text, "clinical trials");
+  assert.deepEqual(query.countryCodes, ["GB"]);
+  assert.equal(query.eligibilityCountry, "US");
+  assert.equal(query.sort, "deadline");
+  assert.deepEqual(opportunityPagination(388, query.page!, query.limit), { page: 33, pageSize: 12, totalPages: 33 });
+  assert.equal(parseOpportunityQuery(new URLSearchParams("page=-1&sort=unknown")).page, 1);
+});
+
+test("a private organization draft can omit the name while publishing still requires one", () => {
+  const draft = { type: "hospital", description: "Draft description" };
+  assert.equal(parseOrganizationDraftInput(draft).name, "");
+  assert.throws(() => parseOrganizationCreateInput(draft), /name is required/);
+  assert.throws(() => parseOrganizationDraftInput({ ...draft, type: "unsupported" }), /type must be/);
 });
 
 test("digest escapes listing text before it reaches email HTML", () => {

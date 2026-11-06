@@ -43,6 +43,8 @@ const applicationStages: Array<[SavedOpportunityRecord["applicationStage"], stri
 function ApplicationTracker({ item, onSaved }: { item: SavedOpportunityRecord; onSaved: () => Promise<void> }) {
   const [stage, setStage] = useState(item.applicationStage);
   const [notes, setNotes] = useState(item.notes ?? "");
+  const [deadlineAlert, setDeadlineAlert] = useState(item.deadlineAlert);
+  const [alertLeadDays, setAlertLeadDays] = useState(String(item.alertLeadDays));
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   async function save() {
@@ -52,7 +54,7 @@ function ApplicationTracker({ item, onSaved }: { item: SavedOpportunityRecord; o
       const response = await fetch("/api/v1/opportunities/saved", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ opportunityId: item.opportunityId, applicationStage: stage, notes }),
+        body: JSON.stringify({ opportunityId: item.opportunityId, applicationStage: stage, notes, deadlineAlert, alertLeadDays: deadlineAlert ? Number(alertLeadDays) : undefined }),
       });
       const body = await response.json() as { success: boolean; error?: { message?: string } };
       if (!response.ok || !body.success) throw new Error(body.error?.message ?? "Could not save application progress.");
@@ -67,7 +69,11 @@ function ApplicationTracker({ item, onSaved }: { item: SavedOpportunityRecord; o
   return <div className={styles.tracker}>
     <label><span>Application stage</span><select value={stage} onChange={(event) => setStage(event.target.value as SavedOpportunityRecord["applicationStage"])}>{applicationStages.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
     <label><span>Private application notes</span><textarea maxLength={1000} rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Tasks, contacts, documents, next step…" /></label>
-    <button disabled={saving} onClick={() => void save()} type="button">{saving ? "Saving…" : "Save progress"}</button>
+    {item.opportunity.deadline ? <>
+      <label><span>Deadline reminder in your workspace</span><select value={deadlineAlert ? "on" : "off"} onChange={(event) => setDeadlineAlert(event.target.value === "on")}><option value="on">On</option><option value="off">Off</option></select></label>
+      {deadlineAlert ? <label><span>Remind me this many days before the deadline</span><input type="number" min="1" max="90" step="1" value={alertLeadDays} onChange={(event) => setAlertLeadDays(event.target.value)} /></label> : null}
+    </> : null}
+    <button disabled={saving || (deadlineAlert && (!Number.isInteger(Number(alertLeadDays)) || Number(alertLeadDays) < 1 || Number(alertLeadDays) > 90))} onClick={() => void save()} type="button">{saving ? "Saving…" : "Save progress"}</button>
     {message ? <p role="status">{message}</p> : null}
   </div>;
 }
@@ -136,7 +142,7 @@ export function SavedOpportunityWorkspace({ pendingOpportunityId }: { pendingOpp
         </div>
         <div>
           <strong>{data.dueSoon}</strong>
-          <span>inside your configured alert window</span>
+          <span>closing within your workspace reminder window</span>
         </div>
         <div className={styles.summaryContext}>
           <strong>Decision context stays separate from ranking.</strong>
@@ -184,9 +190,9 @@ export function SavedOpportunityWorkspace({ pendingOpportunityId }: { pendingOpp
                   <small>Precision: {titleCase(item.opportunity.deadlinePrecision)}</small>
                 </div>
                 <div className={styles.fact}>
-                  <span>Alert state</span>
-                  <strong>{item.deadlineAlert ? "Active" : "Off"}</strong>
-                  <small>{item.deadlineAlert ? item.alertLeadDays + "-day lead time" : "No deadline alert configured"}</small>
+                  <span>Workspace reminder</span>
+                  <strong>{item.opportunity.deadline ? (item.deadlineAlert ? "On" : "Off") : "No fixed deadline"}</strong>
+                  <small>{item.opportunity.deadline ? (item.deadlineAlert ? item.alertLeadDays + "-day lead time" : "Reminders are turned off.") : "A fixed deadline is needed for reminders."}</small>
                 </div>
               </div>
 

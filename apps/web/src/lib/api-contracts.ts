@@ -353,8 +353,21 @@ export type OpportunityQuery = {
   deadlineWithinDays: number | null;
   includeStale: boolean;
   limit: number;
+  page?: number;
+  sort?: OpportunitySort;
+  funder?: string;
+  sourceRecordId?: string;
+  eligibilityCountry?: string;
   /** Keep opportunities open to this career stage (or with no published stage limit). */
   careerStage?: OpportunityCareerStage;
+};
+
+export type OpportunitySort = "newest" | "deadline";
+
+export type OpportunityPagination = {
+  page: number;
+  pageSize: number;
+  totalPages: number;
 };
 
 /** Career stages aligned with the EU R1–R4 researcher profiles. */
@@ -396,6 +409,7 @@ export type OpportunityIntelligenceResponse = {
   /** Listings matching the filters, before the result limit. */
   totalMatching: number;
   cappedAt: number;
+  pagination?: OpportunityPagination;
   personalized: boolean;
   profileContext: {
     careerStage?: string;
@@ -641,6 +655,7 @@ export type ResearchAssistantCitation = {
   label: string;
   detail: string;
   href?: string;
+  opportunityId?: string;
   evidence: "verified" | "corroborated" | "source-backed" | "asserted";
 };
 
@@ -694,6 +709,8 @@ export type FeedbackListResponse = {
 export type DigestFrequencyValue = "weekly" | "off";
 
 export type NotificationPreferencesResponse = {
+  emailVerified?: boolean;
+  verificationAvailable?: boolean;
   digestFrequency: DigestFrequencyValue;
   lastDigestSentAt: string | null;
   deliveryAvailable?: boolean;

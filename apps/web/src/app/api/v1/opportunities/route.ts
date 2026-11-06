@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     await consumeClientRateLimit(request, "opportunities:read", { windowSeconds: 60, max: 120 });
     const query = parseOpportunityQuery(request.nextUrl.searchParams);
     const discovery = await discoverOpportunities(query);
-    const results = await suppressPrivateFeedback("opportunity", discovery.results, (item) => item.id);
+    const results = discovery.pagination ? discovery.results : await suppressPrivateFeedback("opportunity", discovery.results, (item) => item.id);
     const data: OpportunityIntelligenceResponse = { ...discovery, results };
     const body: ApiSuccess<OpportunityIntelligenceResponse> = { success: true, data };
     return NextResponse.json(body, {

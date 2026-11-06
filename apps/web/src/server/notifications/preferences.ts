@@ -17,13 +17,15 @@ export async function getNotificationPreferences(userId: string): Promise<Notifi
 
   const user = await getDb().user.findUnique({
     where: { id: userId },
-    select: { digestFrequency: true, lastDigestSentAt: true },
+    select: { digestFrequency: true, lastDigestSentAt: true, emailVerified: true },
   });
   if (!user) {
     return { digestFrequency: "weekly", lastDigestSentAt: null, deliveryAvailable: deliveryAvailable() };
   }
   return {
     deliveryAvailable: deliveryAvailable(),
+    emailVerified: user.emailVerified,
+    verificationAvailable: integrationConfiguration().emailDelivery,
     digestFrequency: fromDb[user.digestFrequency],
     lastDigestSentAt: user.lastDigestSentAt ? user.lastDigestSentAt.toISOString() : null,
   };
@@ -41,10 +43,12 @@ export async function updateNotificationPreferences(
   const user = await getDb().user.update({
     where: { id: userId },
     data: { digestFrequency: toDb[digestFrequency] },
-    select: { digestFrequency: true, lastDigestSentAt: true },
+    select: { digestFrequency: true, lastDigestSentAt: true, emailVerified: true },
   });
   return {
     deliveryAvailable: deliveryAvailable(),
+    emailVerified: user.emailVerified,
+    verificationAvailable: integrationConfiguration().emailDelivery,
     digestFrequency: fromDb[user.digestFrequency],
     lastDigestSentAt: user.lastDigestSentAt ? user.lastDigestSentAt.toISOString() : null,
   };

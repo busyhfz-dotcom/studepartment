@@ -29,6 +29,7 @@ export default function robots(): MetadataRoute.Robots {
           "/files",
           "/billing",
           "/institutions",
+          "/labs",
           "/researchers",
           "/organization",
         ],

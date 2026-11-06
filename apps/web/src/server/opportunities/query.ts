@@ -1,4 +1,5 @@
 import type { OpportunityCareerStage, OpportunityQuery, OpportunityTypeValue } from "@/lib/api-contracts";
+import { readOpportunityPage, readOpportunitySort } from "@/lib/opportunity-pagination";
 
 const allowedCareerStages = new Set<OpportunityCareerStage>([
   "student",
@@ -47,6 +48,10 @@ function readDeadlineWindow(searchParams: URLSearchParams) {
 }
 
 export function parseOpportunityQuery(searchParams: URLSearchParams): OpportunityQuery {
+  const careerStage = readCareerStage(searchParams);
+  const funder = searchParams.get("funder")?.trim().slice(0, 120);
+  const sourceRecordId = searchParams.get("sourceRecordId")?.trim().slice(0, 128);
+  const eligibilityCountry = searchParams.get("eligibilityCountry")?.trim().toUpperCase();
   return {
     ...(searchParams.get("id") ? { id: searchParams.get("id")!.trim().slice(0, 128) } : {}),
     text: (searchParams.get("q") ?? "").trim().slice(0, 240),
@@ -59,6 +64,10 @@ export function parseOpportunityQuery(searchParams: URLSearchParams): Opportunit
     deadlineWithinDays: readDeadlineWindow(searchParams),
     includeStale: searchParams.get("includeStale") === "true",
     limit: readLimit(searchParams),
-    ...(readCareerStage(searchParams) ? { careerStage: readCareerStage(searchParams) } : {}),
+    ...(searchParams.has("page") ? { page: readOpportunityPage(searchParams.get("page")), sort: readOpportunitySort(searchParams.get("sort")) } : {}),
+    ...(careerStage ? { careerStage } : {}),
+    ...(funder ? { funder } : {}),
+    ...(sourceRecordId ? { sourceRecordId } : {}),
+    ...(eligibilityCountry && /^[A-Z]{2}$/.test(eligibilityCountry) ? { eligibilityCountry } : {}),
   };
 }

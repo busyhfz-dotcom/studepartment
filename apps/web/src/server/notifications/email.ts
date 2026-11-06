@@ -30,13 +30,13 @@ export async function sendEmail(message: EmailMessage): Promise<EmailSendResult>
   const from = process.env.DIGEST_FROM_EMAIL?.trim();
 
   if (!apiKey || !from) {
-    console.info("[email] delivery not configured; skipped send", { to: message.to, subject: message.subject });
     return { sent: false, reason: "EMAIL_DELIVERY_NOT_CONFIGURED" };
   }
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
+      signal: AbortSignal.timeout(15_000),
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
@@ -51,14 +51,13 @@ export async function sendEmail(message: EmailMessage): Promise<EmailSendResult>
     });
 
     if (!response.ok) {
-      const body = await response.text().catch(() => "");
-      console.error("[email] provider rejected send", response.status, body.slice(0, 500));
+      console.error("[email] provider rejected send", response.status);
       return { sent: false, reason: `PROVIDER_ERROR_${response.status}` };
     }
 
     return { sent: true };
   } catch (error) {
-    console.error("[email] send failed", error);
+    console.error("[email] send failed", error instanceof Error ? error.name : "UnknownError");
     return { sent: false, reason: "SEND_EXCEPTION" };
   }
 }

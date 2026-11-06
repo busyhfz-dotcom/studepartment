@@ -107,7 +107,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
             <span className="sectionLabel">Laboratories</span>
             <h2>Labs</h2>
             <div className={styles.stack}>
-              {institution.labs.map((lab) => <div key={lab.id}><strong>{lab.name}</strong><span>{lab.memberCount} members{lab.verified ? " · Verified" : ""}</span>{lab.description ? <p>{lab.description}</p> : null}</div>)}
+              {institution.labs.map((lab) => <div key={lab.id}><strong><Link href={"/labs/" + lab.id}>{lab.name}</Link></strong><span>{lab.memberCount} members{lab.verified ? " · Verified" : ""}</span>{lab.description ? <p>{lab.description}</p> : null}</div>)}
               {!institution.labs.length ? <p>No labs linked yet.</p> : null}
             </div>
           </article>

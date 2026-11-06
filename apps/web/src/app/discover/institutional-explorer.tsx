@@ -228,7 +228,9 @@ export function InstitutionalExplorer({ entityType }: { entityType: Institutiona
                     <strong>{result.verified ? "Verified" : title(result.confidence)}</strong>
                   </div>
                   <FeedbackControls entityId={result.id} entityType={laboratory ? "laboratory" : "institution"} />
-                  {!laboratory ? <Link href={"/institutions/" + result.id}>Institution intelligence ↗</Link> : null}
+                  <Link href={(laboratory ? "/labs/" : "/institutions/") + result.id}>
+                    {laboratory ? "View laboratory profile" : "Institution intelligence"} ↗
+                  </Link>
                   {result.website ? <a href={result.website} rel="noreferrer" target="_blank">Visit source website ↗</a> : null}
                 </aside>
               </article>

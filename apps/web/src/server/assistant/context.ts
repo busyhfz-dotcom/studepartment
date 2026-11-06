@@ -217,6 +217,7 @@ export async function buildResearchAssistantContext(
     }
     add({
       type: "opportunity",
+      opportunityId: opportunity.id,
       label: opportunity.title,
       evidence: opportunity.lastVerifiedAt ? "source-backed" : "asserted",
       href: opportunity.sourceUrl,
@@ -327,6 +328,7 @@ export async function buildResearchAssistantContext(
       if (target?.type === "opportunity" && target.id === opportunity.id) continue;
       add({
         type: "opportunity",
+        opportunityId: opportunity.id,
         label: opportunity.title,
         evidence: opportunity.lastVerifiedAt ? "source-backed" : "asserted",
         href: opportunity.sourceUrl,

@@ -1,0 +1,30 @@
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-block: 22px 4px;
+  font-size: .875rem;
+}
+
+.pager a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+  border-radius: 9px;
+  color: inherit;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.pager a:hover {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.pager a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

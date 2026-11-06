@@ -1,8 +1,16 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+import { Suspense } from "react";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getShellViewer } from "@/server/auth/shell-viewer";
 import { OpportunityExplorer } from "./opportunity-explorer";
 import styles from "./page.module.css";
+
+export const metadata: Metadata = {
+  title: "Search medical research positions and grants",
+  description: "Find research jobs, fellowships and funding calls by topic, location, career stage and deadline.",
+  alternates: { canonical: "/opportunities" },
+};
 
 export default async function OpportunitiesPage() {
   const viewer = await getShellViewer();
@@ -20,7 +28,9 @@ export default async function OpportunitiesPage() {
           </p>
           <Link href="/opportunities/saved">Your saved opportunities ↗</Link>
         </header>
-        <OpportunityExplorer />
+        <Suspense fallback={<p role="status">Loading opportunity search…</p>}>
+          <OpportunityExplorer />
+        </Suspense>
       </div>
     </ProductShell>
   );

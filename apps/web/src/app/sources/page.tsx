@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Data sources",
   description: "The funders and employers whose open positions and funding calls appear in Provenant, and how often each is checked.",
+  alternates: { canonical: "/sources" },
 };
 
 async function loadSources(): Promise<PublicSourceStatus[]> {
@@ -83,7 +84,7 @@ export default async function SourcesPage() {
                   <div className={styles.sourceMeta}>
                     <span>
                       {source.enabled ? `${source.activeListings.toLocaleString("en")} open listings` : "Not connected yet"}
-                      {source.enabled && source.newToday ? ` · ${source.newToday.toLocaleString("en")} new today` : ""}
+                      {source.enabled && source.newToday ? ` · ${source.newToday.toLocaleString("en")} new in 24 hours` : ""}
                     </span>
                     <span>{source.enabled ? `${frequencyLabel(source.intervalMinutes)} · ${syncedLabel(source)}` : "Awaiting access key"}</span>
                   </div>
@@ -99,11 +100,11 @@ export default async function SourcesPage() {
             <p>What happens between the publisher and your search results.</p>
           </div>
           <ul className={styles.notes}>
-            <li>Collection runs around the clock. Most sources are checked every hour, so a new listing usually appears here within an hour of being published.</li>
+            <li>Each connected source has its own check interval. Use the last-check time above to see how recent that source is.</li>
             <li>If a source cannot be reached, it is tried again within 30 minutes and its listings stay up in the meantime.</li>
             <li>A listing leaves search when its deadline passes, when the publisher removes it, or when it has not been seen at the source for {LISTING_STALE_AFTER_DAYS} days.</li>
             <li>Deadlines, eligibility and funding amounts are taken from the publisher. Always confirm them on the official page before you apply.</li>
-            <li>Large job boards such as EURAXESS, Nature Careers and jobs.ac.uk do not allow automated collection, so they are linked from <Link href="/scanner">Scanner</Link> instead.</li>
+            <li>For publishers outside the connected feeds above, use their official listings through <Link href="/scanner">Scanner</Link>.</li>
           </ul>
         </section>
       </div>

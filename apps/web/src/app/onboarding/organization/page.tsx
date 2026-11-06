@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/server/auth/current-user";
-import { getOwnedOrganization } from "@/server/repositories/organization-repository";
+import { getOrganizationDraft, getOwnedOrganization } from "@/server/repositories/organization-repository";
 import { OrganizationOnboardingWizard } from "./organization-onboarding-wizard";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
-import type { InstitutionalOrganizationType } from "@/lib/api-contracts";
 import { safeReturnPath } from "@/lib/navigation";
+import { isInstitutionalOrganizationType } from "@/server/validation/organization";
 
 export default async function OrganizationOnboardingPage({ searchParams }: { searchParams: Promise<{ type?: string; callbackUrl?: string }> }) {
   const { type, callbackUrl } = await searchParams;
@@ -14,8 +14,9 @@ export default async function OrganizationOnboardingPage({ searchParams }: { sea
   const user = await getCurrentUser();
   if (!user) redirect("/auth/sign-in?callbackUrl=" + encodeURIComponent(nextPath));
 
-  const existing = await getOwnedOrganization(user.id);
+  const [existing, saved] = await Promise.all([getOwnedOrganization(user.id), getOrganizationDraft(user.id)]);
   if (existing) redirect(destination);
+  const initialType = saved.typePreference ?? (isInstitutionalOrganizationType(type) ? type : undefined);
 
   return (
     <main className="shell onboardingShell">
@@ -28,11 +29,13 @@ export default async function OrganizationOnboardingPage({ searchParams }: { sea
           Institutional accounts get their own kind of profile: an organization record, the official home for
           your postings, and a verification status that researchers can see.
         </p>
-        <Link className="secondary" href={"/onboarding?callbackUrl=" + encodeURIComponent(safeReturnPath(callbackUrl))}>
-          Applying as an individual researcher instead? Go back to the researcher path ↗
-        </Link>
+        {user.accountKind !== "INSTITUTION" ? (
+          <Link className="secondary" href={"/onboarding?callbackUrl=" + encodeURIComponent(safeReturnPath(callbackUrl))}>
+            Applying as an individual researcher instead? Go back to the researcher path ↗
+          </Link>
+        ) : null}
       </header>
-      <OrganizationOnboardingWizard initialType={type as InstitutionalOrganizationType | undefined} callbackUrl={destination} />
+      <OrganizationOnboardingWizard initialType={initialType} initialDraft={saved.draft} callbackUrl={destination} />
     </main>
   );
 }

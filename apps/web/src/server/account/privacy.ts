@@ -21,6 +21,8 @@ export async function exportAccountData(userId: string) {
       emailVerified: true,
       image: true,
       role: true,
+      organizationDraft: true,
+      organizationTypePreference: true,
       createdAt: true,
       updatedAt: true,
       sessions: {

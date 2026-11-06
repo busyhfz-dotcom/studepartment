@@ -61,9 +61,9 @@ export async function saveOpportunity(input: SaveOpportunityInput) {
       notes,
     },
     update: {
-      deadlineAlert: input.deadlineAlert ?? true,
-      alertLeadDays,
-      notes,
+      ...(input.deadlineAlert !== undefined ? { deadlineAlert: input.deadlineAlert } : {}),
+      ...(input.alertLeadDays !== undefined ? { alertLeadDays } : {}),
+      ...(input.notes !== undefined ? { notes } : {}),
     },
     select: { id: true, opportunityId: true, deadlineAlert: true, alertLeadDays: true, savedAt: true },
   });
@@ -80,11 +80,20 @@ export async function removeSavedOpportunity(opportunityId: string) {
 
 const applicationStages = new Set(["saved", "preparing", "applied", "interview", "decision", "closed"]);
 
-export async function updateSavedOpportunity(input: { opportunityId: string; applicationStage: string; notes?: string | null }) {
+export async function updateSavedOpportunity(input: {
+  opportunityId: string;
+  applicationStage: string;
+  notes?: string | null;
+  deadlineAlert?: boolean;
+  alertLeadDays?: number;
+}) {
   const user = await requireCurrentUser();
   if (!applicationStages.has(input.applicationStage)) throw new SavedOpportunityError("INVALID_APPLICATION_STAGE", "Choose a valid application stage.");
   if (input.notes !== undefined && input.notes !== null && (typeof input.notes !== "string" || input.notes.length > 1000)) {
     throw new SavedOpportunityError("INVALID_NOTES", "Notes must be 1000 characters or fewer.");
+  }
+  if (input.alertLeadDays !== undefined && (!Number.isInteger(input.alertLeadDays) || input.alertLeadDays < 1 || input.alertLeadDays > 90)) {
+    throw new SavedOpportunityError("INVALID_ALERT_WINDOW", "Deadline alert lead time must be between 1 and 90 days.");
   }
   const db = getDb();
   const existing = await db.savedOpportunity.findUnique({ where: { userId_opportunityId: { userId: user.id, opportunityId: input.opportunityId } }, select: { id: true } });
@@ -94,8 +103,10 @@ export async function updateSavedOpportunity(input: { opportunityId: string; app
     data: {
       applicationStage: input.applicationStage.toUpperCase() as "SAVED" | "PREPARING" | "APPLIED" | "INTERVIEW" | "DECISION" | "CLOSED",
       ...(input.notes !== undefined ? { notes: input.notes?.trim() || null } : {}),
+      ...(input.deadlineAlert !== undefined ? { deadlineAlert: input.deadlineAlert } : {}),
+      ...(input.alertLeadDays !== undefined ? { alertLeadDays: input.alertLeadDays } : {}),
     },
-    select: { id: true, applicationStage: true, notes: true },
+    select: { id: true, applicationStage: true, notes: true, deadlineAlert: true, alertLeadDays: true },
   });
 }
 
@@ -136,7 +147,7 @@ export async function listSavedOpportunities(): Promise<SavedOpportunityListResp
   });
 
   const dueSoon = saved.filter((item) => {
-    if (!item.deadlineAlert || !item.opportunity.deadline) return false;
+    if (!item.deadlineAlert || item.opportunity.status !== "active" || !item.opportunity.deadline) return false;
     const remaining = new Date(item.opportunity.deadline).getTime() - now;
     return remaining >= 0 && remaining <= item.alertLeadDays * 86_400_000;
   }).length;

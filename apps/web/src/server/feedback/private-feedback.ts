@@ -158,6 +158,19 @@ export async function listFeedback(userId: string): Promise<FeedbackListResponse
   return { feedback: rows.map(recordToApi) };
 }
 
+export async function suppressedFeedbackIds(userId: string, entityType: FeedbackEntityTypeValue, ids?: string[]): Promise<string[]> {
+  const feedback = await getDb().discoveryFeedback.findMany({
+    where: {
+      userId,
+      entityType: entityToDb[entityType],
+      ...(ids ? { entityId: { in: ids } } : {}),
+      signal: { in: [...suppressingSignals] },
+    },
+    select: { entityId: true },
+  });
+  return feedback.map((row) => row.entityId);
+}
+
 export async function suppressPrivateFeedback<T>(
   entityType: FeedbackEntityTypeValue,
   items: T[],
@@ -166,18 +179,6 @@ export async function suppressPrivateFeedback<T>(
   if (!items.length) return items;
   const user = await getCurrentUser();
   if (!user) return items;
-
-  const ids = items.map(getId);
-  const feedback = await getDb().discoveryFeedback.findMany({
-    where: {
-      userId: user.id,
-      entityType: entityToDb[entityType],
-      entityId: { in: ids },
-      signal: { in: [...suppressingSignals] },
-    },
-    select: { entityId: true },
-  });
-  if (!feedback.length) return items;
-  const suppressed = new Set(feedback.map((row) => row.entityId));
+  const suppressed = new Set(await suppressedFeedbackIds(user.id, entityType, items.map(getId)));
   return items.filter((item) => !suppressed.has(getId(item)));
 }

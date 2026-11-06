@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 import type { ApiError, ApiSuccess, DigestFrequencyValue, NotificationPreferencesResponse } from "@/lib/api-contracts";
 import styles from "./page.module.css";
 
@@ -51,9 +52,30 @@ export function NotificationPreferences() {
         throw new Error(body.success ? "Notification preferences could not be saved." : body.error.message);
       }
       setPreferences(body.data);
-      setNotice(digestFrequency === "off" ? "Weekly digest preference turned off." : body.data.deliveryAvailable ? "Weekly digest preference saved." : "Preference saved. Email delivery will begin after platform activation.");
+      setNotice(digestFrequency === "off" ? "Weekly digest preference turned off." : "Weekly digest preference saved.");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Notification preferences could not be saved.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function requestVerification() {
+    setSaving(true);
+    setError(null);
+    setNotice("");
+    try {
+      const session = await authClient.getSession();
+      const email = session.data?.user.email;
+      if (!email) throw new Error("Sign in again to verify your email.");
+      const result = await authClient.sendVerificationEmail({
+        email,
+        callbackURL: new URL("/settings/privacy", window.location.origin).href,
+      });
+      if (result.error) throw new Error(result.error.message || "Could not request verification.");
+      setNotice("Verification requested. Check your inbox and spam folder.");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Could not request verification.");
     } finally {
       setSaving(false);
     }
@@ -68,7 +90,10 @@ export function NotificationPreferences() {
           A single weekly email summarizing new positions and grants matched to your scientific profile.
           No engagement pressure, no daily noise — you can turn it off at any time.
         </p>
-        {preferences && !preferences.deliveryAvailable ? <p role="status">Email delivery is awaiting platform activation. You can save your preference now and review opportunities in your workspace. <Link href="/opportunities">Browse opportunities →</Link></p> : null}
+        {preferences && !preferences.deliveryAvailable ? <p role="status">Weekly email delivery is awaiting platform activation. You can review deadline reminders in <Link href="/opportunities/saved">your saved opportunities</Link>.</p> : null}
+        {preferences?.verificationAvailable && !preferences.emailVerified && preferences.digestFrequency === "weekly" ? (
+          <p>Verify your account email to receive the weekly digest. <button type="button" className="secondary" disabled={saving} onClick={() => void requestVerification()}>Verify email</button></p>
+        ) : null}
         {notice ? <p role="status">{notice}</p> : null}
         {preferences?.lastDigestSentAt ? (
           <p className={styles.activityNote}>

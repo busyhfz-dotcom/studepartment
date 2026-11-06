@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Browse positions and grants",
+  alternates: { canonical: "/start" },
   description:
     "Browse medical research positions and grants on Provenant. No account needed to start.",
 };
