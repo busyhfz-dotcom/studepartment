@@ -26,7 +26,7 @@ function targetLabel(target?: ResearchAssistantTarget) {
   return "Opportunity-focused context";
 }
 
-export function ResearchAssistantWorkspace({ target, aiAvailable = true, identityHref = "/onboarding" }: { target?: ResearchAssistantTarget; aiAvailable?: boolean; identityHref?: string }) {
+export function ResearchAssistantWorkspace({ target, aiAvailable = false, aiProvider = "Gemini", identityHref = "/onboarding" }: { target?: ResearchAssistantTarget; aiAvailable?: boolean; aiProvider?: "Gemini" | "OpenAI"; identityHref?: string }) {
   const [question, setQuestion] = useState(
     target?.type === "institution"
       ? "How does this institution overlap with my Scientific Identity, and what should I review before deciding whether to pursue its researchers or opportunities?"
@@ -36,6 +36,7 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = true, identit
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [needsIdentity, setNeedsIdentity] = useState(false);
+  const [allowExternalAI, setAllowExternalAI] = useState(false);
 
   const canSubmit = question.trim().length >= 8 && !loading;
   const ledgerLabel = useMemo(() => targetLabel(target), [target]);
@@ -57,6 +58,7 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = true, identit
         cache: "no-store",
         body: JSON.stringify({
           question: question.trim(),
+          allowExternalAI: aiAvailable && allowExternalAI,
           ...(target ? { target } : {}),
         }),
       });
@@ -98,10 +100,16 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = true, identit
             rows={6}
             value={question}
           />
+          {aiAvailable ? (
+            <label className={styles.aiConsent}>
+              <input type="checkbox" checked={allowExternalAI} disabled={loading} onChange={(event) => setAllowExternalAI(event.target.checked)} />
+              <span>Use {aiProvider} to analyse my question and matching public research records. Private profile details and uploaded files stay within Provenant.{aiProvider === "Gemini" ? " Google may use free-tier requests to improve its products. Do not include confidential or patient information in your question." : ""}</span>
+            </label>
+          ) : null}
           <div className={styles.composerFooter}>
             <span>{question.length}/1200</span>
             <button className="primaryButton" disabled={!canSubmit} type="submit">
-              {loading ? "Reviewing evidence…" : aiAvailable ? "Ask Research Assistant" : "Review available evidence"}
+              {loading ? "Reviewing evidence…" : aiAvailable && allowExternalAI ? `Ask with ${aiProvider}` : "Review available evidence"}
             </button>
           </div>
         </form>
@@ -120,7 +128,7 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = true, identit
       <section className={styles.privacyNote}>
         <strong>Provider boundary</strong>
         <p>
-          {aiAvailable ? "Your question and the Provenant sources shown here are sent to our AI provider. We ask the provider not to store them, and the assistant does not browse the web." : "For now, the assistant summarizes matching Provenant records with links to their sources. AI-written answers will be switched on later. Your question stays within Provenant."}
+          {aiAvailable ? `AI analysis is optional and uses ${aiProvider}. Without the checkbox, your question stays within Provenant and receives a structured evidence review. AI answers use matching public records and do not browse the web.` : "The assistant summarizes matching Provenant records with links to their sources. Your question stays within Provenant."}
         </p>
       </section>
 

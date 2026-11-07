@@ -6,6 +6,7 @@ import { ProPreviewNotice } from "@/components/billing/pro-preview-notice";
 import { canUseProFeature, getCurrentUser } from "@/server/auth/current-user";
 import styles from "./page.module.css";
 import { redirect } from "next/navigation";
+import { researchAssistantProvider } from "@/server/assistant/provider";
 
 function targetFromSearch(searchParams: {
   institution?: string;
@@ -45,7 +46,7 @@ export default async function ResearchAssistantPage({
             Ask about scientific fit, current opportunities, researchers or institutions. Answers draw only on the Provenant records selected for your question, and cite each one they use.
           </p>
         </header>
-        <ResearchAssistantWorkspace target={target} aiAvailable={Boolean(process.env.OPENAI_API_KEY?.trim())} identityHref={accountKind === "institution" ? "/onboarding/organization" : "/onboarding"} />
+        <ResearchAssistantWorkspace target={target} aiAvailable={Boolean(researchAssistantProvider())} aiProvider={researchAssistantProvider() === "gemini" ? "Gemini" : "OpenAI"} identityHref={accountKind === "institution" ? "/onboarding/organization" : "/onboarding"} />
       </div>
     </ProductShell>
   );

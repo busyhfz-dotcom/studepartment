@@ -20,7 +20,7 @@ export default function PrivacyPage() {
       <h2>What we collect</h2>
       <ul>
         <li><strong>Account data:</strong> your name, email address and a securely hashed password. Organization accounts also store the representative&apos;s name.</li>
-        <li><strong>Scientific Identity:</strong> what you add to your profile, such as career stage, country, research topics, methods, affiliations, publications and links. If you connect ORCID, we import only the records you consent to.</li>
+        <li><strong>Scientific Identity:</strong> what you add to your profile, such as career stage, country, research topics, methods, affiliations, publications and links. An ORCID link is optional and entered by you; adding it does not authorize automatic import.</li>
         <li><strong>Files:</strong> documents you upload (for example a CV or certificate), stored in private object storage.</li>
         <li><strong>Workspace activity:</strong> saved opportunities, application stages and private notes, introduction requests and replies, and private feedback on results.</li>
         <li><strong>Search text:</strong> when you are signed in, the text of your searches is used to adjust your research-interest weights. The raw text is deleted after {SEARCH_LOG_RETENTION_DAYS} days.</li>
@@ -44,10 +44,11 @@ export default function PrivacyPage() {
 
       <h2>Services that process data for us</h2>
       <ul>
-        <li><strong>Railway:</strong> application hosting, database and private file storage (EU West region).</li>
-        <li><strong>Resend:</strong> delivery of account and notification emails.</li>
-        <li><strong>OpenAI:</strong> semantic search over the text you search for, and Research Assistant answers when you use that feature. The Assistant receives your question plus the relevant Provenant evidence.</li>
-        <li><strong>ORCID and NCBI PubMed:</strong> sources of publication and identity records that you choose to connect or import.</li>
+        <li><strong>Render and Neon:</strong> current application hosting, database and private file storage.</li>
+        <li><strong>Resend:</strong> delivery of account and notification emails when email delivery is enabled.</li>
+        <li><strong>Google Gemini:</strong> optional Research Assistant analysis when enabled. Only after you select the AI checkbox, your question and matching public research records are sent to Google. Private profile details and uploaded files are excluded. Google may use free-tier requests to improve its products; see <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer">Google&apos;s Gemini API terms</a>. Keep confidential and patient information out of questions.</li>
+        <li><strong>OpenAI:</strong> semantic search when configured, and optional Research Assistant analysis on deployments using OpenAI. The assistant identifies its provider before you consent.</li>
+        <li><strong>ORCID and NCBI PubMed:</strong> external research services linked from your profile and sources of public publication records.</li>
       </ul>
 
       <h2>Your controls</h2>
@@ -56,6 +57,7 @@ export default function PrivacyPage() {
         <li><strong>Delete:</strong> permanently delete your account and owned Scientific Identity from the same page.</li>
         <li><strong>Correct:</strong> edit your Scientific Identity at any time.</li>
         <li><strong>Email preferences:</strong> switch the weekly digest off at any time.</li>
+        <li><strong>AI analysis:</strong> leave the AI checkbox off to review matching evidence within Provenant without sending your question to an AI provider.</li>
       </ul>
       <p>
         Depending on where you live, you may also have the right to object to or restrict processing, and to complain

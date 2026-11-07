@@ -646,6 +646,7 @@ export type ResearchAssistantTarget = {
 
 export type ResearchAssistantRequest = {
   question: string;
+  allowExternalAI?: boolean;
   target?: ResearchAssistantTarget;
 };
 

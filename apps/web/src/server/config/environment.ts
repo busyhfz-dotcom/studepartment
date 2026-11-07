@@ -85,7 +85,7 @@ export function integrationConfiguration() {
     orcid: false,
     pubmed: Boolean(process.env.NCBI_EUTILS_EMAIL?.trim()),
     semanticRetrieval: Boolean(process.env.OPENAI_API_KEY?.trim()),
-    researchAssistant: Boolean(process.env.OPENAI_API_KEY?.trim()),
+    researchAssistant: Boolean(process.env.GEMINI_API_KEY?.trim() || process.env.OPENAI_API_KEY?.trim()),
     opportunityIngestion: Boolean(process.env.OPPORTUNITY_INGEST_TOKEN?.trim()),
     weeklyDigestJob: Boolean(process.env.DIGEST_JOB_TOKEN?.trim()) || process.env.EMAIL_DIGEST_ENABLED === "true",
     emailDelivery: Boolean(process.env.RESEND_API_KEY?.trim() && process.env.DIGEST_FROM_EMAIL?.trim()),

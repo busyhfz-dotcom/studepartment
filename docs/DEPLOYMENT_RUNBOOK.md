@@ -123,11 +123,15 @@ The product must never claim hybrid/vector retrieval when the semantic provider/
 
 ## 9. Research Assistant
 
-If OPENAI_API_KEY is absent, the Research Assistant returns an explicit not-configured response. It does not fall back to ungrounded model output.
+Set GEMINI_API_KEY directly in the Render service's private Environment settings. Never commit or paste the key into chat. GEMINI_ASSISTANT_MODEL defaults to gemini-3.1-flash-lite, a stable model with a free tier documented by Google when this integration was added. Confirm current model availability and project quotas in Google AI Studio before activation. No paid plan or billing upgrade is required by this implementation, and it never enables billing or changes provider plans.
 
-OPENAI_ASSISTANT_MODEL controls the synthesis model. The repository default is gpt-5.6-luna.
+Gemini takes priority when configured. Existing OpenAI-only deployments continue to use OPENAI_ASSISTANT_MODEL; a failed Gemini request never switches to OpenAI. Gemini does not enable discovery embeddings. With no provider key, the assistant returns a clearly labelled structured evidence review.
 
-The assistant sends only the authenticated user's request-specific Provenant source ledger and question to the provider, requests store=false, and does not enable external web browsing.
+The checkbox is off by default, and the API also requires allowExternalAI=true. Without consent, no provider request occurs. With consent, the provider receives only the question and matching public source records. The user's private identity, private publication associations, private researcher target, uploads, internal entity IDs and source URLs are excluded. Retrieval can still use the user's profile locally. Questions themselves can contain personal information: the UI explicitly asks users to leave confidential and patient data out. Google may use free-tier requests to improve its products; unlike OpenAI store=false, Gemini has no equivalent retention guarantee, and the UI makes no such promise. See https://ai.google.dev/gemini-api/docs/pricing and https://ai.google.dev/gemini-api/terms.
+
+ASSISTANT_DAILY_REQUEST_LIMIT defaults to 50 across all users, with 5 calls/minute across the service and 20/day per user. Set the daily value to 0 for the kill switch (invalid values also disable calls). Caps use atomic database-backed counters and UTC bucket keys, so concurrent workers share the allowance. Failed calls count toward it; there are no automatic retries. Set the cap below the actual Google project quota. This request cap bounds usage but is not a provider-side dollar budget or a promise of unlimited free service.
+
+Provider timeout is 25 seconds, output is capped at 1800 tokens, and there is no external browsing or tool execution. Incomplete, blocked, empty, failed, rate-limited or invalidly cited responses fall back to a labelled structured evidence review. Provider error bodies and credentials are never exposed.
 
 Verify in staging that:
 

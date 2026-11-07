@@ -16,6 +16,7 @@ export class ResearchAssistantContextError extends Error {
 type ContextResult = {
   context: string;
   citations: ResearchAssistantCitation[];
+  publicCitations: ResearchAssistantCitation[];
   target?: ResearchAssistantTarget;
   limitations: string[];
 };
@@ -88,10 +89,12 @@ export async function buildResearchAssistantContext(
   }
 
   const citations: ResearchAssistantCitation[] = [];
-  function add(citation: Omit<ResearchAssistantCitation, "id">) {
+  const publicCitations: ResearchAssistantCitation[] = [];
+  function add(citation: Omit<ResearchAssistantCitation, "id">, allowExternal = true) {
     if (citations.length >= 28) return null;
     const full = { id: "S" + (citations.length + 1), ...citation };
     citations.push(full);
+    if (allowExternal) publicCitations.push(full);
     return full.id;
   }
 
@@ -115,12 +118,12 @@ export async function buildResearchAssistantContext(
       profile.collaborationGoals.length ? "Collaboration goals: " + profile.collaborationGoals.join(", ") + "." : "",
       "Availability: " + profile.availabilityMode.toLowerCase() + ".",
     ].filter(Boolean).join(" "),
-  });
+  }, false);
 
   if (organization) add({
     type: "institution", label: organization.name, evidence: organization.verified ? "verified" : "asserted", href: "/organization/profile",
     detail: [`Organization type: ${organization.type.toLowerCase().replaceAll("_", " ")}.`, organization.countryCode ? `Country: ${organization.countryCode}.` : "", organization.description ?? "No research description is recorded."].filter(Boolean).join(" "),
-  });
+  }, false);
 
   for (const relation of profile?.publications ?? []) {
     const publication = relation.publication;
@@ -136,7 +139,7 @@ export async function buildResearchAssistantContext(
         publication.doi ? "DOI: " + publication.doi + "." : "",
         "Authorship evidence: " + relation.evidenceLevel.toLowerCase().replaceAll("_", " ") + ".",
       ].filter(Boolean).join(" "),
-    });
+    }, Boolean(profile?.profilePublic));
   }
 
   if (target?.type === "institution") {
@@ -200,7 +203,7 @@ export async function buildResearchAssistantContext(
         researcher.methods.length ? "Methods: " + researcher.methods.map((item) => item.method.name).join(", ") + "." : "",
         researcher.collaborationGoals.length ? "Collaboration goals: " + researcher.collaborationGoals.join(", ") + "." : "",
       ].filter(Boolean).join(" "),
-    });
+    }, researcher.profilePublic);
   }
 
   if (target?.type === "opportunity") {
@@ -347,6 +350,7 @@ export async function buildResearchAssistantContext(
   return {
     context: citations.map(sourceLine).join("\n"),
     citations,
+    publicCitations,
     target,
     limitations: [
       "The assistant only receives the canonical Provenant context listed in the source ledger for this request.",
