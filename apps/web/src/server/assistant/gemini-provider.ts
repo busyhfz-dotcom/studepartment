@@ -29,6 +29,7 @@ export async function generateGeminiResearchAnswer(args: { instructions: string;
       signal: controller.signal,
     });
     if (!response.ok) {
+      console.warn("Gemini request rejected", { httpStatus: response.status });
       throw new ResearchAssistantUpstreamError(response.status === 429
         ? "Gemini has reached its current request limit. Try again later."
         : "Gemini is temporarily unavailable.");
@@ -39,6 +40,7 @@ export async function generateGeminiResearchAnswer(args: { instructions: string;
     };
     const candidate = payload.candidates?.[0];
     if (payload.promptFeedback?.blockReason || candidate?.finishReason !== "STOP") {
+      console.warn("Gemini response incomplete", { blocked: Boolean(payload.promptFeedback?.blockReason), completed: candidate?.finishReason === "STOP" });
       throw new ResearchAssistantUpstreamError("Gemini did not return a complete research answer.");
     }
     const answer = candidate.content?.parts?.filter((part) => !part.thought && typeof part.text === "string")
@@ -47,6 +49,7 @@ export async function generateGeminiResearchAnswer(args: { instructions: string;
     return { answer, model };
   } catch (error) {
     if (error instanceof ResearchAssistantUpstreamError) throw error;
+    console.warn("Gemini transport failed", { timedOut: controller.signal.aborted });
     // Never expose the upstream body, headers, key or transport exception to the client/logs.
     throw new ResearchAssistantUpstreamError(controller.signal.aborted
       ? "Gemini took too long to respond. Try again later."
