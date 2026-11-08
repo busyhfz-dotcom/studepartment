@@ -11,6 +11,7 @@ import { suppressedFeedbackIds } from "@/server/feedback/private-feedback";
 import { opportunityPagination } from "@/lib/opportunity-pagination";
 import { searchTerms } from "./search-terms";
 import { careerStageFilterSlugs } from "./career-stage";
+import { mdPhdAudienceWhere } from './audience';
 import { getTopInterestTopicSlugs, recordSearchAndUpdateInterest } from "@/server/personalization/interest-signals";
 
 const typeToDb = {
@@ -270,6 +271,10 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
       gte: now,
       lte: new Date(now.getTime() + query.deadlineWithinDays * 86_400_000),
     };
+  }
+
+  if(query.audience==='md-phd') {
+    where.AND=[...(Array.isArray(where.AND)?where.AND:where.AND?[where.AND]:[]),mdPhdAudienceWhere()];
   }
 
   // Every search term must appear somewhere in the listing, so a search over

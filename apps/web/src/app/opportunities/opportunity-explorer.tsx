@@ -42,7 +42,7 @@ const careerStageOptions: Array<{ value: "" | OpportunityCareerStage; label: str
 
 const topicOptions = [{ value: "", label: "All research topics" }, ...researchTopics.map(([value, label]) => ({ value, label }))];
 
-const filterKeys = ["q", "type", "topic", "country", "deadlineWithinDays", "career", "funder", "sourceRecordId", "eligibilityCountry"] as const;
+const filterKeys = ["q", "type", "topic", "country", "deadlineWithinDays", "career", "funder", "sourceRecordId", "eligibilityCountry", "audience"] as const;
 type FilterKey = (typeof filterKeys)[number] | "sort";
 type SearchFilters = Record<FilterKey, string>;
 
@@ -57,6 +57,7 @@ function readFilters(params: URLSearchParams): SearchFilters {
     funder: params.get("funder") ?? "",
     sourceRecordId: params.get("sourceRecordId") ?? "",
     eligibilityCountry: params.get("eligibilityCountry") ?? "",
+    audience: params.get("audience") === "md-phd" ? "md-phd" : "",
     sort: readOpportunitySort(params.get("sort")),
   };
 }
@@ -168,6 +169,13 @@ export function OpportunityExplorer() {
           </div>
 
           <div className={styles.filterGrid}>
+            <label>
+              <span>Research pathway</span>
+              <select name="audience" value={filters.audience} onChange={(event) => changeFilter("audience", event.target.value)}>
+                <option value="">All research pathways</option>
+                <option value="md-phd">MD-PhD scholarships &amp; fellowships</option>
+              </select>
+            </label>
             <label>
               <span>Type</span>
               <select name="type" onChange={(event) => changeFilter("type", event.target.value)} value={filters.type}>

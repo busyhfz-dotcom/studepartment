@@ -4,19 +4,13 @@ import { StartFlow } from "./start-flow-client";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Browse positions and grants",
+  title: "Research opportunities and institutional hiring",
   alternates: { canonical: "/start" },
   description:
-    "Browse medical research positions and grants on Provenant. No account needed to start.",
+    "Explore scholarships, research positions and funding, or introduce your institution’s next research opportunity. Browse Provenant without an account.",
 };
 
-/**
- * Public researcher entry flow, ported from the "Entry flow concept" design
- * file. Same journey (choose → explore → review → next step) and visual
- * language as the concept, but backed by the real, live opportunity feed via
- * /api/v1/opportunities instead of the concept's illustrative sample data,
- * and routed through the site's real sign-up/onboarding URLs.
- */
+/** Two public entry routes, backed by the live opportunity feed and institutional workspace. */
 export default function StartPage() {
   return <StartFlow />;
 }

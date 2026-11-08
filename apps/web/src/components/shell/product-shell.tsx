@@ -25,6 +25,7 @@ const workspaceItems: NavItem[] = [
   { href: "/opportunities", label: "Opportunities", description: "Positions, fellowships, grants", icon: "opportunity" },
   { href: "/opportunities?type=masters-scholarship", label: "Master’s scholarships", description: "Funding for a master’s degree", icon: "opportunity" },
   { href: "/opportunities?type=phd-scholarship", label: "PhD scholarships", description: "Doctoral scholarships and studentships", icon: "opportunity" },
+  { href: "/opportunities?audience=md-phd", label: "MD-PhD funding", description: "Dual-degree scholarships and fellowships", icon: "opportunity" },
   { href: "/introductions", label: "Introductions", description: "Meet the right researchers", icon: "introduction" },
   { href: "/scanner", label: "Scanner", description: "Trusted job & funding databases", icon: "scanner" },
   { href: "/conferences", label: "Conferences", description: "Venue checks and CME credit", icon: "conference" },

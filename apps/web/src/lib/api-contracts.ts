@@ -346,6 +346,7 @@ export type OpportunitySourceTypeValue =
   | "import";
 
 export type OpportunityQuery = {
+  audience?: 'md-phd';
   id?: string;
   text: string;
   types: OpportunityTypeValue[];
