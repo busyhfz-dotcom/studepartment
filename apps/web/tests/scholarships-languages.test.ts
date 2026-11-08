@@ -3,7 +3,8 @@ import test from 'node:test';
 import { scholarshipDegrees,parseDaadDataset,daadScholarshipRecords,daadDoctoralRecords } from '../src/server/opportunities/sources/scholarships';
 import { parseOpportunityQuery } from '../src/server/opportunities/query';
 import { selectInterfaceMessages,interfaceMessages } from '../src/lib/i18n/catalog';
-import { languageCodes,supportedLanguage,languageDirection } from '../src/lib/i18n/languages';
+import { languageCodes,supportedLanguage,languageDirection,languageName } from '../src/lib/i18n/languages';
+import { reviewedTranslation } from '../src/lib/i18n/reviewed';
 
 test('degree scholarships have separate search types from grants and salaried doctoral positions',()=>{
   assert.deepEqual(parseOpportunityQuery(new URLSearchParams('type=masters-scholarship&type=phd-scholarship')).types,['masters-scholarship','phd-scholarship']);
@@ -52,7 +53,12 @@ test('translation requests accept only predefined public labels, never arbitrary
 });
 test('language defaults, ISO language choices and right-to-left scripts are explicit',()=>{
   assert.equal(new Set(languageCodes).size,languageCodes.length);
-  assert.ok(languageCodes.length>=180);
+  assert.equal(languageCodes.length,25);
+  assert.equal(supportedLanguage('aa'),false);
+  assert.equal(languageName('es',false),'Spanish');
+  assert.equal(languageName('es'),'Español');
+  for(const code of languageCodes)assert.ok(languageName(code,false).length>2);
+  assert.equal(reviewedTranslation('fa','What are you looking for today?'),'امروز به دنبال چه فرصتی هستید؟');
   assert.equal(supportedLanguage('en'),true);
   assert.equal(languageDirection('fa'),'rtl');assert.equal(languageDirection('ar'),'rtl');assert.equal(languageDirection('fr'),'ltr');
 });

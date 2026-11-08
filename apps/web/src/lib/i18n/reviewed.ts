@@ -1,0 +1,47 @@
+// Carefully worded entrance labels take precedence over generated translations.
+const persian: Record<string, string> = {
+  'Main site': 'سایت اصلی',
+  'Join free': 'عضویت رایگان',
+  'Welcome': 'خوش آمدید',
+  'Choose': 'انتخاب',
+  'Explore': 'جست‌وجو',
+  'Review': 'بررسی',
+  'Next step': 'گام بعدی',
+  'What are you looking for today?': 'امروز به دنبال چه فرصتی هستید؟',
+  "Choose a path to start browsing. You don't need an account.": 'مسیر موردنظرتان را انتخاب کنید. برای جست‌وجو نیازی به حساب کاربری ندارید.',
+  '01 / Research roles': '۰۱ / موقعیت‌های پژوهشی',
+  '02 / Funding calls': '۰۲ / گرنت‌های پژوهشی',
+  '03 / Degree funding': '۰۳ / بورسیهٔ کارشناسی ارشد',
+  '04 / Degree funding': '۰۴ / بورسیهٔ دکتری',
+  'Find a position': 'یافتن موقعیت پژوهشی',
+  'Find a grant': 'یافتن گرنت پژوهشی',
+  'Find a Master’s scholarship': 'یافتن بورسیهٔ کارشناسی ارشد',
+  'Find a PhD scholarship': 'یافتن بورسیهٔ دکتری',
+  'PhD · postdoc · fellowships · research roles': 'دکتری، پسادکتری، فلوشیپ و فرصت‌های پژوهشی',
+  'Funding for your next research project': 'تأمین مالی پروژهٔ پژوهشی بعدی شما',
+  'Scholarships for taught and research master’s degrees': 'بورسیه‌های دوره‌های آموزشی و پژوهشی کارشناسی ارشد',
+  'Doctoral scholarships and funded studentships': 'بورسیه‌ها و فرصت‌های تحصیلی دارای حمایت مالی در مقطع دکتری',
+  'Browse positions': 'مشاهدهٔ موقعیت‌ها',
+  'Browse grants': 'مشاهدهٔ گرنت‌ها',
+  'Browse scholarships': 'مشاهدهٔ بورسیه‌ها',
+  'Browse freely. Sign up only when you want to save or follow up.': 'آزادانه جست‌وجو کنید؛ فقط برای ذخیره و پیگیری فرصت‌ها ثبت‌نام کنید.',
+  'View the full site ↗': 'مشاهدهٔ سایت اصلی ↗',
+  'For labs and institutions: post an opportunity ↗': 'برای آزمایشگاه‌ها و مؤسسه‌ها: انتشار فرصت ↗',
+  'Provenant · medical research, worldwide': 'Provenant · پژوهش پزشکی، در سراسر جهان',
+  'Open the full opportunity search ↗': 'جست‌وجوی همهٔ فرصت‌ها ↗',
+  'Terms': 'شرایط استفاده',
+  'Privacy': 'حریم خصوصی',
+  'Master’s scholarships': 'بورسیه‌های کارشناسی ارشد',
+  'PhD scholarships': 'بورسیه‌های دکتری',
+  'Any location': 'همهٔ کشورها',
+};
+const spanish: Record<string, string> = {
+  'What are you looking for today?': '¿Qué estás buscando hoy?',
+  'Find a position': 'Encontrar un puesto',
+  'Find a grant': 'Encontrar una subvención',
+  'Find a Master’s scholarship': 'Encontrar una beca de máster',
+  'Find a PhD scholarship': 'Encontrar una beca de doctorado',
+};
+export function reviewedTranslation(locale: string, original: string): string | undefined {
+  return (locale === 'fa' ? persian : locale === 'es' ? spanish : undefined)?.[original];
+}

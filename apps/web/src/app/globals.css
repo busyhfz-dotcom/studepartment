@@ -589,3 +589,9 @@ h1 {
 /* Keep identifiers and documents in their original writing direction. */
 html[dir="rtl"] input[type="email"],html[dir="rtl"] input[type="url"],html[dir="rtl"] code{direction:ltr;text-align:left}
 [data-original-content]{unicode-bidi:plaintext}
+
+@font-face{font-family:'Provenant Nazanin';src:local('B Nazanin'),local('BNazanin'),url('/fonts/b-nazanin.woff') format('woff');font-weight:400;font-style:normal;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
+html[lang="fa"] body{--font-sans:'Provenant Nazanin','B Nazanin',Tahoma,Arial,sans-serif;font-family:var(--font-sans);line-height:1.65}
+html[lang="fa"] body :is(h1,h2,h3,h4,p,button,a,label,input,textarea,select,span){letter-spacing:normal}
+html[lang="fa"] body :is(h1,h2,h3,h4){line-height:1.35}
+[lang="fa"]{font-family:'Provenant Nazanin','B Nazanin',Tahoma,Arial,sans-serif}

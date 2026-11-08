@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { languageCodes, languageDirection, languageName, supportedLanguage } from '@/lib/i18n/languages';
+import { reviewedTranslation } from '@/lib/i18n/reviewed';
 import styles from './language.module.css';
 
 type LanguageState = { locale:string; setLocale:(locale:string)=>void; status:'ready'|'loading'|'unavailable' };
@@ -30,7 +31,7 @@ export function LanguageProvider({children}:{children:ReactNode}) {
     void import('@/lib/i18n/ui-catalog.json').then(async module=>{
       const entries=Object.entries(module.default);
       const byText=new Map(entries.map(([key,text])=>[text,key]));
-      const translations:Record<string,string>={};
+      const translations:Record<string,string>=Object.fromEntries(entries.flatMap(([key,text])=>{const translated=reviewedTranslation(locale,text);return translated?[[key,translated]]:[];}));
       const failed=new Set<string>();
       const normalize=(text:string)=>text.replace(/\s+/g,' ').trim();
       async function scan() {
@@ -90,7 +91,7 @@ export function LanguageProvider({children}:{children:ReactNode}) {
     });
     return ()=>{stopped=true;controller.abort();clearTimeout(timer);observer?.disconnect();for(const [node,value] of originals)if(node.isConnected && node.data===value.displayed)node.data=value.original;for(const [element,attributes]of originalAttributes)for(const [name,value]of attributes)if(element.isConnected&&element.getAttribute(name)===value.displayed)element.setAttribute(name,value.original);};
   },[locale]);
-  return <LanguageContext.Provider value={{locale,setLocale,status}}>{children}<LanguagePicker floating />{locale!=='en' && <div data-no-translate className={styles.notice} role="status" dir="ltr">{status==='loading'?'Preparing automatic translation…':status==='unavailable'?'Some labels remain in English. Translation is temporarily unavailable.':'Automatic interface translation · original listings unchanged'}</div>}</LanguageContext.Provider>;
+  return <LanguageContext.Provider value={{locale,setLocale,status}}>{children}<LanguagePicker floating /></LanguageContext.Provider>;
 }
 
 export function LanguagePicker({floating=false}:{floating?:boolean}) {
@@ -112,7 +113,7 @@ export function LanguagePicker({floating=false}:{floating?:boolean}) {
     <button ref={button} type="button" className={styles.trigger} aria-label={`Change language, current language ${languageName(locale,false)}`} aria-expanded={open} aria-haspopup="dialog" onClick={()=>{setQuery('');setOpen(!open);}}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 7h14M5 17h14"/></svg><span>{locale.toUpperCase()}</span></button>
     {open && createPortal(<div data-language-picker data-no-translate ref={panel} role="dialog" aria-label="Choose interface language" className={styles.panel} dir="ltr" onKeyDown={event=>{if(event.key==='Escape'){setOpen(false);button.current?.focus();}}}>
       <strong>Choose language</strong><input ref={search} aria-label="Search languages" placeholder="Search languages…" value={query} onChange={event=>setQuery(event.target.value)}/>
-      <div className={styles.options}>{choices.map(code=><button type="button" key={code} aria-pressed={locale===code} onClick={()=>{setLocale(code);setOpen(false);button.current?.focus();}}><span>{languageName(code)}<small>{languageName(code,false)}</small></span><b>{code.toUpperCase()}</b></button>)}</div>
+      <div className={styles.options}>{choices.map(code=><button type="button" key={code} aria-pressed={locale===code} onClick={()=>{setLocale(code);setOpen(false);button.current?.focus();}}><span lang="en">{languageName(code,false)}<small lang={code} dir="auto">{languageName(code)}</small></span><b>{code.toUpperCase()}</b></button>)}</div>
       <p>{locale==='en'?'English is the original interface.':status==='loading'?'Preparing automatic translation…':status==='unavailable'?'Translation is temporarily unavailable; original English is shown for missing labels.':'Automatic translation. Original listings and documents stay unchanged.'}</p>
     </div>,document.body)}
   </div>;
