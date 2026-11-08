@@ -1,4 +1,12 @@
+import type { OpportunityResult } from '@/lib/api-contracts';
 export type EntryKind = 'position' | 'grant' | 'masters-scholarship' | 'phd-scholarship' | 'md-phd-scholarship';
+export function entryDeadlineLabel(item:Pick<OpportunityResult,'deadline'|'deadlinePrecision'>,locale?:string):string {
+  if(!item.deadline)return item.deadlinePrecision==='rolling'?'Rolling deadline':'Deadline on the listing';
+  const date=new Date(item.deadline);
+  if(Number.isNaN(date.getTime()))return 'See source for deadline';
+  const dateOnly=item.deadlinePrecision==='date-only'||item.deadlinePrecision==='month-only';
+  return date.toLocaleDateString(locale,{month:'short',year:'numeric',...(item.deadlinePrecision==='month-only'?{}:{day:'numeric'}),...(dateOnly?{timeZone:'UTC'}:{})});
+}
 export const entryLabels: Record<EntryKind, string> = {
   position: 'Research positions', grant: 'Grants for research leaders',
   'masters-scholarship': 'Master’s scholarships', 'phd-scholarship': 'PhD scholarships',

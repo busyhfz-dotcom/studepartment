@@ -1,5 +1,6 @@
 // Carefully worded entrance labels take precedence over generated translations.
 const persian: Record<string, string> = {
+  'opportunities': 'فرصت',
   'Not sure where to begin? Browse the source directories and compare the routes available to you.': 'برای انتخاب مسیر، منابع رسمی را بررسی کنید و فرصت‌های متناسب با شرایط خود را مقایسه کنید.',
   'Describe the role, the research and how to apply. An institutional profile helps candidates understand the team behind the opportunity. Laboratories, universities and other research institutions can manage their positions from one workspace.': 'شرح موقعیت، موضوع پژوهش و روش درخواست را مشخص کنید. پروفایل مؤسسه به متقاضیان کمک می‌کند تیم شما را بهتر بشناسند. آزمایشگاه‌ها، دانشگاه‌ها و دیگر مؤسسه‌های پژوهشی می‌توانند آگهی‌های خود را در یک فضای کاری مدیریت کنند.',
   'Introduce your institution and research focus.': 'مؤسسه و زمینه‌ی پژوهش خود را معرفی کنید.',
@@ -14,13 +15,13 @@ const persian: Record<string, string> = {
   'Explore institutional training through T32 ↗': 'بررسی آموزش مؤسسه‌ای T32 ↗',
   'Research careers & funding': 'مسیرهای پژوهشی و تأمین مالی',
   'Your next chapter in research.': 'گام بعدی شما در مسیر پژوهش',
-  'Discover an opportunity that moves your work forward, or find the people who will shape your next project.': 'فرصتی برای پیشبرد پژوهش خود بیابید یا پژوهشگران مناسب را به تیم خود دعوت کنید.',
+  'Discover an opportunity that moves your work forward, or find the people who will shape your next project.': 'فرصت پژوهشی مناسب خود یا پژوهشگران آینده‌ی تیم‌تان را بیابید.',
   'For researchers & future researchers': 'برای پژوهشگران و دانشجویان',
   'For laboratories & institutions': 'برای آزمایشگاه‌ها و مؤسسه‌ها',
-  'Find grant & position': 'یافتن گرنت و موقعیت پژوهشی',
+  'Find grant & position': 'گرنت و موقعیت پژوهشی',
   'Post a position': 'انتشار موقعیت پژوهشی',
-  'Explore scholarships, research funding and roles for every stage of your research career.': 'بورسیه‌ها، گرنت‌ها و موقعیت‌های متناسب با مراحل مختلف مسیر پژوهشی خود را بررسی کنید.',
-  'Introduce your research team and invite qualified researchers to become part of its next chapter.': 'تیم پژوهشی خود را معرفی کنید و از پژوهشگران واجد شرایط برای همکاری دعوت کنید.',
+  'Explore scholarships, research funding and roles for every stage of your research career.': 'بورسیه، گرنت و موقعیت پژوهشی متناسب با مسیر حرفه‌ای شما.',
+  'Introduce your research team and invite qualified researchers to become part of its next chapter.': 'تیم خود را معرفی و پژوهشگران واجد شرایط را به همکاری دعوت کنید.',
   'Explore opportunities': 'مشاهده‌ی فرصت‌ها',
   'Share an opportunity': 'معرفی فرصت پژوهشی',
   'Explore freely. Create an account when you are ready to save an opportunity or publish a position.': 'بدون ثبت‌نام جست‌وجو کنید. برای ذخیره‌ی فرصت‌ها یا انتشار موقعیت پژوهشی، حساب کاربری بسازید.',
@@ -86,6 +87,7 @@ const persian: Record<string, string> = {
   'Any location': 'همه‌ی کشورها',
 };
 const spanish: Record<string, string> = {
+  'opportunities': 'oportunidades',
   'Research careers & funding': 'Carreras de investigación y financiación',
   'Your next chapter in research.': 'Tu próxima etapa en la investigación.',
   'Discover an opportunity that moves your work forward, or find the people who will shape your next project.': 'Encuentra una oportunidad para avanzar en tu investigación o a las personas que darán forma a tu próximo proyecto.',

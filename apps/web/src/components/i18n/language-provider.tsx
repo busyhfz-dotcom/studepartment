@@ -21,7 +21,8 @@ export function LanguageProvider({children}:{children:ReactNode}) {
   useEffect(()=>{
     document.documentElement.lang=locale;
     document.documentElement.dir=languageDirection(locale);
-    try {localStorage.setItem(storageKey,locale);} catch {}
+    // setLocale persists explicit choices. Mounting with the server's English
+    // snapshot must not overwrite the stored language before hydration reads it.
     if(locale==='en') return;
     let stopped=false, running=false, unavailable=false, timer:ReturnType<typeof setTimeout>|undefined;
     const controller=new AbortController();
