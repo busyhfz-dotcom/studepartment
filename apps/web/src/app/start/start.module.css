@@ -487,3 +487,45 @@
   .topActions>a{flex:initial;font-weight:650}
 }
 @media(max-width:360px){.brand{font-size:14px;gap:6px}.mark{width:27px;height:27px}.topActions{gap:10px}.topbar{gap:8px}}
+
+/* Compact entrance choices retain a comfortable full-card touch target. */
+.welcome .stage{padding:10px 0 4px}
+.entryHead{margin-bottom:12px}
+.entryHead>div:first-child{height:64px;transform:scale(.4);margin-bottom:0}
+.entryHead h1{font-size:clamp(32px,3.4vw,48px);line-height:1.1;margin:8px auto;max-width:700px}
+.entryHead p{font-size:13px;line-height:1.6}
+.entryCards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:6px auto 16px}
+.choice,.choice:first-child{display:grid;grid-template-columns:minmax(0,1fr) 32px;grid-template-rows:auto auto auto;gap:5px 12px;min-height:118px;padding:14px 18px;text-align:start;border-radius:15px}
+.choice:nth-child(1){background:linear-gradient(120deg,#93b9fa,#b2ceff);border-color:#bbd4ff;color:#172b4c}
+.choice:nth-child(2){background:linear-gradient(120deg,#c4b0f1,#dfcafb);border-color:#e0d0ff;color:#32274e}
+.choice:nth-child(3){background:linear-gradient(120deg,#9cd9ce,#c1eadb);border-color:#c8eee1;color:#193e38}
+.choice:nth-child(4){background:linear-gradient(120deg,#e7c497,#f1dcba);border-color:#f4e1c3;color:#493620}
+.choice::after,.choice:first-child::after{width:140px;height:140px;bottom:-110px;opacity:.7}
+.choice .over,.choice:first-child .over{grid-column:1;color:inherit;font-size:8px;line-height:1.3}
+.over span:last-child{display:none}
+.choice strong{grid-column:1;margin:0;font-size:clamp(21px,2.1vw,27px);line-height:1.2;letter-spacing:-.035em}
+.choice small,.choice:first-child small{grid-column:1;margin:0;font-size:11px;line-height:1.45;color:inherit;opacity:.85}
+.choice .foot,.choice:first-child .foot{grid-column:2;grid-row:1/4;align-self:center;margin:0;padding:0}
+.foot>span:first-child{display:none}
+.foot>span:last-child{width:32px;height:32px}
+.entryFoot{padding:10px 0 14px;gap:8px}
+:global(html[lang="fa"]) .choice strong{font-size:29px;letter-spacing:normal;line-height:1.3}
+:global(html[lang="fa"]) .choice small{font-size:16px;line-height:1.4}
+:global(html[lang="fa"]) .over{font-size:12px;letter-spacing:normal}
+@media(max-height:760px){.entryHead>div:first-child{display:none}.entryHead h1{font-size:clamp(30px,3vw,42px)}.entryHead{margin-bottom:8px}}
+@media(max-width:540px){
+  .entryHead h1{font-size:32px;line-height:1.12;margin:8px auto}
+  .entryHead p{font-size:12px;max-width:320px}
+  .entryCards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .choice,.choice:first-child{grid-template-columns:minmax(0,1fr);min-height:142px;padding:12px;gap:6px;border-radius:13px}
+  .choice .over,.choice:first-child .over{font-size:7px;min-height:18px;letter-spacing:.03em}
+  .over span:last-child{display:grid;width:22px;height:22px;font-size:15px;border-radius:7px;flex-shrink:0}
+  .choice strong{font-size:18px;line-height:1.2;letter-spacing:-.025em}
+  .choice small,.choice:first-child small{font-size:10px;line-height:1.45;margin:0}
+  .choice .foot,.choice:first-child .foot{display:none}
+  :global(html[lang="fa"]) .choice strong{font-size:24px;line-height:1.2}
+  :global(html[lang="fa"]) .choice small{font-size:14px;line-height:1.3}
+  :global(html[lang="fa"]) .choice .over{font-size:10px;letter-spacing:normal}
+  .entryFoot{font-size:10px;line-height:1.5}
+  .entryFootLinks{gap:6px;flex-direction:row;flex-wrap:wrap}
+}

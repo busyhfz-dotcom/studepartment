@@ -223,7 +223,7 @@ function StartJourney() {
               <ResearchOrbit />
               <span className={styles.eyebrow}>Welcome</span>
               <h1 className={styles.serif}>
-                What are you looking for <em>today?</em>
+                What are you looking for today?
               </h1>
               <p>Choose a path to start browsing. You don&apos;t need an account.</p>
             </div>

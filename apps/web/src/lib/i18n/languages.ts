@@ -1,12 +1,34 @@
-// ISO 639-1 language choices. Labels are generated locally; no translation widget receives page content.
-const codes = 'aa ab ae af ak am an ar as av ay az ba be bg bh bi bm bn bo br bs ca ce ch co cr cs cu cv cy da de dv dz ee el en eo es et eu fa ff fi fj fo fr fy ga gd gl gn gu gv ha he hi ho hr ht hu hy hz ia id ie ig ii ik io is it iu ja jv ka kg ki kj kk kl km kn ko kr ks ku kv kw ky la lb lg li ln lo lt lu lv mg mh mi mk ml mn mr ms mt my na nb nd ne ng nl nn no nr nv ny oc oj om or os pa pi pl ps pt qu rm rn ro ru rw sa sc sd se sg si sk sl sm sn so sq sr ss st su sv sw ta te tg th ti tk tl tn to tr ts tt tw ty ug uk ur uz ve vi vo wa wo xh yi yo za zh zu'.split(' ');
-export const languageCodes: readonly string[] = codes;
-const names = new Map<string,string>();
-export function supportedLanguage(value: unknown): value is string { return typeof value === 'string' && codes.includes(value); }
+export const interfaceLanguages = [
+  { code: 'en', name: 'English', native: 'English' },
+  { code: 'fa', name: 'Persian', native: 'فارسی' },
+  { code: 'ar', name: 'Arabic', native: 'العربية' },
+  { code: 'es', name: 'Spanish', native: 'Español' },
+  { code: 'fr', name: 'French', native: 'Français' },
+  { code: 'de', name: 'German', native: 'Deutsch' },
+  { code: 'zh', name: 'Chinese (Simplified)', native: '简体中文' },
+  { code: 'ja', name: 'Japanese', native: '日本語' },
+  { code: 'ko', name: 'Korean', native: '한국어' },
+  { code: 'pt', name: 'Portuguese', native: 'Português' },
+  { code: 'it', name: 'Italian', native: 'Italiano' },
+  { code: 'tr', name: 'Turkish', native: 'Türkçe' },
+  { code: 'ru', name: 'Russian', native: 'Русский' },
+  { code: 'hi', name: 'Hindi', native: 'हिन्दी' },
+  { code: 'ur', name: 'Urdu', native: 'اردو' },
+  { code: 'bn', name: 'Bengali', native: 'বাংলা' },
+  { code: 'id', name: 'Indonesian', native: 'Bahasa Indonesia' },
+  { code: 'ms', name: 'Malay', native: 'Bahasa Melayu' },
+  { code: 'vi', name: 'Vietnamese', native: 'Tiếng Việt' },
+  { code: 'th', name: 'Thai', native: 'ไทย' },
+  { code: 'nl', name: 'Dutch', native: 'Nederlands' },
+  { code: 'pl', name: 'Polish', native: 'Polski' },
+  { code: 'uk', name: 'Ukrainian', native: 'Українська' },
+  { code: 'sv', name: 'Swedish', native: 'Svenska' },
+  { code: 'el', name: 'Greek', native: 'Ελληνικά' },
+] as const;
+export const languageCodes: readonly string[] = interfaceLanguages.map(language => language.code);
+export function supportedLanguage(value: unknown): value is string { return typeof value === 'string' && languageCodes.includes(value); }
 export function languageName(code: string, native = true) {
-  const key=`${code}:${native}`;
-  const cached=names.get(key);if(cached)return cached;
-  let name:string;try { name=new Intl.DisplayNames([native ? code : 'en'],{type:'language'}).of(code) || code; } catch { name=code.toUpperCase(); }
-  names.set(key,name);return name;
+  const language = interfaceLanguages.find(language => language.code === code);
+  return language ? native ? language.native : language.name : 'English';
 }
-export function languageDirection(code: string): 'rtl' | 'ltr' { return ['ar','fa','he','ur','ps','sd','ug','yi','dv','ks'].includes(code) ? 'rtl' : 'ltr'; }
+export function languageDirection(code: string): 'rtl' | 'ltr' { return ['ar', 'fa', 'ur'].includes(code) ? 'rtl' : 'ltr'; }
