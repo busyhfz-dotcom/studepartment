@@ -580,8 +580,8 @@
 :global(html[lang="fa"]) .gatewayAudience,:global(html[lang="fa"]) .gatewayAction,:global(html[lang="fa"]) .gatewayReassurance{font-size:17px;letter-spacing:normal}
 :global(html[lang="fa"]) .pathwayMain p,:global(html[lang="fa"]) .pathwayHeading p,:global(html[lang="fa"]) .sourceGuidance{font-size:18px}
 @media(max-width:700px){
- .gatewayWelcome{padding:22px 20px 20px;min-height:0}.gatewayIntro h1{font-size:34px;margin:10px 0 12px}.gatewayIntro p{font-size:13px;line-height:1.7}
- .gatewayGrid{grid-template-columns:1fr;gap:14px;margin-top:20px}.gatewayCard{min-height:205px;padding:20px;border-radius:18px}
+ .gatewayWelcome{padding:14px 20px 20px;min-height:0}.gatewayIntro h1{font-size:34px;margin:10px 0 12px}.gatewayIntro p{font-size:13px;line-height:1.7}
+ .gatewayGrid{grid-template-columns:1fr;gap:12px;margin-top:14px}.gatewayCard{min-height:205px;padding:20px;border-radius:18px}
  .gatewayAudience{max-width:calc(100% - 85px);font-size:10px}.gatewayArt{position:absolute;inset-inline-end:15px;top:12px;width:100px;height:65px;margin:0}
  .gatewayCard h2{font-size:29px;margin:24px 0 10px}.gatewayCard p{font-size:13px;max-width:330px}.gatewayAction{font-size:12px;padding-top:12px}.gatewayAction>span{width:30px;height:30px}
  .gatewayReassurance{font-size:10px;margin-top:16px}.pathwayPage{padding-block:24px 40px}.pathwayGrid{grid-template-columns:1fr;gap:14px}.pathwayHeading h1{font-size:31px}

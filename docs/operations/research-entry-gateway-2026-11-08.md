@@ -58,3 +58,25 @@ listed programme has a current scholarship. T32 is an institutional route.
 
 No Railway resources, paid plans, existing scanner timing, secrets or user
 records are changed. Previously paused account-revisit automations stay paused.
+
+## Follow-up release
+
+- PR 48 adds the measured Persian mobile adjustment, whole translated category
+  headings, translatable count labels, and date-only/month-only calendar-date
+  preservation. A Tehran time-zone regression test passed.
+- Browser refresh exposed stored language being overwritten by the English
+  server snapshot before hydration. Persistence now occurs only on an explicit
+  language choice; final browser refresh verification follows deployment.
+- Final CI run 262 passed all checks, including 64 unit tests and the audience
+  API integration:
+  https://github.com/busyhfz-dotcom/studepartment/actions/runs/42501617236
+- PR 48 merged at `af8345778c00faafb8523237d30ab4a67d04eac9`.
+- Render deployment `dep-dboaif5g1s2s73el8000` is live with that exact release.
+- A browser refresh now retains Persian. Final 400 × 712 measurement found
+  13.7px of the second card below the viewport; the last mobile-only spacing
+  adjustment removes 16px above/between the cards without shrinking touch targets.
+- User follow-up: retain the same 25 languages, starting with English, French,
+  German and Spanish. Other supported names and codes stay unchanged.
+- The posting-card browser journey reaches
+  `/auth/sign-up?kind=institution` with organization types displayed. The test
+  stopped before entering details, accepting terms or creating an account.
