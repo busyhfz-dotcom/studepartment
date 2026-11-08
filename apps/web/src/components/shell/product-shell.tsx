@@ -57,6 +57,7 @@ const pageNames: Array<[string, string]> = [
   ["/assistant", "Research Assistant"],
   ["/opportunities", "Opportunity Intelligence"],
   ["/introductions", "Scientific Introductions"],
+  ["/messages", "Private conversation"],
   ["/graph", "Scientific Evidence Graph"],
   ["/scanner", "Scanner Directory"],
   ["/conferences", "Conferences & Credit"],
