@@ -635,3 +635,24 @@
   font-weight:750;
   white-space:nowrap;
 }
+/* Opportunities: collapsible branch with nested funding categories */
+.navBranch{display:grid}
+.navToggle{width:100%;font:inherit;text-align:left;cursor:pointer;appearance:none;-webkit-appearance:none}
+.navToggle:focus-visible,.navSubItem:focus-visible{outline:2px solid #7d9bff;outline-offset:2px}
+.navChevron{justify-self:end;color:#6a81af;font-size:14px;line-height:1;transition:transform .25s var(--ease),color .25s var(--ease)}
+.navToggle:hover .navChevron,.navItemActive .navChevron{color:#8da8f8}
+.navChevronOpen{transform:rotate(90deg)}
+.navSubList{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;transition:grid-template-rows .28s var(--ease),opacity .2s var(--ease),visibility 0s linear .28s}
+.navSubListOpen{grid-template-rows:1fr;opacity:1;visibility:visible;transition:grid-template-rows .28s var(--ease),opacity .2s var(--ease),visibility 0s}
+.navSubInner{position:relative;display:grid;gap:2px;min-height:0;overflow:hidden;margin:3px 0 4px 23px;padding-left:12px}
+.navSubInner:before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:1px;background:linear-gradient(#5073ff55,#5073ff14)}
+.navSubItem{position:relative;display:grid;grid-template-columns:8px minmax(0,1fr);align-items:center;gap:10px;min-height:40px;padding:6px 10px;border:1px solid transparent;border-radius:8px;color:#8f9fc2;transition:background .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease)}
+.navSubItem:hover{background:#1d2947;color:#e3ebff;border-color:#ffffff09}
+.navSubItem .navCopy strong{font-size:11px;font-weight:650}
+.navSubItem .navCopy small{font-size:8.5px;margin-top:2px}
+.navSubDot{width:6px;height:6px;border-radius:50%;background:#3d4f78;box-shadow:0 0 0 3px #10162b;transition:background .2s var(--ease)}
+.navSubItem:hover .navSubDot{background:#7d9bff}
+.navSubItemActive{background:#5073ff1a;border-color:#5073ff14;color:#eff3ff}
+.navSubItemActive .navSubDot{background:#9bb8ff;box-shadow:0 0 0 3px #10162b,0 0 10px #7d9bff88}
+@media(max-width:940px){.navSubItem{min-height:46px}}
+@media(prefers-reduced-motion:reduce){.navSubList,.navSubListOpen,.navChevron{transition:none}}
