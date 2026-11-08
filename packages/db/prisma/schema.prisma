@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 6278)
+Total output lines: 818
+
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -238,6 +241,8 @@ model User {
   searchQueries     SearchQueryLog[]
   profileImages     ProfileImage[]
   storedFiles       StoredFile[]
+  privateMessages   PrivateMessage[]
+  conversationStates ConversationState[]
 }
 
 model ProfileImage {
@@ -411,142 +416,7 @@ model Organization {
   createdAt      DateTime                 @default(now())
   updatedAt      DateTime                 @updatedAt
   owner          User?                    @relation("OrganizationOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
-  affiliations   ResearcherAffiliation[]
-  labs           Laboratory[]
-  opportunities  Opportunity[]
-
-  @@index([normalizedName])
-}
-
-model ResearcherAffiliation {
-  id             String            @id @default(cuid())
-  researcherId   String
-  organizationId String
-  title          String?
-  startDate      DateTime?
-  endDate        DateTime?
-  current        Boolean           @default(true)
-  researcher     ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
-  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  @@index([researcherId])
-  @@index([organizationId])
-}
-
-model ResearchTopic {
-  id            String             @id @default(cuid())
-  name          String
-  slug          String             @unique
-  parentId      String?
-  meshId        String?
-  parent        ResearchTopic?     @relation("TopicHierarchy", fields: [parentId], references: [id])
-  children      ResearchTopic[]    @relation("TopicHierarchy")
-  researchers   ResearcherTopic[]
-  opportunities OpportunityTopic[]
-  interestSignals UserInterestSignal[]
-}
-
-model ResearcherTopic {
-  researcherId String
-  topicId      String
-  weight       Float             @default(1)
-  researcher   ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
-  topic        ResearchTopic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
-
-  @@id([researcherId, topicId])
-}
-
-model ResearchMethod {
-  id            String              @id @default(cuid())
-  name          String
-  slug          String              @unique
-  researchers   ResearcherMethod[]
-  opportunities OpportunityMethod[]
-}
-
-model ResearcherMethod {
-  researcherId String
-  methodId     String
-  proficiency  ProficiencyLevel  @default(WORKING)
-  researcher   ResearcherProfile @relation(fields: [researcherId], references: [id], onDelete: Cascade)
-  method       ResearchMethod    @relation(fields: [methodId], references: [id], onDelete: Cascade)
-
-  @@id([researcherId, methodId])
-}
-
-model Publication {
-  id                  String                  @id @default(cuid())
-  canonicalKey        String                  @unique
-  title               String
-  abstract            String?
-  doi                 String?                 @unique
-  pmid                String?                 @unique
-  pmcid               String?                 @unique
-  journal             String?
-  publicationDate     DateTime?
-  publicationType     String?
-  volume              String?
-  issue               String?
-  pages               String?
-  sourceUrl           String?
-  authorNames         String[]                @default([])
-  citationCount       Int                     @default(0)
-  firstSeenAt         DateTime                @default(now())
-  lastVerifiedAt      DateTime?
-  createdAt           DateTime                @default(now())
-  updatedAt           DateTime                @updatedAt
-  researchers         ResearcherPublication[]
-  provenance          PublicationProvenance[]
-
-  @@index([publicationDate])
-  @@index([lastVerifiedAt])
-}
-
-model ResearcherPublication {
-  researcherId   String
-  publicationId  String
-  authorOrder    Int?
-  sourceType     PublicationSourceType    @default(MANUAL)
-  evidenceLevel  PublicationEvidenceLevel @default(MANUAL_ASSERTED)
-  lastObservedAt DateTime                 @default(now())
-  active         Boolean                  @default(true)
-  researcher     ResearcherProfile        @relation(fields: [researcherId], references: [id], onDelete: Cascade)
-  publication    Publication              @relation(fields: [publicationId], references: [id], onDelete: Cascade)
-
-  @@id([researcherId, publicationId])
-  @@index([researcherId, evidenceLevel])
-}
-
-model PublicationProvenance {
-  id                 String                       @id @default(cuid())
-  evidenceKey        String                       @unique
-  publicationId      String
-  researcherId       String?
-  sourceType         PublicationSourceType
-  sourceRecordId     String
-  sourceUrl          String?
-  contentFingerprint String
-  status             PublicationProvenanceStatus  @default(ASSERTED)
-  observedAt         DateTime                     @default(now())
-  verifiedAt         DateTime?
-  metadata           Json?
-  publication        Publication                  @relation(fields: [publicationId], references: [id], onDelete: Cascade)
-  researcher         ResearcherProfile?           @relation(fields: [researcherId], references: [id], onDelete: Cascade)
-
-  @@index([publicationId, sourceType])
-  @@index([researcherId, sourceType, observedAt])
-  @@index([status, observedAt])
-}
-
-model Laboratory {
-  id             String       @id @default(cuid())
-  organizationId String
-  name           String
-  description    String?
-  website        String?
-  verified       Boolean      @default(false)
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  members        LabMember[]
+  affiliations   ResearcherAffiliatio…1278 tokens truncated…     LabMember[]
 
   @@index([organizationId])
 }
@@ -680,11 +550,36 @@ model ConnectionRequest {
   receiver           ResearcherProfile        @relation("ReceivedConnectionRequests", fields: [receiverId], references: [id], onDelete: Cascade)
   events             ConnectionRequestEvent[]
   attachments        ConnectionRequestAttachment[]
+  messages           PrivateMessage[]
+  conversationStates ConversationState[]
 
   @@index([receiverId, status])
   @@index([senderId, status])
   @@index([senderId, createdAt])
   @@index([receiverId, createdAt])
+}
+
+model PrivateMessage {
+  id String @id @default(cuid())
+  requestId String
+  senderId String
+  clientId String
+  body String
+  createdAt DateTime @default(now())
+  request ConnectionRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  sender User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  @@unique([requestId, senderId, clientId])
+  @@index([requestId, createdAt, id])
+}
+
+model ConversationState {
+  requestId String
+  userId String
+  lastReadAt DateTime?
+  blockedAt DateTime?
+  request ConnectionRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([requestId, userId])
 }
 
 model ConnectionRequestEvent {
@@ -788,3 +683,4 @@ model UiTranslation {
   updatedAt DateTime @updatedAt
   @@index([locale, catalogVersion])
 }
+

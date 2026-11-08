@@ -278,6 +278,7 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
 
                   <div className={styles.requestActions}>
                     <Link className={styles.profileLink} href={"/researchers/" + request.counterpart.id}>View scientific profile</Link>
+                    {request.status === "accepted" ? <Link className={styles.profileLink} href={`/messages/${request.id}`}>Open private conversation</Link> : null}
                     {request.status === "pending" && box === "inbox" ? (
                       <>
                         <button
@@ -411,3 +412,4 @@ export function IntroductionWorkspace({ initialBox }: { initialBox: BoxName }) {
     </>
   );
 }
+

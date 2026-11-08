@@ -18,15 +18,18 @@ type NavItem = {
   icon: IconName;
 };
 
+const opportunityItems: NavItem[] = [
+  { href: "/opportunities?type=grant", label: "Grants", description: "Compare funding calls", icon: "opportunity" },
+  { href: "/opportunities?type=masters-scholarship", label: "Master’s scholarships", description: "Funding for a master’s degree", icon: "opportunity" },
+  { href: "/opportunities?type=phd-scholarship", label: "PhD scholarships", description: "Doctoral scholarships and studentships", icon: "opportunity" },
+  { href: "/opportunities?audience=md-phd", label: "MD-PhD funding", description: "Dual-degree scholarships", icon: "opportunity" },
+];
+
 const workspaceItems: NavItem[] = [
   { href: "/", label: "Overview", description: "Your workspace at a glance", icon: "overview" },
   { href: "/discover", label: "Discovery", description: "Researchers, labs, institutions", icon: "discover" },
   { href: "/assistant", label: "Research Assistant", description: "Answers with sources", icon: "assistant" },
   { href: "/opportunities", label: "Opportunities", description: "Positions, fellowships, grants", icon: "opportunity" },
-    { href: "/opportunities?type=grant", label: "Grants", description: "Compare funding calls and award amounts", icon: "opportunity" },
-  { href: "/opportunities?type=masters-scholarship", label: "Master’s scholarships", description: "Funding for a master’s degree", icon: "opportunity" },
-  { href: "/opportunities?type=phd-scholarship", label: "PhD scholarships", description: "Doctoral scholarships and studentships", icon: "opportunity" },
-  { href: "/opportunities?audience=md-phd", label: "MD-PhD funding", description: "Dual-degree scholarships and fellowships", icon: "opportunity" },
   { href: "/introductions", label: "Introductions", description: "Meet the right researchers", icon: "introduction" },
   { href: "/scanner", label: "Scanner", description: "Trusted job & funding databases", icon: "scanner" },
   { href: "/conferences", label: "Conferences", description: "Venue checks and CME credit", icon: "conference" },
@@ -165,6 +168,7 @@ function NavigationGroup({
   close: () => void;
 }) {
   const activeItemRef = useRef<HTMLAnchorElement>(null);
+  const [opportunitiesOpen, setOpportunitiesOpen] = useState(false);
 
   useEffect(() => {
     activeItemRef.current?.scrollIntoView({ block: "nearest" });
@@ -174,8 +178,9 @@ function NavigationGroup({
     <div className={styles.navGroup}>
       <span className={styles.navLabel}>{label}</span>
       <nav className={styles.navList} aria-label={label}>
-        {items.map((item) => {
+        {items.flatMap((item) => {
           const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          if (item.href === "/opportunities") return [<button key={item.href} type="button" aria-expanded={opportunitiesOpen} className={`${styles.navItem} ${active ? styles.navItemActive : ""}`} onClick={() => setOpportunitiesOpen((open) => !open)}><span className={styles.iconWrap}><Icon name={item.icon} /></span><span className={styles.navCopy}><strong>{item.label}</strong><small>{item.description}</small></span><span className={styles.navArrow} aria-hidden="true">{opportunitiesOpen ? "⌄" : "›"}</span></button>, ...(opportunitiesOpen ? opportunityItems.map((child) => <Link className={`${styles.navItem} ${styles.navSubItem}`} href={child.href} key={child.href} onClick={close}><span className={styles.iconWrap}><Icon name={child.icon} /></span><span className={styles.navCopy}><strong>{child.label}</strong><small>{child.description}</small></span><span className={styles.navArrow} aria-hidden="true">›</span></Link>) : [])];
           return (
             <Link
               aria-current={active ? "page" : undefined}
@@ -350,3 +355,4 @@ export function ProductShell({
     </div>
   );
 }
+

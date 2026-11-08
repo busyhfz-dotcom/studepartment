@@ -1,7 +1,7 @@
 .backdrop {
   --motion-secondary: #bd91ff;
   --motion-highlight: #e7edff;
-  position: absolute;
+  position: fixed;
   z-index: 0;
   inset: 0;
   overflow: hidden;
@@ -65,10 +65,6 @@
   to { translate: 18px 13px; }
 }
 
-@media (max-width: 700px) {
-  .backdrop { display: none; }
-}
-
 @media (max-width: 1024px) and (prefers-reduced-motion: reduce) {
   .backdrop { display: none; }
 }
@@ -80,4 +76,5 @@
   .basePairs line,
   .sequenceNodes circle { animation: none; }
 }
+
 
