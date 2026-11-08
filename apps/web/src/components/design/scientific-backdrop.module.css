@@ -22,6 +22,9 @@
   inset: -5%;
   width: 110%;
   height: 110%;
+  /* Global img/svg rules cap max-width at 100%, which left the right 5% uncovered. */
+  max-width: none;
+  max-height: none;
 }
 
 .dnaHelix {
