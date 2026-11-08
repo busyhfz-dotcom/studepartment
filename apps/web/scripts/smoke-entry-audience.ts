@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {getDb, type Prisma} from '@studepartment/db';
 
+async function main() {
 // Fixtures are permitted only in the disposable local CI database.
 const base=new URL(process.env.SMOKE_BASE_URL || 'http://127.0.0.1:3000');
 const database=new URL(process.env.DATABASE_URL || 'postgresql://invalid');
@@ -44,3 +45,5 @@ try {
   if(organizationId)await db.organization.delete({where:{id:organizationId}});
   await db.$disconnect();
 }
+}
+void main().catch((error:unknown)=>{console.error(error);process.exitCode=1;});
