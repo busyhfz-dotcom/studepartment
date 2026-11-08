@@ -8,7 +8,7 @@ import type { OpportunityIntelligenceResponse, OpportunityResult } from "@/lib/a
 import { readOpportunityPage } from "@/lib/opportunity-pagination";
 import styles from "./start.module.css";
 import { PathIllustration } from './path-illustration';
-import { entryKind, entryLabels as kindLabels, entrySearchParams, entryCategories, type EntryKind as Kind } from './entry-paths';
+import { entryKind, entryDeadlineLabel as deadlineLabel, entryLabels as kindLabels, entrySearchParams, entryCategories, type EntryKind as Kind } from './entry-paths';
 import { BrandSymbol } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { CountrySelect } from "@/components/forms/country-select";
@@ -38,19 +38,6 @@ function typeLabel(type: OpportunityResult["type"]): string {
       return "Funding call";
     default:
       return type;
-  }
-}
-
-function deadlineLabel(item: OpportunityResult): string {
-  if (!item.deadline) return item.deadlinePrecision === "rolling" ? "Rolling deadline" : "Deadline on the listing";
-  try {
-    return new Date(item.deadline).toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return "See source for deadline";
   }
 }
 
@@ -285,7 +272,7 @@ function StartJourney() {
             <button type="button" className={styles.back} onClick={() => setStep("paths")}>
               ← Back to opportunity categories
             </button>
-            <h1 className={styles.serif}>Explore {<em>{kindLabels[kind]}</em>}.</h1>
+            <h1 className={styles.serif}>{kindLabels[kind]}</h1>
             <p>
               Search current listings freely. You only need an account to save an opportunity or keep track of its
               deadline.
@@ -348,7 +335,7 @@ function StartJourney() {
             <div>
               <span className={styles.eyebrow}>{isGrant ? "Funding calls" : isPosition ? "Research roles" : "Degree scholarships"}</span>
               <h2>
-                {loading ? "Searching…" : `${total.toLocaleString("en")} opportunities`}
+                {loading ? "Searching…" : <>{total.toLocaleString("en")} <span>opportunities</span></>}
               </h2>
             </div>
             <p>{kind.includes("scholarship") ? "Funding programmes: confirm country-specific eligibility and application windows at the original source." : "Current listings, each linked to its original source."}</p>
