@@ -27,10 +27,12 @@ Scanner links to Erasmus Mundus, ScholarshipPortal, FindAMasters, FindAPhD, Camp
 
 - Eight new focused tests pass: degree separation, safe dataset parsing, country-dependent deadlines, past deadlines, salaried vs scholarship classification, source URL checks, translation allowlisting, and locale/RTL choices.
 - TypeScript checking passes against the generated client. Targeted lint passes.
-- Broader unit run: 48 tests pass; the pre-existing Gemini test file cannot load `server-only` in the reused local dependencies. This is not reported as a passing full suite.
+- Full local unit run: 60 tests pass (48 general/source tests and 12 Gemini tests). The initial CI exposed that the general runner was loading the Gemini test directly instead of using its existing isolated fixture runner. The general runner now invokes that dedicated runner; no application guard or authentication code was weakened.
 - Migration was applied successfully to isolated Neon preview branch `br-silent-resonance-b985t12g`, parented from the application branch. Read-only checks confirm both enum values and JSON merge semantics. No production migration or test data write was performed in this release step. Automatic review rejected an optional preview sample-row write; that write was abandoned in favour of read-only checks.
 - Local full build remains unverified: the worktree lacks its own installed dependencies, reused Next 16.3.6 differs from the pinned 16.4.2, and the existing theme failed in that reused PostCSS build. A fresh dependency install was also blocked by local package-cache permissions. No successful production build is claimed.
 - Windows browser control stopped because the tool could not confidently determine the current URL. No further browser actions were taken. Mobile/tablet visual checks, actual non-English provider output, Render deployment, live migration and first scholarship ingestion remain pending.
 - The paused account-cohort automation and old monthly teams were not resumed.
 
 Regenerate the public catalog after interface edits with `pnpm --filter @studepartment/web i18n:catalog`. Deploy only after checking the production build, then inspect the new source run timestamps, status and inserted counts on `/sources` and the corresponding degree filters.
+
+Review: https://github.com/busyhfz-dotcom/studepartment/pull/44. Initial clean GitHub CI confirmed installation, schema migration, lint and types; production build was skipped after the old test-runner failure. A follow-up commit corrects that runner and requires a fresh successful CI result before deployment.
