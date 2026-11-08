@@ -54,6 +54,7 @@ export function parseOpportunityQuery(searchParams: URLSearchParams): Opportunit
   const sourceRecordId = searchParams.get("sourceRecordId")?.trim().slice(0, 128);
   const eligibilityCountry = searchParams.get("eligibilityCountry")?.trim().toUpperCase();
   return {
+    ...(searchParams.get('audience') === 'md-phd' ? {audience:'md-phd' as const} : {}),
     ...(searchParams.get("id") ? { id: searchParams.get("id")!.trim().slice(0, 128) } : {}),
     text: (searchParams.get("q") ?? "").trim().slice(0, 240),
     types: readList(searchParams, "type").filter(

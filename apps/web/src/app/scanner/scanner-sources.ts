@@ -21,6 +21,10 @@ export type ScannerCategory = {
  * here only.
  */
 export const scannerCategories: ScannerCategory[] = [
+  { id:"physician-scientists", label:"MD-PhD & physician-scientist training", intro:"Individual fellowships and institutional training are different routes. Confirm enrolment, citizenship or residency and sponsor requirements with the programme.", sources:[
+    {name:"NIH F30 dual-degree fellowships",href:"https://www.cancer.gov/grants-training/training/funding/f30",region:"United States",coverage:"MD-PhD · Individual fellowship",description:"F30 supports eligible students already enrolled in dual-degree training. NIH notices are collected through Grants.gov; confirm the terms in each announcement.",connectorId:"grants-gov"},
+    {name:"NIH T32 institutional training",href:"https://grants.nih.gov/funding/activity-codes/T32",region:"United States",coverage:"Institutional training · Programme recruitment",description:"Awards are made to institutions, which recruit trainees through their programmes. This is an official information directory, not an individual MD-PhD scholarship feed."}
+  ] },
   { id:"scholarships", label:"Master’s & PhD scholarships", intro:"Degree funding databases. Automatic sources show their latest checks in Data sources; other publishers open in their own websites.", sources:[
     {name:"DAAD Scholarship Database",href:"https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/",region:"Germany / international",coverage:"Master’s and PhD",description:"Official scholarship programmes; country-specific deadlines and eligibility.",connectorId:"daad-scholarships"},
     {name:"PhDGermany",href:"https://www.daad.de/en/studying-in-germany/phd-studies-research/phd-germany/",region:"Germany",coverage:"Doctoral scholarships and positions",description:"Official DAAD feed; scholarships and salaried posts are classified separately.",connectorId:"daad-phdgermany"},

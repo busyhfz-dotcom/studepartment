@@ -534,3 +534,59 @@
 :global(html[lang="fa"]) .topActions{font-size:16px}
 :global(html[lang="fa"]) .entryFoot,:global(html[lang="fa"]) .entryFoot button,:global(html[lang="fa"]) .footbar{font-size:14px;line-height:1.6}
 :global(html[lang="fa"]) .stage{font-size:12px}
+
+/* Two clear invitations, with room for the people behind the research. */
+.gatewayWelcome{max-width:1200px;margin:auto;padding:clamp(24px,4vh,44px) var(--gutter) 24px;min-height:calc(100svh - 150px);display:flex;flex-direction:column;justify-content:center}
+.gatewayIntro{text-align:center;max-width:780px;margin:0 auto}
+.gatewayIntro h1{font-size:clamp(34px,4.1vw,54px);line-height:1.12;letter-spacing:-.045em;color:#f0f3ff;margin:12px 0 16px}
+.gatewayIntro p{font-size:15px;line-height:1.8;max-width:660px;color:#adbbd4;margin:0 auto}
+.gatewayGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:30px}
+.gatewayCard{display:flex;flex-direction:column;position:relative;isolation:isolate;min-height:300px;padding:28px;border:1px solid #c2d8ff;border-radius:22px;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.gatewayFind{background:linear-gradient(135deg,#a5c4f8,#c6dbfa);color:#19314a}
+.gatewayPost{background:linear-gradient(135deg,#d2c2ed,#ece0f3);border-color:#e7d8f4;color:#3b2e4a}
+.gatewayCard:hover{transform:translateY(-4px);box-shadow:0 18px 42px #0003}
+.gatewayCard:focus-visible,.pathwayMain:focus-visible,.physicianPath:focus-visible{outline:3px solid #e5bc7b;outline-offset:5px}
+.gatewayAudience{font-size:11px;font-weight:750;line-height:1.5;letter-spacing:.04em}
+.gatewayArt{width:160px;height:98px;align-self:flex-end;margin:0 4px -16px 0;pointer-events:none}
+.gatewayArt svg{display:block;width:100%;height:100%}
+.gatewayCard h2{font-size:clamp(28px,2.7vw,37px);line-height:1.15;letter-spacing:-.045em;margin:0 0 14px;color:inherit}
+.gatewayCard p{font-size:14px;line-height:1.7;margin:0;max-width:390px;color:inherit;opacity:.85}
+.gatewayAction{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:13px;font-weight:750;margin-top:auto;padding-top:22px}
+.gatewayAction>span{display:grid;place-items:center;background:#ffffff55;border-radius:50%;width:36px;height:36px;font-size:21px}
+.gatewayReassurance{text-align:center;font-size:11px;line-height:1.7;color:#9cadca;max-width:680px;margin:20px auto 0}
+.pathwayPage{padding-block:38px 60px;max-width:1200px}
+.pathwayHeading{max-width:760px;margin:18px 0 28px}
+.pathwayHeading h1{font-size:clamp(30px,3.6vw,48px);line-height:1.2;color:#edf2ff;letter-spacing:-.04em;margin:12px 0}
+.pathwayHeading p{font-size:15px;line-height:1.8;color:#a9bbd9}
+.pathwayGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.pathwayCard{border:1px solid #34486a;border-radius:18px;background:linear-gradient(140deg,#15233d,#18243b);overflow:hidden}
+.pathwayMain{display:block;padding:24px;text-decoration:none;color:#e7efff}
+.pathwayMain:hover{background:#ffffff06}
+.pathwayAudience{font-size:11px;color:#b4c7dd}
+.pathwayMain h2{display:flex;justify-content:space-between;align-items:start;gap:15px;font-size:24px;line-height:1.3;margin:12px 0;color:#edf3ff}
+.pathwayMain h2 span{font-size:20px;color:#e5bc7b}
+.pathwayMain p{color:#a7bad8;font-size:14px;line-height:1.75;margin:0}
+.physicianPath{display:block;padding:17px 24px;background:#b4d9ca12;border-top:1px solid #b4d9ca35;color:#c9e8db;text-decoration:none}
+.physicianPath>span{display:block;font-size:11px;margin-bottom:5px;color:#a9cdbf}
+.physicianPath strong{font-size:15px;line-height:1.6}
+.pathwaySupport{margin-top:25px;padding:20px 0;border-top:1px solid #ffffff16;color:#a6b9d5;font-size:13px;line-height:1.8}
+.pathwaySupport a,.sourceGuidance a{color:#bdd5fc;text-underline-offset:4px}
+.sourceGuidance{padding:18px 22px;margin:0 0 22px;border:1px solid #799d8c55;border-radius:14px;background:#233c372e;font-size:13px;line-height:1.8;color:#bfcdc9}
+.sourceGuidance strong{color:#deeee5;font-size:15px}.sourceGuidance p{margin:8px 0}.sourceGuidance a{display:inline-block;margin-inline-end:18px}
+.postingExisting{display:block;color:#b7cff7;margin:20px 0;font-size:14px;line-height:1.7}
+.postingNotes{color:#a6b9d5;font-size:14px;line-height:2.2;padding-inline-start:20px;max-width:700px}
+:global(html[lang="fa"]) .gatewayCard h2{font-size:38px;line-height:1.25}
+:global(html[lang="fa"]) .gatewayCard p,:global(html[lang="fa"]) .gatewayIntro p{font-size:21px;line-height:1.6}
+:global(html[lang="fa"]) .gatewayAudience,:global(html[lang="fa"]) .gatewayAction,:global(html[lang="fa"]) .gatewayReassurance{font-size:17px;letter-spacing:normal}
+:global(html[lang="fa"]) .pathwayMain p,:global(html[lang="fa"]) .pathwayHeading p,:global(html[lang="fa"]) .sourceGuidance{font-size:18px}
+@media(max-width:700px){
+ .gatewayWelcome{padding:28px 20px 20px;min-height:0}.gatewayIntro h1{font-size:34px;margin:10px 0 12px}.gatewayIntro p{font-size:13px;line-height:1.7}
+ .gatewayGrid{grid-template-columns:1fr;gap:16px;margin-top:24px}.gatewayCard{min-height:205px;padding:20px;border-radius:18px}
+ .gatewayAudience{max-width:calc(100% - 85px);font-size:10px}.gatewayArt{position:absolute;inset-inline-end:15px;top:12px;width:100px;height:65px;margin:0}
+ .gatewayCard h2{font-size:29px;margin:24px 0 10px}.gatewayCard p{font-size:13px;max-width:330px}.gatewayAction{font-size:12px;padding-top:12px}.gatewayAction>span{width:30px;height:30px}
+ .gatewayReassurance{font-size:10px;margin-top:16px}.pathwayPage{padding-block:24px 40px}.pathwayGrid{grid-template-columns:1fr;gap:14px}.pathwayHeading h1{font-size:31px}
+ .pathwayMain{padding:21px}.pathwayMain h2{font-size:23px}.physicianPath{padding:15px 21px}
+ :global(html[lang="fa"]) .gatewayCard h2{font-size:34px}:global(html[lang="fa"]) .gatewayCard p{font-size:19px}
+}
+@media(max-height:740px) and (min-width:701px){.gatewayWelcome{padding-block:20px}.gatewayGrid{margin-top:20px}.gatewayCard{min-height:265px;padding:24px}.gatewayArt{height:74px;width:128px}.gatewayIntro h1{font-size:42px}}
+@media(prefers-reduced-motion:reduce){.gatewayCard{transition:none}.gatewayCard:hover{transform:none}}

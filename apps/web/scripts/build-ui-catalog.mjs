@@ -13,7 +13,7 @@ async function walk(dir) {
   for (const entry of await readdir(dir,{withFileTypes:true})) {
     const file = join(dir,entry.name);
     if (entry.isDirectory()) { if (!['api','fonts','i18n'].includes(entry.name)) await walk(file); continue; }
-    if (!file.endsWith('.tsx')) continue;
+    if (!file.endsWith('.tsx') && !file.endsWith('entry-paths.ts')) continue;
     const ast = ts.createSourceFile(file,await readFile(file,'utf8'),ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
     function visit(node) {
       if (ts.isJsxText(node)) add(node.text);

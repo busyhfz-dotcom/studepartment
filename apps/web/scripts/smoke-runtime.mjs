@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const baseUrl = process.env.SMOKE_BASE_URL || "http://127.0.0.1:3000";
 
@@ -167,10 +170,24 @@ assert.match(marketingHtml, /data-language-picker/);
 const entrance = await fetch(baseUrl + "/start");
 assert.equal(entrance.status, 200);
 const entranceHtml = await entrance.text();
-for (const title of ["Find a position", "Find a grant", "Find a Master’s scholarship", "Find a PhD scholarship"]) {
+for (const title of ["Find grant &amp; position", "Post a position"]) {
   assert.ok(entranceHtml.includes(title), `entrance must offer ${title}`);
 }
 assert.match(entranceHtml, /current language English/);
+assert.equal((entranceHtml.match(/<h2\b/g) || []).length, 2, "entrance has two main invitations");
+assert.doesNotMatch(entranceHtml, /01 Choose|02 Explore|03 Review|04 Next step/);
+const pathways = await fetch(baseUrl + "/start?step=paths");
+assert.equal(pathways.status, 200);
+const pathwaysHtml = await pathways.text();
+for (const title of ["Master’s scholarships", "PhD scholarships", "Grants for group leaders", "Research positions", "MD-PhD scholarships"]) {
+  assert.ok(pathwaysHtml.includes(title), "pathway must include " + title);
+}
+await verifyInteractivePage("/start?step=institutions");
+await verifyInteractivePage("/start?step=browse&kind=md-phd-scholarship");
+await verifyInteractivePage("/opportunities?audience=md-phd");
+const mdPhd = await request("/api/v1/opportunities?audience=md-phd&limit=1&page=1");
+assert.equal(mdPhd.status, 200);
+assert.equal((await mdPhd.json()).data.query.audience, "md-phd");
 for (const type of ["masters-scholarship", "phd-scholarship"]) {
   await verifyInteractivePage(`/start?step=browse&kind=${type}`);
   const results = await request(`/api/v1/opportunities?type=${type}&limit=1`);
@@ -179,7 +196,7 @@ for (const type of ["masters-scholarship", "phd-scholarship"]) {
 }
 
 const catalog = JSON.parse(await readFile(new URL("../src/lib/i18n/ui-catalog.json", import.meta.url), "utf8"));
-const publicKey = Object.keys(catalog).find((key) => catalog[key] === "Find a PhD scholarship");
+const publicKey = Object.keys(catalog).find((key) => catalog[key] === "Post a position");
 assert.ok(publicKey);
 const originalLabel = await request("/api/v1/interface-translations", {
   method: "POST", headers: { "Content-Type": "application/json" },
@@ -193,4 +210,10 @@ const arbitraryText = await request("/api/v1/interface-translations", {
 });
 assert.equal(arbitraryText.status, 400, "arbitrary profile/document text must not enter the translation pipeline");
 
+if (process.env.DEPLOYMENT_ENV === "ci") {
+  const require = createRequire(new URL("../../../packages/db/package.json", import.meta.url));
+  const integration = spawnSync(process.execPath, ["--import", pathToFileURL(require.resolve("tsx")).href,
+    fileURLToPath(new URL("./smoke-entry-audience.ts", import.meta.url))], { stdio: "inherit", env: process.env });
+  assert.equal(integration.status, 0, "MD-PhD API integration must pass against disposable CI fixtures");
+}
 console.log("Runtime smoke checks passed.");
