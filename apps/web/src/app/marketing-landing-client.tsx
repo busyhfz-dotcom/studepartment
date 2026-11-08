@@ -1,4 +1,5 @@
 "use client";
+import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
@@ -266,8 +267,8 @@ export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpp
                   const status = badgeStatus(entry.deadline);
                   const label = status === "urgent" ? "Closing soon" : status === "soon" ? "Plan ahead" : "Time to prepare";
                   return (
+                    <div className={styles.tickerItem} key={`${duplicate ? "dup-" : ""}${entry.id}-${index}`}>
                     <button
-                      key={`${duplicate ? "dup-" : ""}${entry.id}-${index}`}
                       type="button"
                       className={styles.latestRow}
                       tabIndex={duplicate ? -1 : undefined}
@@ -284,6 +285,8 @@ export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpp
                         <time>{entry.deadlineLabel}</time>
                       </span>
                     </button>
+                    <span className={styles.tickerShare}><ShareOpportunity item={{id:entry.id,title:entry.title,type:entry.kind==='Grant'?'grant':'position'}} tabIndex={duplicate?-1:0}/></span>
+                    </div>
                   );
                 })}
               </div>
@@ -306,6 +309,7 @@ export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpp
           <p>{selected.organization}</p>
           <div className={styles.detailDeadline}>{selected.deadlineLabel}</div>
           <Link className={styles.detailAction} href={`/start?step=detail&kind=${selected.kind === "Grant" ? "grant" : "position"}&opportunity=${encodeURIComponent(selected.id)}`}>Review this opportunity ↗</Link>
+          <ShareOpportunity item={{id:selected.id,title:selected.title,type:selected.kind==='Grant'?'grant':'position'}}/>
         </div>
       ) : null}
 

@@ -377,6 +377,15 @@ export type OpportunityPagination = {
 export type OpportunityCareerStage = "student" | "phd" | "postdoc" | "early-career-researcher" | "faculty";
 
 export type OpportunityResult = {
+  grant?: {
+    status: 'Open' | 'Upcoming' | 'Check source';
+    agency: string;
+    region: string;
+    regionContext: string;
+    awardMin?: string;
+    awardMax?: string;
+    currency?: string;
+  };
   id: string;
   type: OpportunityTypeValue;
   title: string;

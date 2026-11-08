@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
 import { PublicDocuments } from "@/components/files/public-documents";
 import { notFound } from "next/navigation";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
@@ -115,7 +116,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
             <span className="sectionLabel">Current opportunity evidence</span>
             <h2>Current source-backed opportunities</h2>
             <div className={styles.stack}>
-              {institution.opportunities.map((opportunity) => <div key={opportunity.id}><strong>{opportunity.title}</strong><span>{opportunity.type} · {opportunity.deadlinePrecision === "rolling" ? "Rolling" : date(opportunity.deadline)}</span><a href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Source ↗</a></div>)}
+              {institution.opportunities.map((opportunity) => <div key={opportunity.id}><strong>{opportunity.title}</strong><span>{opportunity.type} · {opportunity.deadlinePrecision === "rolling" ? "Rolling" : date(opportunity.deadline)}</span><a href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Source ↗</a><ShareOpportunity item={{id:opportunity.id,title:opportunity.title,type:opportunity.type}}/></div>)}
               {!institution.opportunities.length ? <p>No current opportunities are connected.</p> : null}
             </div>
           </article>

@@ -336,12 +336,17 @@
 .mobileToggle{padding:0;border:0;border-radius:10px;background:transparent;box-shadow:none}
 .mobileToggle svg{display:block;width:26px;height:26px}
 .tickerPaused .latestTrack{animation-play-state:paused}
+.tickerItem{position:relative;flex-shrink:0;width:360px;height:100%}
+.tickerItem .latestRow{width:100%;height:100%;padding-bottom:52px}
+.tickerShare{position:absolute;bottom:8px;inset-inline-start:20px}
+.latestList{height:194px}
 .opportunityDetail{inset:0;z-index:2;overflow-y:auto}
 .detailTop button{min-width:44px;min-height:44px}
 .tickerMotionToggle{flex-shrink:0;min-height:36px;padding:6px 10px;border:1px solid #40547b;border-radius:8px;background:transparent;color:#c9d8fc;font-size:11px;letter-spacing:normal}
 .tickerMotionToggle:focus-visible,.mobileToggle:focus-visible{outline:2px solid #a7bfff;outline-offset:3px}
 
 @media(max-width:850px){
+  .tickerItem{width:clamp(240px,calc(100vw - 68px),340px)}
   .headerControls { gap: 10px; }
   .headerControls .mobileToggle { margin: 0; }
   .topInner{height:auto;min-height:68px;padding-block:10px;gap:10px;flex-wrap:nowrap}

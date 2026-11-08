@@ -25,6 +25,7 @@ type Synopsis = {
   applicantEligibilityDesc?: string;
   applicantTypes?: Array<{ description: string }>;
   awardCeiling?: string;
+  awardFloor?: string;
   fundingDescLinkUrl?: string;
   responseDateDesc?: string;
 };
@@ -102,7 +103,8 @@ export function toGrantsGovRecord(hit: SearchHit, synopsis: Synopsis | undefined
     topicSlugs: topicSlugsFor(searchable),
     methodSlugs: methodSlugsFor(searchable),
     status: "ACTIVE",
-    metadata: { number: hit.number, agencyCode: hit.agencyCode, oppStatus: hit.oppStatus },
+    metadata: { number: hit.number, agencyCode: hit.agencyCode, agencyName: decodeEntities(hit.agency), oppStatus: hit.oppStatus,
+      awardMin: synopsis?.awardFloor, awardMax: synopsis?.awardCeiling, awardCurrency: 'USD', fundingRegion: 'United States' },
   };
 }
 

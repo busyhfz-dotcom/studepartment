@@ -97,7 +97,7 @@ export function toEuRecord(result: SearchResult, now: Date): OpportunityIngestio
     topicSlugs: topicSlugsFor(searchable),
     methodSlugs: methodSlugsFor(searchable),
     status: "ACTIVE",
-    metadata: { identifier, callIdentifier: first(metadata, "callIdentifier"), status: status === STATUS_OPEN ? "open" : "forthcoming" },
+    metadata: { identifier, callIdentifier: first(metadata, "callIdentifier"), status: status === STATUS_OPEN ? "open" : "forthcoming", fundingRegion: 'Europe', agencyName: funder.name },
   };
 }
 

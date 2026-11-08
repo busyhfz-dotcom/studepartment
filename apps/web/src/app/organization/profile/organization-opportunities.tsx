@@ -1,4 +1,5 @@
 "use client";
+import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
 
 import { useEffect, useState, type FormEvent } from "react";
 import styles from "./organization-profile.module.css";
@@ -79,7 +80,7 @@ export function OrganizationOpportunities() {
   return <section className={styles.postings}>
     <div className={styles.postingsHeader}><div><span className="sectionLabel">Opportunity publishing · free</span><h2>Publish positions, grants and collaborations</h2><p>Postings are linked to your institutional profile and appear in opportunity discovery. Source evidence remains self-reported until independently verified.</p></div><span>{data?.opportunities.length ?? 0} postings</span></div>
     {message ? <p className={styles.postingMessage} role="status">{message}</p> : null}
-    {data?.opportunities.length ? <div className={styles.postingList}>{data.opportunities.map((item) => <article key={item.id}><div><strong>{item.title}</strong><small>{item.type.replaceAll("_", " ")} · {item.status.toLowerCase()} {item.deadline ? " · deadline " + new Date(item.deadline).toLocaleDateString() : ""}</small></div><div><a href={item.sourceUrl} target="_blank" rel="noreferrer">Source ↗</a>{item.status === "ACTIVE" ? <button type="button" onClick={() => void changeStatus(item.id, "ACTIVE", true)}>Refresh</button> : null}<button type="button" onClick={() => void changeStatus(item.id, item.status === "ACTIVE" ? "CLOSED" : "ACTIVE")}>{item.status === "ACTIVE" ? "Close" : "Reactivate"}</button></div></article>)}</div> : null}
+    {data?.opportunities.length ? <div className={styles.postingList}>{data.opportunities.map((item) => <article key={item.id}><div><strong>{item.title}</strong><small>{item.type.replaceAll("_", " ")} · {item.status.toLowerCase()} {item.deadline ? " · deadline " + new Date(item.deadline).toLocaleDateString() : ""}</small></div><div><a href={item.sourceUrl} target="_blank" rel="noreferrer">Source ↗</a>{item.status === "ACTIVE" ? <><ShareOpportunity item={item}/><button type="button" onClick={() => void changeStatus(item.id, "ACTIVE", true)}>Refresh</button></> : null}<button type="button" onClick={() => void changeStatus(item.id, item.status === "ACTIVE" ? "CLOSED" : "ACTIVE")}>{item.status === "ACTIVE" ? "Close" : "Reactivate"}</button></div></article>)}</div> : null}
     <form className={styles.postingForm} onSubmit={publish}>
       <h3>New opportunity</h3>
       <div className={styles.grid}>
