@@ -1,10 +1,10 @@
 export const interfaceLanguages = [
   { code: 'en', name: 'English', native: 'English' },
-  { code: 'fa', name: 'Persian', native: 'فارسی' },
-  { code: 'ar', name: 'Arabic', native: 'العربية' },
-  { code: 'es', name: 'Spanish', native: 'Español' },
   { code: 'fr', name: 'French', native: 'Français' },
   { code: 'de', name: 'German', native: 'Deutsch' },
+  { code: 'es', name: 'Spanish', native: 'Español' },
+  { code: 'fa', name: 'Persian', native: 'فارسی' },
+  { code: 'ar', name: 'Arabic', native: 'العربية' },
   { code: 'zh', name: 'Chinese (Simplified)', native: '简体中文' },
   { code: 'ja', name: 'Japanese', native: '日本語' },
   { code: 'ko', name: 'Korean', native: '한국어' },
