@@ -1,4 +1,5 @@
 "use client";
+import { LanguagePicker } from "@/components/i18n/language-provider";
 
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
@@ -11,17 +12,20 @@ import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { CountrySelect } from "@/components/forms/country-select";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
 
-type Kind = "position" | "grant";
+type Kind = "position" | "grant" | "masters-scholarship" | "phd-scholarship";
+const kindLabels: Record<Kind, string> = { position: "research positions", grant: "grants", "masters-scholarship": "Master’s scholarships", "phd-scholarship": "PhD scholarships" };
 type Step = "welcome" | "browse" | "detail" | "next" | "institutions";
 
 const POSITION_TYPES = ["phd", "postdoc", "fellowship", "research-assistantship", "collaboration"] as const;
 
 function kindOf(type: OpportunityResult["type"]): Kind {
-  return type === "grant" ? "grant" : "position";
+  return type === "grant" || type === "masters-scholarship" || type === "phd-scholarship" ? type : "position";
 }
 
 function typeLabel(type: OpportunityResult["type"]): string {
   switch (type) {
+    case "masters-scholarship": return "Master’s scholarship";
+    case "phd-scholarship": return "PhD scholarship";
     case "phd":
       return "PhD position";
     case "postdoc":
@@ -82,6 +86,7 @@ function TopBar() {
           </span>
         </Link>
       <nav className={styles.topActions} aria-label="Site navigation">
+        <LanguagePicker />
         <Link href="/main-site">Main site</Link>
         <Link className={styles.join} href="/auth/sign-in">Join free</Link>
       </nav>
@@ -108,7 +113,8 @@ function StartJourney() {
   const searchParams = useSearchParams();
   const requestedStep = searchParams.get("step");
   const step: Step = requestedStep === "browse" || requestedStep === "detail" || requestedStep === "next" || requestedStep === "institutions" ? requestedStep : "welcome";
-  const kind: Kind = searchParams.get("kind") === "grant" ? "grant" : "position";
+  const requestedKind = searchParams.get("kind");
+  const kind: Kind = requestedKind === "grant" || requestedKind === "masters-scholarship" || requestedKind === "phd-scholarship" ? requestedKind : "position";
   const query = searchParams.get("q") ?? "";
   const country = searchParams.get("country") ?? "";
   const page = readOpportunityPage(searchParams.get("page"));
@@ -166,8 +172,8 @@ function StartJourney() {
     if (step !== "browse") return;
     const controller = new AbortController();
     const params = new URLSearchParams();
-    if (kind === "grant") {
-      params.set("type", "grant");
+    if (kind !== "position") {
+      params.set("type", kind);
     } else {
       POSITION_TYPES.forEach((type) => params.append("type", type));
     }
@@ -246,6 +252,18 @@ function StartJourney() {
                   <span>→</span>
                 </span>
               </button>
+              <button type="button" className={styles.choice} onClick={() => openBrowse("masters-scholarship")}>
+                <span className={styles.over}><span>03 / Degree funding</span><span>↗</span></span>
+                <strong>Find a Master’s scholarship</strong>
+                <small>Scholarships for taught and research master’s degrees</small>
+                <span className={styles.foot}><span>Browse scholarships</span><span>→</span></span>
+              </button>
+              <button type="button" className={styles.choice} onClick={() => openBrowse("phd-scholarship")}>
+                <span className={styles.over}><span>04 / Degree funding</span><span>↗</span></span>
+                <strong>Find a PhD scholarship</strong>
+                <small>Doctoral scholarships and funded studentships</small>
+                <span className={styles.foot}><span>Browse scholarships</span><span>→</span></span>
+              </button>
             </div>
             <div className={styles.entryFoot}>
               <span>Browse freely. Sign up only when you want to save or follow up.</span>
@@ -290,6 +308,7 @@ function StartJourney() {
 
   if (step === "browse") {
     const isGrant = kind === "grant";
+    const isPosition = kind === "position";
     return (
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
@@ -300,7 +319,7 @@ function StartJourney() {
             <button type="button" className={styles.back} onClick={() => setStep("welcome")}>
               ← Back to choices
             </button>
-            <h1 className={styles.serif}>Explore {isGrant ? <em>grants</em> : <em>research positions</em>}.</h1>
+            <h1 className={styles.serif}>Explore {<em>{kindLabels[kind]}</em>}.</h1>
             <p>
               Search current listings freely. You only need an account to save an opportunity or keep track of its
               deadline.
@@ -312,8 +331,8 @@ function StartJourney() {
             <button
               type="button"
               role="tab"
-              aria-selected={!isGrant}
-              className={`${styles.routeTile} ${!isGrant ? styles.active : ""}`}
+              aria-selected={isPosition}
+              className={`${styles.routeTile} ${isPosition ? styles.active : ""}`}
               onClick={() => openBrowse("position")}
             >
               <span>
@@ -333,6 +352,9 @@ function StartJourney() {
                 <small>Funding calls</small>
               </span>
             </button>
+            {(["masters-scholarship", "phd-scholarship"] as const).map((value) => (
+              <button type="button" role="tab" aria-selected={kind === value} className={`${styles.routeTile} ${kind === value ? styles.active : ""}`} onClick={() => openBrowse(value)} key={value}><span><b>{kindLabels[value]}</b><small>Degree funding</small></span></button>
+            ))}
             <span className={styles.routeNote}>Browse freely · no account required</span>
           </div>
 
@@ -354,28 +376,28 @@ function StartJourney() {
 
           <div className={styles.listHead}>
             <div>
-              <span className={styles.eyebrow}>{isGrant ? "Funding calls" : "Research roles"}</span>
+              <span className={styles.eyebrow}>{isGrant ? "Funding calls" : isPosition ? "Research roles" : "Degree scholarships"}</span>
               <h2>
-                {loading ? "Searching…" : `${total.toLocaleString("en")} ${isGrant ? (total === 1 ? "grant" : "grants") : (total === 1 ? "position" : "positions")} to explore`}
+                {loading ? "Searching…" : `${total.toLocaleString("en")} ${kindLabels[kind]} to explore`}
               </h2>
             </div>
-            <p>Current listings, each linked to its original source.</p>
+            <p>{kind.includes("scholarship") ? "Funding programmes: confirm country-specific eligibility and application windows at the original source." : "Current listings, each linked to its original source."}</p>
           </div>
 
           <div className={styles.results} id="browse-results" aria-busy={loading}>
             {searchError ? <div className={styles.empty} role="alert">{searchError} <button type="button" className={styles.primary} onClick={() => setSearchAttempt((value) => value + 1)}>Retry search</button></div> : null}
             {!loading && !searchError && results.length === 0 ? (
-              <div className={styles.empty}><p>{query.trim() || country.trim() ? "No opportunities match these filters. Try fewer filters or browse original sources." : `No current ${kind === "grant" ? "grants" : "positions"} are listed.`}</p><Link href="/scanner">Explore official sources in Scanner →</Link></div>
+              <div className={styles.empty}><p>{query.trim() || country.trim() ? "No opportunities match these filters. Try fewer filters or browse original sources." : `No current ${kindLabels[kind]} are listed.`}</p><Link href="/scanner">Explore official sources in Scanner →</Link></div>
             ) : (
               results.map((item) => (
                 <article className={styles.result} key={item.id}>
                   <div>
                     <div className={styles.tags}>
                       <span>{typeLabel(item.type)}</span>
-                      <span>{item.location}</span>
+                      <span data-original-content>{item.location}</span>
                     </div>
-                    <h3>{item.title}</h3>
-                    <p>{item.organization}</p>
+                    <h3 data-original-content>{item.title}</h3>
+                    <p data-original-content>{item.organization}</p>
                   </div>
                   <div className={styles.resultSide}>
                     <small>{deadlineLabel(item)}</small>
@@ -396,6 +418,8 @@ function StartJourney() {
 
   if (step === "detail" && selected) {
     const isGrant = kindOf(selected.type) === "grant";
+    const isScholarship = selected.type.includes("scholarship");
+    const recordLabel = isScholarship ? "scholarship" : isGrant ? "grant" : "position";
     const applyHref = selected.applicationUrl || selected.sourceUrl;
     return (
       <div className={styles.page}>
@@ -407,10 +431,10 @@ function StartJourney() {
             <button type="button" className={styles.back} onClick={() => {
               setStep("browse");
             }}>
-              ← Back to {isGrant ? "grants" : "positions"}
+              ← Back to {kindLabels[kind]}
             </button>
-            <h1 className={styles.serif}>{selected.title}</h1>
-            <p>{[selected.organization, selected.location, deadlineLabel(selected)].filter(Boolean).join(" · ")}</p>
+            <h1 data-original-content className={styles.serif}>{selected.title}</h1>
+            <p data-original-content>{[selected.organization, selected.location, deadlineLabel(selected)].filter(Boolean).join(" · ")}</p>
           </div>
         </section>
         <main className={`${styles.wrap} ${styles.detail} ${styles.fade}`}>
@@ -421,8 +445,8 @@ function StartJourney() {
               </span>
               {selected.description ? (
                 <>
-                  <h2>About this {isGrant ? "funding call" : "role"}</h2>
-                  <p>{selected.description}</p>
+                  <h2>About this {isScholarship ? "scholarship" : isGrant ? "funding call" : "role"}</h2>
+                  <p data-original-content>{selected.description}</p>
                 </>
               ) : null}
               {selected.eligibilityReasons.length ? (
@@ -446,7 +470,7 @@ function StartJourney() {
                 </>
               ) : null}
               <a className={styles.official} href={applyHref} target="_blank" rel="noopener noreferrer">
-                Official {isGrant ? "funding call" : "vacancy"} / application route ↗
+                Official {isScholarship ? "scholarship" : isGrant ? "funding call" : "vacancy"} / application route ↗
               </a>
               <p className={styles.smallprint}>
                 Source: {selected.source.name} · last verified {new Date(selected.lastVerifiedAt).toLocaleDateString()}
@@ -456,12 +480,12 @@ function StartJourney() {
               <span className={styles.eyebrow}>Your next move</span>
               <h3>Keep this on your radar.</h3>
               <p>
-                Save this {isGrant ? "grant" : "position"} to come back to it and keep an eye on the deadline. A free
+                Save this {recordLabel} to come back to it and keep an eye on the deadline. A free
                 profile also keeps your CV ready for when you apply.
               </p>
               <div className={styles.detailActions}>
                 <button type="button" className={styles.primary} onClick={() => setStep("next")}>
-                  Track this {isGrant ? "grant" : "position"} <span>↗</span>
+                  Track this {recordLabel} <span>↗</span>
                 </button>
                 <a className={styles.sub} href={applyHref} target="_blank" rel="noopener noreferrer">View contact details at source <span>↗</span></a>
               </div>

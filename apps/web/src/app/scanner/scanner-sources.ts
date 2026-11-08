@@ -21,6 +21,18 @@ export type ScannerCategory = {
  * here only.
  */
 export const scannerCategories: ScannerCategory[] = [
+  { id:"scholarships", label:"Master’s & PhD scholarships", intro:"Degree funding databases. Automatic sources show their latest checks in Data sources; other publishers open in their own websites.", sources:[
+    {name:"DAAD Scholarship Database",href:"https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/",region:"Germany / international",coverage:"Master’s and PhD",description:"Official scholarship programmes; country-specific deadlines and eligibility.",connectorId:"daad-scholarships"},
+    {name:"PhDGermany",href:"https://www.daad.de/en/studying-in-germany/phd-studies-research/phd-germany/",region:"Germany",coverage:"Doctoral scholarships and positions",description:"Official DAAD feed; scholarships and salaried posts are classified separately.",connectorId:"daad-phdgermany"},
+    {name:"Erasmus Mundus Catalogue",href:"https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en",region:"Europe / international",coverage:"Joint master’s",description:"Official programme catalogue. Check each consortium’s current scholarship availability."},
+    {name:"Studyportals Scholarshipportal",href:"https://www.scholarshipportal.com/",region:"Worldwide",coverage:"Degree scholarships",description:"Search the publisher’s scholarship database. External directory; not an automatic import."},
+    {name:"FindAMasters",href:"https://www.findamasters.com/funding/",region:"Worldwide",coverage:"Master’s funding",description:"Master’s scholarship and funding directory. External directory."},
+    {name:"FindAPhD",href:"https://www.findaphd.com/",region:"Worldwide",coverage:"Doctoral funding",description:"Funded doctoral projects and studentships. External directory."},
+    {name:"Campus France",href:"https://campusbourses.campusfrance.org/",region:"France / international",coverage:"Master’s and doctoral funding",description:"CampusBourses, the official funding directory. External directory."},
+    {name:"grants.at",href:"https://grants.at/en/",region:"Austria / international",coverage:"Scholarships and research grants",description:"Austria’s scholarship database. External directory."},
+    {name:"Commonwealth Scholarships",href:"https://cscuk.fcdo.gov.uk/scholarships/",region:"United Kingdom",coverage:"Master’s and doctoral scholarships",description:"Official current calls, eligible countries and application rules. External directory."},
+    {name:"Chevening",href:"https://www.chevening.org/scholarships/",region:"United Kingdom",coverage:"Master’s scholarships",description:"Official programme and application timeline. External directory."}
+  ] },
   {
     id: "europe",
     label: "Europe",
@@ -46,13 +58,6 @@ export const scannerCategories: ScannerCategory[] = [
         region: "United Kingdom (+ international)",
         coverage: "PhD · Postdoc · Faculty · Research staff",
         description: "The UK's principal academic and research job board, also listing a meaningful number of international positions.",
-      },
-      {
-        name: "FindAPhD",
-        href: "https://www.findaphd.com/",
-        region: "UK & international",
-        coverage: "PhD",
-        description: "The largest dedicated PhD listing service, widely used by UK and European universities to advertise funded and self-funded projects.",
       },
       {
         name: "University Positions",
@@ -329,13 +334,6 @@ export const scannerCategories: ScannerCategory[] = [
         region: "Europe & international",
         coverage: "Postdoctoral fellowships",
         description: "Life-science fellowships for postdocs moving to a lab in another country, with EMBO's network and career support.",
-      },
-      {
-        name: "DAAD Scholarship Database",
-        href: "https://www.daad.de/en/studying-in-germany/scholarships/",
-        region: "Germany",
-        coverage: "Doctoral · Research stays · Postdoctoral",
-        description: "Germany's academic exchange service, with a searchable database of funding for international doctoral candidates and researchers.",
       },
       {
         name: "HHMI Hanna H. Gray Fellows",

@@ -25,6 +25,8 @@ enum OrganizationType {
 }
 
 enum OpportunityType {
+  MASTERS_SCHOLARSHIP
+  PHD_SCHOLARSHIP
   PHD
   POSTDOC
   FELLOWSHIP
@@ -776,4 +778,13 @@ model SearchQueryLog {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+model UiTranslation {
+  id String @id
+  locale String
+  catalogVersion String
+  translations Json
+  updatedAt DateTime @updatedAt
+  @@index([locale, catalogVersion])
 }

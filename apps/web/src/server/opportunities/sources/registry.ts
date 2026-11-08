@@ -1,3 +1,4 @@
+import { daadScholarshipsSource, daadDoctoralSource } from "./scholarships";
 import { euFundingTendersSource } from "./eu-funding-tenders";
 import { grantsGovSource } from "./grants-gov";
 import { greenhouseSources } from "./greenhouse";
@@ -9,6 +10,7 @@ import { usaJobsSource } from "./usajobs";
 
 /** Every publisher Provenant reads automatically, in display order. */
 export const opportunitySources: OpportunitySourceConnector[] = [
+  daadScholarshipsSource, daadDoctoralSource,
   grantsGovSource,
   euFundingTendersSource,
   maxPlanckSource,

@@ -171,7 +171,7 @@ export async function runOpportunitySync(
 export type PublicSourceStatus = {
   id: string;
   name: string;
-  kind: "grants" | "positions";
+  kind: "grants" | "positions" | "scholarships";
   homepage: string;
   description: string;
   enabled: boolean;

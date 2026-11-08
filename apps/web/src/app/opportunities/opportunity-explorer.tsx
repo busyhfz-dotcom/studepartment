@@ -25,6 +25,8 @@ const typeOptions: Array<{ value: "" | OpportunityTypeValue; label: string }> = 
   { value: "phd", label: "PhD positions" },
   { value: "fellowship", label: "Fellowships" },
   { value: "grant", label: "Grants" },
+  { value: "masters-scholarship", label: "Master’s scholarships" },
+  { value: "phd-scholarship", label: "PhD scholarships" },
   { value: "collaboration", label: "Collaborations" },
   { value: "research-assistantship", label: "Research assistantships" },
 ];
@@ -276,9 +278,9 @@ export function OpportunityExplorer() {
                       {opportunity.freshness}
                     </span>
                   </div>
-                  <h3>{opportunity.title}</h3>
-                  <strong>{opportunity.organization}</strong>
-                  <p>{opportunity.location}</p>
+                  <h3 data-original-content>{opportunity.title}</h3>
+                  <strong data-original-content>{opportunity.organization}</strong>
+                  <p data-original-content>{opportunity.location}</p>
                   <div className={styles.metaGrid}>
                     <div>
                       <span>Deadline</span>

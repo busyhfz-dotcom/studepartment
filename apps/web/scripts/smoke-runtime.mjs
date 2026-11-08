@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
 
 const baseUrl = process.env.SMOKE_BASE_URL || "http://127.0.0.1:3000";
 
@@ -160,6 +161,36 @@ if (!readyBody.integrations?.emailDelivery) {
 const marketingPage = await fetch(baseUrl + "/main-site");
 const marketingHtml = await marketingPage.text();
 assert.doesNotMatch(marketingHtml, /Nordic Biomedical Graduate School|Pacific Genomics Foundation|Live from Provenant|Refreshed continuously from verified sources/);
-assert.match(marketingHtml, /What is available today/);
+assert.doesNotMatch(marketingHtml, /What is available today/, "the removed availability panel must stay removed");
+assert.match(marketingHtml, /data-language-picker/);
+
+const entrance = await fetch(baseUrl + "/start");
+assert.equal(entrance.status, 200);
+const entranceHtml = await entrance.text();
+for (const title of ["Find a position", "Find a grant", "Find a Master’s scholarship", "Find a PhD scholarship"]) {
+  assert.ok(entranceHtml.includes(title), `entrance must offer ${title}`);
+}
+assert.match(entranceHtml, /current language English/);
+for (const type of ["masters-scholarship", "phd-scholarship"]) {
+  await verifyInteractivePage(`/start?step=browse&kind=${type}`);
+  const results = await request(`/api/v1/opportunities?type=${type}&limit=1`);
+  assert.equal(results.status, 200, `${type} must be a supported public filter`);
+  assert.equal((await results.json()).success, true);
+}
+
+const catalog = JSON.parse(await readFile(new URL("../src/lib/i18n/ui-catalog.json", import.meta.url), "utf8"));
+const publicKey = Object.keys(catalog).find((key) => catalog[key] === "Find a PhD scholarship");
+assert.ok(publicKey);
+const originalLabel = await request("/api/v1/interface-translations", {
+  method: "POST", headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ locale: "en", keys: [publicKey] }),
+});
+assert.equal(originalLabel.status, 200);
+assert.equal((await originalLabel.json()).translations[publicKey], catalog[publicKey]);
+const arbitraryText = await request("/api/v1/interface-translations", {
+  method: "POST", headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ locale: "fa", keys: ["synthetic-private-profile-text"] }),
+});
+assert.equal(arbitraryText.status, 400, "arbitrary profile/document text must not enter the translation pipeline");
 
 console.log("Runtime smoke checks passed.");

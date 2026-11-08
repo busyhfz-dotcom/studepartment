@@ -3,6 +3,7 @@
   "version": "1.4.0-rc.1",
   "private": true,
   "scripts": {
+    "i18n:catalog": "node scripts/build-ui-catalog.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
