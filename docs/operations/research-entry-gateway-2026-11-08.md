@@ -40,7 +40,21 @@ listed programme has a current scholarship. T32 is an institutional route.
 - New CI-only integration creates eight disposable synthetic opportunity
   fixtures in local CI PostgreSQL, checks audience classification, expiry,
   country/text filtering and pagination through the HTTP API, and cleans up.
-- Production build, CI integration and deployment results: pending at draft time.
+- Full CI run 259 passed: fresh migrations, lint, TypeScript, 63 unit tests,
+  production build, HTTP runtime smoke including eight audience fixtures, and
+  production dependency audit.
+  https://github.com/busyhfz-dotcom/studepartment/actions/runs/42498302761
+- PR 47 merged to the deployment branch at
+  `d93ba0d085ca58062478a54cbbc783d1173d0e3d`.
+  https://github.com/busyhfz-dotcom/studepartment/pull/47
+- Render deployment `dep-dbo9ub15efls73d93dsg` was triggered for that exact
+  release in the confirmed Hfz's workspace and became live at 16:14:53 UTC.
+- Public health reports the exact release and database ready. The production
+  MD-PhD API returns two current F30 notices, both with Grants.gov links.
+- Browser checks at 717 × 738 and 400 × 712 confirmed two entrance links and no
+  horizontal overflow. Persian RTL and Nazanin rendered; its longer text pushed
+  the second card below the 712px mobile viewport, prompting a follow-up copy and
+  spacing adjustment. Final mobile verification follows that release.
 
 No Railway resources, paid plans, existing scanner timing, secrets or user
 records are changed. Previously paused account-revisit automations stay paused.

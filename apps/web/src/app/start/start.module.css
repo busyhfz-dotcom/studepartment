@@ -580,13 +580,18 @@
 :global(html[lang="fa"]) .gatewayAudience,:global(html[lang="fa"]) .gatewayAction,:global(html[lang="fa"]) .gatewayReassurance{font-size:17px;letter-spacing:normal}
 :global(html[lang="fa"]) .pathwayMain p,:global(html[lang="fa"]) .pathwayHeading p,:global(html[lang="fa"]) .sourceGuidance{font-size:18px}
 @media(max-width:700px){
- .gatewayWelcome{padding:28px 20px 20px;min-height:0}.gatewayIntro h1{font-size:34px;margin:10px 0 12px}.gatewayIntro p{font-size:13px;line-height:1.7}
- .gatewayGrid{grid-template-columns:1fr;gap:16px;margin-top:24px}.gatewayCard{min-height:205px;padding:20px;border-radius:18px}
+ .gatewayWelcome{padding:22px 20px 20px;min-height:0}.gatewayIntro h1{font-size:34px;margin:10px 0 12px}.gatewayIntro p{font-size:13px;line-height:1.7}
+ .gatewayGrid{grid-template-columns:1fr;gap:14px;margin-top:20px}.gatewayCard{min-height:205px;padding:20px;border-radius:18px}
  .gatewayAudience{max-width:calc(100% - 85px);font-size:10px}.gatewayArt{position:absolute;inset-inline-end:15px;top:12px;width:100px;height:65px;margin:0}
  .gatewayCard h2{font-size:29px;margin:24px 0 10px}.gatewayCard p{font-size:13px;max-width:330px}.gatewayAction{font-size:12px;padding-top:12px}.gatewayAction>span{width:30px;height:30px}
  .gatewayReassurance{font-size:10px;margin-top:16px}.pathwayPage{padding-block:24px 40px}.pathwayGrid{grid-template-columns:1fr;gap:14px}.pathwayHeading h1{font-size:31px}
  .pathwayMain{padding:21px}.pathwayMain h2{font-size:23px}.physicianPath{padding:15px 21px}
- :global(html[lang="fa"]) .gatewayCard h2{font-size:34px}:global(html[lang="fa"]) .gatewayCard p{font-size:19px}
+ :global(html[lang="fa"]) .gatewayCard h2{font-size:30px;line-height:1.2;letter-spacing:normal}
+ :global(html[lang="fa"]) .gatewayCard p{font-size:18px;line-height:1.5}
+ :global(html[lang="fa"]) .gatewayIntro p{font-size:19px;line-height:1.5}
+ :global(html[lang="fa"]) .gatewayIntro h1{letter-spacing:normal}
+ :global(html[lang="fa"]) .gatewayAudience,:global(html[lang="fa"]) .gatewayAction{font-size:15px}
+ :global(html[lang="fa"]) .gatewayReassurance{font-size:14px}
 }
 @media(max-height:740px) and (min-width:701px){.gatewayWelcome{padding-block:20px}.gatewayGrid{margin-top:20px}.gatewayCard{min-height:265px;padding:24px}.gatewayArt{height:74px;width:128px}.gatewayIntro h1{font-size:42px}}
 @media(prefers-reduced-motion:reduce){.gatewayCard{transition:none}.gatewayCard:hover{transform:none}}
