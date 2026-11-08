@@ -238,7 +238,15 @@ export function DiscoveryExplorer() {
                   ) : null}
                   <FeedbackControls entityId={person.id} entityType="researcher" />
                   <Link className={styles.profileLink} href={`/researchers/${person.id}`}>View profile</Link>
-                  <Link className={styles.introLink} href={`/introductions/new?researcher=${person.id}`}>Review introduction</Link>
+                  {person.viewerRelation?.kind === "connected" ? (
+                    <Link className={styles.introLink} href={`/messages/${person.viewerRelation.conversationId}`}>Open private conversation</Link>
+                  ) : person.viewerRelation?.kind === "pending" ? (
+                    <Link className={styles.introLink} href="/introductions">
+                      {person.viewerRelation.direction === "sent" ? "Introduction pending" : "Respond to introduction"}
+                    </Link>
+                  ) : person.viewerRelation?.kind === "self" ? null : (
+                    <Link className={styles.introLink} href={`/introductions/new?researcher=${person.id}`}>Review introduction</Link>
+                  )}
                 </div>
               </article>
             ))}
