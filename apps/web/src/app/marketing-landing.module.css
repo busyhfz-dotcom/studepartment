@@ -29,6 +29,8 @@
 /* Navigation */
 .top { position: relative; z-index: 20; background: var(--paper); border-bottom: 1px solid var(--line); }
 .topInner { min-height: 82px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+.headerControls { display: flex; align-items: center; gap: clamp(14px, 2vw, 28px); margin-inline-start: auto; }
+.headerControls > [data-language-picker] { position: relative; z-index: 3; }
 .brand { display: inline-flex; align-items: center; gap: 11px; white-space: nowrap; font-size: 21px; font-weight: 760; letter-spacing: -.065em; }
 .brand b { color: var(--teal); }
 .mark { display: grid; place-items: center; width: 35px; height: 35px; border-radius: 50%; background: var(--forest); color: var(--mint); font: 24px/1 var(--font-editorial), Georgia, serif; padding-top: 5px; }
@@ -60,7 +62,7 @@
 .heroBottom { display: flex; justify-content: space-between; gap: 22px; border-top: 1px solid var(--line); padding: 21px 0 23px; color: #667b73; font-size: 11px; font-weight: 650; }
 .heroBottom span:last-child { color: var(--teal); text-transform: uppercase; letter-spacing: .13em; }
 
-.heroDesk { position: relative; isolation: isolate; color: #eef8f1; background: var(--deep); border: 1px solid #325c55; border-radius: 7px; box-shadow: 18px 20px 0 #dce8df, 0 25px 55px #163b3229; transform: rotate(1.1deg); }
+.heroDesk { position: relative; isolation: isolate; color: #eef8f1; background: var(--deep); border: 1px solid #325c55; border-radius: 7px; box-shadow: 18px 20px 0 #dce8df, 0 25px 55px #163b3229; transform: none; }
 .deskHeading { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 22px 23px 16px; font-size: 13px; font-weight: 760; }
 .deskHeading span:last-child { color: #9cc6b2; font-size: 10px; font-weight: 650; }
 .latestLoading { margin: 0; padding: 28px 23px; color: #b1cebf; font-size: 13px; }
@@ -340,6 +342,8 @@
 .tickerMotionToggle:focus-visible,.mobileToggle:focus-visible{outline:2px solid #a7bfff;outline-offset:3px}
 
 @media(max-width:850px){
+  .headerControls { gap: 10px; }
+  .headerControls .mobileToggle { margin: 0; }
   .topInner{height:auto;min-height:68px;padding-block:10px;gap:10px;flex-wrap:nowrap}
   .topInner>.brand,.mobileToggle{position:relative;z-index:3}
   .mobileToggle{display:flex;align-items:center;justify-content:center;margin-left:auto;min-width:44px;min-height:44px}

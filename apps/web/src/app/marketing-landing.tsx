@@ -94,8 +94,9 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                 provenant<b>.</b>
               </span>
             </Link>
-            <LanguagePicker />
-            <MobileNav
+            <div className={styles.headerControls}>
+              <LanguagePicker />
+              <MobileNav
               links={[
                 { href: "#platform", label: "Platform" },
                 { href: "#principles", label: "Our approach" },
@@ -103,7 +104,8 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                 { href: "/auth/sign-in", label: "Sign in" },
                 { href: "/auth/sign-up", label: "Create account" },
               ]}
-            />
+              />
+            </div>
           </div>
         </div>
       </header>
