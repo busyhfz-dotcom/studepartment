@@ -2,8 +2,8 @@
 import { LanguagePicker } from "@/components/i18n/language-provider";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { SystemStatus } from "./system-status";
@@ -19,11 +19,14 @@ type NavItem = {
 };
 
 const opportunityItems: NavItem[] = [
+  { href: "/opportunities", label: "All opportunities", description: "Positions, fellowships, grants", icon: "opportunity" },
   { href: "/opportunities?type=grant", label: "Grants", description: "Compare funding calls", icon: "opportunity" },
   { href: "/opportunities?type=masters-scholarship", label: "Master’s scholarships", description: "Funding for a master’s degree", icon: "opportunity" },
   { href: "/opportunities?type=phd-scholarship", label: "PhD scholarships", description: "Doctoral scholarships and studentships", icon: "opportunity" },
   { href: "/opportunities?audience=md-phd", label: "MD-PhD funding", description: "Dual-degree scholarships", icon: "opportunity" },
 ];
+
+const OPPORTUNITIES_HREF = "/opportunities";
 
 const workspaceItems: NavItem[] = [
   { href: "/", label: "Overview", description: "Your workspace at a glance", icon: "overview" },
@@ -156,6 +159,112 @@ function Icon({ name }: { name: IconName }) {
   );
 }
 
+function isSubItemActive(href: string, pathname: string, search: string) {
+  const [itemPath, itemQuery = ""] = href.split("?");
+  if (!pathname.startsWith(itemPath)) return false;
+  const current = new URLSearchParams(search);
+  const wanted = new URLSearchParams(itemQuery);
+  if (!itemQuery) return !current.has("type") && !current.has("audience");
+  return Array.from(wanted.entries()).every(([key, value]) => current.get(key) === value);
+}
+
+function OpportunitySubLinks({
+  search,
+  sectionActive,
+  pathname,
+  open,
+  close,
+  activeItemRef,
+}: {
+  search: string;
+  sectionActive: boolean;
+  pathname: string;
+  open: boolean;
+  close: () => void;
+  activeItemRef: RefObject<HTMLAnchorElement | null>;
+}) {
+  return (
+    <>
+      {opportunityItems.map((child) => {
+        const active = sectionActive && isSubItemActive(child.href, pathname, search);
+        return (
+          <Link
+            aria-current={active ? "page" : undefined}
+            className={`${styles.navSubItem} ${active ? styles.navSubItemActive : ""}`}
+            href={child.href}
+            key={child.href}
+            onClick={close}
+            ref={active ? activeItemRef : undefined}
+            tabIndex={open ? undefined : -1}
+          >
+            <span className={styles.navSubDot} aria-hidden="true" />
+            <span className={styles.navCopy}>
+              <strong>{child.label}</strong>
+              <small>{child.description}</small>
+            </span>
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
+function OpportunitySubLinksWithParams(props: Omit<Parameters<typeof OpportunitySubLinks>[0], "search">) {
+  const searchParams = useSearchParams();
+  return <OpportunitySubLinks {...props} search={searchParams.toString()} />;
+}
+
+function OpportunitiesNav({
+  item,
+  pathname,
+  close,
+  activeItemRef,
+}: {
+  item: NavItem;
+  pathname: string;
+  close: () => void;
+  activeItemRef: RefObject<HTMLAnchorElement | null>;
+}) {
+  const sectionActive = pathname.startsWith(OPPORTUNITIES_HREF);
+  const [open, setOpen] = useState(sectionActive);
+  const [lastPathname, setLastPathname] = useState(pathname);
+  const submenuId = "nav-opportunities-submenu";
+
+  // Entering the Opportunities section always reveals its sub-categories.
+  if (lastPathname !== pathname) {
+    setLastPathname(pathname);
+    if (sectionActive) setOpen(true);
+  }
+
+  const subLinkProps = { sectionActive, pathname, open, close, activeItemRef };
+
+  return (
+    <div className={styles.navBranch}>
+      <button
+        aria-controls={submenuId}
+        aria-expanded={open}
+        className={`${styles.navItem} ${styles.navToggle} ${sectionActive ? styles.navItemActive : ""}`}
+        onClick={() => setOpen((value) => !value)}
+        type="button"
+      >
+        <span className={styles.iconWrap}><Icon name={item.icon} /></span>
+        <span className={styles.navCopy}>
+          <strong>{item.label}</strong>
+          <small>{item.description}</small>
+        </span>
+        <span className={`${styles.navChevron} ${open ? styles.navChevronOpen : ""}`} aria-hidden="true">›</span>
+      </button>
+      <div className={`${styles.navSubList} ${open ? styles.navSubListOpen : ""}`} id={submenuId}>
+        <div className={styles.navSubInner}>
+          <Suspense fallback={<OpportunitySubLinks {...subLinkProps} search="" />}>
+            <OpportunitySubLinksWithParams {...subLinkProps} />
+          </Suspense>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function NavigationGroup({
   label,
   items,
@@ -168,7 +277,6 @@ function NavigationGroup({
   close: () => void;
 }) {
   const activeItemRef = useRef<HTMLAnchorElement>(null);
-  const [opportunitiesOpen, setOpportunitiesOpen] = useState(false);
 
   useEffect(() => {
     activeItemRef.current?.scrollIntoView({ block: "nearest" });
@@ -178,9 +286,11 @@ function NavigationGroup({
     <div className={styles.navGroup}>
       <span className={styles.navLabel}>{label}</span>
       <nav className={styles.navList} aria-label={label}>
-        {items.flatMap((item) => {
+        {items.map((item) => {
+          if (item.href === OPPORTUNITIES_HREF) {
+            return <OpportunitiesNav activeItemRef={activeItemRef} close={close} item={item} key={item.href} pathname={pathname} />;
+          }
           const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-          if (item.href === "/opportunities") return [<button key={item.href} type="button" aria-expanded={opportunitiesOpen} className={`${styles.navItem} ${active ? styles.navItemActive : ""}`} onClick={() => setOpportunitiesOpen((open) => !open)}><span className={styles.iconWrap}><Icon name={item.icon} /></span><span className={styles.navCopy}><strong>{item.label}</strong><small>{item.description}</small></span><span className={styles.navArrow} aria-hidden="true">{opportunitiesOpen ? "⌄" : "›"}</span></button>, ...(opportunitiesOpen ? opportunityItems.map((child) => <Link className={`${styles.navItem} ${styles.navSubItem}`} href={child.href} key={child.href} onClick={close}><span className={styles.iconWrap}><Icon name={child.icon} /></span><span className={styles.navCopy}><strong>{child.label}</strong><small>{child.description}</small></span><span className={styles.navArrow} aria-hidden="true">›</span></Link>) : [])];
           return (
             <Link
               aria-current={active ? "page" : undefined}
