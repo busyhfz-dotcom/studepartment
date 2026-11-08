@@ -227,7 +227,14 @@ export const scannerCategories: ScannerCategory[] = [
         description: "Japan's official Research Career Information Network, run by the Japan Science and Technology Agency — the standard portal for research positions in Japan.",
       },
       {
-        name: "ResearchGate Jobs",
+          name: "LinkedIn Jobs",
+          href: "https://www.linkedin.com/jobs/",
+          region: "Global",
+          coverage: "Research roles · PhD · Postdoc · Industry",
+          description: "Open the publisher's recruitment network directly. Listings are not scraped or automatically imported into Provenant.",
+        },
+        {
+          name: "ResearchGate Jobs",
         href: "https://www.researchgate.net/jobs",
         region: "Global, meaningful Asia-Pacific coverage",
         coverage: "PhD · Postdoc · Faculty · Industry",

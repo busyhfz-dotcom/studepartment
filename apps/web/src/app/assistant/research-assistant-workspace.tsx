@@ -1,4 +1,5 @@
 "use client";
+import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
 
 import { FormEvent, useMemo, useState } from "react";
 import Link from "next/link";
@@ -170,6 +171,7 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = false, aiProv
                     ) : null}
                   </footer>
                   {citation.opportunityId ? <SaveOpportunityButton className="secondary" opportunityId={citation.opportunityId} /> : null}
+                  {citation.opportunityId ? <ShareOpportunity item={{id:citation.opportunityId,title:citation.label}}/> : null}
                 </article>
               ))}
             </div>

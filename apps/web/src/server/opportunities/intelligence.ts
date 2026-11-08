@@ -12,6 +12,7 @@ import { opportunityPagination } from "@/lib/opportunity-pagination";
 import { searchTerms } from "./search-terms";
 import { careerStageFilterSlugs } from "./career-stage";
 import { mdPhdAudienceWhere } from './audience';
+import { grantDetails } from './grant-details';
 import { getTopInterestTopicSlugs, recordSearchAndUpdateInterest } from "@/server/personalization/interest-signals";
 
 const typeToDb = {
@@ -310,6 +311,7 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     orderBy,
     include: {
       organization: true,
+      provenance: { orderBy: { observedAt: 'desc' }, take: 1, select: { metadata: true } },
       topics: { include: { topic: true }, orderBy: { weight: "desc" } },
       methods: { include: { method: true } },
     },
@@ -371,6 +373,7 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
 
     return {
       id: opportunity.id,
+      ...(opportunity.type === 'GRANT' ? { grant: grantDetails({sourceName:opportunity.sourceName,organization:opportunity.organization.name,description:opportunity.description,eligibleCountryCodes:opportunity.eligibleCountryCodes,metadata:opportunity.provenance[0]?.metadata}) } : {}),
       type: typeFromDb[opportunity.type],
       title: opportunity.title,
       description: opportunity.description ?? undefined,

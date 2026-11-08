@@ -13,6 +13,9 @@ import { BrandSymbol } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { CountrySelect } from "@/components/forms/country-select";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
+import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
+import { DeadlineReminder } from '@/components/opportunities/deadline-reminder';
+import { GrantTable } from '@/components/opportunities/grant-table';
 
 type Step = "welcome" | "paths" | "browse" | "detail" | "next" | "institutions";
 
@@ -346,7 +349,7 @@ function StartJourney() {
             {!loading && !searchError && results.length === 0 ? (
               <div className={styles.empty}><p>{query.trim() || country.trim() ? "No opportunities match these filters. Try fewer filters or browse original sources." : `No current ${kindLabels[kind]} are listed.`}</p><Link href="/scanner">Explore official sources in Scanner →</Link></div>
             ) : (
-              results.map((item) => (
+              kind === 'grant' ? (!loading&&!searchError?<GrantTable items={results} params={entrySearchParams(kind,query,country,page).toString()} onReview={openDetail}/>:null) : results.map((item) => (
                 <article className={styles.result} key={item.id}>
                   <div>
                     <div className={styles.tags}>
@@ -361,6 +364,8 @@ function StartJourney() {
                     <button type="button" onClick={() => openDetail(item)} aria-label={`Review ${item.title}`}>
                       Review details ↗
                     </button>
+                    <ShareOpportunity item={item}/>
+                    <DeadlineReminder items={[item]}/>
                   </div>
                 </article>
               ))
@@ -440,6 +445,8 @@ function StartJourney() {
                 profile also keeps your CV ready for when you apply.
               </p>
               <div className={styles.detailActions}>
+                <ShareOpportunity item={selected}/>
+                <DeadlineReminder items={[selected]}/>
                 <button type="button" className={styles.primary} onClick={() => setStep("next")}>
                   Track this {recordLabel} <span>↗</span>
                 </button>

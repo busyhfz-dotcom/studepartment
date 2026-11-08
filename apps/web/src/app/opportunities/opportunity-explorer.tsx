@@ -16,6 +16,9 @@ import styles from "./page.module.css";
 import { SaveOpportunityButton } from "./save-opportunity-button";
 import { CountrySelect } from "@/components/forms/country-select";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
+import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
+import { DeadlineReminder } from '@/components/opportunities/deadline-reminder';
+import { GrantTable } from '@/components/opportunities/grant-table';
 
 type OpportunityApiResponse = ApiSuccess<OpportunityIntelligenceResponse> | ApiError;
 
@@ -240,6 +243,12 @@ export function OpportunityExplorer() {
       {error ? <div className={styles.errorBanner} role="alert">{error} <button type="button" onClick={() => setAttempt((previous) => previous + 1)}>Retry search</button></div> : null}
 
       <section className={styles.resultsSection} id="opportunity-results" aria-busy={loading}>
+        <aside className={styles.networkSources}>
+          <strong>Explore recruitment networks</strong>
+          <p>LinkedIn and ResearchGate open on their own websites. Their listings are not automatically imported here.</p>
+          <a href="https://www.linkedin.com/jobs/" target="_blank" rel="noopener noreferrer">LinkedIn Jobs ↗</a>
+          <a href="https://www.researchgate.net/jobs" target="_blank" rel="noopener noreferrer">ResearchGate Jobs ↗</a>
+        </aside>
         <div className={styles.resultsHeader}>
           <div>
             <span className="sectionLabel">Decision queue</span>
@@ -276,7 +285,7 @@ export function OpportunityExplorer() {
         ) : null}
 
         {!loading && data?.results.length ? (
-          <div className={styles.resultList}>
+          data.query.types.length===1&&data.query.types[0]==='grant' ? <GrantTable items={data.results} params={appliedParams.toString()}/> : <div className={styles.resultList}>
             {data.results.map((opportunity) => (
               <article className={styles.card} key={opportunity.id}>
                 <div className={styles.identity}>
@@ -345,6 +354,8 @@ export function OpportunityExplorer() {
                   <FeedbackControls entityId={opportunity.id} entityType="opportunity" />
                   <a className={styles.secondaryAction} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source</a>
                   <SaveOpportunityButton className={styles.secondaryAction} opportunityId={opportunity.id} />
+                  <ShareOpportunity item={opportunity}/>
+                  <DeadlineReminder items={[opportunity]}/>
                   <a className={styles.secondaryAction} href={"/assistant?opportunity=" + opportunity.id}>Ask assistant</a>
                   <a className={styles.primaryAction} href={opportunity.applicationUrl ?? opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application</a>
                 </aside>

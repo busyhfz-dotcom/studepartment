@@ -23,6 +23,7 @@ const workspaceItems: NavItem[] = [
   { href: "/discover", label: "Discovery", description: "Researchers, labs, institutions", icon: "discover" },
   { href: "/assistant", label: "Research Assistant", description: "Answers with sources", icon: "assistant" },
   { href: "/opportunities", label: "Opportunities", description: "Positions, fellowships, grants", icon: "opportunity" },
+    { href: "/opportunities?type=grant", label: "Grants", description: "Compare funding calls and award amounts", icon: "opportunity" },
   { href: "/opportunities?type=masters-scholarship", label: "Master’s scholarships", description: "Funding for a master’s degree", icon: "opportunity" },
   { href: "/opportunities?type=phd-scholarship", label: "PhD scholarships", description: "Doctoral scholarships and studentships", icon: "opportunity" },
   { href: "/opportunities?audience=md-phd", label: "MD-PhD funding", description: "Dual-degree scholarships and fellowships", icon: "opportunity" },
