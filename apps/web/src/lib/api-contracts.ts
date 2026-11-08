@@ -50,7 +50,14 @@ export type ResearcherDiscoveryResult = {
   verifiedSignals: string[];
   score: number;
   scoreBreakdown: DiscoveryScoreBreakdown;
+  /** Only present for a signed-in viewer: their own relationship to this researcher. */
+  viewerRelation?: ResearcherViewerRelation;
 };
+
+export type ResearcherViewerRelation =
+  | { kind: "self" }
+  | { kind: "connected"; conversationId: string }
+  | { kind: "pending"; direction: "sent" | "received" };
 
 export type ResearcherDiscoveryResponse = {
   query: ResearcherDiscoveryQuery;
