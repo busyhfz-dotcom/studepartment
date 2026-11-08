@@ -20,7 +20,9 @@ export async function POST(request: NextRequest) {
     const {locale,keys}=selected;
     if (locale === 'en') return reply({translations:Object.fromEntries(keys.map(key=>[key,messages[key]]))});
     const db = getDb();
-    const id = `${version}:${locale}`;
+    // Message keys hash their English text, so unchanged labels can be reused across releases.
+    // One cache row per locale avoids duplicating the whole catalog after an interface edit.
+    const id = `interface:${locale}`;
     const row = await db.uiTranslation.findUnique({where:{id}});
     const cached = (row?.translations || {}) as Record<string,string>;
     const missing = keys.filter(key=>typeof cached[key] !== 'string');

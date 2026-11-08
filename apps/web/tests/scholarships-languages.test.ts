@@ -23,6 +23,7 @@ test('nationality-dependent deadlines are not turned into one universal date',()
   assert.equal(record.deadline,null);
   assert.equal(record.metadata?.applicationWindow,'country-specific-or-unconfirmed');
   assert.deepEqual(record.eligibleCountryCodes,undefined);
+  assert.equal(record.eligibleCareerStages,undefined,'degree level must not invent the applicant’s current career-stage eligibility');
 });
 test('a past published deadline is preserved for the ingestion expiry rule',()=>{
   const [record]=daadScholarshipRecords([{id:1,sapProgid:1,nameEn:'Synthetic Doctoral Scholarship'}],[{id:1,general:{en:'Application deadline: 2026-01-01'}}],new Date('2026-11-08T10:00:00Z'));

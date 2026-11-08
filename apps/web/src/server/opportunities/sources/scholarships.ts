@@ -42,7 +42,7 @@ export function daadScholarshipRecords(awards:DaadAward[],deadlines:DaadDeadline
       sourceRecordId:`${award.sapProgid}:${type}`,sourceUrl:`${daadDatabase}?detail=${award.sapProgid}`,type,title:award.nameEn,
       description:`${description}\nApplication windows and eligibility can depend on your country. Confirm the current round on the DAAD record.${general?' Published deadline guidance: '+general.slice(0,350):''}`,
       organization:{name:'German Academic Exchange Service (DAAD)',type:'FOUNDATION',countryCode:'DE',website:'https://www.daad.de/'},countryCode:'DE',deadline,
-      eligibleCareerStages:[type==='MASTERS_SCHOLARSHIP'?'student':'phd'],topicSlugs:topicSlugsFor(award.nameEn+' '+description),methodSlugs:methodSlugsFor(description),
+      topicSlugs:topicSlugsFor(award.nameEn+' '+description),methodSlugs:methodSlugsFor(description),
       metadata:{degreeFunding:true,applicationWindow:deadline?'published':'country-specific-or-unconfirmed',publisherRecordId:award.sapProgid},
     });
   }
@@ -75,7 +75,7 @@ export function daadDoctoralRecords(xml:string,now:Date):OpportunityIngestionRec
     if(url.protocol!=='https:'||!/(^|\.)daad\.de$/.test(url.hostname))return [];
     return [{sourceRecordId:item.guid,sourceUrl:item.link,applicationUrl:item.link,type:scholarship?'PHD_SCHOLARSHIP':'PHD',title:item.title,
       description:cleanDescription(item.description,1000),organization:{name:'German Academic Exchange Service (DAAD)',type:'FOUNDATION',countryCode:'DE',website:'https://www.daad.de/'},
-      countryCode:'DE',deadline,eligibleCareerStages:['phd'],topicSlugs:topicSlugsFor(item.title+' '+text),methodSlugs:methodSlugsFor(text),metadata:{publisher:'DAAD PhDGermany',degreeFunding:scholarship}} as OpportunityIngestionRecord];
+      countryCode:'DE',deadline,topicSlugs:topicSlugsFor(item.title+' '+text),methodSlugs:methodSlugsFor(text),metadata:{publisher:'DAAD PhDGermany',degreeFunding:scholarship}} as OpportunityIngestionRecord];
   });
 }
 
