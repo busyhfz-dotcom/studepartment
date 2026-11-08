@@ -529,3 +529,8 @@
   .entryFoot{font-size:10px;line-height:1.5}
   .entryFootLinks{gap:6px;flex-direction:row;flex-wrap:wrap}
 }
+/* Persian Naskh needs larger small text than the Latin interface. */
+:global(html[lang="fa"]) .entryHead p{font-size:18px;line-height:1.5}
+:global(html[lang="fa"]) .topActions{font-size:16px}
+:global(html[lang="fa"]) .entryFoot,:global(html[lang="fa"]) .entryFoot button,:global(html[lang="fa"]) .footbar{font-size:14px;line-height:1.6}
+:global(html[lang="fa"]) .stage{font-size:12px}
