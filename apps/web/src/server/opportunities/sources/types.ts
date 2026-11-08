@@ -20,7 +20,7 @@ export type SourceContext = {
 export type OpportunitySourceConnector = {
   id: string;
   source: OpportunityIngestionSource;
-  kind: "grants" | "positions";
+  kind: "grants" | "positions" | "scholarships";
   /** Public page people can open to see the publisher's own listings. */
   homepage: string;
   /** Short plain-language description shown on the public sources list. */

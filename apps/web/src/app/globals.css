@@ -585,3 +585,7 @@ h1 {
   .verificationGrid { grid-template-columns:1fr; }
   .verificationItem,.verificationItem:nth-child(2) { border-right:0; }
 }
+
+/* Keep identifiers and documents in their original writing direction. */
+html[dir="rtl"] input[type="email"],html[dir="rtl"] input[type="url"],html[dir="rtl"] code{direction:ltr;text-align:left}
+[data-original-content]{unicode-bidi:plaintext}

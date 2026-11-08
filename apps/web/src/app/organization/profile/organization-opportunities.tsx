@@ -8,6 +8,7 @@ type Option = { slug: string; name: string };
 type Data = { opportunities: RecordItem[]; topics: Option[]; methods: Option[]; organizationVerified: boolean };
 const types = [
   ["phd", "PhD position"], ["postdoc", "Postdoctoral position"], ["fellowship", "Fellowship"],
+  ["masters-scholarship", "Master’s scholarship"], ["phd-scholarship", "PhD scholarship"],
   ["grant", "Grant"], ["collaboration", "Collaboration"], ["research-assistantship", "Research assistantship"],
 ] as const;
 

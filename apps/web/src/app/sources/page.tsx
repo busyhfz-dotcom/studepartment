@@ -50,6 +50,7 @@ function syncedLabel(source: PublicSourceStatus) {
 export default async function SourcesPage() {
   const [viewer, sources] = await Promise.all([getShellViewer(), loadSources()]);
   const groups = [
+    { kind: "scholarships" as const, label: "Scholarships", intro: "Master’s and doctoral funding publishers. Some programme deadlines depend on nationality; confirm the current round at the source." },
     { kind: "grants" as const, label: "Funding calls", intro: "Official funders' databases, read through the public APIs they publish." },
     { kind: "positions" as const, label: "Positions", intro: "Employers' own job feeds and open job boards that allow reuse of their listings." },
   ];
@@ -83,7 +84,7 @@ export default async function SourcesPage() {
                   <p>{source.description}</p>
                   <div className={styles.sourceMeta}>
                     <span>
-                      {source.enabled ? `${source.activeListings.toLocaleString("en")} open listings` : "Not connected yet"}
+                      {source.enabled ? `${source.activeListings.toLocaleString("en")} ${source.kind === "scholarships" ? "listed records" : "open listings"}` : "Not connected yet"}
                       {source.enabled && source.newToday ? ` · ${source.newToday.toLocaleString("en")} new in 24 hours` : ""}
                     </span>
                     <span>{source.enabled ? `${frequencyLabel(source.intervalMinutes)} · ${syncedLabel(source)}` : "Awaiting access key"}</span>

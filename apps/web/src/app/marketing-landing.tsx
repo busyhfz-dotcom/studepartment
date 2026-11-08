@@ -1,3 +1,4 @@
+import { LanguagePicker } from "@/components/i18n/language-provider";
 import Link from "next/link";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { OpportunityTicker, PlatformTabs, MobileNav, Reveal } from "./marketing-landing-client";
@@ -93,6 +94,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                 provenant<b>.</b>
               </span>
             </Link>
+            <LanguagePicker />
             <MobileNav
               links={[
                 { href: "#platform", label: "Platform" },
@@ -203,7 +205,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
                     <span>↗</span>
                   </div>
                   <div>
-                    <h3>Explore positions &amp; funding</h3>
+                    <h3>Explore positions, grants &amp; scholarships</h3>
                     <p>Browse without signing up. Create a free account when you want to save opportunities and track deadlines.</p>
                   </div>
                   <span className={styles.action}>
@@ -262,6 +264,8 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
           <a href="#principles">Our approach</a>
           <Link href="/auth/sign-in">Sign in to your workspace</Link>
           <Link href="/sources">Data sources</Link>
+          <Link href="/start?step=browse&kind=masters-scholarship">Master’s scholarships</Link>
+          <Link href="/start?step=browse&kind=phd-scholarship">PhD scholarships</Link>
           <Link href="/terms">Terms</Link>
           <Link href="/privacy">Privacy</Link>
         </div>

@@ -1,4 +1,5 @@
 "use client";
+import { LanguagePicker } from "@/components/i18n/language-provider";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -22,6 +23,8 @@ const workspaceItems: NavItem[] = [
   { href: "/discover", label: "Discovery", description: "Researchers, labs, institutions", icon: "discover" },
   { href: "/assistant", label: "Research Assistant", description: "Answers with sources", icon: "assistant" },
   { href: "/opportunities", label: "Opportunities", description: "Positions, fellowships, grants", icon: "opportunity" },
+  { href: "/opportunities?type=masters-scholarship", label: "Master’s scholarships", description: "Funding for a master’s degree", icon: "opportunity" },
+  { href: "/opportunities?type=phd-scholarship", label: "PhD scholarships", description: "Doctoral scholarships and studentships", icon: "opportunity" },
   { href: "/introductions", label: "Introductions", description: "Meet the right researchers", icon: "introduction" },
   { href: "/scanner", label: "Scanner", description: "Trusted job & funding databases", icon: "scanner" },
   { href: "/conferences", label: "Conferences", description: "Venue checks and CME credit", icon: "conference" },
@@ -318,6 +321,7 @@ export function ProductShell({
           </div>
 
           <div className={styles.topbarActions}>
+            <LanguagePicker />
             <Link className={styles.quickSearch} href="/discover" title="Search scientific intelligence">
               <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.7">
                 <circle cx="10.5" cy="10.5" r="6.25" />

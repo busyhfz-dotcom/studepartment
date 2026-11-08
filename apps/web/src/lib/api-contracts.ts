@@ -326,6 +326,8 @@ export type ProfileUpdateInput = {
 };
 
 export type OpportunityTypeValue =
+  | "masters-scholarship"
+  | "phd-scholarship"
   | "phd"
   | "postdoc"
   | "fellowship"

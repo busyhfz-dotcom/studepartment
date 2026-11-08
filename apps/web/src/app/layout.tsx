@@ -1,3 +1,4 @@
+import { LanguageProvider } from "@/components/i18n/language-provider";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { getSiteUrl, siteDescription, siteName, siteTagline } from "@/lib/site";
@@ -56,7 +57,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${sans.variable} ${mono.variable}`}>{children}</body>
+      <body className={`${sans.variable} ${mono.variable}`}><LanguageProvider>{children}</LanguageProvider></body>
     </html>
   );
 }

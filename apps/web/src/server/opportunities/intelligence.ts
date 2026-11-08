@@ -14,6 +14,8 @@ import { careerStageFilterSlugs } from "./career-stage";
 import { getTopInterestTopicSlugs, recordSearchAndUpdateInterest } from "@/server/personalization/interest-signals";
 
 const typeToDb = {
+  "masters-scholarship": "MASTERS_SCHOLARSHIP",
+  "phd-scholarship": "PHD_SCHOLARSHIP",
   phd: "PHD",
   postdoc: "POSTDOC",
   fellowship: "FELLOWSHIP",
@@ -23,6 +25,8 @@ const typeToDb = {
 } as const;
 
 const typeFromDb = {
+  MASTERS_SCHOLARSHIP: "masters-scholarship",
+  PHD_SCHOLARSHIP: "phd-scholarship",
   PHD: "phd",
   POSTDOC: "postdoc",
   FELLOWSHIP: "fellowship",
