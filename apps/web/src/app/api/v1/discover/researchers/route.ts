@@ -6,6 +6,7 @@ import { discoverResearchers } from "@/server/discovery/researcher-discovery";
 import { suppressPrivateFeedback } from "@/server/feedback/private-feedback";
 import { parseResearcherDiscoveryQuery } from "@/server/discovery/query";
 import { recordSearchAndUpdateInterest } from "@/server/personalization/interest-signals";
+import { loadViewerRelations } from "@/server/conversations/viewer-relations";
 import {
   consumeClientRateLimit,
   RateLimitExceededError,
@@ -22,7 +23,14 @@ export async function GET(request: NextRequest) {
     }
     const structured = await discoverResearchers(query);
     const discovery = await rerankResearcherDiscovery(structured);
-    const results = await suppressPrivateFeedback("researcher", discovery.results, (item) => item.id);
+    const visible = await suppressPrivateFeedback("researcher", discovery.results, (item) => item.id);
+    const relations = currentUser
+      ? await loadViewerRelations(currentUser.id, visible.map((item) => item.id)).catch(() => new Map())
+      : new Map();
+    const results = visible.map((item) => {
+      const viewerRelation = relations.get(item.id);
+      return viewerRelation ? { ...item, viewerRelation } : item;
+    });
     const data: ResearcherDiscoveryResponse = { ...discovery, results };
     const body: ApiSuccess<ResearcherDiscoveryResponse> = { success: true, data };
     return NextResponse.json(body, {
