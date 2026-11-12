@@ -73,11 +73,12 @@ test("robots keeps people out of search engines but lets public directories in",
   for (const path of ["/scanner", "/conferences", "/opportunities", "/terms", "/privacy"]) assert.ok(!disallow.includes(path), path);
 });
 
-test("sitemap lists public pages on the configured host, not the build placeholder", () => {
+test("sitemap lists public pages on the configured host, not the build placeholder", async () => {
   const previous = process.env.BETTER_AUTH_URL;
   process.env.BETTER_AUTH_URL = "https://provenant.example/";
   try {
-    const urls = sitemap().map((entry) => entry.url);
+    const urls = (await sitemap()).map((entry) => entry.url);
+    assert.ok(urls.includes("https://provenant.example/about"));
     assert.ok(urls.includes("https://provenant.example/"));
     assert.ok(urls.includes("https://provenant.example/scanner"));
     assert.ok(urls.every((url) => url.startsWith("https://provenant.example/")));
