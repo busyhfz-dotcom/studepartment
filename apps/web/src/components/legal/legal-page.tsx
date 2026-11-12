@@ -23,12 +23,13 @@ export function LegalContact() {
     : <>the contact address published by the operator of this deployment</>;
 }
 
-export function LegalPage({ current, title, children }: { current: "terms" | "privacy"; title: string; children: ReactNode }) {
+export function LegalPage({ current, title, children }: { current: "terms" | "privacy" | "about"; title: string; children: ReactNode }) {
   return (
     <div className={styles.page}>
       <header className={styles.topbar}>
         <Link className={styles.brand} href="/start">Provenant</Link>
         <nav aria-label="Legal">
+          <Link aria-current={current === "about" ? "page" : undefined} href="/about">About</Link>
           <Link aria-current={current === "terms" ? "page" : undefined} href="/terms">Terms of Use</Link>
           <Link aria-current={current === "privacy" ? "page" : undefined} href="/privacy">Privacy Notice</Link>
           <Link href="/auth/sign-up">Create an account</Link>
@@ -37,7 +38,7 @@ export function LegalPage({ current, title, children }: { current: "terms" | "pr
       <article className={styles.article}>
         <span className="eyebrow">Provenant · Medical research, worldwide</span>
         <h1>{title}</h1>
-        <p className={styles.updated}>Last updated {LEGAL_LAST_UPDATED}</p>
+        {current === "about" ? null : <p className={styles.updated}>Last updated {LEGAL_LAST_UPDATED}</p>}
         {children}
       </article>
     </div>
