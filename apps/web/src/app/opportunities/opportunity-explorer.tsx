@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type {
   ApiError,
@@ -295,7 +296,7 @@ export function OpportunityExplorer() {
                       {opportunity.freshness}
                     </span>
                   </div>
-                  <h3 data-original-content>{opportunity.title}</h3>
+                  <h3 data-original-content><Link href={`/opportunities/${opportunity.id}`}>{opportunity.title}</Link></h3>
                   <strong data-original-content>{opportunity.organization}</strong>
                   <p data-original-content>{opportunity.location}</p>
                   <div className={styles.metaGrid}>
@@ -314,6 +315,27 @@ export function OpportunityExplorer() {
                   </div>
                 </div>
 
+                {!data.personalized ? (
+                  <div className={styles.analysisGrid}>
+                    <section className={styles.analysisPanel} style={{ gridColumn: "1 / -1" }}>
+                      <div className={styles.analysisHeading}>
+                        <div>
+                          <span className="sectionLabel">About this opportunity</span>
+                        </div>
+                      </div>
+                      <p data-original-content style={{ margin: "0 0 12px", lineHeight: 1.6 }}>
+                        {opportunity.description
+                          ? (opportunity.description.replace(/\s+/g, " ").trim().slice(0, 420) + (opportunity.description.length > 420 ? "…" : ""))
+                          : "The publisher did not provide a summary. Open the listing for the full details."}
+                      </p>
+                      <p style={{ margin: 0, fontSize: 13 }}>
+                        <Link href={`/opportunities/${opportunity.id}`} style={{ textDecoration: "underline" }}>Read the full listing</Link>
+                        {" · "}
+                        <Link href="/auth/sign-up" style={{ textDecoration: "underline" }}>Add your research profile</Link> to see how well it fits and whether you are eligible.
+                      </p>
+                    </section>
+                  </div>
+                ) : (
                 <div className={styles.analysisGrid}>
                   <section className={styles.analysisPanel}>
                     <div className={styles.analysisHeading}>
@@ -344,6 +366,7 @@ export function OpportunityExplorer() {
                     </ul>
                   </section>
                 </div>
+                )}
 
                 <aside className={styles.sourceRail}>
                   <div className={styles.sourceBlock}>
