@@ -49,6 +49,8 @@ enum OpportunityStatus {
   CLOSED
   EXPIRED
   STALE
+  /// Self-published by an institution that has not been verified yet. Never public.
+  PENDING_REVIEW
 }
 
 enum OpportunityDeadlinePrecision {
