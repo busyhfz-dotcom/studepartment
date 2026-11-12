@@ -67,7 +67,7 @@ function FootBar() {
     <footer className={styles.footbar}>
       <span>Provenant · medical research, worldwide</span>
       <Link href="/opportunities">Open the full opportunity search ↗</Link>
-      <span><Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link></span>
+      <span><Link href="/about">About</Link> · <Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link></span>
     </footer>
   );
 }
