@@ -14,6 +14,10 @@ services:
         value: "3000"
       - key: DEPLOYMENT_ENV
         value: staging
+      # Render sits behind Cloudflare, which overwrites CF-Connecting-IP with the real client
+      # address. X-Forwarded-For can carry values the client sent, so it is only the fallback.
+      - key: AUTH_IP_HEADER
+        value: cf-connecting-ip,x-forwarded-for
       - key: BETTER_AUTH_SECRET
         generateValue: true
       - key: DATABASE_URL
