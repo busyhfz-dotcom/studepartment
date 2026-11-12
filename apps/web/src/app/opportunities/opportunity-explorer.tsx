@@ -71,6 +71,18 @@ function formatDate(value?: string) {
   return new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
 }
 
+/**
+ * NIH publishes the F30 dual-degree fellowship as two separate calls whose long titles
+ * differ by one word. Say which one a card is, so they do not read as a duplicate.
+ */
+function titleDistinction(title: string) {
+  const match = title.match(/Institutions (with|without) NIH-Funded Institutional Predoctoral Dual-Degree Training Programs/i);
+  if (!match) return null;
+  return match[1].toLowerCase() === "with"
+    ? "For students at institutions that have an NIH-funded MD-PhD (MSTP) programme"
+    : "For students at institutions that do not have an NIH-funded MD-PhD (MSTP) programme";
+}
+
 function typeLabel(value: OpportunityTypeValue) {
   return typeOptions.find((option) => option.value === value)?.label.replace(/s$/, "") ?? value;
 }
@@ -297,6 +309,7 @@ export function OpportunityExplorer() {
                     </span>
                   </div>
                   <h3 data-original-content><Link href={`/opportunities/${opportunity.id}`}>{opportunity.title}</Link></h3>
+                  {titleDistinction(opportunity.title) ? <p style={{ margin: "0 0 6px", fontWeight: 700, color: "#3f55a8" }}>{titleDistinction(opportunity.title)}</p> : null}
                   <strong data-original-content>{opportunity.organization}</strong>
                   <p data-original-content>{opportunity.location}</p>
                   <div className={styles.metaGrid}>
