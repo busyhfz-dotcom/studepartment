@@ -268,6 +268,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
           <Link href="/sources">Data sources</Link>
           <Link href="/start?step=browse&kind=masters-scholarship">Master’s scholarships</Link>
           <Link href="/start?step=browse&kind=phd-scholarship">PhD scholarships</Link>
+          <Link href="/about">About</Link>
           <Link href="/terms">Terms</Link>
           <Link href="/privacy">Privacy</Link>
         </div>
