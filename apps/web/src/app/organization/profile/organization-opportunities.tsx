@@ -60,7 +60,9 @@ export function OrganizationOpportunities() {
       if (!response.ok || !body.success) throw new Error(body.error?.message ?? "Could not publish opportunity.");
       form.reset();
       await load();
-      setMessage("Opportunity published with self-reported source provenance.");
+      setMessage(data?.organizationVerified
+        ? "Opportunity published with self-reported source provenance."
+        : "Saved. It will appear in public search once your institution has been verified.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not publish opportunity.");
     } finally { setSaving(false); }
@@ -78,9 +80,9 @@ export function OrganizationOpportunities() {
   }
 
   return <section className={styles.postings}>
-    <div className={styles.postingsHeader}><div><span className="sectionLabel">Opportunity publishing · free</span><h2>Publish positions, grants and collaborations</h2><p>Postings are linked to your institutional profile and appear in opportunity discovery. Source evidence remains self-reported until independently verified.</p></div><span>{data?.opportunities.length ?? 0} postings</span></div>
+    <div className={styles.postingsHeader}><div><span className="sectionLabel">Opportunity publishing · free</span><h2>Publish positions, grants and collaborations</h2><p>Postings are linked to your institutional profile and appear in opportunity discovery. Source evidence remains self-reported until independently verified.</p>{data && !data.organizationVerified ? <p role="note">Your institution has not been verified yet. You can prepare postings now; they stay private until verification and then go live automatically. Until then, posting and application links must be on your institution&apos;s website.</p> : null}</div><span>{data?.opportunities.length ?? 0} postings</span></div>
     {message ? <p className={styles.postingMessage} role="status">{message}</p> : null}
-    {data?.opportunities.length ? <div className={styles.postingList}>{data.opportunities.map((item) => <article key={item.id}><div><strong>{item.title}</strong><small>{item.type.replaceAll("_", " ")} · {item.status.toLowerCase()} {item.deadline ? " · deadline " + new Date(item.deadline).toLocaleDateString() : ""}</small></div><div><a href={item.sourceUrl} target="_blank" rel="noreferrer">Source ↗</a>{item.status === "ACTIVE" ? <><ShareOpportunity item={item}/><button type="button" onClick={() => void changeStatus(item.id, "ACTIVE", true)}>Refresh</button></> : null}<button type="button" onClick={() => void changeStatus(item.id, item.status === "ACTIVE" ? "CLOSED" : "ACTIVE")}>{item.status === "ACTIVE" ? "Close" : "Reactivate"}</button></div></article>)}</div> : null}
+    {data?.opportunities.length ? <div className={styles.postingList}>{data.opportunities.map((item) => <article key={item.id}><div><strong>{item.title}</strong><small>{item.type.replaceAll("_", " ")} · {item.status === "PENDING_REVIEW" ? "awaiting institution verification" : item.status.toLowerCase()} {item.deadline ? " · deadline " + new Date(item.deadline).toLocaleDateString() : ""}</small></div><div><a href={item.sourceUrl} target="_blank" rel="noreferrer">Source ↗</a>{item.status === "ACTIVE" ? <><ShareOpportunity item={item}/><button type="button" onClick={() => void changeStatus(item.id, "ACTIVE", true)}>Refresh</button></> : null}<button type="button" onClick={() => void changeStatus(item.id, item.status === "ACTIVE" || item.status === "PENDING_REVIEW" ? "CLOSED" : "ACTIVE")}>{item.status === "ACTIVE" || item.status === "PENDING_REVIEW" ? "Close" : "Reactivate"}</button></div></article>)}</div> : null}
     <form className={styles.postingForm} onSubmit={publish}>
       <h3>New opportunity</h3>
       <div className={styles.grid}>
