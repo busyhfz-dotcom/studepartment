@@ -110,6 +110,17 @@ function fingerprint(record: OpportunityIngestionRecord) {
   })).digest("hex");
 }
 
+/** Listing links are rendered as anchors, so only plain web addresses are stored. */
+function webUrl(value: string | null | undefined) {
+  if (typeof value !== "string") return null;
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
   const db = getDb();
   const observedAt = new Date();
@@ -118,7 +129,12 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
   let updated = 0;
   let unchanged = 0;
 
-  for (const record of batch.records) {
+  for (const received of batch.records) {
+    // A feed is outside our control: drop a record whose source link is not a web address
+    // (for example javascript: or data:) rather than publishing it as a clickable link.
+    const sourceUrl = webUrl(received.sourceUrl);
+    if (!sourceUrl) continue;
+    const record = { ...received, sourceUrl, applicationUrl: webUrl(received.applicationUrl) };
     const recordId = record.sourceRecordId.trim();
     seenRecordIds.add(recordId);
     const key = sourceKey(batch.source, recordId);
