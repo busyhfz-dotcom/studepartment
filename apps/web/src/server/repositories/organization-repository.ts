@@ -247,15 +247,21 @@ export async function updateOwnedOrganization(
   }
 
   const db = getDb();
-  const existing = await db.organization.findUnique({ where: { ownerUserId: userId }, select: { id: true } });
+  const existing = await db.organization.findUnique({ where: { ownerUserId: userId }, select: { id: true, normalizedName: true, website: true } });
   if (!existing) {
     throw new OrganizationRepositoryError("ORGANIZATION_NOT_FOUND", "No institutional profile is registered for this account.");
   }
+  // Verification vouches for one name on one website. Changing either would let a
+  // verified account present itself as a different institution, so it must be re-verified.
+  const identityChanged =
+    (input.name !== undefined && normalizedName(input.name) !== existing.normalizedName)
+    || (input.website !== undefined && (input.website ?? null) !== existing.website);
 
   const updated = await db.organization.update({
     where: { id: existing.id },
     data: {
       ...(input.name !== undefined ? { name: input.name, normalizedName: normalizedName(input.name) } : {}),
+      ...(identityChanged ? { verified: false } : {}),
       ...(input.type !== undefined ? { type: organizationTypeToDb[input.type] } : {}),
       ...(input.countryCode !== undefined ? { countryCode: input.countryCode } : {}),
       ...(input.website !== undefined ? { website: input.website } : {}),
@@ -269,6 +275,13 @@ export async function updateOwnedOrganization(
     },
     select: ownedOrganizationSelect,
   });
+
+  if (identityChanged) {
+    await db.opportunity.updateMany({
+      where: { organizationId: existing.id, sourceKey: { startsWith: "self:" }, status: "ACTIVE" },
+      data: { status: "PENDING_REVIEW" },
+    });
+  }
 
   return mapOwnedOrganization(updated);
 }
