@@ -112,7 +112,7 @@ export const auth = betterAuth({
       joins: true,
     },
     ipAddress: {
-      ipAddressHeaders: [runtime.authIpHeader],
+      ipAddressHeaders: runtime.authIpHeaders,
       ...(runtime.trustedProxies.length ? { trustedProxies: runtime.trustedProxies } : {}),
     },
   },
