@@ -34,11 +34,22 @@ function retryAfter(nowMs: number, windowSeconds: number) {
   return Math.max(1, Math.ceil((windowMs - (nowMs % windowMs)) / 1000));
 }
 
+/** The client address from the first configured proxy header that is present. */
+export function clientAddress(headers: Headers) {
+  for (const header of getCoreRuntimeConfig().authIpHeaders) {
+    const value = headers.get(header)?.split(",")[0]?.trim();
+    if (value) return value.slice(0, 64);
+  }
+  return null;
+}
+
+/**
+ * Buckets anonymous traffic by network address only. The User-Agent is
+ * deliberately not part of the key: it is chosen by the client, so including
+ * it let a caller reset any limit by changing one header.
+ */
 export function clientFingerprint(request: NextRequest) {
-  const runtime = getCoreRuntimeConfig();
-  const forwarded = request.headers.get(runtime.authIpHeader)?.split(",")[0]?.trim();
-  const userAgent = request.headers.get("user-agent")?.slice(0, 160) ?? "unknown-agent";
-  return digestSubject((forwarded || "unknown-ip") + "|" + userAgent);
+  return digestSubject(clientAddress(request.headers) ?? "unknown-ip");
 }
 
 export async function consumeRateLimit(
