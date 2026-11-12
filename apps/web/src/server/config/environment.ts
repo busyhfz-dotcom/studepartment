@@ -7,7 +7,8 @@ export type CoreRuntimeConfig = {
   betterAuthSecret: string;
   betterAuthUrl: string;
   releaseSha?: string;
-  authIpHeader: string;
+  /** Client-IP headers in priority order; the first one present on a request is used. */
+  authIpHeaders: string[];
   trustedProxies: string[];
 };
 
@@ -58,8 +59,14 @@ export function getCoreRuntimeConfig(): CoreRuntimeConfig {
   }
   validHttpUrl("BETTER_AUTH_URL", betterAuthUrl, issues, environment === "production");
 
-  const authIpHeader = process.env.AUTH_IP_HEADER?.trim().toLowerCase() || "x-forwarded-for";
-  if (!/^[a-z0-9-]+$/.test(authIpHeader)) issues.push("AUTH_IP_HEADER contains invalid characters.");
+  // One header, or a comma-separated priority list such as "cf-connecting-ip,x-forwarded-for".
+  const authIpHeaders = (process.env.AUTH_IP_HEADER?.trim().toLowerCase() || "x-forwarded-for")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (!authIpHeaders.length || authIpHeaders.some((header) => !/^[a-z0-9-]+$/.test(header))) {
+    issues.push("AUTH_IP_HEADER contains invalid characters.");
+  }
 
   const trustedProxies = (process.env.AUTH_TRUSTED_PROXIES ?? "")
     .split(",")
@@ -74,7 +81,7 @@ export function getCoreRuntimeConfig(): CoreRuntimeConfig {
     betterAuthSecret,
     betterAuthUrl,
     releaseSha: process.env.RELEASE_SHA?.trim() || process.env.VERCEL_GIT_COMMIT_SHA?.trim() || undefined,
-    authIpHeader,
+    authIpHeaders,
     trustedProxies,
   };
   return cached;
