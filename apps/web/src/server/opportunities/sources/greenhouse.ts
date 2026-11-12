@@ -18,11 +18,17 @@ type GreenhouseJob = {
 type Board = { token: string; name: string; website: string; countryCode: string | null };
 
 /**
- * Biomedical research institutes that publish their careers page through
+ * Biomedical research institutes and research organizations that publish their careers page through
  * Greenhouse's public Job Board API (designed for third-party display).
  */
 export const GREENHOUSE_BOARDS: Board[] = [
   { token: "arcinstitute", name: "Arc Institute", website: "https://arcinstitute.org", countryCode: "US" },
+  { token: "biohub", name: "Chan Zuckerberg Biohub", website: "https://www.czbiohub.org", countryCode: "US" },
+  { token: "altoslabs", name: "Altos Labs", website: "https://www.altoslabs.com", countryCode: "US" },
+  { token: "calicolabs", name: "Calico Life Sciences", website: "https://www.calicolabs.com", countryCode: "US" },
+  { token: "arcadiascience", name: "Arcadia Science", website: "https://www.arcadiascience.com", countryCode: "US" },
+  { token: "sagebionetworks", name: "Sage Bionetworks", website: "https://sagebionetworks.org", countryCode: "US" },
+  { token: "chanzuckerberginitiative", name: "Chan Zuckerberg Initiative", website: "https://chanzuckerberg.com", countryCode: "US" },
 ];
 
 export function toGreenhouseRecord(job: GreenhouseJob, board: Board): OpportunityIngestionRecord | null {
