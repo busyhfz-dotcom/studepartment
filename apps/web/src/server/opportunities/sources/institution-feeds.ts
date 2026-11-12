@@ -31,6 +31,11 @@ export const INSTITUTION_FEEDS: InstitutionFeed[] = [
     city: "Nottingham",
     type: "UNIVERSITY",
   },
+  { id: "cambridge", name: "University of Cambridge", feedUrl: "https://www.jobs.cam.ac.uk/job/?format=rss", homepage: "https://www.jobs.cam.ac.uk", website: "https://www.cam.ac.uk", countryCode: "GB", city: "Cambridge", type: "UNIVERSITY" },
+  { id: "leeds", name: "University of Leeds", feedUrl: "https://jobs.leeds.ac.uk/rss/rss.aspx", homepage: "https://jobs.leeds.ac.uk", website: "https://www.leeds.ac.uk", countryCode: "GB", city: "Leeds", type: "UNIVERSITY" },
+  { id: "karolinska", name: "Karolinska Institutet", feedUrl: "https://ki.varbi.com/en/what:rssfeed", homepage: "https://ki.varbi.com/en/", website: "https://ki.se", countryCode: "SE", city: "Stockholm", type: "UNIVERSITY" },
+  { id: "lund", name: "Lund University", feedUrl: "https://lu.varbi.com/en/what:rssfeed", homepage: "https://lu.varbi.com/en/", website: "https://www.lunduniversity.lu.se", countryCode: "SE", city: "Lund", type: "UNIVERSITY" },
+  { id: "uppsala", name: "Uppsala University", feedUrl: "https://uu.varbi.com/en/what:rssfeed", homepage: "https://uu.varbi.com/en/", website: "https://www.uu.se", countryCode: "SE", city: "Uppsala", type: "UNIVERSITY" },
 ];
 
 /** "Research Fellow (Fixed Term) (MED2602326)" → "Research Fellow (Fixed Term)". */
