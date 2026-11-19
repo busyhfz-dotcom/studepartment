@@ -55,7 +55,7 @@
 }
 
 .noticeBanner {
-  color: #2d3c66;
+  color: #2d6366;
   border: 1px solid rgba(47,68,124,.16);
   background: var(--success-soft);
 }
@@ -291,7 +291,7 @@
 }
 
 .status_accepted {
-  color: #283a6b;
+  color: #28686b;
   background: var(--success-soft);
 }
 
@@ -326,7 +326,7 @@
 .contextQuote {
   margin-top: 11px;
   padding: 12px 13px;
-  color: #404759;
+  color: #405859;
   border-left: 2px solid rgba(20,52,141,.32);
   border-radius: 0 9px 9px 0;
   background: var(--surface-subtle);
@@ -595,4 +595,4 @@
 
 /* Shared electric-blue interaction treatment. */
 .loadingCard,.requestCard{transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
-@media(hover:hover) and (prefers-reduced-motion:no-preference){.loadingCard:hover,.requestCard:hover{transform:translateY(-3px);box-shadow:0 16px 36px #1728470c;border-color:#c5d4f6}}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){.loadingCard:hover,.requestCard:hover{transform:translateY(-3px);box-shadow:0 16px 36px #1746470c;border-color:#c5f4f6}}

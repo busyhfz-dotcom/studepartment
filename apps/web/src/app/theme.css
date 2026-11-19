@@ -1,11 +1,11 @@
 /* Concept 02 — shared production design tokens and progressive motion. */
-:root{--app-bg:#f1f4fa;--background:#f1f4fa;--surface:#fff;--surface-raised:#fff;--surface-subtle:#f7f9fe;--surface-muted:#edf1fa;--surface-warm:#f6f8ff;--surface-inverse:#10162b;--text:#253450;--text-strong:#17233c;--muted:#748098;--muted-2:#8491aa;--muted-3:#aab5c9;--line:#e1e7f1;--line-strong:#d3ddec;--line-soft:#2534500b;--accent:#496ef5;--accent-strong:#3c5ed2;--accent-deep:#253d8a;--accent-soft:#edf2ff;--accent-soft-strong:#dce6ff;--accent-cyan:#829fff;--accent-blue:#6c75dc;--accent-blue-soft:#f0f0ff;--accent-amber:#8e64bd;--accent-amber-soft:#f5efff;--shadow-xs:0 2px 5px #17284704;--shadow-sm:0 10px 30px #17284708;--shadow:0 22px 55px #17284712;--shadow-lg:0 30px 85px #17284720;--radius-lg:16px;--radius-xl:20px;--duration:260ms;--ease:cubic-bezier(.22,.72,.24,1)}
+:root{--app-bg:#f1f8f8;--background:#f1f8f8;--surface:#fff;--surface-raised:#fff;--surface-subtle:#f5faf9;--surface-muted:#eaf5f4;--surface-warm:#f6feff;--surface-inverse:#102e3d;--text:#254f50;--text-strong:#153442;--muted:#749798;--muted-2:#84a9aa;--muted-3:#aac8c9;--line:#e1f1f1;--line-strong:#d3ecec;--line-soft:#254f500b;--accent:#087970;--accent-strong:#096b66;--accent-deep:#25848a;--accent-soft:#eef9f5;--accent-soft-strong:#d7f2ec;--accent-cyan:#35bfae;--accent-blue:#2399ac;--accent-blue-soft:#ebf7fa;--accent-amber:#a15d47;--accent-amber-soft:#fff2ec;--shadow-xs:0 2px 5px #17464704;--shadow-sm:0 10px 30px #17464708;--shadow:0 22px 55px #17464712;--shadow-lg:0 30px 85px #17464720;--radius-lg:16px;--radius-xl:20px;--duration:260ms;--ease:cubic-bezier(.22,.72,.24,1)}
 body{--font-editorial:var(--font-sans);background:var(--background);color:var(--text)}
-h1,h2,h3{font-family:var(--font-sans),Arial,sans-serif;font-weight:750;letter-spacing:-.045em}h1{font-weight:800;line-height:1.14}h1 em,h2 em{font-style:normal}::selection{background:#b9ccff;color:#152955}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #7899ff;outline-offset:3px}
-.eyebrow{color:#637dd9;font-size:10px;letter-spacing:.12em}.eyebrow::before{height:6px;width:6px;border-radius:2px;opacity:1}.sectionLabel{font-size:10px}.primaryButton,.primary,.secondary,.secondaryButton{border-radius:9px;font-size:12px;min-height:44px;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease)}.primaryButton,.primary{background:#4c6ef5;color:#fff;border-color:#4c6ef5;box-shadow:0 5px 18px #4468ff18}.primaryButton:hover,.primary:hover{background:#6382ff;transform:translateY(-2px);box-shadow:0 9px 24px #4468ff32}.secondary,.secondaryButton{background:#fff;border-color:#dce4f3;color:#263656}.secondary:hover,.secondaryButton:hover{background:#f3f6ff;border-color:#7995ff;transform:translateY(-2px)}
-button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s}button:disabled{cursor:wait}button:not(:disabled):active{transform:translateY(1px)}input,textarea,select{transition:border-color .2s,background .2s,box-shadow .2s}input:focus,textarea:focus,select:focus{border-color:#7995f5;box-shadow:0 0 0 3px #7995f51a}
-.chip{background:#f1f4fb;color:#617393;border-color:#e1e7f3}.trustPanel{background:#edf2ff;border-color:#dce5ff}.trustPanel span{color:#7d91b7}.profileName{font-family:var(--font-sans),Arial,sans-serif;font-weight:800;font-size:clamp(32px,4vw,48px);line-height:1.15}.profileCard{border-radius:18px}.profileTopline{background:radial-gradient(ellipse at right top,#a696ef24,transparent 60%),linear-gradient(135deg,#f1f5ff,#e8edff)}.profileSection,.profileSplit{background:white}.card,.panel,.profileCard{transition:box-shadow .3s var(--ease),border-color .3s var(--ease)}.card:hover{box-shadow:var(--shadow-sm);border-color:#d3def6}.lede{font-size:14px;line-height:1.85}.statement h2{font-weight:750;line-height:1.2}
+h1,h2,h3{font-family:var(--font-sans),Arial,sans-serif;font-weight:750;letter-spacing:-.045em}h1{font-weight:800;line-height:1.14}h1 em,h2 em{font-style:normal}::selection{background:#b9fcff;color:#155355}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #28ad9b;outline-offset:3px}
+.eyebrow{color:#188879;font-size:10px;letter-spacing:.12em}.eyebrow::before{height:6px;width:6px;border-radius:2px;opacity:1}.sectionLabel{font-size:10px}.primaryButton,.primary,.secondary,.secondaryButton{border-radius:9px;font-size:12px;min-height:44px;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease)}.primaryButton,.primary{background:#087c76;color:#fff;border-color:#087c76;box-shadow:0 5px 18px #20bca318}.primaryButton:hover,.primary:hover{background:#096b66;transform:translateY(-2px);box-shadow:0 9px 24px #20bca332}.secondary,.secondaryButton{background:#fff;border-color:#dcf3f3;color:#265556}.secondary:hover,.secondaryButton:hover{background:#f3feff;border-color:#28a897;transform:translateY(-2px)}
+button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s}button:disabled{cursor:wait}button:not(:disabled):active{transform:translateY(1px)}input,textarea,select{transition:border-color .2s,background .2s,box-shadow .2s}input:focus,textarea:focus,select:focus{border-color:#28a897;box-shadow:0 0 0 3px #28a8971a}
+.chip{background:#f1fbfb;color:#619293;border-color:#e1f3f3}.trustPanel{background:#eef9f5;border-color:#dcfdff}.trustPanel span{color:#7db6b7}.profileName{font-family:var(--font-sans),Arial,sans-serif;font-weight:800;font-size:clamp(32px,4vw,48px);line-height:1.15}.profileCard{border-radius:18px}.profileTopline{background:radial-gradient(ellipse at right top,#96ddef24,transparent 60%),linear-gradient(135deg,#f1faf8,#e8fdff)}.profileSection,.profileSplit{background:white}.card,.panel,.profileCard{transition:box-shadow .3s var(--ease),border-color .3s var(--ease)}.card:hover{box-shadow:var(--shadow-sm);border-color:#d3f5f6}.lede{font-size:14px;line-height:1.85}.statement h2{font-weight:750;line-height:1.2}
 @media(prefers-reduced-motion:no-preference){main h1{animation:headingArrival .65s var(--ease) both}.primaryButton:disabled{animation:pendingPulse 1.5s ease-in-out infinite}@keyframes headingArrival{from{opacity:.3;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}@keyframes pendingPulse{50%{opacity:.6}}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
@@ -13,32 +13,32 @@ button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,trans
 html::-webkit-scrollbar {
   width: 12px;
   height: 12px;
-  background: #0d1730;
+  background: #0b2938;
 }
 html::-webkit-scrollbar-track {
-  background: #0d1730;
+  background: #0b2938;
   box-shadow: inset 1px 0 #ffffff14;
 }
 html::-webkit-scrollbar-thumb {
   min-height: 48px;
-  border: 3px solid #0d1730;
+  border: 3px solid #0b2938;
   border-radius: 999px;
-  background: linear-gradient(180deg, #91aeff, #7869df);
+  background: linear-gradient(180deg, #91faff, #69c9df);
 }
 html::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #b2c6ff, #9d89f3);
+  background: linear-gradient(180deg, #b2fbff, #89ddf3);
 }
 html::-webkit-scrollbar-button {
   display: none;
   width: 0;
   height: 0;
 }
-html::-webkit-scrollbar-corner { background: #0d1730; }
+html::-webkit-scrollbar-corner { background: #0b2938; }
 
 @supports (-moz-appearance: none) {
   html {
     scrollbar-width: thin;
-    scrollbar-color: #8298f2 #0d1730;
+    scrollbar-color: #82eaf2 #0b2938;
   }
 }
 
@@ -48,14 +48,14 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #9988dc;
+  outline: 2px solid #3cc4b0;
   outline-offset: 2px;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: #8d80cc;
+  border-color: #28a897;
   box-shadow: 0 0 0 3px rgba(141, 128, 204, .14);
 }
 
@@ -63,11 +63,11 @@ select:focus {
    render the menu itself in the site's blue and lavender palette. */
 :root {
   --select-menu-bg: #ffffff;
-  --select-menu-border: #d5def1;
-  --select-menu-text: #253450;
-  --select-menu-hover: #eef2ff;
-  --select-menu-selected: #e1e8ff;
-  --select-menu-selected-text: #304da6;
+  --select-menu-border: #d5f0f1;
+  --select-menu-text: #254f50;
+  --select-menu-hover: #eefeff;
+  --select-menu-selected: #e1fdff;
+  --select-menu-selected-text: #309fa6;
 }
 
 @supports (appearance: base-select) and selector(::picker(select)) {

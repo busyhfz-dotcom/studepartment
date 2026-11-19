@@ -44,7 +44,7 @@
 .bio {
   max-width: 780px;
   margin: 15px 0 0;
-  color: #4d556a;
+  color: #4d696a;
   font-size: 11px;
   line-height: 1.7;
 }
@@ -82,7 +82,7 @@
 
 .trustCard > p {
   margin: 6px 0 0;
-  color: #5f6983;
+  color: #5f8183;
   font-size: 11px;
   line-height: 1.55;
 }
@@ -108,7 +108,7 @@
 }
 
 .trustOn {
-  color: #2b3d70;
+  color: #2b6d70;
   border-color: rgba(47,73,143,.08);
   background: var(--success-soft);
 }
@@ -305,12 +305,12 @@
   margin-top: 9px;
   padding: 22px;
   overflow: hidden;
-  color: #edeff5;
+  color: #edf5f5;
   border: 1px solid rgba(255,255,255,.06);
   border-radius: var(--radius-md);
   background:
     radial-gradient(circle at 88% 0%, rgba(65,98,190,.13), transparent 20rem),
-    linear-gradient(145deg, #10131a, #0a0c13);
+    linear-gradient(145deg, #101a1a, #0a1213);
   box-shadow: var(--shadow-sm);
 }
 
@@ -329,7 +329,7 @@
 
 .graphPanel h2 {
   margin: 6px 0 5px;
-  color: #f5f6fa;
+  color: #f5fafa;
   font-size: 24px;
   letter-spacing: -.038em;
   font-weight: 650;
@@ -342,7 +342,7 @@
 .graphPanel p {
   max-width: 730px;
   margin: 0;
-  color: #78829e;
+  color: #789c9e;
   font-size: 11px;
   line-height: 1.6;
 }
@@ -355,10 +355,10 @@
   justify-content: center;
   min-height: 39px;
   padding: 0 11px;
-  color: #080f21;
+  color: #082021;
   border: 0;
   border-radius: 9px;
-  background: #7892da;
+  background: #78d5da;
   font-size: 11px;
   font-weight: 850;
   white-space: nowrap;
@@ -441,4 +441,4 @@
 
 /* Shared electric-blue interaction treatment. */
 .trustCard,.publicationCard{transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
-@media(hover:hover) and (prefers-reduced-motion:no-preference){.trustCard:hover,.publicationCard:hover{transform:translateY(-3px);box-shadow:0 16px 36px #1728470c;border-color:#c5d4f6}}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){.trustCard:hover,.publicationCard:hover{transform:translateY(-3px);box-shadow:0 16px 36px #1746470c;border-color:#c5f4f6}}

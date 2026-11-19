@@ -37,7 +37,7 @@
 
 .wrap select:hover {
   border-color: var(--line-strong);
-  background: #fbfbfc;
+  background: #fbfcfc;
 }
 
 .wrap select:focus {
@@ -58,7 +58,7 @@
 }
 
 .message {
-  color: #364570;
+  color: #366d70;
 }
 
 .error {

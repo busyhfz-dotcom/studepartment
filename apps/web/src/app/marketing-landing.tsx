@@ -3,7 +3,8 @@ import Link from "next/link";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { OpportunityTicker, PlatformTabs, MobileNav, Reveal } from "./marketing-landing-client";
 import styles from "./marketing-landing.module.css";
-import { BrandSymbol, ResearchPreview } from "@/components/design/research-art";
+import { BrandSymbol } from "@/components/design/research-art";
+import { IntroductionVideo } from "@/components/design/introduction-video";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 
 /** Public platform overview with the live opportunity feed. */
@@ -140,7 +141,7 @@ export function MarketingLanding({ ticker }: { ticker: PublicOpportunityTicker }
               <span>Sourced listings · private by default · free to browse</span>
               <span>Explore the platform ↓</span>
             </div>
-            <ResearchPreview />
+            <IntroductionVideo />
             <OpportunityTicker ticker={ticker} />
           </div>
         </section>

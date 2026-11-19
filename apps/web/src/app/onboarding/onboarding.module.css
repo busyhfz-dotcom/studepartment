@@ -196,7 +196,7 @@
 .choiceColumns button:hover,
 .choices button:hover {
   border-color: var(--line-strong);
-  background: #fbfbfc;
+  background: #fbfcfc;
 }
 
 .choices {

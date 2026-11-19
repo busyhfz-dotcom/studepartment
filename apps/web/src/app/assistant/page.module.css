@@ -248,7 +248,7 @@
 .answerText {
   margin-top: 14px;
   white-space: pre-wrap;
-  color: #323744;
+  color: #324344;
   font-size: 11px;
   line-height: 1.75;
 }
@@ -310,12 +310,12 @@
 
 .evidence_verified,
 .evidence_corroborated {
-  color: #283a6b;
+  color: #28686b;
   background: var(--success-soft);
 }
 
 .evidence_source-backed {
-  color: #525a71;
+  color: #526f71;
   background: rgba(75,83,104,.07);
 }
 

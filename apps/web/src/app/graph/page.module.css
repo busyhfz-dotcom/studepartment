@@ -251,7 +251,7 @@
   border-radius: 12px;
   background:
     radial-gradient(circle at 70% -40%, rgba(80,113,203,.13), transparent 15rem),
-    linear-gradient(145deg, #11141d, #0a0c13);
+    linear-gradient(145deg, #111c1d, #0a1213);
   box-shadow: 0 12px 28px rgba(10,14,24,.12);
 }
 
@@ -261,12 +261,12 @@
 }
 
 .graphRoot small {
-  color: #76809b;
+  color: #76999b;
   font-size: 11px;
 }
 
 .rootType {
-  color: #728dd8;
+  color: #72d3d8;
   font-size: 11px;
   font-weight: 850;
   letter-spacing: .1em;
@@ -384,12 +384,12 @@
 
 .evidence_verified,
 .evidence_corroborated {
-  color: #233566;
+  color: #236366;
   background: var(--success-soft);
 }
 
 .evidence_source-backed {
-  color: #4d556a;
+  color: #4d696a;
   background: rgba(79,87,110,.08);
 }
 
@@ -536,7 +536,7 @@
 
 .edgeRow > span:first-child,
 .edgeRow > span:nth-child(3) {
-  color: #3f4658;
+  color: #3f5758;
 }
 
 .edgeRow > strong {
