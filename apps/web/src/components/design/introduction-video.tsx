@@ -4,12 +4,15 @@ export function IntroductionVideo() {
   const configuredSource = process.env.PROVENANT_INTRO_VIDEO_URL?.trim();
   // The site's media policy allows video files served from its own origin.
   const source = configuredSource && /^\/videos\/[\w./-]+\.(mp4|webm)$/i.test(configuredSource)
-    && !configuredSource.split("/").includes("..") ? configuredSource : undefined;
+    && !configuredSource.split("/").includes("..") ? configuredSource : "/videos/research-tour-4k.mp4";
 
   return (
     <section className={styles.panel} aria-label="Provenant introduction video" data-intro-video>
       {source ? (
-        <video className={styles.video} aria-label="Provenant introduction video" controls playsInline preload="none" src={source} />
+        <video className={styles.video} aria-label="Research platform introduction video" controls playsInline preload="none" poster="/videos/research-tour-poster.jpg" src={source}>
+          <track kind="captions" src="/videos/research-tour.en.vtt" srcLang="en" label="English" />
+          <a href={source}>Watch the introduction video</a>
+        </video>
       ) : (
         <div className={styles.placeholder}>
           <span className={styles.icon} aria-hidden="true">
