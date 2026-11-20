@@ -1,4 +1,5 @@
 import { getDb } from "@studepartment/db";
+import { activeOpportunityWhere } from "./countries";
 
 export type PublicTickerItem = {
   id: string;
@@ -49,12 +50,13 @@ export async function getPublicOpportunityTicker(): Promise<PublicOpportunityTic
 
 export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof getDb>, "opportunity">): Promise<PublicOpportunityTicker> {
   const now = new Date();
-  // Same visibility rules as search: open, not past its deadline, and still
-  // present at its source within the last 45 days.
+  const cutoff = new Date(now.getTime() - 30 * 86_400_000);
   const activeUpcoming = {
-    status: "ACTIVE" as const,
-    lastSeenAt: { gte: new Date(now.getTime() - 45 * 86_400_000) },
-    OR: [{ deadline: null }, { deadline: { gte: now } }],
+    ...activeOpportunityWhere(now),
+    AND: [{ OR: [
+      { publishedAt: { gte: cutoff, lte: now } },
+      { publishedAt: null, firstSeenAt: { gte: cutoff, lte: now } },
+    ] }],
   };
   const newestFirst = [{ publishedAt: { sort: "desc" as const, nulls: "last" as const } }, { firstSeenAt: "desc" as const }];
 
@@ -70,6 +72,7 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
         deadline: true,
         deadlinePrecision: true,
         firstSeenAt: true,
+        publishedAt: true,
         organization: { select: { name: true } },
       },
     }),
@@ -84,6 +87,7 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
         deadline: true,
         deadlinePrecision: true,
         firstSeenAt: true,
+        publishedAt: true,
         organization: { select: { name: true } },
       },
     }),
@@ -106,7 +110,7 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
       countryCode: row.countryCode,
       deadline: row.deadline?.toISOString() ?? null,
       deadlineLabel: formatDeadline(row.deadline, row.deadlinePrecision),
-      isNew: row.firstSeenAt.getTime() >= newSince,
+      isNew: (row.publishedAt ?? row.firstSeenAt).getTime() >= newSince,
     }));
 
   return {

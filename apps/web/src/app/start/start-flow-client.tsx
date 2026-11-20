@@ -1,4 +1,8 @@
 "use client";
+import { IntroductionVideo } from "@/components/design/introduction-video";
+import { OpportunityTicker } from "@/components/opportunities/opportunity-ticker";
+import { rememberOpportunityCountry, useOpportunityCountry } from "@/lib/opportunity-location";
+import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { LanguagePicker } from "@/components/i18n/language-provider";
 
 import Link from "next/link";
@@ -8,7 +12,7 @@ import type { OpportunityIntelligenceResponse, OpportunityResult } from "@/lib/a
 import { readOpportunityPage } from "@/lib/opportunity-pagination";
 import styles from "./start.module.css";
 import { PathIllustration } from './path-illustration';
-import { entryKind, entryDeadlineLabel as deadlineLabel, entryLabels as kindLabels, entrySearchParams, entryCategories, type EntryKind as Kind } from './entry-paths';
+import { entryKind, entryDeadlineLabel as deadlineLabel, entryLabels as kindLabels, entrySearchParams, type EntryKind as Kind } from './entry-paths';
 import { BrandSymbol } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { CountrySelect } from "@/components/forms/country-select";
@@ -17,7 +21,7 @@ import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
 import { DeadlineReminder } from '@/components/opportunities/deadline-reminder';
 import { GrantTable } from '@/components/opportunities/grant-table';
 
-type Step = "welcome" | "paths" | "browse" | "detail" | "next" | "institutions";
+type Step = "welcome" | "browse" | "detail" | "next" | "institutions";
 
 function kindOf(type: OpportunityResult["type"]): Kind {
   return type === "grant" || type === "masters-scholarship" || type === "phd-scholarship" ? type : "position";
@@ -55,8 +59,7 @@ function TopBar() {
         </Link>
       <nav className={styles.topActions} aria-label="Site navigation">
         <LanguagePicker />
-        <Link href="/main-site">Main site</Link>
-        <Link className={styles.join} href="/auth/sign-in">Join free</Link>
+        <Link className={styles.join} href="/auth/sign-in">Sign in</Link>
       </nav>
     </header>
   );
@@ -72,19 +75,21 @@ function FootBar() {
   );
 }
 
-export function StartFlow() {
-  return <Suspense fallback={<div className={styles.page}><TopBar /><main className={styles.wrap}><p role="status">Loading your page…</p></main></div>}><StartJourney /></Suspense>;
+type StartOptions = { ticker?: PublicOpportunityTicker; countryCodes?: string[] };
+export function StartFlow(options: StartOptions) {
+  return <Suspense fallback={<div className={styles.page}><TopBar /><main className={styles.wrap}><p role="status">Loading your page…</p></main></div>}><StartJourney {...options} /></Suspense>;
 }
 
-function StartJourney() {
+function StartJourney({ ticker, countryCodes }: StartOptions) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedStep = searchParams.get("step");
-  const step: Step = requestedStep === "paths" || requestedStep === "browse" || requestedStep === "detail" || requestedStep === "next" || requestedStep === "institutions" ? requestedStep : "welcome";
+  const step: Step = requestedStep === "browse" || requestedStep === "detail" || requestedStep === "next" || requestedStep === "institutions" ? requestedStep : "welcome";
   const requestedKind = searchParams.get("kind");
   const kind: Kind = entryKind(requestedKind);
   const query = searchParams.get("q") ?? "";
-  const country = searchParams.get("country") ?? "";
+  const rememberedCountry = useOpportunityCountry();
+  const country = searchParams.get("country") ?? rememberedCountry;
   const page = readOpportunityPage(searchParams.get("page"));
   const opportunityId = searchParams.get("opportunity");
   const [browseResult, setBrowseResult] = useState<{ key: string; data?: OpportunityIntelligenceResponse; error?: string }>();
@@ -110,11 +115,14 @@ function StartJourney() {
     const params = new URLSearchParams(searchParams.toString());
     value ? params.set(key, value) : params.delete(key);
     params.delete("page");
+    if (key === "country") rememberOpportunityCountry(value);
+    else if (country) params.set("country", country);
     window.history.replaceState(null, "", `/start?${params}`);
   }
 
   function pageHref(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
+    if (country) params.set("country", country);
     params.set("page", String(nextPage));
     params.delete("opportunity");
     return `/start?${params}#browse-results`;
@@ -161,13 +169,13 @@ function StartJourney() {
   }, [step, kind, query, country, page, browseKey]);
 
   function openBrowse(nextKind: Kind) {
-    setStep("browse", { kind: nextKind, q: "", country: "", opportunity: "", page: "" });
+    setStep("browse", { kind: nextKind, q: "", country, opportunity: "", page: "" });
   }
 
   function openDetail(item: OpportunityResult) {
     setSelected(item);
     setDetailFailure(null);
-    setStep("detail", { opportunity: item.id });
+    setStep("detail", { opportunity: item.id, country });
   }
 
   if (step === "welcome") {
@@ -177,18 +185,17 @@ function StartJourney() {
         <TopBar />
         <main className={styles.gatewayWelcome}>
           <div className={styles.gatewayIntro}>
-            <span className={styles.eyebrow}>Research careers &amp; funding</span>
-            <h1>Your next chapter in research.</h1>
-            <p>Discover an opportunity that moves your work forward, or find the people who will shape your next project.</p>
+            <h1>Research careers &amp; funding</h1>
           </div>
           <div className={styles.gatewayGrid}>
-            <Link href="/start?step=paths" className={`${styles.gatewayCard} ${styles.gatewayFind}`}>
+            <Link href="/start?step=browse" className={`${styles.gatewayCard} ${styles.gatewayFind}`}>
               <span className={styles.gatewayAudience}>For researchers &amp; future researchers</span>
               <span className={styles.gatewayArt}><PathIllustration /></span>
               <h2>Find grant &amp; position</h2>
               <p>Explore scholarships, research funding and roles for every stage of your research career.</p>
               <span className={styles.gatewayAction}>Explore opportunities <span aria-hidden="true">↗</span></span>
             </Link>
+            <IntroductionVideo />
             <Link href="/start?step=institutions" className={`${styles.gatewayCard} ${styles.gatewayPost}`}>
               <span className={styles.gatewayAudience}>For laboratories &amp; institutions</span>
               <span className={styles.gatewayArt}><PathIllustration posting /></span>
@@ -203,38 +210,6 @@ function StartJourney() {
       </div>
     );
   }
-
-  if (step === "paths") {
-    return (
-      <div className={styles.page}>
-        <ScientificBackdrop className={styles.scienceBackdrop} />
-        <TopBar />
-        <main className={`${styles.wrap} ${styles.pathwayPage}`}>
-          <Link className={styles.back} href="/start">← Back to the entrance</Link>
-          <header className={styles.pathwayHeading}>
-            <span className={styles.eyebrow}>Find grant &amp; position</span>
-            <h1>Choose the opportunity that fits your next step.</h1>
-            <p>Start with your career stage. You can refine the subject, location and deadline as you explore.</p>
-          </header>
-          <div className={styles.pathwayGrid}>
-            {entryCategories.map(category=>(
-              <article className={styles.pathwayCard} key={category.kind}>
-                <Link className={styles.pathwayMain} href={`/start?step=browse&kind=${category.kind}`}>
-                  <span className={styles.pathwayAudience}>{category.audience}</span>
-                  <h2>{category.title}<span aria-hidden="true">↗</span></h2>
-                  <p>{category.description}</p>
-                </Link>
-                {category.kind==='phd-scholarship' && <Link className={styles.physicianPath} href="/start?step=browse&kind=md-phd-scholarship"><span>For physicians &amp; physician-scientists</span><strong>MD-PhD scholarships &amp; fellowships <span aria-hidden="true">↗</span></strong></Link>}
-              </article>
-            ))}
-          </div>
-          <div className={styles.pathwaySupport}><p>Not sure where to begin? Browse the source directories and compare the routes available to you.</p><Link href="/scanner">Explore funding &amp; career sources ↗</Link></div>
-        </main>
-        <FootBar />
-      </div>
-    );
-  }
-
 
   if (step === "institutions") {
     return (
@@ -252,8 +227,8 @@ function StartJourney() {
             the team behind the opportunity. Laboratories, universities and other research institutions can manage
             their positions from one workspace.
           </p>
-          <Link className={styles.primary} href="/auth/sign-up?kind=institution">
-            Create an institutional profile ↗
+          <Link className={styles.primary} href="/auth/sign-in?kind=institution&callbackUrl=%2Forganization%2Fprofile">
+            Continue to the institutional workspace ↗
           </Link>
           <Link className={styles.postingExisting} href="/organization/profile">Already have an institutional account? Open your posting workspace ↗</Link>
           <ul className={styles.postingNotes}><li>Introduce your institution and research focus.</li><li>Provide a clear role description, deadline and application route.</li><li>Review and publish positions from your organization profile.</li></ul>
@@ -270,24 +245,13 @@ function StartJourney() {
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
         <TopBar />
-        <section className={styles.heroCompact}>
-          <div className={styles.wrap}>
-            <button type="button" className={styles.back} onClick={() => setStep("paths")}>
-              ← Back to opportunity categories
-            </button>
-            <h1 className={styles.serif}>{kindLabels[kind]}</h1>
-            <p>
-              Search current listings freely. You only need an account to save an opportunity or keep track of its
-              deadline.
-            </p>
-          </div>
-        </section>
-        <main className={`${styles.wrap} ${styles.browse} ${styles.fade}`}>
-          <div className={styles.routeSwitch} role="tablist" aria-label="Opportunity type">
+        <main className={`${styles.wrap} ${styles.browse}`}>
+          {ticker ? <OpportunityTicker ticker={ticker} country={country} /> : null}
+          <h1 className={styles.srOnly}>Browse research opportunities</h1>
+          <nav className={styles.routeSwitch} aria-label="Opportunity type">
             <button
               type="button"
-              role="tab"
-              aria-selected={isPosition}
+              aria-pressed={isPosition}
               className={`${styles.routeTile} ${isPosition ? styles.active : ""}`}
               onClick={() => openBrowse("position")}
             >
@@ -298,8 +262,7 @@ function StartJourney() {
             </button>
             <button
               type="button"
-              role="tab"
-              aria-selected={isGrant}
+              aria-pressed={isGrant}
               className={`${styles.routeTile} ${isGrant ? styles.active : ""}`}
               onClick={() => openBrowse("grant")}
             >
@@ -309,11 +272,11 @@ function StartJourney() {
               </span>
             </button>
             {(["masters-scholarship", "phd-scholarship"] as const).map((value) => (
-              <button type="button" role="tab" aria-selected={kind === value} className={`${styles.routeTile} ${kind === value ? styles.active : ""}`} onClick={() => openBrowse(value)} key={value}><span><b>{kindLabels[value]}</b><small>Degree funding</small></span></button>
+              <button type="button" aria-pressed={kind === value} className={`${styles.routeTile} ${kind === value ? styles.active : ""}`} onClick={() => openBrowse(value)} key={value}><span><b>{kindLabels[value]}</b><small>Degree funding</small></span></button>
             ))}
-            {(kind==='phd-scholarship'||kind==='md-phd-scholarship') && <button type="button" role="tab" aria-selected={kind==='md-phd-scholarship'} className={`${styles.routeTile} ${kind==='md-phd-scholarship'?styles.active:''}`} onClick={()=>openBrowse('md-phd-scholarship')}><span><b>MD-PhD funding</b><small>Physician-scientist training</small></span></button>}
+            {(kind==='phd-scholarship'||kind==='md-phd-scholarship') && <button type="button" aria-pressed={kind==='md-phd-scholarship'} className={`${styles.routeTile} ${kind==='md-phd-scholarship'?styles.active:''}`} onClick={()=>openBrowse('md-phd-scholarship')}><span><b>MD-PhD funding</b><small>Physician-scientist training</small></span></button>}
             <span className={styles.routeNote}>Browse freely · no account required</span>
-          </div>
+          </nav>
 
           {kind==='masters-scholarship' && <aside className={styles.sourceGuidance}><strong>Consider the programme as well as the award.</strong><p>DAAD programmes are included in these results. Erasmus Mundus funding is offered through individual consortia; check each programme’s current scholarship availability.</p><a href="https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en" target="_blank" rel="noopener noreferrer">Explore the official Erasmus Mundus catalogue ↗</a></aside>}
           {kind==='md-phd-scholarship' && <aside className={styles.sourceGuidance}><strong>Support for the physician-scientist route.</strong><p>NIH F30 fellowships support students already enrolled in eligible dual-degree programmes. Check citizenship or residency, enrolment and sponsor requirements. T32 awards fund institutions; trainee places are offered by the participating programmes.</p><a href="https://www.cancer.gov/grants-training/training/funding/f30" target="_blank" rel="noopener noreferrer">Understand the F30 route ↗</a><a href="https://grants.nih.gov/funding/activity-codes/T32" target="_blank" rel="noopener noreferrer">Explore institutional training through T32 ↗</a></aside>}
@@ -328,7 +291,7 @@ function StartJourney() {
                 setFilter("q", event.target.value);
               }}
             />
-            <CountrySelect ariaLabel="Location" anyLabel="Any location" value={country}
+            <CountrySelect ariaLabel="Location" anyLabel="Any location" availableCodes={countryCodes ?? []} value={country}
               onChange={(value) => {
                 setFilter("country", value);
               }} />

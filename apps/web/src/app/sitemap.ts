@@ -8,7 +8,6 @@ export const dynamic = "force-dynamic";
 
 const publicPages: Array<{ path: string; changeFrequency: "daily" | "weekly" | "monthly"; priority: number }> = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
-  { path: "/main-site", changeFrequency: "weekly", priority: 0.9 },
   { path: "/start", changeFrequency: "weekly", priority: 0.8 },
   { path: "/opportunities", changeFrequency: "daily", priority: 0.8 },
   { path: "/scanner", changeFrequency: "monthly", priority: 0.7 },

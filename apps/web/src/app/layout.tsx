@@ -26,7 +26,7 @@ const mono = localFont({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#071e2b",
+  themeColor: "#1a1a1a",
 };
 
 export const metadata: Metadata = {

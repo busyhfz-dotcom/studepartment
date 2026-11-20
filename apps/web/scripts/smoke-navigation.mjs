@@ -8,24 +8,28 @@ async function page(path) {
   return response.text();
 }
 
-for (const path of ["/start", "/main-site", "/discover"]) {
+for (const path of ["/start", "/discover"]) {
   const html = await page(path);
   assert.match(html, /href="\/start"/, "brand must link to the entry page");
   if (path === "/start") {
-    assert.match(html, /href="\/main-site"[^>]*>Main site</, "entry must offer Main site");
-    assert.match(html, /href="\/auth\/sign-in"[^>]*>Join free</, "Join free must share the sign-in route");
+    assert.doesNotMatch(html, /href="\/main-site"/);
+    assert.match(html, /href="\/auth\/sign-in"[^>]*>Sign in</);
   } else {
     assert.doesNotMatch(html, />Join free</, "Join free belongs only on the entry page");
     assert.doesNotMatch(html, />Main site</, "Main site shortcut belongs only on the entry page");
   }
 }
+const retired = await fetch(baseUrl + "/main-site", { redirect: "manual" });
+assert.equal(retired.status, 308);
+assert.equal(new URL(retired.headers.get("location"), baseUrl).pathname, "/start");
 
 for (let attempt = 0; attempt < 2; attempt++) {
   const browse = await page("/start?step=browse&kind=grant&q=oncology&country=DE");
-  assert.match(browse, /<em>grants<\/em>/, "refresh must retain the grant browsing step");
+  assert.match(browse, /Grants for group leaders/);
+  assert.match(browse, /selected="" value="DE"|value="DE" selected=""/, "refresh must retain the country");
   assert.match(browse, /value="oncology"/, "refresh must retain the search term");
   const institutions = await page("/start?step=institutions");
-  assert.match(institutions, /Bring an opportunity to the research community/, "refresh must retain the institution step");
+  assert.match(institutions, /Introduce your lab’s next research opportunity/, "refresh must retain the institution step");
 }
 
 const feed = await fetch(baseUrl + "/api/v1/opportunities?limit=1").then((response) => response.json());

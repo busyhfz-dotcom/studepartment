@@ -14,9 +14,9 @@ export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light"
   const sequence = [..."ATGCCAGTACGATTCGAGCTACGGTATCAGGCTAATCGTACCGATAGCTACGATCG"] as Base[];
   const complement: Record<Base, Base> = { A: "T", T: "A", G: "C", C: "G" };
   const colors: Record<Base, string> = tone === "dark"
-    ? { A: "#4ce3c2", T: "#ffac92", G: "#c6b0ff", C: "#6bd9f6" }
-    : { A: "#087c76", T: "#bc674f", G: "#8064ab", C: "#26899e" };
-  const backbone = tone === "dark" ? ["#4ce3c2", "#6bd9f6"] : ["#087c76", "#26899e"];
+    ? { A: "#c1c1c1", T: "#bcbcbc", G: "#bababa", C: "#c4c4c4" }
+    : { A: "#636363", T: "#777777", G: "#6f6f6f", C: "#757575" };
+  const backbone = tone === "dark" ? ["#c1c1c1", "#c4c4c4"] : ["#636363", "#757575"];
   let width = 0, height = 0, phase = 0, previous = 0, frame = 0;
   let pixelRatio = 0;
   let visible = true, disposed = false, contextLost = false, pageHidden = false;
@@ -63,7 +63,7 @@ export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light"
           const p1 = point(n + s / 4, side), p2 = point(n + (s + 1) / 4, side), z = (p1.z + p2.z) / 2;
           parts.push({ z, paint: () => {
             line(p1, p2, color, 3.6 * p1.scale, opacity(z));
-            line({ x: p1.x - .5, y: p1.y }, { x: p2.x - .5, y: p2.y }, tone === "dark" ? "#d8fff3" : color, .6, opacity(z) * .5);
+            line({ x: p1.x - .5, y: p1.y }, { x: p2.x - .5, y: p2.y }, tone === "dark" ? "#f6f6f6" : color, .6, opacity(z) * .5);
           } });
         }
         parts.push({ z: p.z + .1, paint: () => {

@@ -16,6 +16,7 @@ import { researchTopics } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
 import { SaveOpportunityButton } from "./save-opportunity-button";
 import { CountrySelect } from "@/components/forms/country-select";
+import { rememberOpportunityCountry, useOpportunityCountry } from "@/lib/opportunity-location";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
 import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
 import { DeadlineReminder } from '@/components/opportunities/deadline-reminder';
@@ -87,8 +88,11 @@ function typeLabel(value: OpportunityTypeValue) {
   return typeOptions.find((option) => option.value === value)?.label.replace(/s$/, "") ?? value;
 }
 
-export function OpportunityExplorer() {
-  const searchKey = useSearchParams().toString();
+export function OpportunityExplorer({ countryCodes }: { countryCodes: string[] }) {
+  const urlParams = new URLSearchParams(useSearchParams().toString());
+  const rememberedCountry = useOpportunityCountry();
+  if (!urlParams.has("country") && rememberedCountry) urlParams.set("country", rememberedCountry);
+  const searchKey = urlParams.toString();
   const appliedParams = new URLSearchParams(searchKey);
   const searchedWithFilters = filterKeys.some((key) => Boolean(appliedParams.get(key)));
   const hasSearch = searchedWithFilters || appliedParams.has("page");
@@ -132,6 +136,15 @@ export function OpportunityExplorer() {
   }, [hasSearch, requestKey, searchKey]);
 
   function changeFilter(key: FilterKey, value: string) {
+    if (key === "country") {
+      const params = new URLSearchParams(searchKey);
+      params.set("country", value);
+      params.set("page", "1");
+      rememberOpportunityCountry(value);
+      window.history.replaceState(null, "", "/opportunities?" + params);
+      setDraft({ key: params.toString(), filters: { ...filters, country: value } });
+      return;
+    }
     setDraft({ key: searchKey, filters: { ...filters, [key]: value } });
   }
 
@@ -145,6 +158,7 @@ export function OpportunityExplorer() {
     }
     params.set("sort", filters.sort);
     params.set("page", "1");
+    rememberOpportunityCountry(filters.country);
     if (params.toString() === searchKey) setAttempt((previous) => previous + 1);
     else window.history.pushState(null, "", "/opportunities?" + params);
   }
@@ -206,7 +220,7 @@ export function OpportunityExplorer() {
             </label>
             <label>
               <span>Country</span>
-              <CountrySelect name="country" ariaLabel="Country" onChange={(value) => changeFilter("country", value)} value={filters.country} />
+              <CountrySelect name="country" ariaLabel="Country" availableCodes={countryCodes} onChange={(value) => changeFilter("country", value)} value={filters.country} />
             </label>
             <label>
               <span>Career stage</span>

@@ -22,6 +22,7 @@ export function CountrySelect({
   name,
   anyLabel = "Any country",
   ariaLabel,
+  availableCodes,
 }: {
   value?: string;
   defaultValue?: string;
@@ -29,6 +30,7 @@ export function CountrySelect({
   name?: string;
   anyLabel?: string;
   ariaLabel?: string;
+  availableCodes?: readonly string[];
 }) {
   const controlled = value !== undefined;
   // Keep an existing stored code selectable even if it is not in the list, so
@@ -49,7 +51,7 @@ export function CountrySelect({
     >
       <option value="">{anyLabel}</option>
       {unknownCurrent ? <option value={unknownCurrent}>{unknownCurrent}</option> : null}
-      {countries.map(([code, label]) => (
+      {countries.filter(([code]) => !availableCodes || code === current || availableCodes.includes(code)).map(([code, label]) => (
         <option key={code} value={code}>{label}</option>
       ))}
     </select>

@@ -1,5 +1,9 @@
 // Carefully worded entrance labels take precedence over generated translations.
 const persian: Record<string, string> = {
+  'How to use': 'راهنمای استفاده',
+  'Close video': 'بستن ویدیو',
+  'Don’t have an account?': 'حساب کاربری ندارید؟',
+  'Sign in': 'ورود',
   'Share':'اشتراک‌گذاری',
   'Share this opportunity':'اشتراک‌گذاری فرصت',
   'Copy link':'کپی پیوند',
@@ -110,6 +114,10 @@ const persian: Record<string, string> = {
   'Any location': 'همه‌ی کشورها',
 };
 const spanish: Record<string, string> = {
+  'How to use': 'Cómo usar la plataforma',
+  'Close video': 'Cerrar el vídeo',
+  'Don’t have an account?': '¿No tienes una cuenta?',
+  'Sign in': 'Iniciar sesión',
   'opportunities': 'oportunidades',
   'Research careers & funding': 'Carreras de investigación y financiación',
   'Your next chapter in research.': 'Tu próxima etapa en la investigación.',

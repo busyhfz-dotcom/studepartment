@@ -12,7 +12,7 @@
   width: 100%;
   min-height: 50px;
   padding: 7px 8px;
-  color: #bdcbc5;
+  color: #c8c8c8;
   border: 1px solid transparent;
   border-radius: 10px;
   background: transparent;
@@ -28,7 +28,7 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid #7adac9;
+  outline: 2px solid #c4c4c4;
   outline-offset: 2px;
 }
 
@@ -43,10 +43,10 @@
   width: 34px;
   height: 34px;
   flex: 0 0 auto;
-  color: #8cb6a8;
-  border: 1px solid rgba(99, 200, 181, .1);
+  color: #acacac;
+  border: 1px solid rgba(177, 177, 177, .1);
   border-radius: 9px;
-  background: rgba(99, 200, 181, .04);
+  background: rgba(177, 177, 177, .04);
 }
 
 .icon svg {
@@ -66,14 +66,14 @@
 
 .copy small {
   margin-top: 2px;
-  color: #5c6e66;
+  color: #6a6a6a;
   font-size: 7.5px;
 }
 
 .error {
   margin: 0;
-  color: #8b353b;
+  color: #484848;
   font-size: 11px;
   line-height: 1.5;
 }
-.button{padding:10px 12px;color:#afe5e6;border:1px solid #ffffff0d;background:#1a3a3c;border-radius:9px;min-height:54px;transition:background .25s,transform .25s}.button:hover{background:#275355;border-color:#4d949533;transform:translateX(2px)}.button:focus-visible{outline-color:#28ad9b}.icon{height:22px;width:22px;background:none;border:0;color:#8ed7d9}.copy strong{font-size:11px}.copy small{font-size:8px;color:#81b7b8}.error{color:#ffbccb;font-size:11px}
+.button{padding:10px 12px;color:#dadada;border:1px solid #ffffff0d;background:#333333;border-radius:9px;min-height:54px;transition:background .25s,transform .25s}.button:hover{background:#4a4a4a;border-color:#85858533;transform:translateX(2px)}.button:focus-visible{outline-color:#8f8f8f}.icon{height:22px;width:22px;background:none;border:0;color:#c8c8c8}.copy strong{font-size:11px}.copy small{font-size:8px;color:#acacac}.error{color:#cbcbcb;font-size:11px}

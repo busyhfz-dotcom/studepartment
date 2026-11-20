@@ -1,4 +1,5 @@
 "use client";
+import { deadlineReminderOptions } from "@/lib/deadline-reminder-options";
 import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
 import { DeadlineReminder } from '@/components/opportunities/deadline-reminder';
 
@@ -73,7 +74,14 @@ function ApplicationTracker({ item, onSaved }: { item: SavedOpportunityRecord; o
     <label><span>Private application notes</span><textarea maxLength={1000} rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Tasks, contacts, documents, next step…" /></label>
     {item.opportunity.deadline ? <>
       <label><span>Deadline reminder in your workspace</span><select value={deadlineAlert ? "on" : "off"} onChange={(event) => setDeadlineAlert(event.target.value === "on")}><option value="on">On</option><option value="off">Off</option></select></label>
-      {deadlineAlert ? <label><span>Remind me this many days before the deadline</span><input type="number" min="1" max="90" step="1" value={alertLeadDays} onChange={(event) => setAlertLeadDays(event.target.value)} /></label> : null}
+      {deadlineAlert ? <label>
+        <span>Remind me before the deadline</span>
+        <select value={alertLeadDays} onChange={(event) => setAlertLeadDays(event.target.value)}>
+          {!deadlineReminderOptions.some(option => option.days === item.alertLeadDays) &&
+            <option value={item.alertLeadDays}>{item.alertLeadDays} days (previous setting)</option>}
+          {deadlineReminderOptions.map(option => <option key={option.days} value={option.days}>{option.label}</option>)}
+        </select>
+      </label> : null}
     </> : null}
     <button disabled={saving || (deadlineAlert && (!Number.isInteger(Number(alertLeadDays)) || Number(alertLeadDays) < 1 || Number(alertLeadDays) > 90))} onClick={() => void save()} type="button">{saving ? "Saving…" : "Save progress"}</button>
     {message ? <p role="status">{message}</p> : null}

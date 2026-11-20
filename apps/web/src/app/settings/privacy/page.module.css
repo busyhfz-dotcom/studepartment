@@ -85,7 +85,7 @@
   min-height: 25px;
   padding: 0 8px;
   color: var(--accent-deep);
-  border: 1px solid rgba(20,52,141, .16);
+  border: 1px solid rgba(52, 52, 52, .16);
   border-radius: 7px;
   background: var(--accent-soft);
   font-family: var(--font-mono), monospace;
@@ -158,7 +158,7 @@
 }
 
 .deletePanel {
-  border-color: rgba(163,75,80, .2);
+  border-color: rgba(94, 94, 94, .2);
   box-shadow: none;
 }
 
@@ -207,7 +207,7 @@
 }
 
 .deletePanel label span {
-  color: #755254;
+  color: #5a5a5a;
   font-size: 11px;
   font-weight: 780;
 }
@@ -216,7 +216,7 @@
   min-height: 40px;
   padding: 0 10px;
   color: var(--text);
-  border: 1px solid rgba(163,75,80, .25);
+  border: 1px solid rgba(94, 94, 94, .25);
   border-radius: 8px;
   outline: none;
   background: #fff;
@@ -225,15 +225,15 @@
 }
 
 .deletePanel input:focus {
-  border-color: rgba(163,75,80, .45);
-  box-shadow: 0 0 0 3px rgba(163,75,80, .06);
+  border-color: rgba(94, 94, 94, .45);
+  box-shadow: 0 0 0 3px rgba(94, 94, 94, .06);
 }
 
 .deleteButton {
   min-height: 40px;
   padding: 0 13px;
-  color: #7d343a;
-  border: 1px solid rgba(163,75,80, .28);
+  color: #444444;
+  border: 1px solid rgba(94, 94, 94, .28);
   border-radius: 8px;
   background: #fff;
   font: inherit;
@@ -243,7 +243,7 @@
 }
 
 .deleteButton:hover:not(:disabled) {
-  border-color: rgba(163,75,80, .48);
+  border-color: rgba(94, 94, 94, .48);
   background: var(--danger-soft);
 }
 
@@ -256,7 +256,7 @@
   margin-top: 10px;
   padding: 9px 10px;
   color: var(--danger);
-  border: 1px solid rgba(163,75,80, .18);
+  border: 1px solid rgba(94, 94, 94, .18);
   border-radius: 8px;
   background: var(--danger-soft);
   font-size: 11px;

@@ -48,7 +48,7 @@
 .loadingGrid div {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: linear-gradient(90deg, rgba(29,32,41,.03), rgba(29,32,41,.075), rgba(29,32,41,.03));
+  background: linear-gradient(90deg, rgba(32, 32, 32,.03), rgba(32, 32, 32,.075), rgba(32, 32, 32,.03));
   background-size: 220% 100%;
   animation: graphLoading 1.2s ease-in-out infinite;
 }
@@ -107,7 +107,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background:
-    linear-gradient(150deg, rgba(255,255,255,.98), rgba(247,247,249,.92));
+    linear-gradient(150deg, rgba(255,255,255,.98), rgba(247, 247, 247,.92));
   box-shadow: var(--shadow-xs);
 }
 
@@ -138,7 +138,7 @@
 .researcherEvidence span {
   padding: 5px 7px;
   color: var(--accent-strong);
-  border: 1px solid rgba(20,52,141,.12);
+  border: 1px solid rgba(52, 52, 52,.12);
   border-radius: 999px;
   background: var(--accent-soft);
   font-size: 11px;
@@ -183,7 +183,7 @@
 }
 
 .countCardActive {
-  border-color: rgba(20,52,141,.2);
+  border-color: rgba(52, 52, 52,.2);
   background: var(--accent-soft);
 }
 
@@ -222,8 +222,8 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background:
-    linear-gradient(rgba(24,27,35,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(24,27,35,.025) 1px, transparent 1px),
+    linear-gradient(rgba(27, 27, 27,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27, 27, 27,.025) 1px, transparent 1px),
     var(--surface);
   background-size: 30px 30px, 30px 30px, auto;
   box-shadow: var(--shadow-xs);
@@ -233,7 +233,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(20,52,141,.035), transparent 28rem);
+  background: radial-gradient(circle at 50% 0%, rgba(52, 52, 52,.035), transparent 28rem);
   pointer-events: none;
 }
 
@@ -247,12 +247,12 @@
   margin: 0 auto;
   padding: 15px 18px;
   color: #fff;
-  border: 1px solid rgba(115,144,222,.11);
+  border: 1px solid rgba(143, 143, 143,.11);
   border-radius: 12px;
   background:
-    radial-gradient(circle at 70% -40%, rgba(80,113,203,.13), transparent 15rem),
-    linear-gradient(145deg, #111c1d, #0a1213);
-  box-shadow: 0 12px 28px rgba(10,14,24,.12);
+    radial-gradient(circle at 70% -40%, rgba(112, 112, 112,.13), transparent 15rem),
+    linear-gradient(145deg, #1a1a1a, #101010);
+  box-shadow: 0 12px 28px rgba(14, 14, 14,.12);
 }
 
 .graphRoot strong {
@@ -261,12 +261,12 @@
 }
 
 .graphRoot small {
-  color: #76999b;
+  color: #929292;
   font-size: 11px;
 }
 
 .rootType {
-  color: #72d3d8;
+  color: #bfbfbf;
   font-size: 11px;
   font-weight: 850;
   letter-spacing: .1em;
@@ -295,7 +295,7 @@
   padding: 11px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(247,247,249,.84);
+  background: rgba(247, 247, 247,.84);
   backdrop-filter: blur(4px);
 }
 
@@ -384,17 +384,17 @@
 
 .evidence_verified,
 .evidence_corroborated {
-  color: #236366;
+  color: #565656;
   background: var(--success-soft);
 }
 
 .evidence_source-backed {
-  color: #4d696a;
-  background: rgba(79,87,110,.08);
+  color: #636363;
+  background: rgba(87, 87, 87,.08);
 }
 
 .evidence_asserted {
-  color: #876a37;
+  color: #6c6c6c;
   background: var(--warning-soft);
 }
 
@@ -531,12 +531,12 @@
 }
 
 .edgeRow:hover {
-  background: rgba(247,247,249,.7);
+  background: rgba(247, 247, 247,.7);
 }
 
 .edgeRow > span:first-child,
 .edgeRow > span:nth-child(3) {
-  color: #3f5758;
+  color: #525252;
 }
 
 .edgeRow > strong {
@@ -572,7 +572,7 @@
 }
 
 .graphFootnote strong {
-  color: #86672d;
+  color: #696969;
 }
 
 @media (max-width: 1080px) {

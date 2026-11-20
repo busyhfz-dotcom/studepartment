@@ -57,7 +57,7 @@ async function verifyInteractivePage(path) {
   return nonce;
 }
 
-for (const path of ["/start", "/main-site", "/discover", "/discover/labs", "/discover/institutions", "/opportunities"]) {
+for (const path of ["/start", "/discover", "/discover/labs", "/discover/institutions", "/opportunities"]) {
   await verifyInteractivePage(path);
 }
 const firstDiscoveryNonce = await verifyInteractivePage("/discover");
@@ -161,11 +161,9 @@ if (!readyBody.integrations?.emailDelivery) {
   assert.equal(recovery.status, 503, "disabled email must not pretend to send a reset link");
 }
 
-const marketingPage = await fetch(baseUrl + "/main-site");
-const marketingHtml = await marketingPage.text();
-assert.doesNotMatch(marketingHtml, /Nordic Biomedical Graduate School|Pacific Genomics Foundation|Live from Provenant|Refreshed continuously from verified sources/);
-assert.doesNotMatch(marketingHtml, /What is available today/, "the removed availability panel must stay removed");
-assert.match(marketingHtml, /data-language-picker/);
+const marketingPage = await fetch(baseUrl + "/main-site", { redirect: "manual" });
+assert.equal(marketingPage.status, 308);
+assert.equal(new URL(marketingPage.headers.get("location"), baseUrl).pathname, "/start");
 
 const entrance = await fetch(baseUrl + "/start");
 assert.equal(entrance.status, 200);
@@ -176,11 +174,14 @@ for (const title of ["Find grant &amp; position", "Post a position"]) {
 assert.match(entranceHtml, /current language English/);
 assert.equal((entranceHtml.match(/<h2\b/g) || []).length, 2, "entrance has two main invitations");
 assert.doesNotMatch(entranceHtml, /01 Choose|02 Explore|03 Review|04 Next step/);
-const pathways = await fetch(baseUrl + "/start?step=paths");
-assert.equal(pathways.status, 200);
-const pathwaysHtml = await pathways.text();
-for (const title of ["Master’s scholarships", "PhD scholarships", "Grants for group leaders", "Research positions", "MD-PhD scholarships"]) {
-  assert.ok(pathwaysHtml.includes(title), "pathway must include " + title);
+assert.match(entranceHtml, /Research careers &amp; funding/);
+assert.match(entranceHtml, /How to use/);
+assert.doesNotMatch(entranceHtml, /Your next chapter in research/);
+const browse = await fetch(baseUrl + "/start?step=paths");
+assert.equal(new URL(browse.url).searchParams.get("step"), "browse");
+const browseHtml = await browse.text();
+for (const title of ["Master’s scholarships", "PhD scholarships", "Grants for group leaders", "Positions", "Latest opportunities"]) {
+  assert.ok(browseHtml.includes(title), "browse page must include " + title);
 }
 await verifyInteractivePage("/start?step=institutions");
 await verifyInteractivePage("/start?step=browse&kind=md-phd-scholarship");

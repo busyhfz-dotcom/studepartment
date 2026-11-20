@@ -1,0 +1,91 @@
+.heroDesk {
+  position: relative;
+  isolation: isolate;
+  color: #f5f5f5;
+  background: #171717;
+  border: 1px solid #444;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.deskHeading, .deskFooter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px 20px;
+  padding: 12px clamp(14px, 2vw, 24px);
+  background: #1e1e1e;
+  color: #cbcbcb;
+  font-size: 12px;
+}
+
+.deskHeading { border-bottom: 1px solid #444; }
+.deskFooter { border-top: 1px solid #444; }
+.deskFooter a, .latestLoading a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.liveLabel { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; color: #fff; }
+.liveDot { width: 7px; height: 7px; border-radius: 50%; background: #ddd; box-shadow: 0 0 0 4px #ffffff20; }
+.tickerMotionToggle, .detailTop button {
+  padding: 7px 11px;
+  border: 1px solid #777;
+  border-radius: 7px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.tickerMotionToggle { min-height: 40px; }
+.tickerMotionToggle:hover, .detailTop button:hover { background: #363636; }
+.latestLoading { margin: 0; padding: 24px; color: #d1d1d1; font-size: 13px; }
+.latestList { overflow: hidden; direction: ltr; }
+.latestTrack { display: flex; width: max-content; animation: ticker-loop 60s linear infinite; }
+.latestGroup { display: flex; }
+@keyframes ticker-loop { to { transform: translateX(-50%); } }
+.latestList:focus-within .latestTrack,
+.isSelected .latestTrack,
+.tickerPaused .latestTrack { animation-play-state: paused; }
+.tickerItem { position: relative; width: clamp(235px, 31vw, 330px); border-inline-end: 1px solid #3e3e3e; }
+.latestRow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 9px;
+  width: 100%;
+  min-height: 171px;
+  height: 100%;
+  padding: 14px 16px 50px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.latestRow:hover, .latestRow:focus-visible { background: #282828; }
+.latestRow:focus-visible { outline: 2px solid #eee; outline-offset: -2px; }
+.latestRow strong, .latestRow small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.latestRow strong { font-size: 14px; line-height: 1.4; }
+.latestRow small { margin-top: 4px; color: #c4c4c4; font-size: 11px; }
+.kind { display: block; margin-bottom: 5px; color: #ddd; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.newChip, .badge { display: inline-block; border-radius: 4px; padding: 2px 6px; background: #363636; color: #f5f5f5; font-size: 10px; font-weight: 750; }
+.newChip { margin-inline-start: 6px; background: #ececec; color: #171717; letter-spacing: normal; }
+.deadline { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 9px; font-size: 11px; color: #c4c4c4; }
+.urgent .badge { background: #eee; color: #171717; }
+.soon .badge { background: #545454; }
+.open .badge { background: #303030; }
+.tickerShare { position: absolute; inset-block-end: 7px; inset-inline-start: 16px; }
+.opportunityDetail { position: absolute; inset: 0; z-index: 2; overflow: auto; padding: 16px 20px; background: #202020; }
+.detailTop { display: flex; justify-content: space-between; align-items: center; color: #ddd; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
+.detailTop button { width: 44px; height: 44px; padding: 0; font-size: 22px; }
+.opportunityDetail h3 { margin: 4px 0; font-size: clamp(17px, 2.2vw, 27px); }
+.opportunityDetail p, .detailDeadline { margin: 0 0 7px; color: #ccc; font-size: 12px; }
+.detailAction { display: inline-flex; margin: 4px 8px 0 0; padding: 10px 12px; border-radius: 6px; background: #eee; color: #161616; font-size: 12px; font-weight: 800; }
+.detailAction:hover { background: #ccc; }
+
+@media (hover: hover) {
+  .latestList:hover .latestTrack { animation-play-state: paused; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .latestTrack { animation: none; }
+  .latestList { overflow-x: auto; }
+  .latestGroup[aria-hidden="true"], .tickerMotionToggle { display: none; }
+}

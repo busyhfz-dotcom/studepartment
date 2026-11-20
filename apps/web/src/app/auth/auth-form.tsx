@@ -54,6 +54,8 @@ export function AuthForm({
     ? `/onboarding?role=${encodeURIComponent(accountRole)}`
     : `/onboarding/organization?type=${encodeURIComponent(organizationType)}`;
   const returnQuery = callbackUrl ? `callbackUrl=${encodeURIComponent(signInDestination)}` : "";
+  const registrationQuery = new URLSearchParams(returnQuery);
+  if (initialKind === "institution") registrationQuery.set("kind", "institution");
   const signUpDestination = onboardingPath + (returnQuery ? `&${returnQuery}` : "");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -183,7 +185,7 @@ export function AuthForm({
         )}
         {mode === "sign-in" ? <p className={styles.switcher}><Link href="/auth/forgot-password">Forgot your password?</Link></p> : null}
         <p className={styles.switcher}>
-          {mode === "sign-up" ? <>Already have an account? <Link href={`/auth/sign-in${returnQuery ? `?${returnQuery}` : ""}`}>Sign in</Link></> : <>New to Provenant? <Link href={`/auth/sign-up${returnQuery ? `?${returnQuery}` : ""}`}>Create an account</Link></>}
+          {mode === "sign-up" ? <>Already have an account? <Link href={`/auth/sign-in${returnQuery ? `?${returnQuery}` : ""}`}>Sign in</Link></> : <>Don’t have an account? <Link href={`/auth/sign-up${registrationQuery.size ? `?${registrationQuery}` : ""}`}>Create an account</Link></>}
         </p>
       </section>
 

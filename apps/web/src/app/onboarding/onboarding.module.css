@@ -128,8 +128,8 @@
 .grid select:focus,
 .fullField input:focus,
 .fullField select:focus {
-  border-color: rgba(20,52,141,.4);
-  box-shadow: 0 0 0 3px rgba(20,52,141,.07);
+  border-color: rgba(52, 52, 52,.4);
+  box-shadow: 0 0 0 3px rgba(52, 52, 52,.07);
 }
 
 .fullField {
@@ -196,7 +196,7 @@
 .choiceColumns button:hover,
 .choices button:hover {
   border-color: var(--line-strong);
-  background: #fbfcfc;
+  background: #fcfcfc;
 }
 
 .choices {
@@ -208,7 +208,7 @@
 .choiceColumns .selected,
 .choices .selected {
   color: var(--accent-deep);
-  border-color: rgba(20,52,141,.2);
+  border-color: rgba(52, 52, 52,.2);
   background: var(--accent-soft);
   box-shadow: inset 2px 0 0 var(--accent-strong);
 }
@@ -246,8 +246,8 @@
 .error {
   margin: 18px 0 0;
   padding: 10px 11px;
-  color: #8c3d43;
-  border: 1px solid rgba(159,47,47,.16);
+  color: #4e4e4e;
+  border: 1px solid rgba(71, 71, 71,.16);
   border-radius: 8px;
   background: var(--danger-soft);
   font-size: 11px;

@@ -37,12 +37,12 @@
 
 .wrap select:hover {
   border-color: var(--line-strong);
-  background: #fbfcfc;
+  background: #fcfcfc;
 }
 
 .wrap select:focus {
-  border-color: rgba(20,52,141,.4);
-  box-shadow: 0 0 0 3px rgba(20,52,141,.065);
+  border-color: rgba(52, 52, 52,.4);
+  box-shadow: 0 0 0 3px rgba(52, 52, 52,.065);
 }
 
 .wrap select:disabled {
@@ -58,9 +58,9 @@
 }
 
 .message {
-  color: #366d70;
+  color: #626262;
 }
 
 .error {
-  color: #8a443e;
+  color: #525252;
 }

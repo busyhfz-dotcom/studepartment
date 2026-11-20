@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getShellViewer } from "@/server/auth/shell-viewer";
+import { getOpportunityCountries } from "@/server/opportunities/countries";
 import { OpportunityExplorer } from "./opportunity-explorer";
 import styles from "./page.module.css";
 
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function OpportunitiesPage() {
-  const viewer = await getShellViewer();
+  const [viewer, countryCodes] = await Promise.all([getShellViewer(), getOpportunityCountries()]);
   return (
     <ProductShell {...viewer}>
       <div className={styles.shell}>
@@ -29,7 +30,7 @@ export default async function OpportunitiesPage() {
           <Link href="/opportunities/saved">Your saved opportunities ↗</Link>
         </header>
         <Suspense fallback={<p role="status">Loading opportunity search…</p>}>
-          <OpportunityExplorer />
+          <OpportunityExplorer countryCodes={countryCodes} />
         </Suspense>
       </div>
     </ProductShell>

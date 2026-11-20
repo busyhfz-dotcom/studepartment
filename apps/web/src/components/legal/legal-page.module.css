@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: var(--surface-subtle, #f7fdfd);
+  background: var(--surface-subtle, #fcfcfc);
   color: var(--text);
 }
 

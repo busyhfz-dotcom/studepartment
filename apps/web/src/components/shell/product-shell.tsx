@@ -192,7 +192,7 @@ function OpportunitySubLinks({
           <Link
             aria-current={active ? "page" : undefined}
             className={`${styles.navSubItem} ${active ? styles.navSubItemActive : ""}`}
-            href={child.href}
+            href={carryOpportunityCountry(child.href, search)}
             key={child.href}
             onClick={close}
             ref={active ? activeItemRef : undefined}
@@ -208,6 +208,11 @@ function OpportunitySubLinks({
       })}
     </>
   );
+}
+
+function carryOpportunityCountry(href: string, search: string) {
+  const country = new URLSearchParams(search).get("country");
+  return country ? href + (href.includes("?") ? "&" : "?") + "country=" + encodeURIComponent(country) : href;
 }
 
 function OpportunitySubLinksWithParams(props: Omit<Parameters<typeof OpportunitySubLinks>[0], "search">) {
@@ -400,7 +405,7 @@ export function ProductShell({
             </span>
           </Link>
           {signedIn ? <SignOutButton /> : (
-            <Link className={styles.trustSummary} href="/auth/sign-up" onClick={() => setMobileOpen(false)}>
+            <Link className={styles.trustSummary} href="/auth/sign-in" onClick={() => setMobileOpen(false)}>
               <span className={styles.trustGlyph} aria-hidden="true">
                 <svg fill="none" viewBox="0 0 24 24">
                   <circle cx="12" cy="8" r="4" />
@@ -408,7 +413,7 @@ export function ProductShell({
                 </svg>
               </span>
               <span>
-                <strong>Join free or sign in</strong>
+                <strong>Sign in</strong>
                 <small>Save opportunities and get weekly matches</small>
               </span>
             </Link>

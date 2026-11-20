@@ -1,61 +1,77 @@
-.panel {
-  box-sizing: border-box;
+.trigger {
   display: grid;
-  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-  place-items: center;
-  position: relative;
-  isolation: isolate;
-  max-width: 1100px;
-  height: 415px;
-  margin: 0 auto 55px;
-  overflow: hidden;
-  border: 1px solid #41797c66;
-  border-radius: 16px;
-  background: radial-gradient(ellipse at 50% 38%, #194a50 0%, #102e3d 54%, #0b2837 100%);
-  box-shadow: 0 -15px 85px #4fd2d814, 0 25px 100px #0003;
-}
-
-.placeholder {
-  display: grid;
+  place-content: center;
   justify-items: center;
-  gap: 10px;
-  padding: 24px;
-  text-align: center;
-  color: #f1faf8;
+  align-self: center;
+  justify-self: center;
+  gap: 8px;
+  inline-size: 92px;
+  aspect-ratio: 1;
+  border: 1px solid #747474;
+  border-radius: 50%;
+  background: #1b1b1b;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 760;
+  cursor: pointer;
 }
 
-.placeholder h2 { margin: 6px 0 0; font-size: clamp(22px, 3vw, 32px); }
-.placeholder p { margin: 0; color: #afccd5; font-size: 14px; }
+.trigger:hover { background: #303030; border-color: #f2f2f2; }
+.trigger:focus-visible, .close:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
-.icon {
-  display: grid;
-  place-items: center;
-  width: 60px;
-  height: 60px;
-  color: #8be8d4;
-  background: #4ce3c21a;
-  border: 1px solid #4ce3c24d;
-  border-radius: 18px;
+.play {
+  width: 0;
+  height: 0;
+  margin-inline-start: 3px;
+  border-block: 7px solid transparent;
+  border-inline-start: 11px solid currentColor;
 }
+
+.dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  inline-size: min(1100px, calc(100vw - 28px), calc((100dvh - 28px) * 16 / 9));
+  max-inline-size: none;
+  max-block-size: none;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / .73);
+  backdrop-filter: blur(9px);
+}
+
+:global(html:has(dialog[open])) { overflow: hidden; }
 
 .video {
   display: block;
   width: 100%;
   height: 100%;
-  min-width: 0;
-  min-height: 0;
   object-fit: contain;
-  background: #071e2b;
 }
 
-@media (max-width: 940px) {
-  .panel { height: 412px; }
+.close {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-end: 8px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #999;
+  border-radius: 50%;
+  background: #121212;
+  color: #fff;
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 @media (max-width: 700px) {
-  .panel { height: 425px; margin-bottom: 32px; }
-}
-
-@media (max-width: 430px) {
-  .panel { height: 433px; }
+  .trigger { inline-size: 68px; gap: 5px; font-size: 10px; }
 }
