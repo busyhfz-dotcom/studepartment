@@ -122,9 +122,8 @@ export async function runSource(
   let run: SourceRunResult;
   try {
     const records = dedupe(await connector.collect({ fetch: fetchImpl, now, env: process.env, log }));
-    // An empty full snapshot is far more likely an outage than a real empty list;
-    // never let it mark every listing stale.
-    const completeSnapshot = connector.completeSnapshot && records.length > 0;
+    // A collector must explicitly distinguish verified empty results from outages.
+    const completeSnapshot = connector.completeSnapshot && (records.length > 0 || connector.allowEmptySnapshot === true);
     const staleBefore = new Date(now.getTime() - (connector.staleGraceHours ?? DEFAULT_STALE_GRACE_HOURS) * 3_600_000);
     const result = await ingestOpportunityBatch({ source: connector.source, completeSnapshot, staleBefore, records });
     log(`${connector.source.name}: ${result.created} new, ${result.updated} updated, ${result.unchanged} unchanged, ${result.duplicatesSkipped} duplicates skipped, ${result.markedStale} no longer listed`);

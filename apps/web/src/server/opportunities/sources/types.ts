@@ -31,6 +31,8 @@ export type OpportunitySourceConnector = {
    * items must leave this false.
    */
   completeSnapshot: boolean;
+  /** Opt in when a recognized full list can have no eligible records. */
+  allowEmptySnapshot?: boolean;
   /**
    * Minutes between automatic checks. Kept short so new listings appear within
    * the hour, but long enough to be a light, polite load on the publisher.
