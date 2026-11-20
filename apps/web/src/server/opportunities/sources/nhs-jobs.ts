@@ -9,7 +9,8 @@ import type { OpportunitySourceConnector } from "./types";
 // result is still filtered by title to research posts.
 const SEARCH_URL = "https://www.jobs.nhs.uk/api/v1/search_xml";
 const QUERIES = ["clinical research fellow", "research fellow", "research assistant", "research associate", "phd", "postdoctoral", "doctoral",
-  "research nurse", "clinical research practitioner", "research coordinator", "clinical trials coordinator"];
+  "research nurse", "clinical research practitioner", "research coordinator", "clinical trials coordinator",
+  "clinical research associate", "research scientist", "research technician", "biostatistician"];
 const MAX_PAGES_PER_QUERY = 12;
 
 type Vacancy = {

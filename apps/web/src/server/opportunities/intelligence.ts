@@ -18,6 +18,7 @@ import { getTopInterestTopicSlugs, recordSearchAndUpdateInterest } from "@/serve
 const typeToDb = {
   "masters-scholarship": "MASTERS_SCHOLARSHIP",
   "phd-scholarship": "PHD_SCHOLARSHIP",
+  "md-scholarship": "MD_SCHOLARSHIP",
   phd: "PHD",
   postdoc: "POSTDOC",
   fellowship: "FELLOWSHIP",
@@ -29,6 +30,7 @@ const typeToDb = {
 const typeFromDb = {
   MASTERS_SCHOLARSHIP: "masters-scholarship",
   PHD_SCHOLARSHIP: "phd-scholarship",
+  MD_SCHOLARSHIP: "md-scholarship",
   PHD: "phd",
   POSTDOC: "postdoc",
   FELLOWSHIP: "fellowship",

@@ -6,7 +6,7 @@ import { consumeClientRateLimit, RateLimitExceededError, rateLimitErrorResponse 
 
 const types = {
   phd: "PHD", postdoc: "POSTDOC", fellowship: "FELLOWSHIP", grant: "GRANT",
-  "masters-scholarship": "MASTERS_SCHOLARSHIP", "phd-scholarship": "PHD_SCHOLARSHIP",
+  "masters-scholarship": "MASTERS_SCHOLARSHIP", "phd-scholarship": "PHD_SCHOLARSHIP", "md-scholarship": "MD_SCHOLARSHIP",
   collaboration: "COLLABORATION", "research-assistantship": "RESEARCH_ASSISTANTSHIP",
 } as const;
 

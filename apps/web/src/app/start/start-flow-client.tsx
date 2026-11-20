@@ -24,12 +24,13 @@ import { GrantTable } from '@/components/opportunities/grant-table';
 type Step = "welcome" | "browse" | "detail" | "next" | "institutions";
 
 function kindOf(type: OpportunityResult["type"]): Kind {
-  return type === "grant" || type === "masters-scholarship" || type === "phd-scholarship" ? type : "position";
+  return type === "grant" || type === "masters-scholarship" || type === "phd-scholarship" || type === "md-scholarship" ? type : "position";
 }
 
 function typeLabel(type: OpportunityResult["type"]): string {
   switch (type) {
     case "masters-scholarship": return "Master’s scholarship";
+    case "md-scholarship": return "Medical degree scholarship";
     case "phd-scholarship": return "PhD scholarship";
     case "phd":
       return "PhD position";
@@ -279,7 +280,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
                 <small>Research funding</small>
               </span>
             </button>
-            {(["masters-scholarship", "phd-scholarship"] as const).map((value) => (
+            {(["masters-scholarship", "phd-scholarship", "md-scholarship"] as const).map((value) => (
               <button type="button" aria-pressed={kind === value} className={`${styles.routeTile} ${kind === value ? styles.active : ""}`} onClick={() => openBrowse(value)} key={value}><span><b>{kindLabels[value]}</b><small>Degree funding</small></span></button>
             ))}
             {(kind==='phd-scholarship'||kind==='md-phd-scholarship') && <button type="button" aria-pressed={kind==='md-phd-scholarship'} className={`${styles.routeTile} ${kind==='md-phd-scholarship'?styles.active:''}`} onClick={()=>openBrowse('md-phd-scholarship')}><span><b>MD-PhD funding</b><small>Physician-scientist training</small></span></button>}

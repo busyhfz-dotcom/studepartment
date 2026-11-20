@@ -13,7 +13,7 @@
  * `id` is part of each record's permanent key. Never change one; ids of
  * dual-degree programmes start with "mdphd-" so the MD-PhD view can find them.
  */
-export type ProgrammeLevel = "MASTERS_SCHOLARSHIP" | "PHD_SCHOLARSHIP" | "FELLOWSHIP";
+export type ProgrammeLevel = "MASTERS_SCHOLARSHIP" | "PHD_SCHOLARSHIP" | "MD_SCHOLARSHIP" | "FELLOWSHIP";
 export type ProviderType = "UNIVERSITY" | "HOSPITAL" | "LABORATORY" | "RESEARCH_INSTITUTE" | "COMPANY" | "FOUNDATION";
 
 export type Programme = {
@@ -28,6 +28,7 @@ export type Programme = {
   match: string;
   levels: ProgrammeLevel[];
   summary: string;
+  deadline?: string;
 };
 
 const M: ProgrammeLevel[] = ["MASTERS_SCHOLARSHIP"];

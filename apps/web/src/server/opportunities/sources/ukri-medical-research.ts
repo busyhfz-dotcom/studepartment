@@ -1,11 +1,14 @@
 import type { OpportunityIngestionRecord } from "../ingestion";
-import { topicSlugsFor } from "./classify";
+import { isMedicalText, topicSlugsFor } from "./classify";
 import { englishDate, openPublisher } from "./official-pages";
 import { decodeEntities, htmlToText } from "./text";
 import type { OpportunitySourceConnector } from "./types";
 
 const homepage = "https://www.ukri.org/opportunity/?filter_council%5B0%5D=824&filter_status%5B0%5D=open&filter_status%5B1%5D=upcoming&filter_submitted=true";
 const maxPages = 5;
+const mrc = { name: "Medical Research Council", website: "https://www.ukri.org/councils/mrc/" };
+const bbsrc = { name: "Biotechnology and Biological Sciences Research Council", website: "https://www.ukri.org/councils/bbsrc/" };
+const bioscienceHomepage = homepage.replace("=824&", "=816&");
 
 function londonDate(field: string | undefined) {
   if (!field) return null;
@@ -25,7 +28,7 @@ function amount(field: string | undefined) {
   return htmlToText(field?.replace(/&pound;/gi, "£")).match(/^£([\d,]+)(?:\.\d{2})?$/)?.[1]?.replaceAll(",", "");
 }
 
-export function mrcFundingPage(html: string, now: Date) {
+export function mrcFundingPage(html: string, now: Date, council = mrc) {
   const cards = Array.from(html.matchAll(/<div id="post-(\d+)"[^>]*>([\s\S]*?)<!-- #post -->/gi));
   if (!/Funding opportunity list/i.test(html) || !cards.length) throw new Error("UKRI's funding list was not recognized");
   const records = cards.flatMap(([, id, card]): OpportunityIngestionRecord[] => {
@@ -35,7 +38,11 @@ export function mrcFundingPage(html: string, now: Date) {
     const title = htmlToText(titleMarkup);
     const fields = new Map(Array.from(card.matchAll(/<dt\b[^>]*>([\s\S]*?)<\/dt>\s*<dd\b[^>]*>([\s\S]*?)<\/dd>/gi),
       ([, name, field]) => [htmlToText(name).replace(/:$/, ""), field]));
-    if (!/Medical Research Council/i.test(htmlToText(fields.get("Funders")))) return [];
+    const funders = htmlToText(fields.get("Funders"));
+    if (!funders.includes(council.name)) return [];
+    if (council === bbsrc && (funders.includes(mrc.name) || !(
+      /bbsrc (?:standard research grant|new investigator|fellowships?)/i.test(title) || isMedicalText(title)
+    ))) return [];
     const status = htmlToText(fields.get("Opportunity status"));
     if (status !== "Open" && status !== "Upcoming") return [];
     const types = htmlToText(fields.get("Funding type"));
@@ -52,8 +59,8 @@ export function mrcFundingPage(html: string, now: Date) {
       applicationUrl: sourceUrl,
       type: /\bfellowship\b/i.test(types) && !/\bgrant\b/i.test(types) ? "FELLOWSHIP" : "GRANT",
       title,
-      description: status === "Upcoming" && opening ? `Medical Research Council funding. The call opens ${opening.slice(0, 10)}. View the original UKRI opportunity for eligibility.` : null,
-      organization: { name: "Medical Research Council", type: "FOUNDATION", countryCode: "GB", website: "https://www.ukri.org/councils/mrc/" },
+      description: status === "Upcoming" && opening ? `${council.name} funding. The call opens ${opening.slice(0, 10)}. View the original UKRI opportunity for eligibility.` : null,
+      organization: { ...council, type: "FOUNDATION", countryCode: "GB" },
       countryCode: "GB",
       publishedAt: published ? englishDate(published) : null,
       deadline: deadline ?? "rolling",
@@ -73,26 +80,34 @@ export function mrcFundingPage(html: string, now: Date) {
   return { records, next: next ? decodeEntities(next) : null };
 }
 
-export const ukriMedicalResearchSource: OpportunitySourceConnector = {
-  id: "ukri-medical-research-council",
-  source: { type: "FUNDER", name: "UKRI Medical Research Council", verified: true },
-  kind: "grants",
-  homepage,
-  description: "Current and announced UKRI Medical Research Council grant and fellowship calls, with published closing dates.",
-  completeSnapshot: true,
-  staleGraceHours: 24,
-  intervalMinutes: 360,
-  isEnabled: () => true,
-  async collect({ fetch, now }) {
-    const read = await openPublisher(fetch, homepage);
-    const records: OpportunityIngestionRecord[] = [];
-    let url: string | null = homepage;
-    for (let page = 0; url && page < maxPages; page += 1) {
-      const result = mrcFundingPage(await read(url), now);
-      records.push(...result.records);
-      url = result.next;
-    }
-    if (url) throw new Error("UKRI's medical call list exceeded the configured page budget");
-    return records;
-  },
-};
+function fundingSource(council: typeof mrc, url: string, id: string, description: string): OpportunitySourceConnector {
+  return {
+    id,
+    source: { type: "FUNDER", name: `UKRI ${council.name}`, verified: true },
+    kind: "grants",
+    homepage: url,
+    description,
+    completeSnapshot: true,
+    staleGraceHours: 24,
+    intervalMinutes: 360,
+    isEnabled: () => true,
+    async collect({ fetch, now }) {
+      const read = await openPublisher(fetch, url);
+      const records: OpportunityIngestionRecord[] = [];
+      let next: string | null = url;
+      for (let page = 0; next && page < maxPages; page += 1) {
+        const result = mrcFundingPage(await read(next), now, council);
+        records.push(...result.records);
+        next = result.next;
+      }
+      if (next) throw new Error("UKRI's funding call list exceeded the configured page budget");
+      return records;
+    },
+  };
+}
+
+export const ukriMedicalResearchSource = fundingSource(mrc, homepage, "ukri-medical-research-council",
+  "Current and announced UKRI Medical Research Council grant and fellowship calls, with published closing dates.");
+
+export const ukriBioscienceSource = fundingSource(bbsrc, bioscienceHomepage, "ukri-biomedical-bioscience",
+  "Open and upcoming UKRI biotechnology, biological science and biomedical research grants.");

@@ -12,12 +12,12 @@ const MEDICAL_PATTERN = new RegExp(
   "\\b(" + [
     "medic(?:al|ine|inal)", "clinic(?:al|ian|s)?", "health", "healthcare", "biomedic\\w*", "biomed", "patient\\w*", "hospital\\w*",
     "cancer\\w*", "oncolog\\w*", "tumou?r\\w*", "leuka?emi\\w*", "lymphoma\\w*", "carcinoma\\w*", "metasta\\w*",
-    "immun\\w*", "infect\\w*", "vaccin\\w*", "virus\\w*", "viral", "virolog\\w*", "bacteri\\w*", "microbio\\w*", "antimicrobial\\w*", "pathogen\\w*",
+    "immun\\w*", "infect\\w*", "vaccin\\w*", "virus\\w*", "viral", "virolog\\w*", "bacteri\\w*", "microbio\\w*", "antimicrobial\\w*", "pathogen\\w*", "parasitol\\w*", "parasiti\\w*", "mycolog\\w*", "medical entomology",
     "hiv", "aids", "tuberculosis", "malaria", "sepsis", "covid\\w*", "pandemic\\w*",
     "neuro\\w*", "brain", "alzheimer\\w*", "parkinson\\w*", "dementia", "stroke", "psychiatr\\w*", "mental health", "depress\\w*",
     "cardio\\w*", "cardiac", "heart", "vascular", "diabet\\w*", "obesity", "metabolic", "kidney", "renal", "liver", "hepat\\w*", "lung", "pulmonar\\w*", "respiratory",
     "disease\\w*", "therap\\w*", "drug\\w*", "pharma\\w*", "toxicolog\\w*", "diagnos\\w*", "surg\\w*", "radiolog\\w*", "patholog\\w*",
-    "epidemiolog\\w*", "biostatist\\w*", "public health", "global health", "nurs\\w*", "midwi\\w*", "dental", "dentist\\w*", "physiotherap\\w*", "rehabilitat\\w*",
+    "epidemiolog\\w*", "biostatist\\w*", "public health", "global health", "nurs\\w*", "midwi\\w*", "dental", "dentist\\w*", "physiotherap\\w*", "rehabilitat\\w*", "audiolog\\w*", "occupational therap\\w*", "speech and language therap\\w*", "dietet\\w*", "medical laboratory",
     "pediatric\\w*", "paediatric\\w*", "neonat\\w*", "maternal", "pregnan\\w*", "reproductive", "ageing", "aging",
     "genom\\w*", "genetic\\w*", "molecular biology", "cell biology", "stem cell\\w*", "physiolog\\w*", "biochem\\w*", "bioinformatic\\w*", "computational biology",
     "biomarker\\w*", "translational", "clinical trial\\w*",
@@ -43,7 +43,7 @@ export function classifyPositionTitle(title: string): PositionType | null {
   if (/\b(consultant|matron|nurse practitioner|physician assistant|secretary|accountant)\b/.test(value)) return null;
   if (/\b(?:clinical research (?:coordinators?|specialists?|practitioners?|nurses?)|research (?:study )?coordinators?|clinical (?:trials?|stud(?:y|ies)) coordinators?|research nurses?)\b/.test(value)
     && !/\b(?:director|manager|head of)\b/.test(value)) return "RESEARCH_ASSISTANTSHIP";
-  if (/\b(professor|lecturer|faculty|director|head of|dean|chair\b|manager|administrat|coordinator|officer|assistant to|secretary|accountant|engineer(?!ing)|technologist|nurse practitioner|physician assistant)\b/.test(value)
+  if (/\b(professor|lecturer|faculty|director|head of|dean|chair\b|manager|administrat|coordinator|officer|assistant to|secretary|accountant|(?<!research )engineer(?!ing)|(?<!research )technologist|nurse practitioner|physician assistant)\b/.test(value)
     && !/\b(post-?doc|postdoctoral|ph\.?d|doctoral|fellowship|research fellow)\b/.test(value)) {
     return null;
   }
@@ -54,9 +54,8 @@ export function classifyPositionTitle(title: string): PositionType | null {
   if (/\bclinical research fellows?\b/.test(value)) return "FELLOWSHIP";
   if (/\bresearch fellows?\b/.test(value)) return "POSTDOC";
   if (/\bfellowships?\b/.test(value)) return "FELLOWSHIP";
-  // Assistant and associate posts only; senior "Scientist" roles are staff
-  // positions this index does not list.
-  if (/\b(research (assistants?|associates?|technicians?)|lab(oratory)? (technician|research assistant))\b/.test(value)) {
+  // Research staff appear under the same research-position category.
+  if (/\b(research (assistants?|associates?|technicians?|scientists?|engineers?|technologists?)|(?:staff|project|laboratory|biomedical|clinical research|translational) scientists?|biostatistician\\w*|clinical trial associates?|lab(oratory)? (technician|research assistant))\b/.test(value)) {
     return "RESEARCH_ASSISTANTSHIP";
   }
   return null;
@@ -76,6 +75,11 @@ export function careerStagesForPosition(type: PositionType, text: string): strin
 }
 
 const TOPIC_RULES: Array<[string, RegExp]> = [
+  ["parasitology", /\b(parasitol\w*|parasiti\w*|medical entomology|malaria|leishmani\w*|helminth\w*)\b/i],
+  ["microbiology", /\b(microbiol\w*|bacterio\w*|mycolog\w*|bacteriophag\w*|microbiom\w*)\b/i],
+  ["biochemistry", /\b(biochem\w*|proteom\w*|enzymolog\w*)\b/i],
+  ["molecular-cell-biology", /\b(molecular biolog\w*|cell biolog\w*|structural biolog\w*)\b/i],
+  ["allied-health", /\b(allied health|audiolog\w*|dietitian\w*|dietet\w*|occupational therap\w*|speech and language therap\w*|physiotherap\w*|medical laboratory)\b/i],
   ["oncology", /\b(cancer|oncolog\w*|tumou?r\w*|leuka?emi\w*|lymphoma|carcinoma|melanoma|glioma|sarcoma|myeloma)\b/i],
   ["cancer-immunotherapy", /\b(immunotherap\w*|car[- ]?t\b|checkpoint inhibit\w*|cancer vaccine\w*)\b/i],
   ["immunology", /\b(immun\w*|autoimmun\w*|inflammat\w*|t[- ]cells?|b[- ]cells?|antibod\w*)\b/i],

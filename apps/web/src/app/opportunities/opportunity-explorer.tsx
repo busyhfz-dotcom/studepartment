@@ -31,6 +31,7 @@ const typeOptions: Array<{ value: "" | OpportunityTypeValue; label: string }> = 
   { value: "grant", label: "Grants" },
   { value: "masters-scholarship", label: "Master’s scholarships" },
   { value: "phd-scholarship", label: "PhD scholarships" },
+  { value: "md-scholarship", label: "Medical degree scholarships" },
   { value: "collaboration", label: "Collaborations" },
   { value: "research-assistantship", label: "Research assistantships" },
 ];

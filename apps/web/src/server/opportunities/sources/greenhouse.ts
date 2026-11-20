@@ -15,7 +15,7 @@ type GreenhouseJob = {
   departments?: Array<{ name: string }>;
 };
 
-type Board = { token: string; name: string; website: string; countryCode: string | null };
+type Board = { token: string; name: string; website: string; countryCode: string | null; employerType?: "COMPANY" };
 
 /**
  * Biomedical research institutes and research organizations that publish their careers page through
@@ -28,25 +28,33 @@ export const GREENHOUSE_BOARDS: Board[] = [
   { token: "calicolabs", name: "Calico Life Sciences", website: "https://www.calicolabs.com", countryCode: "US" },
   { token: "arcadiascience", name: "Arcadia Science", website: "https://www.arcadiascience.com", countryCode: "US" },
   { token: "sagebionetworks", name: "Sage Bionetworks", website: "https://sagebionetworks.org", countryCode: "US" },
+  { token: "freenome", name: "Freenome", website: "https://www.freenome.com", countryCode: "US", employerType: "COMPANY" },
+  { token: "natera", name: "Natera", website: "https://www.natera.com", countryCode: null, employerType: "COMPANY" },
+  { token: "precisionmedicinegroup", name: "Precision Medicine Group", website: "https://www.precisionmedicinegrp.com", countryCode: null, employerType: "COMPANY" },
+  { token: "recursionpharmaceuticals", name: "Recursion", website: "https://www.recursion.com", countryCode: null, employerType: "COMPANY" },
+  { token: "eikontherapeutics", name: "Eikon Therapeutics", website: "https://www.eikontx.com", countryCode: "US", employerType: "COMPANY" },
   { token: "chanzuckerberginitiative", name: "Chan Zuckerberg Initiative", website: "https://chanzuckerberg.com", countryCode: "US" },
 ];
 
 export function toGreenhouseRecord(job: GreenhouseJob, board: Board): OpportunityIngestionRecord | null {
   const location = job.location?.name ?? null;
-  return toPositionRecord({
+  if (/(?:talent community|general application|expression of interest)/i.test(job.title)) return null;
+  const record = toPositionRecord({
     sourceRecordId: String(job.id),
     sourceUrl: job.absolute_url,
     applicationUrl: job.absolute_url,
     title: job.title,
     descriptionHtml: job.content ?? null,
-    organization: { name: board.name, type: "RESEARCH_INSTITUTE", countryCode: board.countryCode, website: board.website },
+    organization: { name: board.name, type: board.employerType ?? "RESEARCH_INSTITUTE", countryCode: board.countryCode, website: board.website },
     city: location?.split(",")[0]?.trim() || null,
     countryCode: countryCodeFromText(location) ?? board.countryCode,
     location,
     publishedAt: job.first_published ?? job.updated_at ?? null,
     subjects: job.departments?.map((department) => department.name),
-    biomedicalPublisher: true,
+    biomedicalPublisher: !board.employerType,
   });
+  if (record && board.employerType) record.description = null;
+  return record;
 }
 
 export const greenhouseSources: OpportunitySourceConnector[] = GREENHOUSE_BOARDS.map((board) => ({
@@ -63,7 +71,8 @@ export const greenhouseSources: OpportunitySourceConnector[] = GREENHOUSE_BOARDS
       context.fetch,
       `https://boards-api.greenhouse.io/v1/boards/${board.token}/jobs?content=true`,
     );
-    const jobs = response.jobs ?? [];
+    if (!Array.isArray(response.jobs)) throw new Error("Unrecognized Greenhouse jobs response");
+    const jobs = response.jobs;
     const records = jobs
       .map((job) => toGreenhouseRecord(job, board))
       .filter((record): record is OpportunityIngestionRecord => Boolean(record));

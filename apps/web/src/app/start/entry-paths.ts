@@ -1,5 +1,5 @@
 import type { OpportunityResult } from '@/lib/api-contracts';
-export type EntryKind = 'position' | 'grant' | 'masters-scholarship' | 'phd-scholarship' | 'md-phd-scholarship';
+export type EntryKind = 'position' | 'grant' | 'masters-scholarship' | 'phd-scholarship' | 'md-phd-scholarship' | 'md-scholarship';
 export function entryDeadlineLabel(item:Pick<OpportunityResult,'deadline'|'deadlinePrecision'>,locale?:string):string {
   if(!item.deadline)return item.deadlinePrecision==='rolling'?'Rolling deadline':'Deadline on the listing';
   const date=new Date(item.deadline);
@@ -10,6 +10,7 @@ export function entryDeadlineLabel(item:Pick<OpportunityResult,'deadline'|'deadl
 export const entryLabels: Record<EntryKind, string> = {
   position: 'Research positions', grant: 'Grants for research leaders',
   'masters-scholarship': 'Master’s scholarships', 'phd-scholarship': 'PhD scholarships',
+  'md-scholarship': 'Medical degree scholarships',
   'md-phd-scholarship': 'MD-PhD scholarships & fellowships',
 };
 export function entryKind(value: string | null): EntryKind {
@@ -29,6 +30,7 @@ export function entrySearchParams(kind: EntryKind, query: string, country: strin
 export const entryCategories: Array<{kind:Exclude<EntryKind,'md-phd-scholarship'>; title:string; audience:string; description:string}> = [
   {kind:'masters-scholarship',title:'Master’s scholarships',audience:'Begin a research career',description:'Funding for taught and research master’s programmes.'},
   {kind:'phd-scholarship',title:'PhD scholarships',audience:'Develop your research',description:'Doctoral scholarships and funded studentships, with a dedicated MD-PhD route.'},
+  {kind:'md-scholarship',title:'Medical degree scholarships',audience:'Train in medicine',description:'Scholarships and tuition awards for medical degrees.'},
   {kind:'grant',title:'Grants for group leaders & PIs',audience:'Lead a research team',description:'Funding calls for principal investigators, group leaders and their host institutions.'},
   {kind:'position',title:'Research positions',audience:'Join a research team',description:'Research assistant, postdoctoral, fellowship and other research roles.'},
 ];

@@ -15,7 +15,7 @@ function readCareerStage(searchParams: URLSearchParams): OpportunityCareerStage 
 }
 
 const allowedTypes = new Set<OpportunityTypeValue>([
-  "masters-scholarship", "phd-scholarship",
+  "masters-scholarship", "phd-scholarship", "md-scholarship",
   "phd",
   "postdoc",
   "fellowship",

@@ -11,7 +11,7 @@ export type OpportunityIngestionRecord = {
   sourceRecordId: string;
   sourceUrl: string;
   applicationUrl?: string | null;
-  type: "MASTERS_SCHOLARSHIP" | "PHD_SCHOLARSHIP" | "PHD" | "POSTDOC" | "FELLOWSHIP" | "GRANT" | "COLLABORATION" | "RESEARCH_ASSISTANTSHIP";
+  type: "MASTERS_SCHOLARSHIP" | "PHD_SCHOLARSHIP" | "MD_SCHOLARSHIP" | "PHD" | "POSTDOC" | "FELLOWSHIP" | "GRANT" | "COLLABORATION" | "RESEARCH_ASSISTANTSHIP";
   title: string;
   description?: string | null;
   organization: {

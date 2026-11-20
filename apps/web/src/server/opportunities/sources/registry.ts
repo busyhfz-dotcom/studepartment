@@ -21,6 +21,8 @@ import { mayoClinicResearchSource } from "./mayo-clinic-research";
 import { nhsJobsSource } from "./nhs-jobs";
 import { neurologicalFoundationSource } from "./nz-neurological-foundation";
 import { pacificResearchCareerSources } from "./pacific-research-careers";
+import { queenslandFundedProjectsSource } from "./queensland-funded-projects";
+import { universityDegreeFundingSource } from "./university-degree-funding";
 import { programmeRegistrySource } from "./programme-registry";
 import { ritsumeikanScholarshipSource } from "./ritsumeikan-scholarship";
 import { rmitMedicalScienceSource } from "./rmit-medical-science";
@@ -30,7 +32,7 @@ import { smartRecruitersSources } from "./smartrecruiters";
 import { swissTphSource } from "./swiss-tph";
 import type { OpportunitySourceConnector } from "./types";
 import { ucasScholarshipsSource } from "./ucas-scholarships";
-import { ukriMedicalResearchSource } from "./ukri-medical-research";
+import { ukriBioscienceSource, ukriMedicalResearchSource } from "./ukri-medical-research";
 import { californiaResearchCareerSources } from "./university-california-research";
 import { usaJobsSource } from "./usajobs";
 import { wellcomeSource } from "./wellcome";
@@ -40,6 +42,8 @@ import { westlakeResearchCareersSource } from "./westlake-research-careers";
 export const opportunitySources: OpportunitySourceConnector[] = [
   daadScholarshipsSource, daadDoctoralSource,
   programmeRegistrySource,
+  universityDegreeFundingSource,
+  queenslandFundedProjectsSource,
   ucasScholarshipsSource,
   canberraScholarshipSource,
   ritsumeikanScholarshipSource,
@@ -53,6 +57,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   ianPotterMedicalResearchSource,
   eitHealthValidationSource,
   ukriMedicalResearchSource,
+  ukriBioscienceSource,
   neurologicalFoundationSource,
   canadianCancerFundingSource,
   brainCanadaTrainingSource,

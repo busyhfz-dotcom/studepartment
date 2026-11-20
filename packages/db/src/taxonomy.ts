@@ -10,6 +10,11 @@ export const researchTopics = [
   ],
   [
     "biomarkers",
+    "parasitology",
+    "microbiology",
+    "biochemistry",
+    "molecular-cell-biology",
+    "allied-health",
     "Biomarkers"
   ],
   [

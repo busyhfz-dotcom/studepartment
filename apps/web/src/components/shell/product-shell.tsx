@@ -23,6 +23,7 @@ const opportunityItems: NavItem[] = [
   { href: "/opportunities?type=grant", label: "Grants", description: "Compare funding calls", icon: "opportunity" },
   { href: "/opportunities?type=masters-scholarship", label: "Master’s scholarships", description: "Funding for a master’s degree", icon: "opportunity" },
   { href: "/opportunities?type=phd-scholarship", label: "PhD scholarships", description: "Doctoral scholarships and studentships", icon: "opportunity" },
+  { href: "/opportunities?type=md-scholarship", label: "Medical degree scholarships", description: "Funding for a medical degree", icon: "opportunity" },
   { href: "/opportunities?audience=md-phd", label: "MD-PhD funding", description: "Dual-degree scholarships", icon: "opportunity" },
 ];
 

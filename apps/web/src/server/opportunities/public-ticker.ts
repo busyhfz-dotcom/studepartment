@@ -63,7 +63,7 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
 
   const [positions, grants, totalPositions, totalGrants, countries, latest] = await Promise.all([
     db.opportunity.findMany({
-      where: { ...activeUpcoming, type: { notIn: ["GRANT", "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP"] } },
+      where: { ...activeUpcoming, type: { notIn: ["GRANT", "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP", "MD_SCHOLARSHIP"] } },
       orderBy: newestFirst,
       take: 8,
       select: {
@@ -92,7 +92,7 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
         organization: { select: { name: true } },
       },
     }),
-    db.opportunity.count({ where: { ...activeUpcoming, type: { notIn: ["GRANT", "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP"] } } }),
+    db.opportunity.count({ where: { ...activeUpcoming, type: { notIn: ["GRANT", "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP", "MD_SCHOLARSHIP"] } } }),
     db.opportunity.count({ where: { ...activeUpcoming, type: "GRANT" } }),
     db.opportunity.findMany({
       where: { ...activeUpcoming, countryCode: { not: null } },

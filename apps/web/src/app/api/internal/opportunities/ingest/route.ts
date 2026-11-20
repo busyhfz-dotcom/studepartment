@@ -29,7 +29,7 @@ const opportunityTypes = new Set<OpportunityIngestionRecord["type"]>([
   "GRANT",
   "COLLABORATION",
   "RESEARCH_ASSISTANTSHIP",
-  "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP",
+  "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP", "MD_SCHOLARSHIP",
 ]);
 
 const organizationTypes = new Set<OpportunityIngestionRecord["organization"]["type"]>([

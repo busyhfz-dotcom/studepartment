@@ -22,8 +22,9 @@ const typeLabels: Record<string, string> = {
   RESEARCH_ASSISTANTSHIP: "Research position",
   MASTERS_SCHOLARSHIP: "Master’s scholarship",
   PHD_SCHOLARSHIP: "PhD scholarship",
+  MD_SCHOLARSHIP: "Medical degree scholarship",
 };
-const fundingTypes = new Set(["GRANT", "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP"]);
+const fundingTypes = new Set(["GRANT", "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP", "MD_SCHOLARSHIP"]);
 
 /** One public, indexable page per listing that is open and still present at its source. */
 const loadOpportunity = cache(async (id: string) => {

@@ -2,6 +2,7 @@ import type { OpportunityIngestionRecord } from "../ingestion";
 import { topicSlugsFor } from "./classify";
 import { indexerUserAgent, mapWithConcurrency } from "./http";
 import { PROGRAMMES, type Programme } from "./programme-registry-data";
+import { htmlToText } from "./text";
 import type { FetchLike, OpportunitySourceConnector } from "./types";
 
 /** Part of every record's permanent key and of the MD-PhD view's filter. Never rename. */
@@ -87,7 +88,9 @@ export async function programmePagePublished(
   const robots = await robotsCache.get(url.origin);
   if (robots && !robotsAllows(robots, url.pathname + url.search)) return false;
   const page = await fetchText(fetchImpl, programme.url);
-  return Boolean(page && page.status === 200 && page.text.toLowerCase().includes(programme.match.toLowerCase()));
+  if (!page || page.status !== 200) return false;
+  const name = programme.match.toLowerCase();
+  return page.text.toLowerCase().includes(name) || htmlToText(page.text).toLowerCase().includes(name);
 }
 
 export function toProgrammeRecords(programme: Programme): OpportunityIngestionRecord[] {
@@ -106,7 +109,7 @@ export function toProgrammeRecords(programme: Programme): OpportunityIngestionRe
       website: new URL(programme.url).origin,
     },
     countryCode: programme.country,
-    deadline: null,
+    deadline: programme.deadline ?? null,
     topicSlugs: topicSlugsFor(`${programme.title} ${programme.summary}`),
     methodSlugs: [],
     status: "ACTIVE" as const,
