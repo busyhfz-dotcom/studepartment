@@ -1,4 +1,4 @@
-name: Check opportunities drag in Firefox
+name: Check mRNA entrance motion in Firefox
 on:
   push:
     branches: [codex/verify-firefox-motion]
@@ -13,73 +13,72 @@ jobs:
         run: |
           npm install --no-audit --no-fund playwright@1.64.0
           npx playwright install --with-deps firefox
-      - name: Verify pause, dragging in both directions and resume
+      - name: Verify the entrance layer on desktop and mobile
         run: |
           node <<'JS'
-          const assert=require("node:assert/strict");
+          const assert = require("node:assert/strict");
           const { firefox } = require("playwright");
-          const origin = "https://provenant-web.onrender.com/start?step=browse";
-          const scrollSelector="[data-manual]";
-          async function exercise(browser, name){
-            const page=await browser.newPage({viewport:{width:1280,height:860},reducedMotion:"no-preference"});
-            page.setDefaultTimeout(13000);
+          const url="https://provenant-web.onrender.com/start";
+          async function signature(page) {
+            return page.locator("canvas[data-transcript]").evaluate(c=>{
+              const narrow=c.clientWidth<=700;
+              const x=Math.round(c.width*(narrow?.018:.028)), y=Math.round(c.height*.42);
+              const w=Math.round(c.width*(narrow?.13:.16)),h=Math.round(c.height*.44);
+              const data=c.getContext("2d").getImageData(x,y,w,h).data;
+              let hash=0, visible=0;for(let i=3;i<data.length;i+=4){hash=Math.imul(hash,31)+data[i]|0;visible+=data[i]>5?1:0;}
+              return {hash,visible};
+            });
+          }
+          async function exercise(engine,name,options,sizes) {
+            const browser=await engine.launch(options);
             try{
-              await page.goto(origin);
-              const desk=page.getByRole("complementary",{name:"Latest position and grant preview"});
-              const rail=desk.locator(scrollSelector);
-              const pause=desk.getByRole("button",{name:"Pause opportunity motion"});
-              await rail.waitFor(); await pause.waitFor();
-              await page.mouse.move(2,2);
-              const position=()=>rail.evaluate(e=>e.scrollLeft);
-              await page.waitForFunction(s=>document.querySelector(s)?.scrollLeft>32,scrollSelector);
-              const beforePause=await position();
-              await pause.click();
-              const paused=await position();
-              assert.ok(paused>=beforePause-2 && paused<beforePause+30,{beforePause,paused});
-              const resume=desk.getByRole("button",{name:"Resume opportunity motion"});
-              await resume.waitFor();
-              await page.waitForTimeout(130);
-              assert.equal(await position(),paused);
-              const box=await rail.boundingBox();
-              async function dragBy(delta){
-                const x=box.x+box.width*.50, y=box.y+41;
-                await page.mouse.move(x,y);
-                await page.mouse.down();
-                await page.mouse.move(x+delta,y,{steps:9});
-                await page.mouse.up();
+              for(const [width,height] of sizes) {
+                const page=await browser.newPage({viewport:{width,height},reducedMotion:"reduce"});
+                await page.goto(url);
+                const canvas=page.locator("canvas[data-transcript]");
+                await canvas.waitFor();
+                await page.waitForFunction(()=>document.querySelector("canvas[data-transcript]")?.width>300);
+                const first=await signature(page);
+                assert.ok(first.visible>45);
+                const heading=page.getByRole("heading",{name:"Research careers & funding"});
+                assert.ok(await heading.evaluate(e=>{
+                  const rect=e.getBoundingClientRect();
+                  return e.contains(document.elementFromPoint(rect.x+rect.width/2,rect.y+rect.height/2));
+                }));
+                await page.waitForTimeout(425);
+                assert.equal((await signature(page)).hash,first.hash);
+          
+                await page.getByRole("button",{name:"Play background motion"}).click();
+                await page.waitForTimeout(850);
+                const after=await signature(page);
+                assert.notEqual(after.hash,first.hash);
+                await page.getByRole("button",{name:"Pause background motion"}).click();
+                const stopped=await signature(page);
+                await page.waitForTimeout(425);
+                assert.equal((await signature(page)).hash,stopped.hash);
+                await page.getByRole("link",{name:/Find grant & position/}).click();
+                await page.getByRole("complementary",{name:"Latest position and grant preview"}).waitFor();
+                assert.equal(await canvas.count(),0);
+                console.log({browser:name,width,visibleSamples:first.visible,motion:true,pause:true,entryOnly:true});
+                await page.close();
               }
-              await dragBy(-310);
-              const dragged=await position();
-              assert.ok(dragged-paused>285,{paused,dragged});
-              assert.equal(await desk.getByRole("region",{name:"Selected opportunity"}).count(),0);
-              await dragBy(170);
-              const returned=await position();
-              assert.ok(dragged-returned>150,{dragged,returned});
-              assert.equal(await desk.getByRole("region",{name:"Selected opportunity"}).count(),0);
-              await page.mouse.click(box.x+box.width*.35,box.y+40);
-              await desk.getByRole("region",{name:"Selected opportunity"}).waitFor();
-              await desk.getByRole("button",{name:"Close opportunity details"}).click();
-              await resume.click(); await page.mouse.move(2,2);
-              await page.waitForFunction(({selector,returned})=>document.querySelector(selector)?.scrollLeft>returned+15,{selector:scrollSelector,returned});
-              console.log({browser:name,version:browser.version(),paused,dragged,returned,clickedDetail:true,resumed:true});
-            }finally{await page.close()}
+            }finally{await browser.close()}
           }
           (async()=>{
-            const browser=await firefox.launch();
+            const probe=await firefox.launch();
+            let ready=false;
             try {
-              const check=await browser.newPage();
-              let ready=false;
-              for (let attempt=0;attempt<35;attempt++) {
-                try{
-                  await check.goto(origin,{waitUntil:"domcontentloaded",timeout:15000});
-                  ready=await check.locator(scrollSelector).count()>0;
+              const page=await probe.newPage();
+              for(let attempt=0;attempt<40;attempt++){
+                try {
+                  await page.goto(url,{waitUntil:"domcontentloaded",timeout:15000});
+                  ready=await page.locator("canvas[data-transcript]").count()>0;
                 }catch{}
                 if(ready)break;
                 await new Promise(resolve=>setTimeout(resolve,10000));
               }
-              assert.ok(ready,"Draggable ticker is live");
-              await check.close();
-              await exercise(browser,"Firefox");
-            }finally{await browser.close()}
+            }finally{await probe.close();}
+            assert.ok(ready,"The new mRNA layer is live");
+            await exercise(firefox,"Firefox",{headless:true},[[1440,900],[390,844]]);
           })().catch(e=>{console.error(e);process.exitCode=1});
           JS
