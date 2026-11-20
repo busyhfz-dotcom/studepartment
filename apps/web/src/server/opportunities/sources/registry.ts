@@ -8,11 +8,13 @@ import { euraxessSource } from "./euraxess";
 import { fapespFellowshipsSource } from "./fapesp-fellowships";
 import { grantsGovSource } from "./grants-gov";
 import { greenhouseSources } from "./greenhouse";
+import { hkuResearchCareersSource } from "./hong-kong-research-careers";
 import { ianPotterMedicalResearchSource } from "./ian-potter-medical-research";
 import { institutionFeedSources } from "./institution-feeds";
 import { lifeArcSource } from "./lifearc";
 import { maxPlanckSource } from "./max-planck";
 import { nhsJobsSource } from "./nhs-jobs";
+import { neurologicalFoundationSource } from "./nz-neurological-foundation";
 import { pacificResearchCareerSources } from "./pacific-research-careers";
 import { programmeRegistrySource } from "./programme-registry";
 import { ritsumeikanScholarshipSource } from "./ritsumeikan-scholarship";
@@ -25,6 +27,7 @@ import { ucasScholarshipsSource } from "./ucas-scholarships";
 import { ukriMedicalResearchSource } from "./ukri-medical-research";
 import { usaJobsSource } from "./usajobs";
 import { wellcomeSource } from "./wellcome";
+import { westlakeResearchCareersSource } from "./westlake-research-careers";
 
 /** Every publisher Provenant reads automatically, in display order. */
 export const opportunitySources: OpportunitySourceConnector[] = [
@@ -43,11 +46,14 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   ianPotterMedicalResearchSource,
   eitHealthValidationSource,
   ukriMedicalResearchSource,
+  neurologicalFoundationSource,
   euraxessSource,
   swissTphSource,
   ...continentalCareerSources,
   cnrsResearchCareersSource,
   ...pacificResearchCareerSources,
+  hkuResearchCareersSource,
+  westlakeResearchCareersSource,
   ...smartRecruitersSources,
   maxPlanckSource,
   nhsJobsSource,
