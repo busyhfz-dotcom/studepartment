@@ -58,7 +58,7 @@ export function ucasRecords(html: string, url: string, now: Date): OpportunityIn
       countryCode: "CN",
       deadline: date,
       deadlineTimezone: "Asia/Shanghai",
-      eligibleCareerStages: [type === "MASTERS_SCHOLARSHIP" ? "masters" : "phd"],
+      eligibleCareerStages: [type === "MASTERS_SCHOLARSHIP" ? "student" : "phd"],
       metadata: { degreeFunding: true, applicationCycle: year },
     };
   });

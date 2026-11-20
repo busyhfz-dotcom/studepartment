@@ -1,3 +1,4 @@
+import { canberraScholarshipSource } from "./canberra-scholarship";
 import { daadScholarshipsSource, daadDoctoralSource } from "./scholarships";
 import { euFundingTendersSource } from "./eu-funding-tenders";
 import { euraxessSource } from "./euraxess";
@@ -18,6 +19,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   daadScholarshipsSource, daadDoctoralSource,
   programmeRegistrySource,
   ucasScholarshipsSource,
+  canberraScholarshipSource,
   grantsGovSource,
   euFundingTendersSource,
   wellcomeSource,
