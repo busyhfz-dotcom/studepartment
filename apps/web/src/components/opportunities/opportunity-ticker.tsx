@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
+import { ControlIcon } from "@/components/design/control-icon";
 import { ShareOpportunity } from "./share-opportunity";
 import { ListingActions } from "./listing-actions";
 import { setMotion, useMotionPreference } from "@/lib/motion-preference";
@@ -140,6 +141,7 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
   const motionEnabled = useMotionPreference("opportunities");
   const playing = motionEnabled && !paused && !selected;
   const scroll = useTickerScroll(playing, entries.length);
+  const motionLabel = playing ? "Pause" : motionEnabled ? "Resume" : "Play";
 
   const countryQuery = country ? "&country=" + encodeURIComponent(country) : "";
 
@@ -161,7 +163,13 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
               if (!motionEnabled) setMotion("opportunities", true);
             }
           }}
-        >{playing ? "Ⅱ Pause" : motionEnabled ? "▶ Resume" : "▶ Play"}</button> : null}
+        >
+          <span className={styles.mobileControl} aria-hidden="true">{playing ? "Ⅱ" : "▶"} {motionLabel}</span>
+          <span className={styles.desktopControl} aria-hidden="true">
+            <span className={styles.controlBadge}><ControlIcon name={playing ? "pause" : "play"} /></span>
+            {motionLabel}
+          </span>
+        </button> : null}
       </div>
       {entries.length ? (
         <div
@@ -234,7 +242,8 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
           <div className={styles.detailTop}>
             <span>{selected.kind}</span>
             <button type="button" aria-label="Close opportunity details" onClick={() => setSelected(null)}>
-              ×
+              <span className={styles.mobileControl} aria-hidden="true">×</span>
+              <ControlIcon name="close" className={styles.desktopControl} />
             </button>
           </div>
           <h3>{selected.title}</h3>

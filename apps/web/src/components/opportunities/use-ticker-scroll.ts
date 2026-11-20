@@ -47,14 +47,19 @@ export function useTickerScroll(playing: boolean, entryCount: number) {
     let offset = Math.max(0, list.scrollLeft);
     let previous: number | undefined;
     let frame: number;
+    let elapsed = 0;
+    const desktop = window.matchMedia("(min-width: 1024px)");
 
     function advance(now: number) {
       if (!list || !group) return;
       if (previous !== undefined && !drag.current) {
         const loopWidth = group.offsetWidth;
         if (loopWidth > list.clientWidth) {
-          // Keep the fraction between frames even on browsers that round scrollLeft.
-          offset = (offset + Math.min(now - previous, 45) * pixelsPerSecond / 1000) % loopWidth;
+          const step = Math.min(now - previous, 45);
+          elapsed += step;
+          // Ease back into the motion after a pause without losing subpixel progress.
+          const pace = desktop.matches ? Math.min(elapsed / 260, 1) : 1;
+          offset = (offset + step * pixelsPerSecond * pace / 1000) % loopWidth;
           list.scrollLeft = offset;
         }
       }

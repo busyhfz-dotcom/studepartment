@@ -78,3 +78,69 @@
 .opportunityDetail h3 { margin: 4px 0; font-size: clamp(17px, 2.2vw, 27px); }
 .opportunityDetail p, .detailDeadline { margin: 0 0 7px; color: #ccc; font-size: 12px; }
 .detailActions { inline-size: min(100%, 280px); margin-block-start: 12px; }
+.desktopControl { display: none; }
+
+@media (min-width: 1024px) {
+  .heroDesk {
+    border-color: #515151;
+    border-radius: 19px;
+    box-shadow: 0 18px 44px #0005, inset 0 1px 0 #ffffff0b;
+  }
+  .deskHeading { background: linear-gradient(110deg, #222, #191919 68%); }
+  .mobileControl { display: none; }
+  .desktopControl { display: inline-flex; align-items: center; gap: 8px; }
+  .tickerMotionToggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-inline-size: 105px;
+    min-block-size: 43px;
+    padding: 5px 11px 5px 6px;
+    border-color: #626262;
+    border-radius: 12px;
+    background: #232323;
+    color: #f1f1f1;
+    font: 700 12px/1.3 var(--font-sans), Arial, sans-serif;
+    transition: border-color .18s, background-color .18s, box-shadow .18s;
+  }
+  .tickerMotionToggle:hover { border-color: #8c8c8c; background: #303030; }
+  .controlBadge {
+    display: grid;
+    place-items: center;
+    inline-size: 27px;
+    block-size: 27px;
+    border-radius: 7px;
+    background: #eeeeee;
+    color: #181818;
+  }
+  .controlBadge svg { inline-size: 17px; block-size: 17px; }
+  .tickerMotionToggle:focus-visible, .detailTop button:focus-visible {
+    outline: 2px solid #eee;
+    outline-offset: 3px;
+  }
+  .tickerItem {
+    background: linear-gradient(155deg, #191919, #131313 78%);
+    border-inline-end-color: #333;
+  }
+  .latestRow { transition: background-color .18s; }
+  .latestRow:hover, .latestRow:focus-visible { background: #ffffff0b; }
+  .opportunityDetail {
+    background: radial-gradient(ellipse at 5% 0%, #2c2c2c, #191919 68%);
+    padding: 18px 24px;
+    animation: detailReveal .2s ease-out both;
+  }
+  .detailTop button {
+    display: grid;
+    place-items: center;
+    border-color: #626262;
+    border-radius: 12px;
+    background: #232323;
+    transition: border-color .18s, background-color .18s, color .18s;
+  }
+  .detailTop button:hover { background: #ededed; border-color: #ededed; color: #181818; }
+  @keyframes detailReveal { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .tickerMotionToggle, .latestRow, .detailTop button { transition: none; }
+    .opportunityDetail { animation: none; }
+  }
+}

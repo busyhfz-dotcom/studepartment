@@ -614,3 +614,27 @@
   .gatewayIntro h1 { font-size:clamp(30px, 9vw, 48px); }
   .browse > aside:first-child { margin-bottom:16px; }
 }
+@media (min-width: 1024px) {
+  .gatewayCard {
+    border-radius: 24px;
+    overflow: hidden;
+  }
+  .gatewayArt {
+    box-sizing: border-box;
+    padding: 7px 10px;
+    border: 1px solid color-mix(in srgb, currentColor 13%, transparent);
+    border-radius: 16px;
+    background: color-mix(in srgb, currentColor 4%, transparent);
+    transition: transform .24s cubic-bezier(.2,.7,.3,1);
+  }
+  .gatewayAction > span { transition: transform .2s, background-color .2s; }
+  .gatewayCard:hover .gatewayArt { transform: translateY(-2px); }
+  .gatewayCard:hover .gatewayAction > span {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, currentColor 22%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gatewayArt, .gatewayAction > span { transition: none; }
+    .gatewayCard:hover .gatewayArt, .gatewayCard:hover .gatewayAction > span { transform: none; }
+  }
+}

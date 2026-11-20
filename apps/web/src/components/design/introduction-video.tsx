@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { ControlIcon } from "./control-icon";
 import styles from "./introduction-video.module.css";
 
 const source = "/videos/research-tour-4k.mp4";
@@ -17,8 +18,8 @@ export function IntroductionVideo() {
   return (
     <>
       <button className={styles.trigger} type="button" aria-haspopup="dialog" onClick={showVideo}>
-        <span className={styles.play} aria-hidden="true" />
-        How to use
+        <span className={styles.play} aria-hidden="true"><ControlIcon name="play" className={styles.desktopGlyph} /></span>
+        <span>How to use</span>
       </button>
       <dialog ref={dialog} className={styles.dialog} aria-label="How to use" onClose={() => setOpen(false)}
         onClick={(event) => {
@@ -31,7 +32,10 @@ export function IntroductionVideo() {
             <a href={source}>Watch the introduction video</a>
           </video>
         )}
-        <button className={styles.close} type="button" aria-label="Close video" onClick={() => dialog.current?.close()}>×</button>
+        <button className={styles.close} type="button" aria-label="Close video" onClick={() => dialog.current?.close()}>
+          <span className={styles.mobileGlyph} aria-hidden="true">×</span>
+          <ControlIcon name="close" className={styles.desktopGlyph} />
+        </button>
       </dialog>
     </>
   );
