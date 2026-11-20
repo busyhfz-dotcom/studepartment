@@ -8,6 +8,7 @@
 .facts dt { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted, #888888); }
 .facts dd { margin: 5px 0 0; font-weight: 700; overflow-wrap: anywhere; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.listingActionGroup { inline-size: min(100%, 320px); }
 .secondary { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid var(--line, #e8e8e8); border-radius: 10px; background: var(--surface, #fff); color: inherit; font: inherit; font-size: 13px; font-weight: 650; text-decoration: none; cursor: pointer; }
 .body { padding: 20px; border: 1px solid var(--line, #efefef); border-radius: 16px; background: var(--surface, #fff); }
 .body h2 { margin: 0 0 10px; font-size: 18px; }

@@ -1,7 +1,7 @@
 'use client';
 import type {OpportunityResult} from '@/lib/api-contracts';
 import {opportunityPath} from '@/lib/opportunity-actions';
-import {ShareOpportunity} from './share-opportunity';
+import {ListingActions} from './listing-actions';
 import {DeadlineReminder} from './deadline-reminder';
 import {entryDeadlineLabel} from '@/app/start/entry-paths';
 import styles from './grant-table.module.css';
@@ -22,7 +22,12 @@ export function GrantTable({items,params,onReview}:{items:OpportunityResult[];pa
         <td data-label="Region"><span data-original-content>{item.grant?.region||'Not specified'}</span><small>{item.grant?.regionContext||'See source eligibility'}</small></td>
         <td data-label="Award min">{award(item.grant?.awardMin,item.grant?.currency)}</td>
         <td data-label="Award max">{award(item.grant?.awardMax,item.grant?.currency)}</td>
-        <td data-label="Actions"><div className={styles.rowActions}><ShareOpportunity item={item}/><DeadlineReminder items={[item]}/><a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">Official source ↗</a></div></td>
+        <td data-label="Actions"><div className={styles.rowActions}>
+          <ListingActions item={item} primary={onReview
+            ? <button type="button" onClick={()=>onReview(item)} aria-label={`Review ${item.title}`}>Review details ↗</button>
+            : <a href={opportunityPath(item)}>Review details ↗</a>} />
+          <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">Official source ↗</a>
+        </div></td>
       </tr>)}</tbody>
     </table></div>
   </section>;

@@ -18,8 +18,7 @@ import { SaveOpportunityButton } from "./save-opportunity-button";
 import { CountrySelect } from "@/components/forms/country-select";
 import { rememberOpportunityCountry, useOpportunityCountry } from "@/lib/opportunity-location";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
-import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
-import { DeadlineReminder } from '@/components/opportunities/deadline-reminder';
+import { ListingActions } from '@/components/opportunities/listing-actions';
 import { GrantTable } from '@/components/opportunities/grant-table';
 
 type OpportunityApiResponse = ApiSuccess<OpportunityIntelligenceResponse> | ApiError;
@@ -402,10 +401,10 @@ export function OpportunityExplorer({ countryCodes }: { countryCodes: string[] }
                     <small>{opportunity.source.type.replaceAll("-", " ")}</small>
                   </div>
                   <FeedbackControls entityId={opportunity.id} entityType="opportunity" />
-                  <a className={styles.secondaryAction} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source</a>
+                  <div className={styles.listingActionRail}>
+                    <ListingActions item={opportunity} primary={<a href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source ↗</a>} />
+                  </div>
                   <SaveOpportunityButton className={styles.secondaryAction} opportunityId={opportunity.id} />
-                  <ShareOpportunity item={opportunity}/>
-                  <DeadlineReminder items={[opportunity]}/>
                   <a className={styles.secondaryAction} href={"/assistant?opportunity=" + opportunity.id}>Ask assistant</a>
                   <a className={styles.primaryAction} href={opportunity.applicationUrl ?? opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application</a>
                 </aside>

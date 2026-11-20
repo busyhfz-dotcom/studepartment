@@ -1,7 +1,6 @@
 "use client";
 import { deadlineReminderOptions } from "@/lib/deadline-reminder-options";
-import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
-import { DeadlineReminder } from '@/components/opportunities/deadline-reminder';
+import { ListingActions } from '@/components/opportunities/listing-actions';
 
 import { DocumentManager } from "@/components/files/document-manager";
 
@@ -207,10 +206,11 @@ export function SavedOpportunityWorkspace({ pendingOpportunityId }: { pendingOpp
               </div>
 
               <div className={styles.actions}>
-                <ShareOpportunity item={{id:item.opportunityId,title:item.opportunity.title,type:item.opportunity.type}}/>
-                <DeadlineReminder items={[{id:item.opportunityId,title:item.opportunity.title,type:item.opportunity.type,deadline:item.opportunity.deadline,deadlinePrecision:item.opportunity.deadlinePrecision}]}/>
+                <ListingActions
+                  item={{id:item.opportunityId,title:item.opportunity.title,type:item.opportunity.type,deadline:item.opportunity.deadline,deadlinePrecision:item.opportunity.deadlinePrecision}}
+                  primary={<a href={item.opportunity.applicationUrl ?? item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application ↗</a>}
+                />
                 <a href={item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open source ↗</a>
-                <a href={item.opportunity.applicationUrl ?? item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application ↗</a>
                 <button onClick={() => void remove(item.opportunityId)} type="button">Remove from workspace</button>
               </div>
               <ApplicationDocuments opportunityId={item.opportunityId} />

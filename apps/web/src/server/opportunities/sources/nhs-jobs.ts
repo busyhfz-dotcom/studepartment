@@ -8,7 +8,8 @@ import type { OpportunitySourceConnector } from "./types";
 // API") for re-display of its adverts. Its keyword search is broad, so each
 // result is still filtered by title to research posts.
 const SEARCH_URL = "https://www.jobs.nhs.uk/api/v1/search_xml";
-const QUERIES = ["clinical research fellow", "research fellow", "research assistant", "research associate", "phd", "postdoctoral", "doctoral"];
+const QUERIES = ["clinical research fellow", "research fellow", "research assistant", "research associate", "phd", "postdoctoral", "doctoral",
+  "research nurse", "clinical research practitioner", "research coordinator", "clinical trials coordinator"];
 const MAX_PAGES_PER_QUERY = 12;
 
 type Vacancy = {

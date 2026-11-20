@@ -18,8 +18,7 @@ import { BrandSymbol } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { CountrySelect } from "@/components/forms/country-select";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
-import { ShareOpportunity } from '@/components/opportunities/share-opportunity';
-import { DeadlineReminder } from '@/components/opportunities/deadline-reminder';
+import { ListingActions } from '@/components/opportunities/listing-actions';
 import { GrantTable } from '@/components/opportunities/grant-table';
 
 type Step = "welcome" | "browse" | "detail" | "next" | "institutions";
@@ -333,11 +332,9 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
                   </div>
                   <div className={styles.resultSide}>
                     <small>{deadlineLabel(item)}</small>
-                    <button type="button" onClick={() => openDetail(item)} aria-label={`Review ${item.title}`}>
+                    <ListingActions item={item} primary={<button type="button" onClick={() => openDetail(item)} aria-label={`Review ${item.title}`}>
                       Review details ↗
-                    </button>
-                    <ShareOpportunity item={item}/>
-                    <DeadlineReminder items={[item]}/>
+                    </button>} />
                   </div>
                 </article>
               ))
@@ -417,11 +414,9 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
                 profile also keeps your CV ready for when you apply.
               </p>
               <div className={styles.detailActions}>
-                <ShareOpportunity item={selected}/>
-                <DeadlineReminder items={[selected]}/>
-                <button type="button" className={styles.primary} onClick={() => setStep("next")}>
-                  Track this {recordLabel} <span>↗</span>
-                </button>
+                <ListingActions item={selected} primary={<button type="button" onClick={() => setStep("next")}>
+                  Track this {recordLabel} ↗
+                </button>} />
                 <a className={styles.sub} href={applyHref} target="_blank" rel="noopener noreferrer">View contact details at source <span>↗</span></a>
               </div>
               <p className={styles.smallprint}>

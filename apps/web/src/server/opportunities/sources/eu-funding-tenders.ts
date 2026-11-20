@@ -2,7 +2,7 @@ import type { OpportunityIngestionRecord } from "../ingestion";
 import { isMedicalText, methodSlugsFor, topicSlugsFor } from "./classify";
 import { requestJson } from "./http";
 import { cleanDescription, decodeEntities } from "./text";
-import type { OpportunitySourceConnector } from "./types";
+import type { FetchLike, OpportunitySourceConnector } from "./types";
 
 // The portal's own public search service. "SEDIA" is the published key the
 // portal itself uses; no account is needed. EU content is reusable under the
@@ -124,9 +124,16 @@ export const euFundingTendersSource: OpportunitySourceConnector = {
   staleGraceHours: 24,
   isEnabled: () => true,
   async collect(context) {
+    // Limit the whole fetch and response body, so a slow portal cannot delay other publishers for minutes.
+    const budget = AbortSignal.timeout(70_000);
+    const fetchWithinBudget: FetchLike = (input, init) => context.fetch(input, {
+      ...init,
+      signal: init?.signal ? AbortSignal.any([init.signal, budget]) : budget,
+    });
     const results: SearchResult[] = [];
     for (let page = 1; page <= 20; page += 1) {
-      const response = await requestJson<SearchResponse>(context.fetch, `${SEARCH_URL}&pageSize=100&pageNumber=${page}`, {
+      budget.throwIfAborted();
+      const response = await requestJson<SearchResponse>(fetchWithinBudget, `${SEARCH_URL}&pageSize=100&pageNumber=${page}`, {
         method: "POST",
         body: searchBody(),
       });

@@ -275,8 +275,8 @@
   border-left: 1px solid var(--line);
 }
 
-.actions a,
-.actions button {
+.actions > a,
+.actions > button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -293,18 +293,12 @@
   cursor: pointer;
 }
 
-.actions a:hover,
-.actions button:hover {
+.actions > a:hover,
+.actions > button:hover {
   border-color: var(--line-strong);
 }
 
-.actions a:nth-child(2) {
-  color: #fff;
-  border-color: var(--accent-strong);
-  background: var(--accent-strong);
-}
-
-.actions button {
+.actions > button {
   color: var(--muted);
   background: transparent;
 }

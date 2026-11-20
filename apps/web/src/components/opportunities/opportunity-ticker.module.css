@@ -77,5 +77,4 @@
 .detailTop button { width: 44px; height: 44px; padding: 0; font-size: 22px; }
 .opportunityDetail h3 { margin: 4px 0; font-size: clamp(17px, 2.2vw, 27px); }
 .opportunityDetail p, .detailDeadline { margin: 0 0 7px; color: #ccc; font-size: 12px; }
-.detailAction { display: inline-flex; margin: 4px 8px 0 0; padding: 10px 12px; border-radius: 6px; background: #eee; color: #161616; font-size: 12px; font-weight: 800; }
-.detailAction:hover { background: #ccc; }
+.detailActions { inline-size: min(100%, 280px); margin-block-start: 12px; }

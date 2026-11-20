@@ -1,3 +1,4 @@
+import { brainCanadaTrainingSource } from "./brain-canada-training";
 import { canberraScholarshipSource } from "./canberra-scholarship";
 import { canadianCancerFundingSource } from "./canadian-cancer-funding";
 import { cnrsResearchCareersSource } from "./cnrs-research-careers";
@@ -5,15 +6,18 @@ import { continentalCareerSources } from "./continental-careers";
 import { daadScholarshipsSource, daadDoctoralSource } from "./scholarships";
 import { eitHealthValidationSource } from "./eit-health-validation";
 import { euFundingTendersSource } from "./eu-funding-tenders";
+import { extendedResearchSources } from "./extended-research-careers";
 import { euraxessSource } from "./euraxess";
 import { fapespFellowshipsSource } from "./fapesp-fellowships";
 import { grantsGovSource } from "./grants-gov";
 import { greenhouseSources } from "./greenhouse";
 import { hkuResearchCareersSource } from "./hong-kong-research-careers";
+import { hospitalResearchSources } from "./hospital-research-careers";
 import { ianPotterMedicalResearchSource } from "./ian-potter-medical-research";
 import { institutionFeedSources } from "./institution-feeds";
 import { lifeArcSource } from "./lifearc";
 import { maxPlanckSource } from "./max-planck";
+import { mayoClinicResearchSource } from "./mayo-clinic-research";
 import { nhsJobsSource } from "./nhs-jobs";
 import { neurologicalFoundationSource } from "./nz-neurological-foundation";
 import { pacificResearchCareerSources } from "./pacific-research-careers";
@@ -50,14 +54,18 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   ukriMedicalResearchSource,
   neurologicalFoundationSource,
   canadianCancerFundingSource,
+  brainCanadaTrainingSource,
   euraxessSource,
   swissTphSource,
   ...continentalCareerSources,
+  ...extendedResearchSources,
   cnrsResearchCareersSource,
   ...pacificResearchCareerSources,
   hkuResearchCareersSource,
   westlakeResearchCareersSource,
   ...smartRecruitersSources,
+  mayoClinicResearchSource,
+  ...hospitalResearchSources,
   maxPlanckSource,
   nhsJobsSource,
   ...institutionFeedSources,

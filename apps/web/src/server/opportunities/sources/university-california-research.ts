@@ -8,6 +8,10 @@ const campuses = [
   { slug: "uc-berkeley", name: "University of California, Berkeley", origin: "https://aprecruit.berkeley.edu", website: "https://www.berkeley.edu", city: "Berkeley" },
   { slug: "ucla", name: "University of California, Los Angeles", origin: "https://recruit.apo.ucla.edu", website: "https://www.ucla.edu", city: "Los Angeles" },
   { slug: "uc-san-diego", name: "University of California, San Diego", origin: "https://apol-recruit.ucsd.edu", website: "https://www.ucsd.edu", city: "San Diego" },
+  { slug: "ucsf", name: "University of California, San Francisco", origin: "https://aprecruit.ucsf.edu", website: "https://www.ucsf.edu", city: "San Francisco" },
+  { slug: "uc-davis", name: "University of California, Davis", origin: "https://recruit.ucdavis.edu", website: "https://www.ucdavis.edu", city: "Davis" },
+  { slug: "uc-irvine", name: "University of California, Irvine", origin: "https://recruit.ap.uci.edu", website: "https://uci.edu", city: "Irvine" },
+  { slug: "uc-santa-barbara", name: "University of California, Santa Barbara", origin: "https://recruit.ap.ucsb.edu", website: "https://www.ucsb.edu", city: "Santa Barbara" },
 ];
 
 export function ucResearchRecords(html: string, campus: typeof campuses[number], today: string): OpportunityIngestionRecord[] {

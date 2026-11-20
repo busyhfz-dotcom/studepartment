@@ -1,7 +1,7 @@
 import type { OpportunityResult } from './api-contracts';
 export type ShareableOpportunity = {id:string;title:string;type?:string;deadline?:string|null;deadlinePrecision?:string};
 export function opportunityPath(item:Pick<ShareableOpportunity,'id'|'type'>) {
-  const type=(item.type||'position').toLowerCase().replaceAll('_','-');
+  const type=(item.type||'position').toLowerCase().replace(/[ _]+/g,'-');
   const kind=['grant','masters-scholarship','phd-scholarship'].includes(type)?type:'position';
   return '/start?'+new URLSearchParams({step:'detail',kind,opportunity:item.id});
 }

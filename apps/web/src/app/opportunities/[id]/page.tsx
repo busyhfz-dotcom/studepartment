@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@studepartment/db";
 import { ProductShell } from "@/components/shell/product-shell";
-import { ShareOpportunity } from "@/components/opportunities/share-opportunity";
+import { ListingActions } from "@/components/opportunities/listing-actions";
 import { getSiteUrl } from "@/lib/site";
 import { getShellViewer } from "@/server/auth/shell-viewer";
 import { SaveOpportunityButton } from "../save-opportunity-button";
@@ -143,10 +143,12 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
         </dl>
 
         <div className={styles.actions}>
-          <a className="primaryButton" href={applyUrl} rel="noreferrer" target="_blank">Open application ↗</a>
+          <div className={styles.listingActionGroup}>
+            <ListingActions item={{ id: opportunity.id, title: opportunity.title, type: opportunity.type, deadline: opportunity.deadline?.toISOString() ?? null, deadlinePrecision: opportunity.deadlinePrecision.toLowerCase().replaceAll("_", "-") }}
+              primary={<a href={applyUrl} rel="noreferrer" target="_blank">Open application ↗</a>} />
+          </div>
           <a className={styles.secondary} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review original source ↗</a>
           <SaveOpportunityButton className={styles.secondary} opportunityId={opportunity.id} />
-          <ShareOpportunity item={{ id: opportunity.id, title: opportunity.title, type: opportunity.type, deadline: opportunity.deadline?.toISOString() ?? null }} />
         </div>
 
         <section className={styles.body}>

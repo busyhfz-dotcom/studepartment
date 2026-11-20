@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { ShareOpportunity } from "./share-opportunity";
+import { ListingActions } from "./listing-actions";
 import { setMotion, useMotionPreference } from "@/lib/motion-preference";
 import { useTickerScroll } from "./use-ticker-scroll";
 import styles from "./opportunity-ticker.module.css";
@@ -14,6 +15,7 @@ type TickerEntry = {
   title: string;
   organization: string;
   deadline: string | null;
+  deadlinePrecision?: string;
   deadlineLabel: string;
   isNew: boolean;
 };
@@ -25,6 +27,7 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     title: item.title,
     organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
     deadline: item.deadline,
+    deadlinePrecision: item.deadlinePrecision,
     deadlineLabel: item.deadlineLabel,
     isNew: Boolean(item.isNew),
   }));
@@ -34,6 +37,7 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     title: item.title,
     organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
     deadline: item.deadline,
+    deadlinePrecision: item.deadlinePrecision,
     deadlineLabel: item.deadlineLabel,
     isNew: Boolean(item.isNew),
   }));
@@ -236,8 +240,12 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
           <h3>{selected.title}</h3>
           <p>{selected.organization}</p>
           <div className={styles.detailDeadline}>{selected.deadlineLabel}</div>
-          <Link className={styles.detailAction} href={`/start?step=detail&kind=${selected.kind === "Grant" ? "grant" : "position"}&opportunity=${encodeURIComponent(selected.id)}${countryQuery}`}>Review this opportunity ↗</Link>
-          <ShareOpportunity item={{id:selected.id,title:selected.title,type:selected.kind==='Grant'?'grant':'position'}}/>
+          <div className={styles.detailActions}>
+            <ListingActions
+              item={{id:selected.id,title:selected.title,type:selected.kind==='Grant'?'grant':'position',deadline:selected.deadline,deadlinePrecision:selected.deadlinePrecision}}
+              primary={<Link href={`/start?step=detail&kind=${selected.kind === "Grant" ? "grant" : "position"}&opportunity=${encodeURIComponent(selected.id)}${countryQuery}`}>Review this opportunity ↗</Link>}
+            />
+          </div>
         </div>
       ) : null}
 

@@ -21,6 +21,7 @@ const MEDICAL_PATTERN = new RegExp(
     "pediatric\\w*", "paediatric\\w*", "neonat\\w*", "maternal", "pregnan\\w*", "reproductive", "ageing", "aging",
     "genom\\w*", "genetic\\w*", "molecular biology", "cell biology", "stem cell\\w*", "physiolog\\w*", "biochem\\w*", "bioinformatic\\w*", "computational biology",
     "biomarker\\w*", "translational", "clinical trial\\w*",
+    "endocrin\\w*", "ha?ematolog\\w*", "rheumatolog\\w*", "gastroenterolog\\w*", "dermatolog\\w*", "ophthalmolog\\w*", "nephrolog\\w*",
   ].join("|") + ")\\b",
   "i",
 );
@@ -36,7 +37,12 @@ export function isMedicalText(...parts: Array<string | null | undefined>): boole
 /** Classifies a research position from its title. Returns null for roles we do not list. */
 export function classifyPositionTitle(title: string): PositionType | null {
   const value = title.toLowerCase();
+  if (/\bpostdoktor\b/.test(value)) return "POSTDOC";
+  if (/\bdoktorand\b/.test(value)) return "PHD";
+  if (/\b(?:forskningsassistent|forskningssjuksköterska)\b/u.test(value)) return "RESEARCH_ASSISTANTSHIP";
   if (/\b(consultant|matron|nurse practitioner|physician assistant|secretary|accountant)\b/.test(value)) return null;
+  if (/\b(?:clinical research (?:coordinators?|specialists?|practitioners?|nurses?)|research (?:study )?coordinators?|clinical (?:trials?|stud(?:y|ies)) coordinators?|research nurses?)\b/.test(value)
+    && !/\b(?:director|manager|head of)\b/.test(value)) return "RESEARCH_ASSISTANTSHIP";
   if (/\b(professor|lecturer|faculty|director|head of|dean|chair\b|manager|administrat|coordinator|officer|assistant to|secretary|accountant|engineer(?!ing)|technologist|nurse practitioner|physician assistant)\b/.test(value)
     && !/\b(post-?doc|postdoctoral|ph\.?d|doctoral|fellowship|research fellow)\b/.test(value)) {
     return null;

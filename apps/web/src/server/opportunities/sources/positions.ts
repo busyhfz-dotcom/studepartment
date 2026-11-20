@@ -34,7 +34,7 @@ export function toPositionRecord(input: PositionInput): OpportunityIngestionReco
   const title = decodeEntities(input.title).replace(/\s+/g, " ").trim();
   const type = classifyPositionTitle(title);
   if (!type) return null;
-  if (input.requireResearchTitle && !/\b(research|ph\.?\s?d|doctoral|post-?doc\w*)\b/i.test(title)) return null;
+  if (input.requireResearchTitle && !/\b(research|clinical trials?|clinical stud(?:y|ies)|ph\.?\s?d|doctoral|post-?doc\w*)\b/i.test(title)) return null;
   const description = cleanDescription(input.descriptionHtml, 1200);
   const subjects = input.subjects ?? [];
   if (!input.biomedicalPublisher && !isMedicalText(title, subjects.join(" "), description?.slice(0, 600))) return null;

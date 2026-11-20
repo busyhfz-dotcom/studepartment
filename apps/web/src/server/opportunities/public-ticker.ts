@@ -7,6 +7,7 @@ export type PublicTickerItem = {
   organization: string;
   countryCode: string | null;
   deadline: string | null;
+  deadlinePrecision?: string;
   deadlineLabel: string;
   /** First collected in the last 24 hours. */
   isNew: boolean;
@@ -109,6 +110,7 @@ export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof get
       organization: row.organization.name,
       countryCode: row.countryCode,
       deadline: row.deadline?.toISOString() ?? null,
+      deadlinePrecision: row.deadlinePrecision.toLowerCase().replaceAll("_", "-"),
       deadlineLabel: formatDeadline(row.deadline, row.deadlinePrecision),
       isNew: (row.publishedAt ?? row.firstSeenAt).getTime() >= newSince,
     }));
