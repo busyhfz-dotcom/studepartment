@@ -12,7 +12,7 @@ const MEDICAL_PATTERN = new RegExp(
   "\\b(" + [
     "medic(?:al|ine|inal)", "clinic(?:al|ian|s)?", "health", "healthcare", "biomedic\\w*", "biomed", "patient\\w*", "hospital\\w*",
     "cancer\\w*", "oncolog\\w*", "tumou?r\\w*", "leuka?emi\\w*", "lymphoma\\w*", "carcinoma\\w*", "metasta\\w*",
-    "immun\\w*", "infect\\w*", "vaccin\\w*", "virus\\w*", "viral", "virolog\\w*", "bacteri\\w*", "microbio\\w*", "antimicrobial\\w*", "pathogen\\w*", "parasitol\\w*", "parasiti\\w*", "mycolog\\w*", "medical entomology",
+    "immun\\w*", "infect\\w*", "vaccin\\w*", "virus\\w*", "viral", "virolog\\w*", "bacteri\\w*", "microbi\\w*", "bioscien\\w*", "antimicrobial\\w*", "pathogen\\w*", "parasitol\\w*", "parasiti\\w*", "mycolog\\w*", "medical entomology",
     "hiv", "aids", "tuberculosis", "malaria", "sepsis", "covid\\w*", "pandemic\\w*",
     "neuro\\w*", "brain", "alzheimer\\w*", "parkinson\\w*", "dementia", "stroke", "psychiatr\\w*", "mental health", "depress\\w*",
     "cardio\\w*", "cardiac", "heart", "vascular", "diabet\\w*", "obesity", "metabolic", "kidney", "renal", "liver", "hepat\\w*", "lung", "pulmonar\\w*", "respiratory",
@@ -55,7 +55,7 @@ export function classifyPositionTitle(title: string): PositionType | null {
   if (/\bresearch fellows?\b/.test(value)) return "POSTDOC";
   if (/\bfellowships?\b/.test(value)) return "FELLOWSHIP";
   // Research staff appear under the same research-position category.
-  if (/\b(research (assistants?|associates?|technicians?|scientists?|engineers?|technologists?)|(?:staff|project|laboratory|biomedical|clinical research|translational) scientists?|biostatistician\\w*|clinical trial associates?|lab(oratory)? (technician|research assistant))\b/.test(value)) {
+  if (/\b(research (assistants?|associates?|technicians?|scientists?|engineers?|technologists?)|(?:staff|project|laboratory|biomedical|clinical research|translational) scientists?|biostatisticians?|clinical trial associates?|lab(oratory)? (technician|research assistant))\b/.test(value)) {
     return "RESEARCH_ASSISTANTSHIP";
   }
   return null;
@@ -76,9 +76,9 @@ export function careerStagesForPosition(type: PositionType, text: string): strin
 
 const TOPIC_RULES: Array<[string, RegExp]> = [
   ["parasitology", /\b(parasitol\w*|parasiti\w*|medical entomology|malaria|leishmani\w*|helminth\w*)\b/i],
-  ["microbiology", /\b(microbiol\w*|bacterio\w*|mycolog\w*|bacteriophag\w*|microbiom\w*)\b/i],
+  ["microbiology", /\b(microbi\w*|bacterio\w*|mycolog\w*|bacteriophag\w*|microbiom\w*)\b/i],
   ["biochemistry", /\b(biochem\w*|proteom\w*|enzymolog\w*)\b/i],
-  ["molecular-cell-biology", /\b(molecular biolog\w*|cell biolog\w*|structural biolog\w*)\b/i],
+  ["molecular-cell-biology", /\b(molecular biolog\w*|molecular bioscien\w*|cell biolog\w*|structural biolog\w*)\b/i],
   ["allied-health", /\b(allied health|audiolog\w*|dietitian\w*|dietet\w*|occupational therap\w*|speech and language therap\w*|physiotherap\w*|medical laboratory)\b/i],
   ["oncology", /\b(cancer|oncolog\w*|tumou?r\w*|leuka?emi\w*|lymphoma|carcinoma|melanoma|glioma|sarcoma|myeloma)\b/i],
   ["cancer-immunotherapy", /\b(immunotherap\w*|car[- ]?t\b|checkpoint inhibit\w*|cancer vaccine\w*)\b/i],

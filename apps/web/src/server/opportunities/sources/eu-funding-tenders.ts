@@ -1,6 +1,6 @@
 import type { OpportunityIngestionRecord } from "../ingestion";
 import { isMedicalText, methodSlugsFor, topicSlugsFor } from "./classify";
-import { requestJson } from "./http";
+import { mapWithConcurrency, requestJson } from "./http";
 import { cleanDescription, decodeEntities } from "./text";
 import type { FetchLike, OpportunitySourceConnector } from "./types";
 
@@ -130,17 +130,24 @@ export const euFundingTendersSource: OpportunitySourceConnector = {
       ...init,
       signal: init?.signal ? AbortSignal.any([init.signal, budget]) : budget,
     });
-    const results: SearchResult[] = [];
-    for (let page = 1; page <= 20; page += 1) {
+    const pageSize = 50;
+    const readPage = async (page: number) => {
       budget.throwIfAborted();
-      const response = await requestJson<SearchResponse>(fetchWithinBudget, `${SEARCH_URL}&pageSize=100&pageNumber=${page}`, {
+      const response = await requestJson<SearchResponse>(fetchWithinBudget, `${SEARCH_URL}&pageSize=${pageSize}&pageNumber=${page}`, {
         method: "POST",
         body: searchBody(),
       });
-      const items = response.results ?? [];
-      results.push(...items);
-      if (items.length < 100 || results.length >= response.totalResults) break;
-    }
+      if (!Number.isInteger(response.totalResults) || !Array.isArray(response.results)) {
+        throw new Error("Unrecognized EU Funding & Tenders search response");
+      }
+      return { total: response.totalResults, results: response.results };
+    };
+    const firstPage = await readPage(1);
+    const pageCount = Math.ceil(firstPage.total / pageSize);
+    if (pageCount > 30) throw new Error("EU Funding & Tenders search exceeded its page budget");
+    const pageNumbers = Array.from({ length: Math.max(pageCount - 1, 0) }, (_, index) => index + 2);
+    const following = await mapWithConcurrency(pageNumbers, 3, readPage);
+    const results = [firstPage, ...following].flatMap((page) => page.results);
     const records = results
       .filter((result) => isHealthTopic(result.metadata))
       .map((result) => toEuRecord(result, context.now))

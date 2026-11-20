@@ -44,6 +44,8 @@ export const INSTITUTION_FEEDS: InstitutionFeed[] = [
   { id: "surrey", name: "University of Surrey", feedUrl: "https://jobs.surrey.ac.uk/rss/rss.aspx", homepage: "https://jobs.surrey.ac.uk", website: "https://www.surrey.ac.uk", countryCode: "GB", city: "Guildford", type: "UNIVERSITY", focused: true },
   { id: "umea-medical", name: "Umeå University", feedUrl: "https://umu.varbi.com/en/what:rssfeed", homepage: "https://umu.varbi.com/en/", website: "https://www.umu.se", countryCode: "SE", city: "Umeå", type: "UNIVERSITY", focused: true },
   { id: "stockholm-health", name: "Stockholm University", feedUrl: "https://su.varbi.com/en/what:rssfeed", homepage: "https://su.varbi.com/en/", website: "https://www.su.se", countryCode: "SE", city: "Stockholm", type: "UNIVERSITY", focused: true },
+  { id: "aston-health", name: "Aston University", feedUrl: "https://jobs.aston.ac.uk/rss/rss.aspx", homepage: "https://jobs.aston.ac.uk/", website: "https://www.aston.ac.uk", countryCode: "GB", city: "Birmingham", type: "UNIVERSITY", focused: true },
+  { id: "kth-biomedical", name: "KTH Royal Institute of Technology", feedUrl: "https://kth.varbi.com/en/what:rssfeed", homepage: "https://kth.varbi.com/en/", website: "https://www.kth.se", countryCode: "SE", city: "Stockholm", type: "UNIVERSITY", focused: true },
   { id: "region-stockholm-research", name: "Region Stockholm", feedUrl: "https://regionstockholm.varbi.com/en/what:rssfeed", homepage: "https://regionstockholm.varbi.com/en/", website: "https://www.regionstockholm.se", countryCode: "SE", city: "Stockholm", type: "HOSPITAL", focused: true },
 ];
 
@@ -77,6 +79,10 @@ export function toInstitutionFeedRecord(item: FeedItem, feed: InstitutionFeed, n
     subjects: item.categories,
     biomedicalPublisher: fromMedicalSchool || swedishHealth,
   });
+  if (record?.type === "PHD" && /\bfunded\s+(?:ph\.?d|doctoral)\b|\bstipend\s+(?:of|is|at)\b|\b(?:funding|scholarship) covers (?:tuition|fees)\b/i.test(item.title + " " + text)
+    && !/\b(?:unfunded|self[- ]funded|seeking funding|funding is not guaranteed)\b/i.test(item.title + " " + text)) {
+    record.type = "PHD_SCHOLARSHIP";
+  }
   return record && feed.focused ? { ...record, description: null } : record;
 }
 

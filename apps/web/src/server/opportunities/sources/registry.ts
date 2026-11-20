@@ -21,6 +21,7 @@ import { mayoClinicResearchSource } from "./mayo-clinic-research";
 import { nhsJobsSource } from "./nhs-jobs";
 import { neurologicalFoundationSource } from "./nz-neurological-foundation";
 import { pacificResearchCareerSources } from "./pacific-research-careers";
+import { manchesterFundedDoctoratesSource } from "./manchester-funded-doctorates";
 import { queenslandFundedProjectsSource } from "./queensland-funded-projects";
 import { universityDegreeFundingSource } from "./university-degree-funding";
 import { programmeRegistrySource } from "./programme-registry";
@@ -44,6 +45,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   programmeRegistrySource,
   universityDegreeFundingSource,
   queenslandFundedProjectsSource,
+  manchesterFundedDoctoratesSource,
   ucasScholarshipsSource,
   canberraScholarshipSource,
   ritsumeikanScholarshipSource,

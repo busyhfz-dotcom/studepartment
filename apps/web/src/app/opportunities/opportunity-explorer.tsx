@@ -33,7 +33,7 @@ const typeOptions: Array<{ value: "" | OpportunityTypeValue; label: string }> = 
   { value: "phd-scholarship", label: "PhD scholarships" },
   { value: "md-scholarship", label: "Medical degree scholarships" },
   { value: "collaboration", label: "Collaborations" },
-  { value: "research-assistantship", label: "Research assistantships" },
+  { value: "research-assistantship", label: "Research staff positions" },
 ];
 
 const careerStageOptions: Array<{ value: "" | OpportunityCareerStage; label: string }> = [

@@ -39,7 +39,7 @@ function typeLabel(type: OpportunityResult["type"]): string {
     case "fellowship":
       return "Research fellowship";
     case "research-assistantship":
-      return "Research assistantship";
+      return "Research staff position";
     case "collaboration":
       return "Collaboration";
     case "grant":
