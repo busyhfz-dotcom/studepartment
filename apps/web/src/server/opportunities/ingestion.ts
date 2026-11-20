@@ -111,11 +111,18 @@ function fingerprint(record: OpportunityIngestionRecord) {
 }
 
 /** Listing links are rendered as anchors, so only plain web addresses are stored. */
-function webUrl(value: string | null | undefined) {
+function webUrl(value: string | null | undefined, removeTracking = false) {
   if (typeof value !== "string") return null;
   try {
     const url = new URL(value.trim());
-    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : null;
+    if (url.username || url.password || (url.protocol !== "https:" && url.protocol !== "http:")) return null;
+    if (removeTracking) {
+      for (const name of [...url.searchParams.keys()]) {
+        if (/^(?:utm_.*|gclid|gbraid|wbraid|fbclid|msclkid)$/i.test(name)) url.searchParams.delete(name);
+      }
+    }
+    // Keep meaningful query strings and fragments, including EU Funding & Tenders topic routes.
+    return url.toString();
   } catch {
     return null;
   }
@@ -128,11 +135,12 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
   let created = 0;
   let updated = 0;
   let unchanged = 0;
+  let duplicatesSkipped = 0;
 
   for (const received of batch.records) {
     // A feed is outside our control: drop a record whose source link is not a web address
     // (for example javascript: or data:) rather than publishing it as a clickable link.
-    const sourceUrl = webUrl(received.sourceUrl);
+    const sourceUrl = webUrl(received.sourceUrl, true);
     if (!sourceUrl) continue;
     const record = { ...received, sourceUrl, applicationUrl: webUrl(received.applicationUrl) };
     const recordId = record.sourceRecordId.trim();
@@ -147,6 +155,29 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
     const eligibleCountryCodes = Array.from(new Set((record.eligibleCountryCodes ?? []).map((value) => value.toUpperCase().slice(0, 2)).filter(Boolean))).slice(0, 32);
 
     await db.$transaction(async (tx) => {
+      const existing = await tx.opportunity.findUnique({
+        where: { sourceKey: key },
+        include: { provenance: { select: { contentFingerprint: true } } },
+      });
+      if (!existing) {
+        // Serialize first inserts with the same canonical link and category across source leases.
+        const identity = [record.type, sourceUrl].join(":");
+        await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${identity}, 0))::text AS locked`;
+        const url = new URL(sourceUrl);
+        const alternatives = !url.search && !url.hash
+          ? [{ sourceUrl }, { sourceUrl: { startsWith: sourceUrl + "?" } }]
+          : [{ sourceUrl }];
+        const candidates = await tx.opportunity.findMany({
+          where: { status: "ACTIVE", type: record.type, sourceKey: { not: key }, OR: alternatives },
+          select: { sourceUrl: true, title: true },
+        });
+        if (candidates.some((item) => webUrl(item.sourceUrl, true) === sourceUrl
+          && normalizeText(item.title) === normalizeText(record.title))) {
+          duplicatesSkipped += 1;
+          return;
+        }
+      }
+
       const organizationCountry = record.organization.countryCode?.toUpperCase().slice(0, 2) || null;
       let organization = await tx.organization.findFirst({
         where: {
@@ -170,10 +201,6 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
         });
       }
 
-      const existing = await tx.opportunity.findUnique({
-        where: { sourceKey: key },
-        include: { provenance: { select: { contentFingerprint: true } } },
-      });
       const changed = !existing?.provenance.some((item) => item.contentFingerprint === contentFingerprint);
 
       const derivedStatus = record.status === "CLOSED"
@@ -308,6 +335,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
     created,
     updated,
     unchanged,
+    duplicatesSkipped,
     markedStale,
   };
 }

@@ -26,6 +26,7 @@ export type SourceRunResult = {
   created?: number;
   updated?: number;
   unchanged?: number;
+  duplicatesSkipped?: number;
   markedStale?: number;
   error?: string;
 };
@@ -126,7 +127,7 @@ export async function runSource(
     const completeSnapshot = connector.completeSnapshot && records.length > 0;
     const staleBefore = new Date(now.getTime() - (connector.staleGraceHours ?? DEFAULT_STALE_GRACE_HOURS) * 3_600_000);
     const result = await ingestOpportunityBatch({ source: connector.source, completeSnapshot, staleBefore, records });
-    log(`${connector.source.name}: ${result.created} new, ${result.updated} updated, ${result.unchanged} unchanged, ${result.markedStale} no longer listed`);
+    log(`${connector.source.name}: ${result.created} new, ${result.updated} updated, ${result.unchanged} unchanged, ${result.duplicatesSkipped} duplicates skipped, ${result.markedStale} no longer listed`);
     run = { ...base, status: "ok", durationMs: Date.now() - started, ...result };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

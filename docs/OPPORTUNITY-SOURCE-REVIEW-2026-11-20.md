@@ -1,0 +1,31 @@
+# Opportunity source review
+
+## Recurring sources added
+
+| Publisher | What enters Provenant | Intended check interval |
+| --- | --- | --- |
+| [Wellcome](https://wellcome.org/research-funding/schemes) | The funder's open or rolling research grants. Partner-led schemes and training programmes require their own application calendars. [Reuse licence](https://wellcome.org/about-us/our-people/governance/privacy-and-terms). | 4 hours |
+| [LifeArc](https://www.lifearc.org/project/rare-disease-clinical-trials-programme/) | Rare Disease Clinical Trials Programme, based on the programme's stated application status. The published amount is an upper limit per proposal. | 6 hours |
+| [UCAS](https://english.ucas.ac.cn/index.php/admission/international-students/financial-aid) | Annual Chinese Government, CAS-ANSO and UCAS scholarship calls. A call that explicitly funds both degrees is represented once in each eligible category. The 2027 calls name February 28, 2027, Beijing time. | 6 hours |
+| [EURAXESS](https://euraxess.ec.europa.eu/jobs/search) | Recent employer-published adverts from the public results page. Medical research relevance, recognised role, and a current dated deadline are required. Records use the original link and basic facts. The parameterised search and API paths are excluded by the [publisher's robots rules](https://euraxess.ec.europa.eu/robots.txt). | 1 hour |
+
+All four use the existing opportunity scheduler and publish their run status on the site's sources endpoint. The site updates stable source records in place. Ingestion checks for active records with the same normalised source link, title and opportunity type before inserting. It preserves meaningful filters and hash routes in links. Different degree tracks stay distinct. Opportunities advertised independently with different titles and URLs may still require editorial review.
+
+## Primary sources already covered
+
+- [NIDCD funding types](https://www.nidcd.nih.gov/funding/types) explains the award mechanisms. The existing Grants.gov collector is the publication route [NIH identifies for its notices](https://grants.nih.gov/funding/explore-nih-opportunities?type=active). [HRSA Find Funding](https://www.hrsa.gov/grants/find-funding) also links to the federal grants system.
+- The [European Commission health research overview](https://research-and-innovation.ec.europa.eu/research-area/health_en) is programme information. Calls belong in the existing EU Funding & Tenders integration. The European Society of Endocrinology's EU4Health overview is a signpost to the same programme family.
+- [MEXT](https://www.studyinjapan.go.jp/en/planning/scholarships/mext-scholarships/) is represented in the official programme registry. Where an institution publishes its own separate MEXT call, its eligibility and cycle need to be verified before adding a second record.
+
+## Verified restrictions or out-of-scope items
+
+- [NIHR](https://www.nihr.ac.uk/funding-opportunities), the [Academy of Medical Sciences](https://acmedsci.ac.uk/grants-and-programmes/grants) and the [Bayer Foundation](https://www.bayer-foundation.com/en/science/fellowships) are primary sources, but their tested pages returned HTTP 403 to the identified collector. No access workaround or substitute scrape was installed.
+- Mayo Clinic's Careers A–Z is educational. The employer does publish real research jobs, but its [terms forbid automated extraction](https://www.mayoclinic.org/about-this-site/terms-conditions-use-policy) and its recruiting site's [robots rules block the search path](https://jobs.mayoclinic.org/robots.txt). [Pfizer's terms](https://www.pfizer.com/general/terms) restrict republication, and the [Leukemia Research Foundation](https://leukemiarf.org/privacy-policy/) asks for written permission to publish material. These were left out of automated ingestion.
+- [ERIA's ASEAN–Japan call](https://www.eria.org/publications/call-for-applications--asean%E2%80%93japan-medical-scholarship-programme-2027%E2%80%932035--fully-funded-) is for eligible undergraduate medical students. [McCall MacBain](https://mccallmacbainscholars.org/apply/) reports that applications for summer/fall 2027 are closed. The Medical Research UK antimicrobial resistance rounds examined had July 2026 deadlines. None became active listings.
+- Educational articles about healthcare careers and specialty choices from SGU, St Matthew's, AUC, Indeed, Nurse.org, HealthCareers, Med School Insiders, Coursera and Hospice of the North Coast were treated as reference material. A degree description, admissions advert, clinical observership, or MBBS/MD-only scholarship does not establish a funded Master's, PhD or MD–PhD opportunity.
+
+## Links for further source discovery
+
+The supplied lists of jobs, grants and scholarships include commercial directories, editorial articles and community posts. They can lead to an employer, university, or funder's opportunity page. They were not enrolled as feeds. This includes EverNetwork, SchoolGrantsBlog, Kent Scientific, Science Careers, ScientifyResearch, fundsforNGOs, The Grant Portal, AtomGrants, OEDb, DevelopmentAid, RevenueBase, ResearchGate, Indeed, BMJ Careers, PracticeMatch, DocCafe, Health eCareers, Mastersportal, Bachelorsportal, QS, IDP, Scholarships.com and the other commercial catalogues.
+
+Other funders and universities in the submitted list remain candidates for validation. Before enabling any of them, identify a current call and its official link, verify the degree or position type, confirm the terms for regular collection, and establish a stable record identifier and an expiry rule. Being an authoritative institution establishes provenance. It does not establish that a particular programme is currently accepting applications.
