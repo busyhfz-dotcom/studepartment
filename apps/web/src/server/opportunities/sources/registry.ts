@@ -25,6 +25,7 @@ import { programmeRegistrySource } from "./programme-registry";
 import { ritsumeikanScholarshipSource } from "./ritsumeikan-scholarship";
 import { rmitMedicalScienceSource } from "./rmit-medical-science";
 import { sydneyRtpSource } from "./sydney-rtp";
+import { singHealthResearchSource } from "./singhealth-research-careers";
 import { smartRecruitersSources } from "./smartrecruiters";
 import { swissTphSource } from "./swiss-tph";
 import type { OpportunitySourceConnector } from "./types";
@@ -66,6 +67,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   ...smartRecruitersSources,
   mayoClinicResearchSource,
   ...hospitalResearchSources,
+  singHealthResearchSource,
   maxPlanckSource,
   nhsJobsSource,
   ...institutionFeedSources,
