@@ -2,6 +2,7 @@
 import { IntroductionVideo } from "@/components/design/introduction-video";
 import { OpportunityTicker } from "@/components/opportunities/opportunity-ticker";
 import { rememberOpportunityCountry, useOpportunityCountry } from "@/lib/opportunity-location";
+import { setMotion, useMotionPreference } from "@/lib/motion-preference";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { LanguagePicker } from "@/components/i18n/language-provider";
 
@@ -49,6 +50,7 @@ function typeLabel(type: OpportunityResult["type"]): string {
 }
 
 function TopBar() {
+  const moving = useMotionPreference("background");
   return (
     <header className={styles.topbar}>
         <Link className={styles.brand} href="/start" aria-label="Provenant home">
@@ -58,6 +60,12 @@ function TopBar() {
           </span>
         </Link>
       <nav className={styles.topActions} aria-label="Site navigation">
+        <button type="button" className={styles.backgroundMotion}
+          aria-label={moving ? "Pause background motion" : "Play background motion"}
+          title={moving ? "Pause background motion" : "Play background motion"}
+          onClick={() => setMotion("background", !moving)}>
+          <span className={moving ? styles.motionPauseIcon : styles.motionPlayIcon} aria-hidden="true" />
+        </button>
         <LanguagePicker />
         <Link className={styles.join} href="/auth/sign-in">Sign in</Link>
       </nav>

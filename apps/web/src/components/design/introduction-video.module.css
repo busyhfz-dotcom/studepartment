@@ -7,16 +7,17 @@
   gap: 8px;
   inline-size: 92px;
   aspect-ratio: 1;
-  border: 1px solid #747474;
+  border: 1px solid #aaa;
   border-radius: 50%;
-  background: #1b1b1b;
+  background: radial-gradient(circle at 35% 14%, #414141, #161616 62%, #090909);
+  box-shadow: inset 0 1px 0 #ffffff33, 0 0 22px #ffffff19;
   color: #fff;
   font-size: 12px;
   font-weight: 760;
   cursor: pointer;
 }
 
-.trigger:hover { background: #303030; border-color: #f2f2f2; }
+.trigger:hover { background: #f7f7f7; border-color: #fff; color: #111; }
 .trigger:focus-visible, .close:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
 .play {

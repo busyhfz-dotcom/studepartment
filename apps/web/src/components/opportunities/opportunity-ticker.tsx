@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { ShareOpportunity } from "./share-opportunity";
+import { setMotion, useMotionPreference } from "@/lib/motion-preference";
 import styles from "./opportunity-ticker.module.css";
 
 type TickerEntry = {
@@ -131,6 +132,8 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
   const entries = buildEntries(ticker);
   const [selected, setSelected] = useState<TickerEntry | null>(null);
   const [paused, setPaused] = useState(false);
+  const motionEnabled = useMotionPreference("opportunities");
+  const playing = motionEnabled && !paused && !selected;
 
   const countryQuery = country ? "&country=" + encodeURIComponent(country) : "";
 
@@ -142,16 +145,21 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
         {entries.length ? <button
           type="button"
           className={styles.tickerMotionToggle}
-          aria-label={paused || selected ? "Resume opportunity motion" : "Pause opportunity motion"}
+          aria-label={playing ? "Pause opportunity motion" : motionEnabled ? "Resume opportunity motion" : "Play opportunity motion"}
           onClick={() => {
-            if (paused || selected) { setSelected(null); setPaused(false); }
-            else setPaused(true);
+            if (playing) {
+              setPaused(true);
+            } else {
+              setSelected(null);
+              setPaused(false);
+              if (!motionEnabled) setMotion("opportunities", true);
+            }
           }}
-        >{paused || selected ? "▶ Resume" : "Ⅱ Pause"}</button> : null}
+        >{playing ? "Ⅱ Pause" : motionEnabled ? "▶ Resume" : "▶ Play"}</button> : null}
       </div>
       {entries.length ? (
-        <div className={styles.latestList} aria-label="Latest opportunities; touch to pause or select a listing for details" onPointerDown={() => setPaused(true)}>
-          <div className={styles.latestTrack} style={{ animationDuration: `${entries.length * 8}s` }}>
+        <div className={styles.latestList} data-motion={motionEnabled ? "on" : "off"} aria-label="Latest opportunities; touch to pause or select a listing for details" onPointerDown={() => setPaused(true)}>
+          <div className={styles.latestTrack} data-user-motion={motionEnabled ? "true" : undefined} style={{ animationDuration: `${entries.length * 8}s` }}>
             {[false, true].map((duplicate) => (
               <div className={styles.latestGroup} aria-hidden={duplicate || undefined} key={duplicate ? "dup" : "orig"}>
                 {entries.map((entry, index) => {

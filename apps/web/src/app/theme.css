@@ -2,17 +2,17 @@
 :root{--app-bg:#f7f7f7;--background:#f7f7f7;--surface:#fff;--surface-raised:#fff;--surface-subtle:#f9f9f9;--surface-muted:#f3f3f3;--surface-warm:#fcfcfc;--surface-inverse:#292929;--text:#464646;--text-strong:#2e2e2e;--muted:#909090;--muted-2:#a1a1a1;--muted-3:#c2c2c2;--line:#eeeeee;--line-strong:#e7e7e7;--line-soft:#4646460b;--accent:#606060;--accent-strong:#565656;--accent-deep:#707070;--accent-soft:#f6f6f6;--accent-soft-strong:#ececec;--accent-cyan:#a0a0a0;--accent-blue:#818181;--accent-blue-soft:#f5f5f5;--accent-amber:#6a6a6a;--accent-amber-soft:#f4f4f4;--shadow-xs:0 2px 5px #3c3c3c04;--shadow-sm:0 10px 30px #3c3c3c08;--shadow:0 22px 55px #3c3c3c12;--shadow-lg:0 30px 85px #3c3c3c20;--radius-lg:16px;--radius-xl:20px;--duration:260ms;--ease:cubic-bezier(.22,.72,.24,1)}
 body{--font-editorial:var(--font-sans);background:var(--background);color:var(--text)}
 :root {
-  --app-bg: #f5f5f5;
-  --background: #f5f5f5;
-  --text: #303030;
-  --text-strong: #171717;
-  --muted: #595959;
-  --muted-2: #656565;
+  --app-bg: #f9f9f9;
+  --background: #f9f9f9;
+  --text: #242424;
+  --text-strong: #0b0b0b;
+  --muted: #4f4f4f;
+  --muted-2: #5d5d5d;
   --line: #d7d7d7;
   --line-strong: #adadad;
-  --accent: #343434;
-  --accent-strong: #202020;
-  --accent-deep: #171717;
+  --accent: #222;
+  --accent-strong: #111;
+  --accent-deep: #080808;
 }
 h1,h2,h3{font-family:var(--font-sans),Arial,sans-serif;font-weight:750;letter-spacing:-.045em}h1{font-weight:800;line-height:1.14}h1 em,h2 em{font-style:normal}::selection{background:#eeeeee;color:#464646}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #8f8f8f;outline-offset:3px}
@@ -20,7 +20,20 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s}button:disabled{cursor:wait}button:not(:disabled):active{transform:translateY(1px)}input,textarea,select{transition:border-color .2s,background .2s,box-shadow .2s}input:focus,textarea:focus,select:focus{border-color:#8c8c8c;box-shadow:0 0 0 3px #8c8c8c1a}
 .chip{background:#f9f9f9;color:#888888;border-color:#efefef}.trustPanel{background:#f6f6f6;border-color:#f6f6f6}.trustPanel span{color:#aaaaaa}.profileName{font-family:var(--font-sans),Arial,sans-serif;font-weight:800;font-size:clamp(32px,4vw,48px);line-height:1.15}.profileCard{border-radius:18px}.profileTopline{background:radial-gradient(ellipse at right top,#cfcfcf24,transparent 60%),linear-gradient(135deg,#f8f8f8,#f9f9f9)}.profileSection,.profileSplit{background:white}.card,.panel,.profileCard{transition:box-shadow .3s var(--ease),border-color .3s var(--ease)}.card:hover{box-shadow:var(--shadow-sm);border-color:#eeeeee}.lede{font-size:14px;line-height:1.85}.statement h2{font-weight:750;line-height:1.2}
 @media(prefers-reduced-motion:no-preference){main h1{animation:headingArrival .65s var(--ease) both}.primaryButton:disabled{animation:pendingPulse 1.5s ease-in-out infinite}@keyframes headingArrival{from{opacity:.3;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}@keyframes pendingPulse{50%{opacity:.6}}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+  :not([data-user-motion="true"]), *::before, *::after { animation: none !important; }
+}
+
+.primaryButton, .primary {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  box-shadow: 0 4px 12px #0002;
+}
+.primaryButton:hover, .primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
 
 /* Branded page scrollbar for the dark entry and the shared workspace. */
 html::-webkit-scrollbar {

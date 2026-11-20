@@ -1,3 +1,5 @@
+import { allowsMotion, subscribeToMotion } from "@/lib/motion-preference";
+
 type Point = { x: number; y: number; z: number; scale: number };
 type DrawPart = { z: number; paint: () => void };
 type Base = "A" | "T" | "G" | "C";
@@ -10,16 +12,16 @@ export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light"
   const context = canvas.getContext("2d", { alpha: true });
   if (!context) return () => {};
   const ctx = context;
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   const sequence = [..."ATGCCAGTACGATTCGAGCTACGGTATCAGGCTAATCGTACCGATAGCTACGATCG"] as Base[];
   const complement: Record<Base, Base> = { A: "T", T: "A", G: "C", C: "G" };
   const colors: Record<Base, string> = tone === "dark"
-    ? { A: "#c1c1c1", T: "#bcbcbc", G: "#bababa", C: "#c4c4c4" }
-    : { A: "#636363", T: "#777777", G: "#6f6f6f", C: "#757575" };
-  const backbone = tone === "dark" ? ["#c1c1c1", "#c4c4c4"] : ["#636363", "#757575"];
+    ? { A: "#f4f4f4", T: "#a3a3a3", G: "#c2c2c2", C: "#e5e5e5" }
+    : { A: "#202020", T: "#828282", G: "#5b5b5b", C: "#3b3b3b" };
+  const backbone = tone === "dark" ? ["#dadada", "#fff"] : ["#262626", "#626262"];
   let width = 0, height = 0, phase = 0, previous = 0, frame = 0;
   let pixelRatio = 0;
-  let visible = true, disposed = false, contextLost = false, pageHidden = false;
+  let disposed = false, contextLost = false, pageHidden = false;
+  let motionEnabled = allowsMotion("background");
   function point(n: number, side: number): Point {
     const radius = width < 700 ? 43 : 72;
     const theta = n * Math.PI * 2 / 10.5 + phase + (side ? 2.47 : 0);
@@ -82,15 +84,15 @@ export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light"
   function tick(now: number) {
     frame = 0;
     if (!canAnimate()) { previous = 0; return; }
-    if (now - previous >= 1000 / 24) {
-      phase = (phase + Math.min((now - (previous || now)) / 1000, .08) * .21) % (Math.PI * 2);
+    if (now - previous >= 30) {
+      phase = (phase + Math.min((now - (previous || now)) / 1000, .08) * .26) % (Math.PI * 2);
       previous = now;
       draw();
     }
     frame = requestAnimationFrame(tick);
   }
   function canAnimate() {
-    return !disposed && !contextLost && !pageHidden && visible && !document.hidden && !reduced.matches;
+    return Boolean(width && height && !disposed && !contextLost && !pageHidden && !document.hidden && motionEnabled);
   }
 
   function pause() {
@@ -132,34 +134,35 @@ export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light"
     resize();
   }
 
-  const resizeObserver = new ResizeObserver(resize);
-  resizeObserver.observe(canvas);
-  const visibilityObserver = new IntersectionObserver(([entry]) => {
-    visible = entry?.isIntersecting ?? false;
+  // The canvas is viewport-fixed. A visibility observer can stop it during
+  // layout or history restoration even though the page is still foregrounded.
+  const resizeObserver = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(resize);
+  resizeObserver?.observe(canvas);
+  const unsubscribeMotion = subscribeToMotion(() => {
+    const enabled = allowsMotion("background");
+    if (enabled === motionEnabled) return;
+    motionEnabled = enabled;
     sync();
   });
-  visibilityObserver.observe(canvas);
   document.addEventListener("visibilitychange", sync);
   window.addEventListener("pageshow", showPage);
   window.addEventListener("pagehide", hidePage);
   window.addEventListener("resize", resize);
   canvas.addEventListener("contextlost", loseContext);
   canvas.addEventListener("contextrestored", restoreContext);
-  reduced.addEventListener("change", sync);
   resize();
 
   return () => {
     disposed = true;
     pause();
-    resizeObserver.disconnect();
-    visibilityObserver.disconnect();
+    resizeObserver?.disconnect();
+    unsubscribeMotion();
     document.removeEventListener("visibilitychange", sync);
     window.removeEventListener("pageshow", showPage);
     window.removeEventListener("pagehide", hidePage);
     window.removeEventListener("resize", resize);
     canvas.removeEventListener("contextlost", loseContext);
     canvas.removeEventListener("contextrestored", restoreContext);
-    reduced.removeEventListener("change", sync);
     ctx.clearRect(0, 0, width, height);
   };
 }
