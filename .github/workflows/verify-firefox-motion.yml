@@ -1,0 +1,84 @@
+name: Check public motion in Firefox
+on:
+  push:
+    branches: [codex/verify-firefox-motion]
+permissions:
+  contents: read
+jobs:
+  firefox:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install Firefox test browser
+        run: |
+          npm install --no-audit --no-fund playwright@1.64.0
+          npx playwright install --with-deps firefox
+      - name: Check the two animations
+        run: |
+          node <<'JS'
+          const assert = require('node:assert/strict');
+          const { firefox } = require('playwright');
+          const base = 'https://provenant-web.onrender.com';
+          async function pixels(page) {
+            return page.locator('canvas').first().evaluate(c => {
+              const x = Math.floor(c.width * .5);
+              const data = c.getContext('2d').getImageData(x, 0, c.width-x, c.height).data;
+              let hash = 0, alpha = 0;
+              for (let index=3; index<data.length; index+=68) {
+                hash = Math.imul(hash, 31) + data[index] | 0;
+                alpha += data[index];
+              }
+              return { hash, alpha };
+            });
+          }
+          async function check() {
+            const browser = await firefox.launch();
+            try {
+              const deployment = await browser.newPage();
+              let ready = false;
+              for (let attempt = 0; attempt < 24; attempt++) {
+                try {
+                  await deployment.goto(base+'/start', {waitUntil:'domcontentloaded',timeout:15000});
+                  ready = await deployment.getByRole('button',{name:/background motion/}).count() > 0;
+                } catch {}
+                if (ready) break;
+                await new Promise(resolve => setTimeout(resolve,10000));
+              }
+              assert.ok(ready,'Updated site is available');
+              await deployment.close();
+              for (const reducedMotion of ['no-preference','reduce']) {
+                const page = await browser.newPage({reducedMotion,viewport:{width:1360,height:900}});
+                await page.goto(base+'/start');
+                await page.waitForFunction(() => document.querySelector('canvas')?.width>300);
+                const initial = await pixels(page);
+                assert.ok(initial.alpha>0,'Canvas is drawn');
+                await page.waitForTimeout(450);
+                assert.equal((await pixels(page)).hash!==initial.hash,reducedMotion==='no-preference','DNA initial state');
+                if (reducedMotion==='reduce') {
+                  await page.getByRole('button',{name:'Play background motion'}).click();
+                  const now = await pixels(page);
+                  await page.waitForTimeout(450);
+                  assert.notEqual((await pixels(page)).hash,now.hash,'DNA can be played');
+                }
+                await page.goto(base+'/start?step=browse');
+                await page.mouse.move(2,2);
+                const track = page.locator('[class*="latestTrack"]').first();
+                await track.waitFor();
+                const transform = () => track.evaluate(el => getComputedStyle(el).transform);
+                const initialTransform=await transform();
+                await page.waitForTimeout(450);
+                assert.equal((await transform())!==initialTransform,reducedMotion==='no-preference','Feed initial state');
+                if (reducedMotion==='reduce') {
+                  await page.getByRole('button',{name:'Play opportunity motion'}).click();
+                  await page.mouse.move(2,2);
+                  const start=await transform();
+                  await page.waitForTimeout(450);
+                  assert.notEqual(await transform(),start,'Feed can be played');
+                }
+                console.log({browser:browser.version(),reducedMotion,verified:['DNA','Latest opportunities']});
+                await page.close();
+              }
+            } finally { await browser.close(); }
+          }
+          check().catch(error=>{console.error(error);process.exitCode=1});
+          JS
