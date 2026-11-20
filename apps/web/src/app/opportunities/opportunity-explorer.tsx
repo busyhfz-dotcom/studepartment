@@ -323,7 +323,7 @@ export function OpportunityExplorer({ countryCodes }: { countryCodes: string[] }
                     </span>
                   </div>
                   <h3 data-original-content><Link href={`/opportunities/${opportunity.id}`}>{opportunity.title}</Link></h3>
-                  {titleDistinction(opportunity.title) ? <p style={{ margin: "0 0 6px", fontWeight: 700, color: "#3f55a8" }}>{titleDistinction(opportunity.title)}</p> : null}
+                  {titleDistinction(opportunity.title) ? <p style={{ margin: "0 0 6px", fontWeight: 700, color: "#565656" }}>{titleDistinction(opportunity.title)}</p> : null}
                   <strong data-original-content>{opportunity.organization}</strong>
                   <p data-original-content>{opportunity.location}</p>
                   <div className={styles.metaGrid}>
