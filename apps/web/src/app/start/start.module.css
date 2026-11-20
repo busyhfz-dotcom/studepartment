@@ -594,22 +594,17 @@
 .browse > aside:first-child { margin-bottom:24px; }
 .topbar { border-color:#ffffff21; }
 .topbar .mark { color:#111; background:linear-gradient(150deg,#fff 32%,#b7b7b7); box-shadow:0 0 18px #ffffff27,0 6px 18px #0005; }
-.topActions .backgroundMotion {
-  display:grid;
-  place-items:center;
-  flex:none;
-  inline-size:40px;
-  block-size:40px;
+.footbar .backgroundMotion {
+  min-height: 30px;
   padding:0;
-  border:1px solid #777;
-  border-radius:50%;
-  background:#ffffff10;
-  color:#fff;
+  border:0;
+  background:transparent;
+  color:#e0e0e0;
+  font:inherit;
+  white-space:nowrap;
   cursor:pointer;
 }
-.topActions .backgroundMotion:hover { background:#fff; color:#0a0a0a; border-color:#fff; }
-.motionPauseIcon { inline-size:9px; block-size:11px; border-inline:2px solid currentColor; }
-.motionPlayIcon { inline-size:0; block-size:0; margin-inline-start:2px; border-block:5px solid transparent; border-inline-start:8px solid currentColor; }
+.footbar .backgroundMotion:hover, .footbar .backgroundMotion:focus-visible { color:#fff; text-decoration:underline; text-underline-offset:3px; }
 .page .routeTile, .page .result, .page .sourceGuidance, .page .empty { background:linear-gradient(150deg,#202020,#101010); border-color:#555; }
 .page .routeTile.active { border-color:#fff; background:linear-gradient(135deg,#fff,#ddd); color:#111; box-shadow:0 4px 15px #0006; }
 .page .routeTile small, .page .searchbox::placeholder { color:#c0c0c0; }
@@ -621,8 +616,4 @@
   .gatewayGrid { grid-template-columns:minmax(0,1fr); gap:12px; }
   .gatewayIntro h1 { font-size:clamp(30px, 9vw, 48px); }
   .browse > aside:first-child { margin-bottom:16px; }
-}
-@media(max-width:360px) {
-  .topActions { gap:8px; }
-  .topActions .backgroundMotion { inline-size:36px; block-size:36px; }
 }

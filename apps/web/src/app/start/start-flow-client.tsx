@@ -50,7 +50,6 @@ function typeLabel(type: OpportunityResult["type"]): string {
 }
 
 function TopBar() {
-  const moving = useMotionPreference("background");
   return (
     <header className={styles.topbar}>
         <Link className={styles.brand} href="/start" aria-label="Provenant home">
@@ -60,12 +59,6 @@ function TopBar() {
           </span>
         </Link>
       <nav className={styles.topActions} aria-label="Site navigation">
-        <button type="button" className={styles.backgroundMotion}
-          aria-label={moving ? "Pause background motion" : "Play background motion"}
-          title={moving ? "Pause background motion" : "Play background motion"}
-          onClick={() => setMotion("background", !moving)}>
-          <span className={moving ? styles.motionPauseIcon : styles.motionPlayIcon} aria-hidden="true" />
-        </button>
         <LanguagePicker />
         <Link className={styles.join} href="/auth/sign-in">Sign in</Link>
       </nav>
@@ -74,11 +67,19 @@ function TopBar() {
 }
 
 function FootBar() {
+  const moving = useMotionPreference("background");
   return (
     <footer className={styles.footbar}>
       <span>Provenant · medical research, worldwide</span>
       <Link href="/opportunities">Open the full opportunity search ↗</Link>
-      <span><Link href="/about">About</Link> · <Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link></span>
+      <span>
+        <Link href="/about">About</Link> · <Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link> ·{" "}
+        <button className={styles.backgroundMotion} type="button"
+          aria-label={moving ? "Pause background motion" : "Play background motion"}
+          onClick={() => setMotion("background", !moving)}>
+          {moving ? "Pause motion" : "Play motion"}
+        </button>
+      </span>
     </footer>
   );
 }
