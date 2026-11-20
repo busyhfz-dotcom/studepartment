@@ -1,4 +1,5 @@
 import { allowsMotion, subscribeToMotion } from "@/lib/motion-preference";
+import { createMrnaPainter } from "./mrna-backdrop";
 
 type Point = { x: number; y: number; z: number; scale: number };
 type DrawPart = { z: number; paint: () => void };
@@ -8,7 +9,7 @@ type Base = "A" | "T" | "G" | "C";
  * offset. Illustrative geometry and sequence, not an atomistic biological record.
  * Uses no libraries, network requests, randomness, or user data.
  */
-export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light" = "dark") {
+export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light" = "dark", showTranscript = false) {
   const context = canvas.getContext("2d", { alpha: true });
   if (!context) return () => {};
   const ctx = context;
@@ -20,6 +21,7 @@ export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light"
   const backbone = tone === "dark" ? ["#dadada", "#fff"] : ["#262626", "#626262"];
   let width = 0, height = 0, phase = 0, previous = 0, frame = 0;
   let pixelRatio = 0;
+  let paintTranscript: ReturnType<typeof createMrnaPainter> | undefined;
   let disposed = false, contextLost = false, pageHidden = false;
   let motionEnabled = allowsMotion("background");
   function point(n: number, side: number): Point {
@@ -40,6 +42,7 @@ export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light"
   function draw() {
     ctx.clearRect(0, 0, width, height);
     if (!width || !height) return;
+    paintTranscript?.(phase);
     const radius = width < 700 ? 43 : 72, parts: DrawPart[] = [];
     const opacity = (z: number) => .20 + .66 * (z + radius) / (radius * 2);
     const count = Math.ceil(height / (radius * .325)) + 65;
@@ -121,6 +124,7 @@ export function mountDnaMotion(canvas: HTMLCanvasElement, tone: "dark" | "light"
       canvas.width = Math.round(width * pixelRatio);
       canvas.height = Math.round(height * pixelRatio);
       ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      if (showTranscript) paintTranscript = createMrnaPainter(ctx, width, height);
     }
     sync();
   }

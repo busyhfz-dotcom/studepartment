@@ -190,7 +190,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
   if (step === "welcome") {
     return (
       <div className={styles.page}>
-        <ScientificBackdrop className={styles.scienceBackdrop} />
+        <ScientificBackdrop className={styles.scienceBackdrop} showTranscript />
         <TopBar />
         <main className={styles.gatewayWelcome}>
           <div className={styles.gatewayIntro}>
