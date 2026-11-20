@@ -9,6 +9,7 @@ import { lifeArcSource } from "./lifearc";
 import { maxPlanckSource } from "./max-planck";
 import { nhsJobsSource } from "./nhs-jobs";
 import { programmeRegistrySource } from "./programme-registry";
+import { ritsumeikanScholarshipSource } from "./ritsumeikan-scholarship";
 import type { OpportunitySourceConnector } from "./types";
 import { ucasScholarshipsSource } from "./ucas-scholarships";
 import { usaJobsSource } from "./usajobs";
@@ -20,6 +21,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   programmeRegistrySource,
   ucasScholarshipsSource,
   canberraScholarshipSource,
+  ritsumeikanScholarshipSource,
   grantsGovSource,
   euFundingTendersSource,
   wellcomeSource,
