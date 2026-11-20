@@ -153,12 +153,44 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
     const countryCode = (record.countryCode ?? record.organization.countryCode ?? "").toUpperCase().slice(0, 2) || null;
     const eligibleCareerStages = Array.from(new Set((record.eligibleCareerStages ?? []).map(normalizeSlug).filter(Boolean))).slice(0, 16);
     const eligibleCountryCodes = Array.from(new Set((record.eligibleCountryCodes ?? []).map((value) => value.toUpperCase().slice(0, 2)).filter(Boolean))).slice(0, 32);
+    const derivedStatus = record.status === "CLOSED"
+      ? "CLOSED"
+      : deadline.deadline && deadline.deadline.getTime() < observedAt.getTime()
+        ? "EXPIRED"
+        : "ACTIVE";
 
     await db.$transaction(async (tx) => {
       const existing = await tx.opportunity.findUnique({
         where: { sourceKey: key },
-        include: { provenance: { select: { contentFingerprint: true } } },
+        select: {
+          id: true,
+          status: true,
+          provenance: {
+            orderBy: [{ observedAt: "desc" }, { id: "desc" }],
+            take: 1,
+            select: { id: true, contentFingerprint: true },
+          },
+        },
       });
+      const latest = existing?.provenance[0];
+      if (existing && existing.status === derivedStatus && latest?.contentFingerprint === contentFingerprint) {
+        // Keep observations and funding status fresh without rebuilding identical topics,
+        // methods, organisation associations or the listing itself on every poll.
+        await tx.opportunity.update({
+          where: { id: existing.id },
+          data: { lastSeenAt: observedAt, lastVerifiedAt: batch.source.verified ? observedAt : undefined },
+        });
+        await tx.opportunityProvenance.update({
+          where: { id: latest.id },
+          data: {
+            observedAt,
+            status: batch.source.verified ? "VERIFIED" : "ASSERTED",
+            metadata: record.metadata ? record.metadata as Prisma.InputJsonValue : undefined,
+          },
+        });
+        unchanged += 1;
+        return;
+      }
       if (!existing) {
         // Serialize first inserts with the same canonical link and category across source leases.
         const identity = [record.type, sourceUrl].join(":");
@@ -200,14 +232,6 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
           },
         });
       }
-
-      const changed = !existing?.provenance.some((item) => item.contentFingerprint === contentFingerprint);
-
-      const derivedStatus = record.status === "CLOSED"
-        ? "CLOSED"
-        : deadline.deadline && deadline.deadline.getTime() < observedAt.getTime()
-          ? "EXPIRED"
-          : "ACTIVE";
 
       const opportunity = await tx.opportunity.upsert({
         where: { sourceKey: key },
@@ -309,8 +333,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
       });
 
       if (!existing) created += 1;
-      else if (changed) updated += 1;
-      else unchanged += 1;
+      else updated += 1;
     });
   }
 
