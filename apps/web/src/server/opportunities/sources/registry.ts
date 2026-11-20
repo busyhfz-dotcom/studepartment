@@ -1,4 +1,5 @@
 import { canberraScholarshipSource } from "./canberra-scholarship";
+import { canadianCancerFundingSource } from "./canadian-cancer-funding";
 import { cnrsResearchCareersSource } from "./cnrs-research-careers";
 import { continentalCareerSources } from "./continental-careers";
 import { daadScholarshipsSource, daadDoctoralSource } from "./scholarships";
@@ -25,6 +26,7 @@ import { swissTphSource } from "./swiss-tph";
 import type { OpportunitySourceConnector } from "./types";
 import { ucasScholarshipsSource } from "./ucas-scholarships";
 import { ukriMedicalResearchSource } from "./ukri-medical-research";
+import { californiaResearchCareerSources } from "./university-california-research";
 import { usaJobsSource } from "./usajobs";
 import { wellcomeSource } from "./wellcome";
 import { westlakeResearchCareersSource } from "./westlake-research-careers";
@@ -47,6 +49,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   eitHealthValidationSource,
   ukriMedicalResearchSource,
   neurologicalFoundationSource,
+  canadianCancerFundingSource,
   euraxessSource,
   swissTphSource,
   ...continentalCareerSources,
@@ -59,5 +62,6 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   nhsJobsSource,
   ...institutionFeedSources,
   usaJobsSource,
+  ...californiaResearchCareerSources,
   ...greenhouseSources,
 ];
