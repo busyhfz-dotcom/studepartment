@@ -21,8 +21,7 @@ button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,trans
 .chip{background:#f9f9f9;color:#888888;border-color:#efefef}.trustPanel{background:#f6f6f6;border-color:#f6f6f6}.trustPanel span{color:#aaaaaa}.profileName{font-family:var(--font-sans),Arial,sans-serif;font-weight:800;font-size:clamp(32px,4vw,48px);line-height:1.15}.profileCard{border-radius:18px}.profileTopline{background:radial-gradient(ellipse at right top,#cfcfcf24,transparent 60%),linear-gradient(135deg,#f8f8f8,#f9f9f9)}.profileSection,.profileSplit{background:white}.card,.panel,.profileCard{transition:box-shadow .3s var(--ease),border-color .3s var(--ease)}.card:hover{box-shadow:var(--shadow-sm);border-color:#eeeeee}.lede{font-size:14px;line-height:1.85}.statement h2{font-weight:750;line-height:1.2}
 @media(prefers-reduced-motion:no-preference){main h1{animation:headingArrival .65s var(--ease) both}.primaryButton:disabled{animation:pendingPulse 1.5s ease-in-out infinite}@keyframes headingArrival{from{opacity:.3;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}@keyframes pendingPulse{50%{opacity:.6}}}
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
-  :not([data-user-motion="true"]), *::before, *::after { animation: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
 .primaryButton, .primary {

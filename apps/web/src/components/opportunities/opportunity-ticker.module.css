@@ -36,14 +36,13 @@
 .tickerMotionToggle { min-height: 40px; }
 .tickerMotionToggle:hover, .detailTop button:hover { background: #363636; }
 .latestLoading { margin: 0; padding: 24px; color: #d1d1d1; font-size: 13px; }
-.latestList { overflow: hidden; direction: ltr; }
+.latestList { overflow-x: auto; direction: ltr; overscroll-behavior-x: contain; scrollbar-width: none; }
+.latestList::-webkit-scrollbar { display: none; }
+.latestList:focus-visible { outline: 2px solid #eee; outline-offset: -2px; }
+.latestList[data-manual="true"], .latestList[data-manual="true"] .latestRow { cursor: grab; }
+.latestList[data-dragging="true"], .latestList[data-dragging="true"] * { cursor: grabbing; user-select: none; }
 .latestTrack { display: flex; width: max-content; }
-.latestList[data-motion="on"] .latestTrack { animation: ticker-loop 60s linear infinite; }
 .latestGroup { display: flex; }
-@keyframes ticker-loop { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
-.latestList[data-motion="on"]:focus-within .latestTrack,
-.isSelected .latestList[data-motion="on"] .latestTrack,
-.tickerPaused .latestList[data-motion="on"] .latestTrack { animation-play-state: paused; }
 .tickerItem { position: relative; width: clamp(235px, 31vw, 330px); border-inline-end: 1px solid #3e3e3e; }
 .latestRow {
   display: flex;
@@ -80,10 +79,3 @@
 .opportunityDetail p, .detailDeadline { margin: 0 0 7px; color: #ccc; font-size: 12px; }
 .detailAction { display: inline-flex; margin: 4px 8px 0 0; padding: 10px 12px; border-radius: 6px; background: #eee; color: #161616; font-size: 12px; font-weight: 800; }
 .detailAction:hover { background: #ccc; }
-
-@media (hover: hover) {
-  .latestList[data-motion="on"]:hover .latestTrack { animation-play-state: paused; }
-}
-
-.latestList[data-motion="off"] { overflow-x: auto; }
-.latestList[data-motion="off"] .latestGroup[aria-hidden="true"] { display: none; }

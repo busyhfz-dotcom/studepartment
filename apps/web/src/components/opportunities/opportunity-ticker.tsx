@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { ShareOpportunity } from "./share-opportunity";
 import { setMotion, useMotionPreference } from "@/lib/motion-preference";
+import { useTickerScroll } from "./use-ticker-scroll";
 import styles from "./opportunity-ticker.module.css";
 
 type TickerEntry = {
@@ -134,15 +135,16 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
   const [paused, setPaused] = useState(false);
   const motionEnabled = useMotionPreference("opportunities");
   const playing = motionEnabled && !paused && !selected;
+  const scroll = useTickerScroll(playing, entries.length);
 
   const countryQuery = country ? "&country=" + encodeURIComponent(country) : "";
 
   return (
-    <aside className={`${styles.heroDesk} ${selected ? styles.isSelected : ""} ${paused ? styles.tickerPaused : ""}`} aria-label="Latest position and grant preview">
+    <aside className={styles.heroDesk} aria-label="Latest position and grant preview">
       <div className={styles.deskHeading}>
         <span className={styles.liveLabel}>{ticker.available ? <i className={styles.liveDot} aria-hidden="true" /> : null}Latest opportunities</span>
         <span>{ticker.available ? `${ticker.stats.totalPositions} positions · ${ticker.stats.totalGrants} grants` : "Feed unavailable"}</span>
-        {entries.length ? <button
+        {scroll.overflowing ? <button
           type="button"
           className={styles.tickerMotionToggle}
           aria-label={playing ? "Pause opportunity motion" : motionEnabled ? "Resume opportunity motion" : "Play opportunity motion"}
@@ -158,10 +160,37 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
         >{playing ? "Ⅱ Pause" : motionEnabled ? "▶ Resume" : "▶ Play"}</button> : null}
       </div>
       {entries.length ? (
-        <div className={styles.latestList} data-motion={motionEnabled ? "on" : "off"} aria-label="Latest opportunities; touch to pause or select a listing for details" onPointerDown={() => setPaused(true)}>
-          <div className={styles.latestTrack} data-user-motion={motionEnabled ? "true" : undefined} style={{ animationDuration: `${entries.length * 8}s` }}>
-            {[false, true].map((duplicate) => (
-              <div className={styles.latestGroup} aria-hidden={duplicate || undefined} key={duplicate ? "dup" : "orig"}>
+        <div
+          ref={scroll.viewport}
+          className={styles.latestList}
+          data-manual={scroll.overflowing && !playing}
+          data-dragging={scroll.dragging}
+          role="group"
+          aria-label="Latest opportunities. Drag left or right to browse, or select an opportunity for details."
+          tabIndex={scroll.overflowing ? 0 : undefined}
+          onPointerEnter={event => { if (event.pointerType === "mouse") scroll.setHovered(true); }}
+          onPointerLeave={event => {
+            if (event.pointerType === "mouse") scroll.setHovered(false);
+            if (!event.currentTarget.hasPointerCapture(event.pointerId)) scroll.endDrag(event);
+          }}
+          onFocus={() => scroll.setFocused(true)}
+          onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) scroll.setFocused(false); }}
+          onPointerDown={event => {
+            if (!event.isPrimary || event.button !== 0) return;
+            setPaused(true);
+            scroll.startDrag(event);
+          }}
+          onPointerMove={scroll.moveDrag}
+          onPointerUp={scroll.endDrag}
+          onPointerCancel={scroll.endDrag}
+          onLostPointerCapture={scroll.endDrag}
+          onClickCapture={scroll.blockDragClick}
+          onWheel={event => { if (event.deltaX || event.shiftKey) setPaused(true); }}
+          onKeyDown={event => { if (event.key === "ArrowLeft" || event.key === "ArrowRight") setPaused(true); }}
+        >
+          <div className={styles.latestTrack}>
+            {(motionEnabled && scroll.overflowing ? [false, true] : [false]).map((duplicate) => (
+              <div className={styles.latestGroup} ref={duplicate ? undefined : scroll.firstGroup} aria-hidden={duplicate || undefined} key={duplicate ? "dup" : "orig"}>
                 {entries.map((entry, index) => {
                   const status = badgeStatus(entry.deadline);
                   const label = status === "urgent" ? "Closing soon" : status === "soon" ? "Plan ahead" : "Time to prepare";
