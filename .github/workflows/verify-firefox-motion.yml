@@ -39,12 +39,13 @@ jobs:
               for (let attempt = 0; attempt < 24; attempt++) {
                 try {
                   await deployment.goto(base+'/start', {waitUntil:'domcontentloaded',timeout:15000});
-                  ready = await deployment.getByRole('button',{name:/background motion/}).count() > 0;
+                  ready = await deployment.getByRole('contentinfo').getByRole('button',{name:/background motion/}).count() > 0;
                 } catch {}
                 if (ready) break;
                 await new Promise(resolve => setTimeout(resolve,10000));
               }
-              assert.ok(ready,'Updated site is available');
+              assert.ok(ready,'Updated footer is available');
+              assert.equal(await deployment.getByRole('navigation',{name:'Site navigation'}).getByRole('button',{name:/background motion/}).count(),0,'Header has no motion control');
               await deployment.close();
               for (const reducedMotion of ['no-preference','reduce']) {
                 const page = await browser.newPage({reducedMotion,viewport:{width:1360,height:900}});
