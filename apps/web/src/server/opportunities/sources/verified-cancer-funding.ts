@@ -192,6 +192,80 @@ const calls: readonly Call[] = [
     award: {"max":375000,"currency":"USD"},
     summary: "Career development funding for early-career breast cancer investigators. The first deadline is for a letter of intent.",
   },
+  {
+    id: "cri-star", type: "GRANT", country: null, region: "International",
+    title: "CRI Lloyd J. Old STAR Program", funder: "Cancer Research Institute",
+    url: "https://www.cancerresearch.org/lloyd-j-old-star-program",
+    match: "January 15, 2027", deadline: "2027-01-15T23:59:00-05:00", timezone: "America/New_York",
+    award: {"max":1250000,"currency":"USD"},
+    summary: "Flexible support for mid-career scientists independently pursuing cancer immunotherapy research.",
+  },
+  {
+    id: "cri-clip", type: "GRANT", country: null, region: "International",
+    title: "CRI Clinic and Laboratory Integration Program", funder: "Cancer Research Institute",
+    url: "https://www.cancerresearch.org/clip",
+    match: "December 1, 2026", deadline: "2026-12-01T23:59:00-05:00", timezone: "America/New_York",
+    award: {"max":1000000,"currency":"USD"},
+    summary: "Cancer immunology project funding for translational research teams. The first deadline is for a letter of intent.",
+  },
+  {
+    id: "aacr-kbc-monosomy7", type: "GRANT", country: null, region: "International",
+    title: "AACR–Kids Beating Cancer Margaret Guedes Monosomy 7 Legacy Cancer Research Grant", funder: "American Association for Cancer Research and Kids Beating Cancer",
+    url: "https://www.aacr.org/grants/aacr-kids-beating-cancer-margaret-guedes-monosomy-7-legacy-cancer-research-grant/",
+    match: "December 1, 2026", deadline: "2026-12-01T13:00:00-05:00", timezone: "America/New_York",
+    award: {"max":300000,"currency":"USD"},
+    summary: "Research support for teams studying monosomy 7 and its role in cancer and related disorders. Consult the eligibility criteria and scope of the current call.",
+  },
+  {
+    id: "aacr-male-breast-cancer", type: "GRANT", country: null, region: "International",
+    title: "AACR–Male Breast Cancer Global Alliance Innovation and Discovery Grant", funder: "American Association for Cancer Research and Male Breast Cancer Global Alliance",
+    url: "https://www.aacr.org/grants/aacr-male-breast-global-alliance-innovation-and-discovery-grant-for-male-breast-cancer-research/",
+    match: "January 12, 2027", deadline: "2027-01-12T13:00:00-05:00", timezone: "America/New_York",
+    award: {"max":50000,"currency":"USD"},
+    summary: "Funding for research addressing male breast cancer. The official notice gives eligibility and application requirements.",
+  },
+  {
+    id: "max-eder-junior-research-groups", type: "GRANT", country: "DE", region: "Germany",
+    title: "Max Eder Junior Research Groups", funder: "German Cancer Aid",
+    url: "https://www.krebshilfe.de/forschen/foerderung/foerderprogramme/nachwuchsfoerderung/max-eder-nachwuchsgruppen/",
+    match: "Januar 2027", deadline: "2027-01-26T13:00:00+01:00", timezone: "Europe/Berlin",
+    summary: "Funding to establish an independent cancer research group at an eligible German host institution.",
+  },
+  {
+    id: "dfg-individual-research", type: "GRANT", country: "DE", region: "Germany",
+    title: "DFG Individual Research Grants", funder: "German Research Foundation (DFG)",
+    url: "https://www.dfg.de/en/research-funding/funding-opportunities/programmes/individual/research-grants",
+    match: "The first proposal may be submitted at any time", deadline: "Rolling", timezone: null,
+    summary: "Funding for a defined research project, including eligible medical and biomedical research, based at a qualifying institution.",
+  },
+  {
+    id: "dfg-heisenberg", type: "GRANT", country: "DE", region: "Germany",
+    title: "DFG Heisenberg Programme", funder: "German Research Foundation (DFG)",
+    url: "https://www.dfg.de/en/research-funding/funding-opportunities/programmes/individual/heisenberg",
+    match: "Proposals may be submitted at any time", deadline: "Rolling", timezone: null,
+    summary: "Funding for researchers qualified for professorship, including options for clinicians and a research project grant for work in Germany.",
+  },
+  {
+    id: "fwf-esprit", type: "FELLOWSHIP", country: "AT", region: "Austria",
+    title: "FWF ESPRIT Postdoctoral Programme", funder: "Austrian Science Fund",
+    url: "https://www.fwf.ac.at/en/funding/portfolio/careers/esprit",
+    match: "Rolling submissions", deadline: "Rolling", timezone: null,
+    summary: "Supports the salary and project of an early-career researcher with a mentor at an Austrian host institution. Biomedical projects are eligible.",
+  },
+  {
+    id: "bif-travel", type: "GRANT", country: null, region: "International",
+    title: "Boehringer Ingelheim Fonds Travel Grants", funder: "Boehringer Ingelheim Fonds",
+    url: "https://bifonds.de/de/stipendien-grants/reisebeihilfen/frequently-asked-questions-travel-grants.html",
+    match: "may be submitted at any time", deadline: "Rolling", timezone: null,
+    summary: "Travel funding for eligible biomedical research stays, courses or doctoral applicant visits. Apply at least six weeks before departure under the funder’s timing rules.",
+  },
+  {
+    id: "company-of-biologists-travel", type: "GRANT", country: null, region: "International",
+    title: "The Company of Biologists Travelling Fellowships", funder: "The Company of Biologists",
+    url: "https://www.biologists.com/grants/travelling-fellowships/",
+    match: "5 February 2027", deadline: "2027-02-05", timezone: "Europe/London",
+    summary: "Research visit funding for eligible graduate students and early-career researchers in the fields covered by the participating journals.",
+  },
 ];
 
 function toRecord(call: Call): OpportunityIngestionRecord {
@@ -259,4 +333,3 @@ export const verifiedCancerFundingSource: OpportunitySourceConnector = {
     return confirmed;
   },
 };
-
