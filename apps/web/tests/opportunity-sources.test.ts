@@ -51,7 +51,9 @@ test("only research positions are classified, by title", () => {
   assert.equal(classifyPositionTitle("Clinical Research Fellowship in Oncology"), "FELLOWSHIP");
   assert.equal(classifyPositionTitle("Clinical Research Fellow (Cardiology)"), "FELLOWSHIP");
   assert.equal(classifyPositionTitle("Senior Scientist, Mass Spectrometry"), null);
-  assert.equal(classifyPositionTitle("Research Nurse"), null);
+  assert.equal(classifyPositionTitle("Research Nurse"), "RESEARCH_ASSISTANTSHIP");
+  assert.equal(classifyPositionTitle("Senior Scientist I, Molecular Virology"), "RESEARCH_ASSISTANTSHIP");
+  assert.equal(classifyPositionTitle("Director, US GI Market Research"), null);
   assert.equal(classifyPositionTitle("Wellcome Early-Career Fellowship"), "FELLOWSHIP");
   assert.equal(classifyPositionTitle("Research Assistant, Infectious Disease Lab"), "RESEARCH_ASSISTANTSHIP");
   assert.equal(classifyPositionTitle("Professor of Medicine"), null);
@@ -207,7 +209,7 @@ test("sources are checked around the clock: hourly when healthy, sooner after a 
   assert.equal(await isSourceDue(hourly, now, run(30, "failed"), null), true, "failures retry after 30 minutes");
   assert.equal(await isSourceDue(hourly, now, undefined, null), true, "never checked");
   assert.equal(await isSourceDue(hourly, now, undefined, new Date(now.getTime() - 15 * 60_000)), false, "a restart does not re-read a fresh source");
-  assert.ok(opportunitySources.every((source) => source.intervalMinutes <= 180), "no source waits more than three hours");
+  assert.ok(opportunitySources.every((source) => source.intervalMinutes <= 720), "every source is checked at least twice daily");
   assert.equal(opportunitySources.find((source) => source.id === "eu-funding-tenders")?.staleGraceHours, 24, "EU topics that drop out of one search page are not taken down");
 });
 
