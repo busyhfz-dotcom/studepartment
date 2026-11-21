@@ -55,12 +55,25 @@ export const UNIVERSITY_AWARDS: Programme[] = [
   universityAward("cleveland-clinic-lerner-md-tuition", "Cleveland Clinic Lerner College of Medicine Full-Tuition Scholarship", "Cleveland Clinic Lerner College of Medicine", "US",
     "https://my.clevelandclinic.org/lerner-college-medicine/tuition-financial-aid",
     "full tuition scholarship to all CCLCM students", medicine, "Full tuition for students in the five-year research-intensive MD programme, including its required research year."),
-universityAward("hms-md-need-based-scholarships", "Harvard Medical School MD Scholarships", "Harvard Medical School", "US",
+  universityAward("hms-md-need-based-scholarships", "Harvard Medical School MD Scholarships", "Harvard Medical School", "US",
     "https://meded.hms.harvard.edu/Financial-aid",
     "Middle Income Initiative", medicine, "Need-based Harvard Medical School scholarships for MD students, including support under the Middle Income Initiative. Eligibility depends on the school’s aid assessment."),
   universityAward("duke-mbs-need-based-scholarships", "Duke Master of Biomedical Sciences Scholarships", "Duke University School of Medicine", "US",
     "https://medschool.duke.edu/education/health-professions-education-programs/master-biomedical-sciences/mbs-faqs",
     "need-based scholarship support", masters, "Duke offers need-based scholarship support to selected Master of Biomedical Sciences students."),
+
+  universityAward("yale-md-access", "Yale School of Medicine Access Scholarship", "Yale School of Medicine", "US",
+    "https://medicine.yale.edu/md-program/financialaid/md-scholarships/",
+    "Access scholarships are awarded to incoming students", medicine, "This award replaces the standard annual student loan commitment for selected incoming MD students with high demonstrated financial need."),
+  universityAward("yale-md-merit", "Yale School of Medicine Merit Scholarship", "Yale School of Medicine", "US",
+    "https://medicine.yale.edu/md-program/financialaid/md-scholarships/",
+    "Beginning in fall 2027", medicine, "Starting with 2027 entry, selected incoming MD students can receive full tuition for four years. Yale evaluates students during admission."),
+  universityAward("washu-md-merit", "WashU Medicine Merit Scholarships", "Washington University School of Medicine in St. Louis", "US",
+    "https://mdadmissions.wustl.edu/financial-support/",
+    "Merit scholarships", medicine, "WashU Medicine offers merit scholarships for selected entering MD students. See the school’s financial support page for eligibility."),
+  universityAward("stanford-md-need-based-grants", "Stanford Medicine Need-Based MD Grants", "Stanford University School of Medicine", "US",
+    "https://med.stanford.edu/md/financial-aid.html",
+    "need-based Stanford grants", medicine, "Stanford considers MD students for institutional grants using the school’s assessment of financial need."),
 
 ];
 

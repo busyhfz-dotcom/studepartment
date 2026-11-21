@@ -33,6 +33,10 @@ export const GREENHOUSE_BOARDS: Board[] = [
   { token: "precisionmedicinegroup", name: "Precision Medicine Group", website: "https://www.precisionmedicinegrp.com", countryCode: null, employerType: "COMPANY" },
   { token: "recursionpharmaceuticals", name: "Recursion", website: "https://www.recursion.com", countryCode: null, employerType: "COMPANY" },
   { token: "eikontherapeutics", name: "Eikon Therapeutics", website: "https://www.eikontx.com", countryCode: "US", employerType: "COMPANY" },
+  { token: "revolutionmedicines", name: "Revolution Medicines", website: "https://www.revmed.com", countryCode: null, employerType: "COMPANY" },
+  { token: "generatebiomedicines", name: "Generate Biomedicines", website: "https://generatebiomedicines.com", countryCode: "US", employerType: "COMPANY" },
+  { token: "tesseratherapeutics", name: "Tessera Therapeutics", website: "https://www.tesseratherapeutics.com", countryCode: "US", employerType: "COMPANY" },
+  { token: "relaytherapeutics", name: "Relay Therapeutics", website: "https://relaytx.com", countryCode: "US", employerType: "COMPANY" },
   { token: "chanzuckerberginitiative", name: "Chan Zuckerberg Initiative", website: "https://chanzuckerberg.com", countryCode: "US" },
 ];
 

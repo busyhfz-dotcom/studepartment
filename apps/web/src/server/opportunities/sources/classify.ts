@@ -43,6 +43,7 @@ export function classifyPositionTitle(title: string): PositionType | null {
   if (/\b(consultant|matron|nurse practitioner|physician assistant|secretary|accountant)\b/.test(value)) return null;
   if (/\b(?:clinical research (?:coordinators?|specialists?|practitioners?|nurses?)|research (?:study )?coordinators?|clinical (?:trials?|stud(?:y|ies)) coordinators?|research nurses?)\b/.test(value)
     && !/\b(?:director|manager|head of)\b/.test(value)) return "RESEARCH_ASSISTANTSHIP";
+  if (/\b(?:bioinformaticians?|bioinformatics scientists?|clinical trials? managers?|directors? of clinical research|(?:director|manager)\s*,\s*(?:clinical trials?|clinical research|biostatistics))\b/.test(value)) return "RESEARCH_ASSISTANTSHIP";
   if (/\b(professor|lecturer|faculty|director|head of|dean|chair\b|manager|administrat|coordinator|officer|assistant to|secretary|accountant|(?<!research )engineer(?!ing)|(?<!research )technologist|nurse practitioner|physician assistant)\b/.test(value)
     && !/\b(post-?doc|postdoctoral|ph\.?d|doctoral|fellowship|research fellow)\b/.test(value)) {
     return null;
@@ -54,6 +55,7 @@ export function classifyPositionTitle(title: string): PositionType | null {
   if (/\bclinical research fellows?\b/.test(value)) return "FELLOWSHIP";
   if (/\bresearch fellows?\b/.test(value)) return "POSTDOC";
   if (/\bfellowships?\b/.test(value)) return "FELLOWSHIP";
+  if (/\b(?:scientists?|researchers?)\b/.test(value) && /\b(?:bioanalytical|(?:synthetic|computational|structural|cell|molecular) biology|molecular virology|translational medicine|bioinformatics|clinical pharmacology|pharmacometric\w*|medicinal chemistry)\b/.test(value)) return "RESEARCH_ASSISTANTSHIP";
   // Research staff appear under the same research-position category.
   if (/\b(research (assistants?|associates?|technicians?|scientists?|engineers?|technologists?)|(?:staff|project|laboratory|biomedical|clinical research|translational) scientists?|biostatisticians?|clinical trial associates?|lab(oratory)? (technician|research assistant))\b/.test(value)) {
     return "RESEARCH_ASSISTANTSHIP";

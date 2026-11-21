@@ -1,6 +1,7 @@
 import { brainCanadaTrainingSource } from "./brain-canada-training";
 import { canberraScholarshipSource } from "./canberra-scholarship";
 import { canadianCancerFundingSource } from "./canadian-cancer-funding";
+import { canadianFundingCalendarSource } from "./canadian-funding-calendar";
 import { cnrsResearchCareersSource } from "./cnrs-research-careers";
 import { continentalCareerSources } from "./continental-careers";
 import { daadScholarshipsSource, daadDoctoralSource } from "./scholarships";
@@ -62,6 +63,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   ukriBioscienceSource,
   neurologicalFoundationSource,
   canadianCancerFundingSource,
+  canadianFundingCalendarSource,
   brainCanadaTrainingSource,
   euraxessSource,
   swissTphSource,
