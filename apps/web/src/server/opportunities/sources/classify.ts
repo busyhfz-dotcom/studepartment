@@ -1,4 +1,5 @@
 import { countries } from "@/lib/countries";
+import { hasHumanDisease } from "./human-disease-terms";
 import type { OpportunityIngestionRecord } from "../ingestion";
 
 type PositionType = Exclude<OpportunityIngestionRecord["type"], "GRANT" | "COLLABORATION">;
@@ -31,7 +32,7 @@ const MEDICAL_FALSE_FRIENDS = /\b(health insurance|occupational health and safet
 
 export function isMedicalText(...parts: Array<string | null | undefined>): boolean {
   const text = parts.filter(Boolean).join(" ").replace(MEDICAL_FALSE_FRIENDS, " ");
-  return MEDICAL_PATTERN.test(text);
+  return MEDICAL_PATTERN.test(text) || hasHumanDisease(text);
 }
 
 /** Classifies a research position from its title. Returns null for roles we do not list. */

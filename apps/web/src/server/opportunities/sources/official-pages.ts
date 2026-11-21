@@ -9,14 +9,17 @@ export async function openPublisher(fetchImpl: FetchLike, homepage: string) {
     if (error instanceof SourceRequestError && error.status === 404) return "";
     throw error;
   });
-  return async (url: string) => {
+  return async (url: string, init: RequestInit = {}) => {
     const target = new URL(url, origin);
     if (target.origin !== origin || !robotsAllows(robots, target.pathname + target.search)) {
       throw new Error("This resource is outside the publisher's permitted public pages");
     }
+    const headers = new Headers(init.headers);
+    if (!headers.has("accept")) headers.set("accept", "text/html");
     const response = await requestWithRetry(fetchImpl, target.href, {
+      ...init,
       redirect: "error",
-      headers: { accept: "text/html" },
+      headers,
     }, { timeoutMs: 20_000, retries: 0 });
     return response.text();
   };

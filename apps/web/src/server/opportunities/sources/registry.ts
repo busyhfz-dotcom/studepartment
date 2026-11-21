@@ -3,8 +3,10 @@ import { canberraScholarshipSource } from "./canberra-scholarship";
 import { canadianCancerFundingSource } from "./canadian-cancer-funding";
 import { canadianFundingCalendarSource } from "./canadian-funding-calendar";
 import { cnrsResearchCareersSource } from "./cnrs-research-careers";
+import { commonwealthMedicalMastersSource } from "./commonwealth-health-scholarships";
 import { continentalCareerSources } from "./continental-careers";
 import { daadScholarshipsSource, daadDoctoralSource } from "./scholarships";
+import { dukeResearchCareersSource } from "./duke-research-careers";
 import { eitHealthValidationSource } from "./eit-health-validation";
 import { euFundingTendersSource } from "./eu-funding-tenders";
 import { extendedResearchSources } from "./extended-research-careers";
@@ -22,6 +24,7 @@ import { mayoClinicResearchSource } from "./mayo-clinic-research";
 import { nhsJobsSource } from "./nhs-jobs";
 import { northernUniversityCareerSources } from "./northern-university-careers";
 import { neurologicalFoundationSource } from "./nz-neurological-foundation";
+import { oriseResearchFellowshipsSource } from "./orise-research-fellowships";
 import { pacificResearchCareerSources } from "./pacific-research-careers";
 import { manchesterFundedDoctoratesSource } from "./manchester-funded-doctorates";
 import { queenslandFundedProjectsSource } from "./queensland-funded-projects";
@@ -35,16 +38,18 @@ import { smartRecruitersSources } from "./smartrecruiters";
 import { swissTphSource } from "./swiss-tph";
 import type { OpportunitySourceConnector } from "./types";
 import { ucasScholarshipsSource } from "./ucas-scholarships";
-import { ukriBioscienceSource, ukriMedicalResearchSource } from "./ukri-medical-research";
+import { ukriBioscienceSource, ukriMedicalResearchSource, ukriRelatedMedicalSources } from "./ukri-medical-research";
 import { californiaResearchCareerSources } from "./university-california-research";
 import { usaJobsSource } from "./usajobs";
 import { wellcomeSource } from "./wellcome";
+import { workdayResearchSources } from "./workday-research-careers";
 import { westlakeResearchCareersSource } from "./westlake-research-careers";
 
 /** Every publisher Provenant reads automatically, in display order. */
 export const opportunitySources: OpportunitySourceConnector[] = [
   daadScholarshipsSource, daadDoctoralSource,
   programmeRegistrySource,
+  commonwealthMedicalMastersSource,
   universityDegreeFundingSource,
   queenslandFundedProjectsSource,
   manchesterFundedDoctoratesSource,
@@ -62,6 +67,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   eitHealthValidationSource,
   ukriMedicalResearchSource,
   ukriBioscienceSource,
+  ...ukriRelatedMedicalSources,
   neurologicalFoundationSource,
   canadianCancerFundingSource,
   canadianFundingCalendarSource,
@@ -76,6 +82,9 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   hkuResearchCareersSource,
   westlakeResearchCareersSource,
   ...smartRecruitersSources,
+  ...workdayResearchSources,
+  dukeResearchCareersSource,
+  oriseResearchFellowshipsSource,
   mayoClinicResearchSource,
   ...hospitalResearchSources,
   singHealthResearchSource,

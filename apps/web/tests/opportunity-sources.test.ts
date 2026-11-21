@@ -64,6 +64,9 @@ test("only research positions are classified, by title", () => {
 
 test("medical relevance ignores benefits boilerplate and tags topics", () => {
   assert.equal(isMedicalText("Postdoc in tumour immunology"), true);
+  for (const condition of ["vitiligo", "lissencephaly", "sickle-cell anemia", "Von Hippel–Lindau syndrome", "syringomyelia", "phenylketonuria"]) {
+    assert.equal(isMedicalText("Research Fellow in " + condition), true, condition);
+  }
   for (const [text, slug] of [
     ["Postdoctoral fellow in parasitology", "parasitology"],
     ["Research associate in bacterial genetics", "microbiology"],

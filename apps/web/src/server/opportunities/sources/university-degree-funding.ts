@@ -75,6 +75,12 @@ export const UNIVERSITY_AWARDS: Programme[] = [
     "https://med.stanford.edu/md/financial-aid.html",
     "need-based Stanford grants", medicine, "Stanford considers MD students for institutional grants using the school’s assessment of financial need."),
 
+  universityAward("mrc-precision-medicine-glasscot-2027", "MRC Precision Medicine Doctoral Studentships", "University of Edinburgh and University of Glasgow", "GB",
+    "https://www.gla.ac.uk/postgraduate/doctoraltraining/mrc-precision-medicine/howtoapply/",
+    "APPLICATION CLOSING DATE: 11 January 2027", doctorate, "Funded precision medicine PhD places at Edinburgh and Glasgow. Topics and funding eligibility are explained on the programme’s application page.", "2027-01-11"),
+  universityAward("cruk-scotland-black-leaders-2027", "CRUK Scotland Black Leaders in Cancer PhD Studentship", "Cancer Research UK Scotland Centre", "GB",
+    "https://www.crukscotlandcentre.ac.uk/training/phd-studentships",
+    "Closing Date: 30th November 2026", doctorate, "The Black Leaders in Cancer programme funds a doctoral studentship in cancer research. The provider sets eligibility and requires an application through the Windsor Fellowship and the university.", "2026-11-30"),
 ];
 
 export const universityDegreeFundingSource: OpportunitySourceConnector = {

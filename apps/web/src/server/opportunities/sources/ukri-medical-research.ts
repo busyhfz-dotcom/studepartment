@@ -9,6 +9,12 @@ const maxPages = 5;
 const mrc = { name: "Medical Research Council", website: "https://www.ukri.org/councils/mrc/" };
 const bbsrc = { name: "Biotechnology and Biological Sciences Research Council", website: "https://www.ukri.org/councils/bbsrc/" };
 const bioscienceHomepage = homepage.replace("=824&", "=816&");
+const relatedCouncils = [
+  { code: "820", name: "Engineering and Physical Sciences Research Council", website: "https://www.ukri.org/councils/epsrc/" },
+  { code: "818", name: "Economic and Social Research Council", website: "https://www.ukri.org/councils/esrc/" },
+  { code: "822", name: "Innovate UK", website: "https://www.ukri.org/councils/innovate-uk/" },
+  { code: "826", name: "Natural Environment Research Council", website: "https://www.ukri.org/councils/nerc/" },
+];
 
 function londonDate(field: string | undefined) {
   if (!field) return null;
@@ -43,6 +49,9 @@ export function mrcFundingPage(html: string, now: Date, council = mrc) {
     if (council === bbsrc && (funders.includes(mrc.name) || !(
       /bbsrc (?:standard research grant|new investigator|fellowships?)/i.test(title) || isMedicalText(title)
     ))) return [];
+    const relatedIndex = relatedCouncils.findIndex(({ name }) => name === council.name);
+    if (relatedIndex >= 0 && (!isMedicalText(title) || funders.includes(mrc.name) || funders.includes(bbsrc.name)
+      || relatedCouncils.slice(0, relatedIndex).some(({ name }) => funders.includes(name)))) return [];
     const status = htmlToText(fields.get("Opportunity status"));
     if (status !== "Open" && status !== "Upcoming") return [];
     const types = htmlToText(fields.get("Funding type"));
@@ -88,6 +97,7 @@ function fundingSource(council: typeof mrc, url: string, id: string, description
     homepage: url,
     description,
     completeSnapshot: true,
+    allowEmptySnapshot: true,
     staleGraceHours: 24,
     intervalMinutes: 360,
     isEnabled: () => true,
@@ -111,3 +121,10 @@ export const ukriMedicalResearchSource = fundingSource(mrc, homepage, "ukri-medi
 
 export const ukriBioscienceSource = fundingSource(bbsrc, bioscienceHomepage, "ukri-biomedical-bioscience",
   "Open and upcoming UKRI biotechnology, biological science and biomedical research grants.");
+
+export const ukriRelatedMedicalSources = relatedCouncils.map(council => fundingSource(
+  council,
+  homepage.replace("=824&", `=${council.code}&`),
+  `ukri-medical-cross-disciplinary-${council.code}`,
+  `Open and upcoming health-related funding from ${council.name}.`,
+));
