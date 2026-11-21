@@ -1,3 +1,4 @@
+import { researchTopics } from "@studepartment/db/taxonomy";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { parseFeed } from "../src/server/opportunities/sources/rss";
@@ -63,6 +64,16 @@ test("only research positions are classified, by title", () => {
 
 test("medical relevance ignores benefits boilerplate and tags topics", () => {
   assert.equal(isMedicalText("Postdoc in tumour immunology"), true);
+  for (const [text, slug] of [
+    ["Postdoctoral fellow in parasitology", "parasitology"],
+    ["Research associate in bacterial genetics", "microbiology"],
+    ["Postdoc in biochemistry", "biochemistry"],
+    ["Fellow in molecular and cell biology", "molecular-cell-biology"],
+    ["Research associate in physiotherapy", "allied-health"],
+  ]) {
+    assert.ok(topicSlugsFor(text).includes(slug), text);
+    assert.ok(researchTopics.some(([storedSlug]) => storedSlug === slug), slug);
+  }
   assert.equal(isMedicalText("Postdoc in seismology", "Benefits include health insurance"), false);
   assert.equal(isMedicalText("PhD in particle physics"), false);
   assert.equal(isMedicalText("Max Planck Research Group Constellations of Global (Dis)Ordering (DISORDER)"), false);

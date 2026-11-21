@@ -42,7 +42,10 @@ type PreviousRun = Pick<SourceRunResult, "startedAt" | "status">;
 /** Makes sure the topic and method vocabulary exists, so listings can be tagged. */
 async function ensureTaxonomy() {
   const db = getDb();
-  const [topicCount, methodCount] = await Promise.all([db.researchTopic.count(), db.researchMethod.count()]);
+  const [topicCount, methodCount] = await Promise.all([
+    db.researchTopic.count({ where: { slug: { in: researchTopics.map(([slug]) => slug) } } }),
+    db.researchMethod.count({ where: { slug: { in: researchMethods.map(([slug]) => slug) } } }),
+  ]);
   if (topicCount >= researchTopics.length && methodCount >= researchMethods.length) return;
   for (const [slug, name] of researchTopics) {
     await db.researchTopic.upsert({ where: { slug }, update: {}, create: { slug, name } });

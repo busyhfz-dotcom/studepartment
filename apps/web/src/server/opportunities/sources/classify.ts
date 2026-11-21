@@ -78,7 +78,7 @@ export function careerStagesForPosition(type: PositionType, text: string): strin
 
 const TOPIC_RULES: Array<[string, RegExp]> = [
   ["parasitology", /\b(parasitol\w*|parasiti\w*|medical entomology|malaria|leishmani\w*|helminth\w*)\b/i],
-  ["microbiology", /\b(microbi\w*|bacterio\w*|mycolog\w*|bacteriophag\w*|microbiom\w*)\b/i],
+  ["microbiology", /\b(microbi\w*|bacteri\w*|mycolog\w*)\b/i],
   ["biochemistry", /\b(biochem\w*|proteom\w*|enzymolog\w*)\b/i],
   ["molecular-cell-biology", /\b(molecular biolog\w*|molecular bioscien\w*|cell biolog\w*|structural biolog\w*)\b/i],
   ["allied-health", /\b(allied health|audiolog\w*|dietitian\w*|dietet\w*|occupational therap\w*|speech and language therap\w*|physiotherap\w*|medical laboratory)\b/i],
