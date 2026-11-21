@@ -35,6 +35,27 @@ test("a real position does not fabricate a grant feed or overwrite zero totals",
   assert.deepEqual(ticker.stats, { totalPositions: 1, totalGrants: 0, countries: 1 });
 });
 
+test("ticker listings and counts use recent publication dates and a 30-day deadline limit", async () => {
+  const now = new Date("2026-11-21T12:00:00Z");
+  const since = new Date("2026-10-22T12:00:00Z");
+  const through = new Date("2026-12-21T12:00:00Z");
+  const filters: unknown[] = [];
+  const db = { opportunity: {
+    findMany: async ({ where }: { where: unknown }) => { filters.push(where); return []; },
+    count: async ({ where }: { where: unknown }) => { filters.push(where); return 0; },
+    aggregate: async () => ({ _max: { lastSeenAt: null } }),
+  } } as unknown as Parameters<typeof loadPublicOpportunityTicker>[0];
+
+  await loadPublicOpportunityTicker(db, now);
+  assert.equal(filters.length, 5);
+  for (const query of filters) {
+    const filter = query as { publishedAt: unknown; AND: unknown; OR: unknown };
+    assert.deepEqual(filter.publishedAt, { gte: since, lte: now });
+    assert.deepEqual(filter.AND, [{ OR: [{ deadline: null }, { deadline: { lte: through } }] }]);
+    assert.deepEqual(filter.OR, [{ deadline: null }, { deadline: { gte: now } }]);
+  }
+});
+
 test("Retry-After accepts seconds, dates, vendor header and invalid values", () => {
   const now = Date.parse("2026-10-14T10:00:00Z");
   assert.equal(retryAfterSeconds(new Headers({ "retry-after": "292" }), now), 292);

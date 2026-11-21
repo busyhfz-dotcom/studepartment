@@ -250,6 +250,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
   if (step === "browse") {
     const isGrant = kind === "grant";
     const isPosition = kind === "position";
+    const doctoralFunding = kind === "phd-scholarship" || kind === "md-scholarship" || kind === "md-phd-scholarship";
     return (
       <div className={styles.page}>
         <ScientificBackdrop className={styles.scienceBackdrop} />
@@ -280,10 +281,33 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
                 <small>Research funding</small>
               </span>
             </button>
-            {(["masters-scholarship", "phd-scholarship", "md-scholarship"] as const).map((value) => (
-              <button type="button" aria-pressed={kind === value} className={`${styles.routeTile} ${kind === value ? styles.active : ""}`} onClick={() => openBrowse(value)} key={value}><span><b>{kindLabels[value]}</b><small>Degree funding</small></span></button>
-            ))}
-            {(kind==='phd-scholarship'||kind==='md-phd-scholarship') && <button type="button" aria-pressed={kind==='md-phd-scholarship'} className={`${styles.routeTile} ${kind==='md-phd-scholarship'?styles.active:''}`} onClick={()=>openBrowse('md-phd-scholarship')}><span><b>MD-PhD funding</b><small>Physician-scientist training</small></span></button>}
+            <button type="button" aria-pressed={kind === "masters-scholarship"}
+              className={`${styles.routeTile} ${kind === "masters-scholarship" ? styles.active : ""}`}
+              onClick={() => openBrowse("masters-scholarship")}>
+              <span><b>{kindLabels["masters-scholarship"]}</b><small>Degree funding</small></span>
+            </button>
+            <div className={styles.routeBranch}>
+              <button type="button" aria-pressed={kind === "phd-scholarship"} aria-expanded={doctoralFunding}
+                aria-controls="doctoral-funding-options"
+                className={`${styles.routeTile} ${kind === "phd-scholarship" ? styles.active : ""}`}
+                onClick={() => openBrowse("phd-scholarship")}>
+                <span><b>{kindLabels["phd-scholarship"]}</b><small>Degree funding</small></span>
+                <span className={styles.routeChevron} aria-hidden="true" />
+              </button>
+              <div className={styles.routeChildren} id="doctoral-funding-options" role="group"
+                aria-label="Medical degree funding" hidden={!doctoralFunding}>
+                <button type="button" aria-pressed={kind === "md-scholarship"}
+                  className={`${styles.routeTile} ${kind === "md-scholarship" ? styles.active : ""}`}
+                  onClick={() => openBrowse("md-scholarship")}>
+                  <span><b>MD scholarships</b><small>Medical degree funding</small></span>
+                </button>
+                <button type="button" aria-pressed={kind === "md-phd-scholarship"}
+                  className={`${styles.routeTile} ${kind === "md-phd-scholarship" ? styles.active : ""}`}
+                  onClick={() => openBrowse("md-phd-scholarship")}>
+                  <span><b>MD-PhD funding</b><small>Physician-scientist training</small></span>
+                </button>
+              </div>
+            </div>
             <span className={styles.routeNote}>Browse freely · no account required</span>
           </nav>
 

@@ -49,15 +49,17 @@ export async function getPublicOpportunityTicker(): Promise<PublicOpportunityTic
   }
 }
 
-export async function loadPublicOpportunityTicker(db: Pick<ReturnType<typeof getDb>, "opportunity">): Promise<PublicOpportunityTicker> {
-  const now = new Date();
-  const cutoff = new Date(now.getTime() - 30 * 86_400_000);
+export async function loadPublicOpportunityTicker(
+  db: Pick<ReturnType<typeof getDb>, "opportunity">,
+  now = new Date(),
+): Promise<PublicOpportunityTicker> {
+  const windowMs = 30 * 86_400_000;
+  const cutoff = new Date(now.getTime() - windowMs);
+  const deadlineLimit = new Date(now.getTime() + windowMs);
   const activeUpcoming = {
     ...activeOpportunityWhere(now),
-    AND: [{ OR: [
-      { publishedAt: { gte: cutoff, lte: now } },
-      { publishedAt: null, firstSeenAt: { gte: cutoff, lte: now } },
-    ] }],
+    publishedAt: { gte: cutoff, lte: now },
+    AND: [{ OR: [{ deadline: null }, { deadline: { lte: deadlineLimit } }] }],
   };
   const newestFirst = [{ publishedAt: { sort: "desc" as const, nulls: "last" as const } }, { firstSeenAt: "desc" as const }];
 

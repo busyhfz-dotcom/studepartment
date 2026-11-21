@@ -136,7 +136,14 @@
 
 /* Browse */
 .browse { padding-block: 32px 100px; }
-.routeSwitch { display: flex; align-items: stretch; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.routeSwitch { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.routeBranch { width: 230px; min-width: 0; }
+.routeBranch .routeTile { width: 100%; justify-content: space-between; }
+.routeChildren { display: grid; gap: 7px; margin: 8px 0 0 11px; padding-inline-start: 11px; border-inline-start: 1px solid #686868; }
+.routeChildren[hidden] { display: none; }
+.routeChildren .routeTile { min-height: 48px; padding-block: 8px; }
+.routeChevron { width: 8px; height: 8px; margin: 0 2px 4px 0; flex: none; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); }
+.routeBranch button[aria-expanded="true"] .routeChevron { transform: rotate(225deg); margin-bottom: -4px; }
 .routeTile {
   display: flex;
   align-items: center;
@@ -318,7 +325,7 @@
   .detailMain, .detailSide { padding: 23px; }
   .nextGrid, .plans { grid-template-columns: 1fr; }
   .nextHero { text-align: left; }
-  .routeTile { width: calc(50% - 6px); }
+  .routeTile, .routeBranch { width: calc(50% - 6px); }
 }
 @media (max-width: 520px) {
   .topActions { font-size: 11px; gap: 11px; }
@@ -349,6 +356,7 @@
   .browse{padding-block:24px 64px}
   .routeSwitch{display:grid;grid-template-columns:1fr 1fr}
   .routeTile{width:100%;min-width:0;min-height:64px}
+  .routeBranch{width:100%}
   .routeNote{grid-column:1/-1;margin:0}
   .filterRow{grid-template-columns:1fr}
   .searchbox,.filterRow select{min-height:48px}
