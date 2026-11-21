@@ -78,7 +78,7 @@ export function robotsAllows(robotsTxt: string, path: string): boolean {
  */
 export async function programmePagePublished(
   fetchImpl: FetchLike,
-  programme: Programme,
+  programme: Pick<Programme, "url" | "match">,
   robotsCache: Map<string, Promise<string | null>>,
 ): Promise<boolean> {
   const url = new URL(programme.url);

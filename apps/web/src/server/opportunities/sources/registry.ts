@@ -41,6 +41,7 @@ import { ucasScholarshipsSource } from "./ucas-scholarships";
 import { ukriBioscienceSource, ukriMedicalResearchSource, ukriRelatedMedicalSources } from "./ukri-medical-research";
 import { californiaResearchCareerSources } from "./university-california-research";
 import { usaJobsSource } from "./usajobs";
+import { verifiedCancerFundingSource } from "./verified-cancer-funding";
 import { wellcomeSource } from "./wellcome";
 import { workdayResearchSources } from "./workday-research-careers";
 import { westlakeResearchCareersSource } from "./westlake-research-careers";
@@ -48,6 +49,7 @@ import { westlakeResearchCareersSource } from "./westlake-research-careers";
 /** Every publisher Provenant reads automatically, in display order. */
 export const opportunitySources: OpportunitySourceConnector[] = [
   daadScholarshipsSource, daadDoctoralSource,
+  verifiedCancerFundingSource,
   programmeRegistrySource,
   commonwealthMedicalMastersSource,
   universityDegreeFundingSource,
