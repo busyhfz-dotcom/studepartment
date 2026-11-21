@@ -84,7 +84,7 @@ export const universityDegreeFundingSource: OpportunitySourceConnector = {
   homepage: "https://www.topuniversities.com/world-university-rankings",
   description: "Named master’s and doctoral awards and medical degree funding verified directly on university pages.",
   completeSnapshot: true,
-  intervalMinutes: 720,
+  intervalMinutes: 360,
   staleGraceHours: 96,
   isEnabled: () => true,
   async collect({ fetch, now, log }) {

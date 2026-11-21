@@ -20,6 +20,7 @@ import { lifeArcSource } from "./lifearc";
 import { maxPlanckSource } from "./max-planck";
 import { mayoClinicResearchSource } from "./mayo-clinic-research";
 import { nhsJobsSource } from "./nhs-jobs";
+import { northernUniversityCareerSources } from "./northern-university-careers";
 import { neurologicalFoundationSource } from "./nz-neurological-foundation";
 import { pacificResearchCareerSources } from "./pacific-research-careers";
 import { manchesterFundedDoctoratesSource } from "./manchester-funded-doctorates";
@@ -68,6 +69,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   euraxessSource,
   swissTphSource,
   ...continentalCareerSources,
+  ...northernUniversityCareerSources,
   ...extendedResearchSources,
   cnrsResearchCareersSource,
   ...pacificResearchCareerSources,
