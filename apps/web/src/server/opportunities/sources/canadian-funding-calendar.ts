@@ -35,6 +35,8 @@ export function canadianFundingCalendarRecords(html: string, now: Date): Opportu
     const organization = agencies.includes("CIHR") ? organizations.CIHR : organizations.NSERC;
     const url = new URL(decodeEntities(link[1]));
     const programme = url.searchParams.get("prog");
+    // The official programme notice supersedes an older deadline in this calendar.
+    if (url.hostname === "www.researchnet-recherchenet.ca" && programme === "4393" && deadline === "2026-11-24") return [];
     if (url.hostname === "www.researchnet-recherchenet.ca" && programme && /^\d+$/.test(programme)) {
       url.search = new URLSearchParams({ prog: programme, language: "E" }).toString();
     }
