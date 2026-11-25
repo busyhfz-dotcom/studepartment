@@ -355,6 +355,8 @@ export type OpportunitySourceTypeValue =
 
 export type OpportunityQuery = {
   audience?: 'md-phd';
+  region?: keyof typeof import("./opportunity-filters").opportunityRegions;
+  role?: keyof typeof import("./opportunity-filters").positionRoles;
   id?: string;
   text: string;
   types: OpportunityTypeValue[];
@@ -385,6 +387,11 @@ export type OpportunityPagination = {
 export type OpportunityCareerStage = "student" | "phd" | "postdoc" | "early-career-researcher" | "faculty";
 
 export type OpportunityResult = {
+  views?: number;
+  likes?: number;
+  liked?: boolean;
+  publishedEligibility?: string;
+  competition?: { label: string; rate: number; basis: string; url: string };
   grant?: {
     status: 'Open' | 'Upcoming' | 'Check source';
     agency: string;

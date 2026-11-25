@@ -2,47 +2,47 @@
   color-scheme: light;
 
   /* Core atmosphere */
-  --app-bg: #f5f5f5;
-  --background: #f5f5f5;
-  --surface: #fefefe;
+  --app-bg: #f2f3f9;
+  --background: #f2f3f9;
+  --surface: #fafbfe;
   --surface-raised: #ffffff;
-  --surface-subtle: #f8f8f8;
-  --surface-muted: #f0f0f0;
-  --surface-warm: #fafafa;
-  --surface-inverse: #111111;
+  --surface-subtle: #f5f6fb;
+  --surface-muted: #edeef6;
+  --surface-warm: #f7f8fc;
+  --surface-inverse: #252951;
 
   /* Typography */
-  --text: #2e2e2e;
-  --text-strong: #161616;
-  --muted: #777777;
-  --muted-2: #999999;
-  --muted-3: #b5b5b5;
+  --text: #383c59;
+  --text-strong: #272a43;
+  --muted: #6b6b96;
+  --muted-2: #9a9bc2;
+  --muted-3: #b5b6d3;
 
   /* Borders */
-  --line: #e1e1e1;
-  --line-strong: #d0d0d0;
+  --line: #dfe0ed;
+  --line-strong: #cfd0e3;
   --line-soft: rgba(22, 22, 22, .055);
   --line-inverse: rgba(255,255,255,.085);
 
   /* Brand + intelligence */
-  --accent: #6c6c6c;
-  --accent-strong: #575757;
-  --accent-deep: #3f3f3f;
-  --accent-soft: #f1f1f1;
-  --accent-soft-strong: #e8e8e8;
-  --accent-cyan: #adadad;
-  --accent-blue: #b4b4b4;
-  --accent-blue-soft: #f8f8f8;
-  --accent-amber: #747474;
-  --accent-amber-soft: #f2f2f2;
+  --accent: #61628e;
+  --accent-strong: #515695;
+  --accent-deep: #393b6c;
+  --accent-soft: #eeeff7;
+  --accent-soft-strong: #e5e6f1;
+  --accent-cyan: #adaece;
+  --accent-blue: #b4b5d2;
+  --accent-blue-soft: #f5f6fb;
+  --accent-amber: #686994;
+  --accent-amber-soft: #eff0f7;
 
   /* Status */
-  --success: #757575;
-  --success-soft: #f1f1f1;
-  --warning: #727272;
-  --warning-soft: #f3f3f3;
-  --danger: #5e5e5e;
-  --danger-soft: #f0f0f0;
+  --success: #696a95;
+  --success-soft: #eeeff7;
+  --warning: #676793;
+  --warning-soft: #f0f1f8;
+  --danger: #555683;
+  --danger-soft: #edeef6;
 
   /* Geometry */
   --radius-xs: 7px;
@@ -98,8 +98,8 @@ button, a, input, select, textarea { touch-action: manipulation; }
 }
 
 ::selection {
-  color: #232323;
-  background: #dfdfdf;
+  color: #31344f;
+  background: #dddeec;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -222,15 +222,15 @@ p { text-wrap: pretty; }
 
 .primary,
 .primaryButton {
-  color: #fafafa;
-  border: 1px solid #161616;
-  background: #161616;
+  color: #f7f8fc;
+  border: 1px solid #272a43;
+  background: #272a43;
   box-shadow: 0 8px 22px rgba(15, 15, 15,.14);
 }
 .primary:hover,
 .primaryButton:hover {
   transform: translateY(-1px);
-  background: #0f0f0f;
+  background: #23253d;
   box-shadow: 0 13px 28px rgba(15, 15, 15,.17);
 }
 
@@ -372,7 +372,7 @@ h1 {
 }
 
 .trustPanel span {
-  color: #7b7b7b;
+  color: #6f6f99;
   font-size: 9px;
 }
 
@@ -404,7 +404,7 @@ h1 {
 
 .chip {
   padding: 7px 9px;
-  color: #4e4e4e;
+  color: #464877;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface-subtle);
@@ -420,7 +420,7 @@ h1 {
 
 .cleanList li {
   padding: 7px 0;
-  color: #515151;
+  color: #494b7a;
   border-bottom: 1px solid var(--line);
   font-size: 10px;
 }

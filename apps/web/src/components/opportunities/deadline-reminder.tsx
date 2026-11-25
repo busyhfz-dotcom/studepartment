@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import {useState} from 'react';
-import {reminderCalendar,type ShareableOpportunity} from '@/lib/opportunity-actions';
+import {calendarLinks,reminderCalendar,type ShareableOpportunity} from '@/lib/opportunity-actions';
 import { deadlineReminderOptions } from "@/lib/deadline-reminder-options";
 import {ActionDialog} from './action-dialog';
 import styles from './opportunity-actions.module.css';
@@ -11,6 +11,7 @@ export function DeadlineReminder({items}:{items:ShareableOpportunity[]}){
   const [openedAt,setOpenedAt]=useState(0);
   const dated=available(items,openedAt);
   const chosen=dated.filter(item=>selected.includes(item.id));
+  const calendars=open&&chosen.length===1?calendarLinks(chosen[0],location.origin):null;
   async function save(){
     setBusy(true);setStatus('');setSignIn(false);let saved=0;
     try{for(const item of chosen){
@@ -30,7 +31,10 @@ export function DeadlineReminder({items}:{items:ShareableOpportunity[]}){
     }catch(error){setStatus(error instanceof Error?error.message:'Unable to prepare the calendar.');}
   }
   return <span className={styles.root}>
-    <button className={styles.trigger} type="button" onClick={()=>{const now=Date.now(),choices=available(items,now);setOpenedAt(now);setSelected(choices.length===1?[choices[0].id]:[]);setStatus('');setSignIn(false);setOpen(true);}}>Notify me</button>
+    <button className={styles.trigger} type="button" onClick={()=>{const now=Date.now(),choices=available(items,now);setOpenedAt(now);setSelected(choices.length===1?[choices[0].id]:[]);setStatus('');setSignIn(false);setOpen(true);}}>
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12a2 2 0 0 0 4 0"/></svg>
+      Alert
+    </button>
     {open?<ActionDialog title="Deadline reminders" onClose={()=>setOpen(false)}>
       <p className={styles.notice}>Email delivery is not enabled yet. Save a workspace reminder or download a calendar alert.</p>
       <label className={styles.field}>
@@ -41,7 +45,12 @@ export function DeadlineReminder({items}:{items:ShareableOpportunity[]}){
       </label>
       {dated.length>1?<div className={styles.checklist} role="group" aria-label="Choose opportunities">{dated.map(item=><label key={item.id}><input type="checkbox" checked={selected.includes(item.id)} onChange={event=>setSelected(value=>event.target.checked?[...value,item.id]:value.filter(id=>id!==item.id))}/><span data-original-content>{item.title}</span></label>)}</div>:dated[0]?<p data-original-content>{dated[0].title}</p>:<p>A future, day-specific deadline is required. Check the original source for this opportunity.</p>}
       <div className={styles.choices}><button type="button" disabled={!chosen.length||busy} onClick={()=>void save()}>{busy?'Saving…':'Save workspace reminder'}</button><button type="button" disabled={!chosen.length||busy} onClick={calendar}>Download calendar (.ics)</button></div>
-      <p className={styles.hint}>Device alerts depend on your calendar settings. A reminder does not submit an application.</p>
+      {calendars?<div className={styles.choices}>
+        <a href={calendars.google} target="_blank" rel="noopener noreferrer">Google Calendar</a>
+        <a href={calendars.outlook} target="_blank" rel="noopener noreferrer">Outlook (work or university)</a>
+        <a href={calendars.outlookPersonal} target="_blank" rel="noopener noreferrer">Outlook.com</a>
+      </div>:null}
+      <p className={styles.hint}>The calendar file includes the selected alert time. For events added directly, check the reminder setting before saving.</p>
       {status?<p role="status">{status}</p>:null}{signIn?<Link href={'/auth/sign-in?callbackUrl='+encodeURIComponent('/opportunities/saved')}>Sign in</Link>:null}
     </ActionDialog>:null}
   </span>;

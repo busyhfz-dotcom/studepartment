@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
+import { CountrySelect } from "@/components/forms/country-select";
+import { featuredCountries, opportunitySubjects } from "@/lib/opportunity-filters";
 import { ControlIcon } from "@/components/design/control-icon";
 import { ShareOpportunity } from "./share-opportunity";
 import { ListingActions } from "./listing-actions";
@@ -54,7 +56,7 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
 function badgeStatus(deadline: string | null): "urgent" | "soon" | "open" {
   if (!deadline) return "open";
   const days = (new Date(deadline).getTime() - Date.now()) / 86_400_000;
-  if (days <= 14) return "urgent";
+  if (days <= 7) return "urgent";
   if (days <= 42) return "soon";
   return "open";
 }
@@ -77,7 +79,9 @@ function updatedLabel(value: string | null, now: number) {
  * Keeps the feed current while the page is open: re-reads it every few
  * minutes while the tab is visible, and as soon as the tab is shown again.
  */
-function useLiveTicker(initial: PublicOpportunityTicker) {
+function useLiveTicker(initial: PublicOpportunityTicker, location: string, subject: string) {
+  const requestParams = new URLSearchParams({ location, subject }).toString();
+  const [shown, setShown] = useState("");
   const [ticker, setTicker] = useState(initial);
   const [now, setNow] = useState<number | null>(null);
   const lastFetch = useRef(0);
@@ -89,11 +93,12 @@ function useLiveTicker(initial: PublicOpportunityTicker) {
     async function refresh() {
       lastFetch.current = Date.now();
       try {
-        const response = await fetch("/api/v1/opportunities/ticker", { cache: "no-store" });
+        const response = await fetch("/api/v1/opportunities/ticker?" + requestParams, { cache: "no-store" });
         if (!response.ok) return;
         const body = await response.json() as { success: boolean; data?: PublicOpportunityTicker };
         if (cancelled || !body.success || !body.data?.available) return;
-        const next = tickerSignature(body.data);
+        setShown(requestParams);
+        const next = requestParams + tickerSignature(body.data);
         if (next !== signature.current) {
           signature.current = next;
           setTicker(body.data);
@@ -106,6 +111,7 @@ function useLiveTicker(initial: PublicOpportunityTicker) {
         if (!cancelled) setNow(Date.now());
       }
     }
+    if (location || subject || shown) void refresh();
     const timer = setInterval(() => {
       if (document.visibilityState === "visible") void refresh();
     }, REFRESH_MS);
@@ -122,9 +128,9 @@ function useLiveTicker(initial: PublicOpportunityTicker) {
       clearTimeout(first);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, []);
+  }, [requestParams, location, subject]);
 
-  return { ticker, updated: now === null ? null : updatedLabel(ticker.lastCollectedAt, now) };
+  return { ticker, filtering:(Boolean(location || subject) || Boolean(shown)) && shown !== requestParams, updated: now === null ? null : updatedLabel(ticker.lastCollectedAt, now) };
 }
 
 /**
@@ -133,9 +139,18 @@ function useLiveTicker(initial: PublicOpportunityTicker) {
  * detail panel — same interaction as the design concept, real data instead
  * of the concept's illustrative sample rows.
  */
-export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: PublicOpportunityTicker; country: string }) {
-  const { ticker, updated } = useLiveTicker(initialTicker);
-  const entries = buildEntries(ticker);
+export function OpportunityTicker({ ticker: initialTicker, country, subject = "" }: { ticker: PublicOpportunityTicker; country: string; subject?: string }) {
+  const [personalize, setPersonalize] = useState(false);
+  const [preferences, setPreferences] = useState<{ location:string; subject:string }>();
+  useEffect(() => { try {
+    const raw=localStorage.getItem("provenant.ticker-filters");
+    const saved=raw?JSON.parse(raw):null;
+    if(typeof saved?.location==="string"&&typeof saved?.subject==="string") setPreferences(saved);
+  } catch {} }, []);
+  const location = preferences?.location ?? country;
+  const activeSubject = preferences?.subject ?? subject;
+  const { ticker, updated, filtering } = useLiveTicker(initialTicker, location, activeSubject);
+  const entries = filtering ? [] : buildEntries(ticker);
   const [selected, setSelected] = useState<TickerEntry | null>(null);
   const [paused, setPaused] = useState(false);
   const motionEnabled = useMotionPreference("opportunities");
@@ -143,13 +158,20 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
   const scroll = useTickerScroll(playing, entries.length);
   const motionLabel = playing ? "Pause" : motionEnabled ? "Resume" : "Play";
 
-  const countryQuery = country ? "&country=" + encodeURIComponent(country) : "";
+  const countryQuery = location ? "&country=" + encodeURIComponent(location) : "";
+  function setFeedFilter(key:"location"|"subject", value:string) {
+    const next={location,subject:activeSubject,[key]:value};
+    setPreferences(next);
+    setSelected(null);
+    try {localStorage.setItem("provenant.ticker-filters",JSON.stringify(next));} catch {}
+  }
 
   return (
     <aside className={styles.heroDesk} aria-label="Latest position and grant preview">
       <div className={styles.deskHeading}>
         <span className={styles.liveLabel}>{ticker.available ? <i className={styles.liveDot} aria-hidden="true" /> : null}Latest opportunities</span>
-        <span>{ticker.available ? `${ticker.stats.totalPositions} positions · ${ticker.stats.totalGrants} grants` : "Feed unavailable"}</span>
+        <span>{filtering ? "Updating feed…" : ticker.available ? `${ticker.stats.totalPositions} positions · ${ticker.stats.totalGrants} grants` : "Feed unavailable"}</span>
+        <button type="button" className={styles.tickerMotionToggle} aria-expanded={personalize} onClick={()=>setPersonalize(!personalize)}>Personalize</button>
         {scroll.overflowing ? <button
           type="button"
           className={styles.tickerMotionToggle}
@@ -171,6 +193,12 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
           </span>
         </button> : null}
       </div>
+      {personalize ? <div className={styles.personalize}>
+        <CountrySelect groupRegions availableCodes={featuredCountries} anyLabel="All locations" ariaLabel="Latest opportunities location" value={location} onChange={value=>setFeedFilter("location",value)} />
+        <select aria-label="Latest opportunities subject" value={activeSubject} onChange={event=>setFeedFilter("subject",event.target.value)}>
+          <option value="">All subjects</option>{opportunitySubjects.map(([id,label])=><option key={id} value={id}>{label}</option>)}
+        </select>
+      </div> : null}
       {entries.length ? (
         <div
           ref={scroll.viewport}
@@ -234,7 +262,7 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
           </div>
         </div>
       ) : (
-        <p className={styles.latestLoading}>{ticker.available ? "No open positions or grants were added in the last 30 days." : "The opportunity feed is unavailable right now."} <Link href="/scanner">Explore official sources in Scanner ↗</Link></p>
+        <p className={styles.latestLoading}>{filtering ? "Loading your feed…" : ticker.available ? "No recent opportunities match this feed." : "The opportunity feed is unavailable right now."} <Link href="/scanner">Explore official sources in Scanner ↗</Link></p>
       )}
 
       {selected ? (
@@ -259,7 +287,7 @@ export function OpportunityTicker({ ticker: initialTicker, country }: { ticker: 
       ) : null}
 
       <div className={styles.deskFooter}>
-        <span>Published or first listed in the past 30 days{updated ? `, ${updated}` : ""}. <Link href="/sources">See sources</Link></span>
+        <span>Published in the past 30 days{updated ? `, ${updated}` : ""}. <Link href="/sources">See sources</Link></span>
         <Link href="/opportunities">Full search ↗</Link>
       </div>
     </aside>

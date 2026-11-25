@@ -1,3 +1,5 @@
+import { opportunityRegions, positionRoles } from "@/lib/opportunity-filters";
+import { publishedFacts } from "./published-facts";
 import { getDb, type Prisma } from "@studepartment/db";
 import type {
   OpportunityFreshness,
@@ -279,6 +281,17 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
   if(query.audience==='md-phd') {
     where.AND=[...(Array.isArray(where.AND)?where.AND:where.AND?[where.AND]:[]),mdPhdAudienceWhere()];
   }
+
+  const extraFilters: Prisma.OpportunityWhereInput[] = [];
+  if (query.region) {
+    const region = opportunityRegions[query.region];
+    extraFilters.push({ OR: [
+      { countryCode: { in: [...region.countries] } },
+      { countryCode: null, provenance: { some: { metadata: { path: ["fundingRegion"], equals: region.label } } } },
+    ] });
+  }
+  if (query.role) extraFilters.push({ OR: positionRoles[query.role].terms.map(term => ({title:{contains:term,mode:"insensitive"}})) });
+  if (extraFilters.length) where.AND = [...(Array.isArray(where.AND) ? where.AND : []), ...extraFilters];
 
   // Every search term must appear somewhere in the listing, so a search over
   // thousands of listings returns the matching ones rather than the latest few.

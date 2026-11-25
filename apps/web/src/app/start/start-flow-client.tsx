@@ -19,6 +19,9 @@ import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { CountrySelect } from "@/components/forms/country-select";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
 import { ListingActions } from '@/components/opportunities/listing-actions';
+import { featuredCountries, opportunitySubjects, positionRoleLabel, positionRoles } from "@/lib/opportunity-filters";
+import { Competition, DueDate, ListingEligibility } from "@/components/opportunities/listing-facts";
+import { OpportunitySignals } from "@/components/opportunities/opportunity-signals";
 import { GrantTable } from '@/components/opportunities/grant-table';
 
 type Step = "welcome" | "browse" | "detail" | "next" | "institutions";
@@ -89,7 +92,7 @@ export function StartFlow(options: StartOptions) {
   return <Suspense fallback={<div className={styles.page}><TopBar /><main className={styles.wrap}><p role="status">Loading your page…</p></main></div>}><StartJourney {...options} /></Suspense>;
 }
 
-function StartJourney({ ticker, countryCodes }: StartOptions) {
+function StartJourney({ ticker }: StartOptions) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedStep = searchParams.get("step");
@@ -99,6 +102,8 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
   const query = searchParams.get("q") ?? "";
   const rememberedCountry = useOpportunityCountry();
   const country = searchParams.get("country") ?? rememberedCountry;
+  const subject = searchParams.get("subject") ?? "";
+  const role = searchParams.get("role") ?? "";
   const page = readOpportunityPage(searchParams.get("page"));
   const opportunityId = searchParams.get("opportunity");
   const [browseResult, setBrowseResult] = useState<{ key: string; data?: OpportunityIntelligenceResponse; error?: string }>();
@@ -106,7 +111,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
   const selected = selectedRecord?.id === opportunityId ? selectedRecord : null;
   const [detailFailure, setDetailFailure] = useState<string | null>(null);
   const [searchAttempt, setSearchAttempt] = useState(0);
-  const browseKey = JSON.stringify([kind, query, country, page, searchAttempt]);
+  const browseKey = JSON.stringify([kind, query, country, subject, role, page, searchAttempt]);
   const loading = step === "browse" && browseResult?.key !== browseKey;
   const results = loading ? [] : browseResult?.data?.results ?? [];
   const total = loading ? 0 : browseResult?.data?.totalMatching ?? 0;
@@ -120,7 +125,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
     router.push(`/start${params.size ? `?${params}` : ""}`, { scroll: true });
   }
 
-  function setFilter(key: "q" | "country", value: string) {
+  function setFilter(key: "q" | "country" | "subject" | "role", value: string) {
     const params = new URLSearchParams(searchParams.toString());
     value ? params.set(key, value) : params.delete(key);
     params.delete("page");
@@ -156,7 +161,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
   useEffect(() => {
     if (step !== "browse") return;
     const controller = new AbortController();
-    const params = entrySearchParams(kind, query, country, page);
+    const params = entrySearchParams(kind, query, country, page, subject, role);
 
     const timeout = window.setTimeout(() => {
       fetch(`/api/v1/opportunities?${params.toString()}`, { signal: controller.signal })
@@ -175,7 +180,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [step, kind, query, country, page, browseKey]);
+  }, [step, kind, query, country, subject, role, page, browseKey]);
 
   function openBrowse(nextKind: Kind) {
     setStep("browse", { kind: nextKind, q: "", country, opportunity: "", page: "" });
@@ -256,7 +261,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
         <ScientificBackdrop className={styles.scienceBackdrop} />
         <TopBar />
         <main className={`${styles.wrap} ${styles.browse}`}>
-          {ticker ? <OpportunityTicker ticker={ticker} country={country} /> : null}
+          {ticker ? <OpportunityTicker ticker={ticker} country={country} subject={subject} /> : null}
           <h1 className={styles.srOnly}>Browse research opportunities</h1>
           <nav className={styles.routeSwitch} data-doctoral-open={doctoralFunding} aria-label="Opportunity type">
             <button
@@ -311,7 +316,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
               </div>
             </div>
           </nav>
-          <p className={styles.routeNote}>Browse freely · no account required</p>
+          <div className={styles.routeLinks}><Link href="/opportunities/favorites">♡ My Favorites</Link><Link href="/opportunities/directory">Programme & conference directory</Link></div>
 
           {kind==='masters-scholarship' && <aside className={styles.sourceGuidance}><strong>Consider the programme as well as the award.</strong><p>DAAD programmes are included in these results. Erasmus Mundus funding is offered through individual consortia; check each programme’s current scholarship availability.</p><a href="https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en" target="_blank" rel="noopener noreferrer">Explore the official Erasmus Mundus catalogue ↗</a></aside>}
           {kind==='md-phd-scholarship' && <aside className={styles.sourceGuidance}><strong>Support for the physician-scientist route.</strong><p>NIH F30 fellowships support students already enrolled in eligible dual-degree programmes. Check citizenship or residency, enrolment and sponsor requirements. T32 awards fund institutions; trainee places are offered by the participating programmes.</p><a href="https://www.cancer.gov/grants-training/training/funding/f30" target="_blank" rel="noopener noreferrer">Understand the F30 route ↗</a><a href="https://grants.nih.gov/funding/activity-codes/T32" target="_blank" rel="noopener noreferrer">Explore institutional training through T32 ↗</a></aside>}
@@ -326,11 +331,24 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
                 setFilter("q", event.target.value);
               }}
             />
-            <CountrySelect ariaLabel="Location" anyLabel="Any location" availableCodes={countryCodes ?? []} value={country}
-              onChange={(value) => {
-                setFilter("country", value);
-              }} />
+            <CountrySelect ariaLabel="Location" anyLabel="Any location" availableCodes={featuredCountries} groupRegions value={country}
+              onChange={(value) => setFilter("country", value)} />
+            <select aria-label="Subject" value={subject} onChange={event => setFilter("subject", event.target.value)}>
+              <option value="">Any subject</option>
+              {opportunitySubjects.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+            </select>
+            {isPosition ? <select aria-label="Position role" value={role} onChange={event => setFilter("role", event.target.value)}>
+              <option value="">Any role</option>
+              {Object.entries(positionRoles).map(([id, data]) => <option key={id} value={id}>{data.label}</option>)}
+            </select> : null}
           </div>
+
+          {country === "NL" ? <aside className={styles.locationFeature}>
+            <div><strong>Research in the Netherlands</strong><p>Explore current listings and official programme routes.</p>
+              <Link href="/opportunities/directory?q=Netherlands">Netherlands directory ↗</Link>
+            </div>
+            <a className={styles.photoCredit} href="https://commons.wikimedia.org/wiki/File:Amsterdam_city,_wit_a_view_over_old_canal_street_Prinsengracht_in_the_city-center,_photo_by_Fons_Heijnsbroek,_jan._2022.jpg" target="_blank" rel="noopener noreferrer">Amsterdam · Fons Heijnsbroek, CC0</a>
+          </aside> : null}
 
           <div className={styles.listHead}>
             <div>
@@ -345,20 +363,21 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
           <div className={styles.results} id="browse-results" aria-busy={loading}>
             {searchError ? <div className={styles.empty} role="alert">{searchError} <button type="button" className={styles.primary} onClick={() => setSearchAttempt((value) => value + 1)}>Retry search</button></div> : null}
             {!loading && !searchError && results.length === 0 ? (
-              <div className={styles.empty}><p>{query.trim() || country.trim() ? "No opportunities match these filters. Try fewer filters or browse original sources." : `No current ${kindLabels[kind]} are listed.`}</p><Link href="/scanner">Explore official sources in Scanner →</Link></div>
+              <div className={styles.empty}><p>{query.trim() || country.trim() || subject || role ? "No opportunities match these filters. Try fewer filters or browse original sources." : `No current ${kindLabels[kind]} are listed.`}</p><Link href="/scanner">Explore official sources in Scanner →</Link></div>
             ) : (
-              kind === 'grant' ? (!loading&&!searchError?<GrantTable items={results} params={entrySearchParams(kind,query,country,page).toString()} onReview={openDetail}/>:null) : results.map((item) => (
+              kind === 'grant' ? (!loading&&!searchError?<GrantTable items={results} params={entrySearchParams(kind,query,country,page,subject,role).toString()} onReview={openDetail}/>:null) : results.map((item) => (
                 <article className={styles.result} key={item.id}>
                   <div>
                     <div className={styles.tags}>
-                      <span>{typeLabel(item.type)}</span>
+                      <span>{(isPosition && positionRoleLabel(item.title)) || typeLabel(item.type)}</span>
                       <span data-original-content>{item.location}</span>
                     </div>
                     <h3 data-original-content>{item.title}</h3>
                     <p data-original-content>{item.organization}</p>
                   </div>
                   <div className={styles.resultSide}>
-                    <small>{deadlineLabel(item)}</small>
+                    <DueDate item={item} />
+                    <OpportunitySignals key={item.id} item={item} />
                     <ListingActions item={item} primary={<button type="button" onClick={() => openDetail(item)} aria-label={`Review ${item.title}`}>
                       Review details ↗
                     </button>} />
@@ -406,6 +425,8 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
                   <p data-original-content>{selected.description}</p>
                 </>
               ) : null}
+              <p><strong>Eligibility</strong> · <ListingEligibility item={selected} /></p>
+              <p><strong>Competition</strong> · <Competition item={selected} /></p>
               {selected.eligibilityReasons.length ? (
                 <>
                   <h2>Eligibility at a glance</h2>
@@ -427,7 +448,7 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
                 </>
               ) : null}
               <a className={styles.official} href={applyHref} target="_blank" rel="noopener noreferrer">
-                Official {isScholarship ? "scholarship" : isGrant ? "funding call" : "vacancy"} / application route ↗
+                Apply now ↗
               </a>
               <p className={styles.smallprint}>
                 Source: {selected.source.name} · last verified {new Date(selected.lastVerifiedAt).toLocaleDateString()}
@@ -441,6 +462,8 @@ function StartJourney({ ticker, countryCodes }: StartOptions) {
                 profile also keeps your CV ready for when you apply.
               </p>
               <div className={styles.detailActions}>
+                <DueDate item={selected} />
+                <OpportunitySignals key={selected.id} item={selected} recordView />
                 <ListingActions item={selected} primary={<button type="button" onClick={() => setStep("next")}>
                   Track this {recordLabel} ↗
                 </button>} />

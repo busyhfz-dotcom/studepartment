@@ -1,3 +1,6 @@
+import type { Prisma } from "@studepartment/db";
+import { isCountryCode } from "@/lib/countries";
+import { opportunityRegion, opportunityRegions, opportunitySubjects } from "@/lib/opportunity-filters";
 import { getDb } from "@studepartment/db";
 import { activeOpportunityWhere } from "./countries";
 
@@ -35,14 +38,16 @@ function formatDeadline(deadline: Date | null, precision: string): string {
   return `Deadline ${deadline.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
 }
 
-export async function getPublicOpportunityTicker(): Promise<PublicOpportunityTicker> {
+export type TickerFilters = { location?: string | null; subject?: string | null };
+
+export async function getPublicOpportunityTicker(filters?: TickerFilters): Promise<PublicOpportunityTicker> {
   const unavailable: PublicOpportunityTicker = {
     available: false, generatedAt: new Date().toISOString(), lastCollectedAt: null, positions: [], grants: [],
     stats: { totalPositions: 0, totalGrants: 0, countries: 0 },
   };
   if (!process.env.DATABASE_URL) return unavailable;
   try {
-    return await loadPublicOpportunityTicker(getDb());
+    return await loadPublicOpportunityTicker(getDb(), new Date(), filters);
   } catch (error) {
     console.error("[opportunities] public ticker unavailable", error);
     return unavailable;
@@ -52,14 +57,27 @@ export async function getPublicOpportunityTicker(): Promise<PublicOpportunityTic
 export async function loadPublicOpportunityTicker(
   db: Pick<ReturnType<typeof getDb>, "opportunity">,
   now = new Date(),
+  filters: TickerFilters = {},
 ): Promise<PublicOpportunityTicker> {
   const windowMs = 30 * 86_400_000;
   const cutoff = new Date(now.getTime() - windowMs);
   const deadlineLimit = new Date(now.getTime() + windowMs);
+  const regionKey = opportunityRegion(filters.location ?? null);
+  const conditions: Prisma.OpportunityWhereInput[] = [{ OR: [{ deadline:null }, {deadline:{lte:deadlineLimit}}] }];
+  if (regionKey) {
+    const region = opportunityRegions[regionKey];
+    conditions.push({ OR: [
+      { countryCode:{ in:[...region.countries] } },
+      { countryCode:null, provenance:{ some:{ metadata:{ path:["fundingRegion"], equals:region.label } } } },
+    ] });
+  } else if (filters.location && isCountryCode(filters.location)) conditions.push({ countryCode:filters.location.toUpperCase() });
+  const subject = opportunitySubjects.find(([slug])=>slug===filters.subject)?.[0];
+  if (subject === "machine-learning") conditions.push({ methods:{ some:{method:{slug:subject}} } });
+  else if (subject) conditions.push({ topics:{ some:{topic:{slug:subject}} } });
   const activeUpcoming = {
     ...activeOpportunityWhere(now),
     publishedAt: { gte: cutoff, lte: now },
-    AND: [{ OR: [{ deadline: null }, { deadline: { lte: deadlineLimit } }] }],
+    AND: conditions,
   };
   const newestFirst = [{ publishedAt: { sort: "desc" as const, nulls: "last" as const } }, { firstSeenAt: "desc" as const }];
 

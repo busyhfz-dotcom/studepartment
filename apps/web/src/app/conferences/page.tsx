@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getShellViewer } from "@/server/auth/shell-viewer";
 import { conferenceCategories } from "./conference-sources";
@@ -23,6 +24,7 @@ export default async function ConferencesPage() {
             Credibility checks for venues and journals, the societies behind the major specialty congresses, and
             the registries clinicians use to track CME/CPD credit.
           </p>
+          <Link href="/opportunities/directory?group=conferences">Browse conferences, travel awards and prizes ↗</Link>
         </header>
 
         {conferenceCategories.map((category) => (

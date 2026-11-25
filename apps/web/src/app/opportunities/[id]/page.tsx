@@ -6,6 +6,7 @@ import { cache } from "react";
 import { getDb } from "@studepartment/db";
 import { ProductShell } from "@/components/shell/product-shell";
 import { ListingActions } from "@/components/opportunities/listing-actions";
+import { OpportunitySignals } from "@/components/opportunities/opportunity-signals";
 import { getSiteUrl } from "@/lib/site";
 import { getShellViewer } from "@/server/auth/shell-viewer";
 import { SaveOpportunityButton } from "../save-opportunity-button";
@@ -145,6 +146,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
         <div className={styles.actions}>
           <div className={styles.listingActionGroup}>
+            <OpportunitySignals item={{ id: opportunity.id, title: opportunity.title, type: opportunity.type }} recordView />
             <ListingActions item={{ id: opportunity.id, title: opportunity.title, type: opportunity.type, deadline: opportunity.deadline?.toISOString() ?? null, deadlinePrecision: opportunity.deadlinePrecision.toLowerCase().replaceAll("_", "-") }}
               primary={<a href={applyUrl} rel="noreferrer" target="_blank">Open application ↗</a>} />
           </div>

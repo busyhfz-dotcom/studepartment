@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { isCountryCode } from "./countries";
+import { opportunityRegion } from "./opportunity-filters";
 
 const storageKey = "provenant.opportunity-country";
 const changeEvent = "provenant:opportunity-country";
@@ -29,7 +30,7 @@ export function useOpportunityCountry() {
 }
 
 export function rememberOpportunityCountry(value: string) {
-  fallback = isCountryCode(value) ? value : "";
+  fallback = isCountryCode(value) || opportunityRegion(value) ? value : "";
   try {
     localStorage.setItem(storageKey, fallback);
   } catch {

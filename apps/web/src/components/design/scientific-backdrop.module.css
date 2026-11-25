@@ -1,19 +1,19 @@
 .backdrop {
-  --motion-secondary: #cecece;
-  --motion-highlight: #f9f9f9;
+  --motion-secondary: #cdcee2;
+  --motion-highlight: #f6f7fb;
   position: fixed;
   z-index: 0;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  color: #a3a3a3;
+  color: #a4a5c8;
 }
 
 .dark { opacity: .58; }
 .light {
-  --motion-secondary: #777777;
+  --motion-secondary: #6b6b96;
   --motion-highlight: #fff;
-  color: #777777;
+  color: #6b6b96;
   opacity: .3;
 }
 

@@ -1,24 +1,24 @@
-/* Shared monochrome design tokens and progressive motion. */
-:root{--app-bg:#f7f7f7;--background:#f7f7f7;--surface:#fff;--surface-raised:#fff;--surface-subtle:#f9f9f9;--surface-muted:#f3f3f3;--surface-warm:#fcfcfc;--surface-inverse:#292929;--text:#464646;--text-strong:#2e2e2e;--muted:#909090;--muted-2:#a1a1a1;--muted-3:#c2c2c2;--line:#eeeeee;--line-strong:#e7e7e7;--line-soft:#4646460b;--accent:#606060;--accent-strong:#565656;--accent-deep:#707070;--accent-soft:#f6f6f6;--accent-soft-strong:#ececec;--accent-cyan:#a0a0a0;--accent-blue:#818181;--accent-blue-soft:#f5f5f5;--accent-amber:#6a6a6a;--accent-amber-soft:#f4f4f4;--shadow-xs:0 2px 5px #3c3c3c04;--shadow-sm:0 10px 30px #3c3c3c08;--shadow:0 22px 55px #3c3c3c12;--shadow-lg:0 30px 85px #3c3c3c20;--radius-lg:16px;--radius-xl:20px;--duration:260ms;--ease:cubic-bezier(.22,.72,.24,1)}
+/* Shared indigo and lavender design tokens and progressive motion. */
+:root{--app-bg:#f4f5fa;--background:#f4f5fa;--surface:#fff;--surface-raised:#fff;--surface-subtle:#f6f7fb;--surface-muted:#f0f1f8;--surface-warm:#f8f9fd;--surface-inverse:#353854;--text:#3f4171;--text-strong:#383c59;--muted:#8281a9;--muted-2:#a2a3c7;--muted-3:#c1c2da;--line:#ebecf5;--line-strong:#e4e5f1;--line-soft:#3f41710b;--accent:#565885;--accent-strong:#4d4f7d;--accent-deep:#656591;--accent-soft:#f3f4fa;--accent-soft-strong:#e9eaf4;--accent-cyan:#a1a2c6;--accent-blue:#74749e;--accent-blue-soft:#f2f3f9;--accent-amber:#5f608d;--accent-amber-soft:#f1f2f8;--shadow-xs:0 2px 5px #36396a04;--shadow-sm:0 10px 30px #36396a08;--shadow:0 22px 55px #36396a12;--shadow-lg:0 30px 85px #36396a20;--radius-lg:16px;--radius-xl:20px;--duration:260ms;--ease:cubic-bezier(.22,.72,.24,1)}
 body{--font-editorial:var(--font-sans);background:var(--background);color:var(--text)}
 :root {
-  --app-bg: #f9f9f9;
-  --background: #f9f9f9;
-  --text: #242424;
-  --text-strong: #0b0b0b;
-  --muted: #4f4f4f;
-  --muted-2: #5d5d5d;
-  --line: #d7d7d7;
-  --line-strong: #adadad;
-  --accent: #222;
-  --accent-strong: #111;
-  --accent-deep: #080808;
+  --app-bg: #f6f7fb;
+  --background: #f6f7fb;
+  --text: #252951;
+  --text-strong: #202239;
+  --muted: #474978;
+  --muted-2: #545583;
+  --line: #d5d6e7;
+  --line-strong: #adaece;
+  --accent: #303469;
+  --accent-strong: #252951;
+  --accent-deep: #22264d;
 }
-h1,h2,h3{font-family:var(--font-sans),Arial,sans-serif;font-weight:750;letter-spacing:-.045em}h1{font-weight:800;line-height:1.14}h1 em,h2 em{font-style:normal}::selection{background:#eeeeee;color:#464646}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #8f8f8f;outline-offset:3px}
-.eyebrow{color:#6f6f6f;font-size:10px;letter-spacing:.12em}.eyebrow::before{height:6px;width:6px;border-radius:2px;opacity:1}.sectionLabel{font-size:10px}.primaryButton,.primary,.secondary,.secondaryButton{border-radius:9px;font-size:12px;min-height:44px;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease)}.primaryButton,.primary{background:#636363;color:#fff;border-color:#636363;box-shadow:0 5px 18px #99999918}.primaryButton:hover,.primary:hover{background:#565656;transform:translateY(-2px);box-shadow:0 9px 24px #99999932}.secondary,.secondaryButton{background:#fff;border-color:#eeeeee;color:#4b4b4b}.secondary:hover,.secondaryButton:hover{background:#fcfcfc;border-color:#8c8c8c;transform:translateY(-2px)}
-button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s}button:disabled{cursor:wait}button:not(:disabled):active{transform:translateY(1px)}input,textarea,select{transition:border-color .2s,background .2s,box-shadow .2s}input:focus,textarea:focus,select:focus{border-color:#8c8c8c;box-shadow:0 0 0 3px #8c8c8c1a}
-.chip{background:#f9f9f9;color:#888888;border-color:#efefef}.trustPanel{background:#f6f6f6;border-color:#f6f6f6}.trustPanel span{color:#aaaaaa}.profileName{font-family:var(--font-sans),Arial,sans-serif;font-weight:800;font-size:clamp(32px,4vw,48px);line-height:1.15}.profileCard{border-radius:18px}.profileTopline{background:radial-gradient(ellipse at right top,#cfcfcf24,transparent 60%),linear-gradient(135deg,#f8f8f8,#f9f9f9)}.profileSection,.profileSplit{background:white}.card,.panel,.profileCard{transition:box-shadow .3s var(--ease),border-color .3s var(--ease)}.card:hover{box-shadow:var(--shadow-sm);border-color:#eeeeee}.lede{font-size:14px;line-height:1.85}.statement h2{font-weight:750;line-height:1.2}
+h1,h2,h3{font-family:var(--font-sans),Arial,sans-serif;font-weight:750;letter-spacing:-.045em}h1{font-weight:800;line-height:1.14}h1 em,h2 em{font-style:normal}::selection{background:#ebecf5;color:#3f4171}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #8180a9;outline-offset:3px}
+.eyebrow{color:#646490;font-size:10px;letter-spacing:.12em}.eyebrow::before{height:6px;width:6px;border-radius:2px;opacity:1}.sectionLabel{font-size:10px}.primaryButton,.primary,.secondary,.secondaryButton{border-radius:9px;font-size:12px;min-height:44px;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease)}.primaryButton,.primary{background:#595a87;color:#fff;border-color:#595a87;box-shadow:0 5px 18px #9a9bc218}.primaryButton:hover,.primary:hover{background:#4d4f7d;transform:translateY(-2px);box-shadow:0 9px 24px #9a9bc232}.secondary,.secondaryButton{background:#fff;border-color:#ebecf5;color:#444675}.secondary:hover,.secondaryButton:hover{background:#f8f9fd;border-color:#7e7da6;transform:translateY(-2px)}
+button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s}button:disabled{cursor:wait}button:not(:disabled):active{transform:translateY(1px)}input,textarea,select{transition:border-color .2s,background .2s,box-shadow .2s}input:focus,textarea:focus,select:focus{border-color:#7e7da6;box-shadow:0 0 0 3px #7e7da61a}
+.chip{background:#f6f7fb;color:#7a7aa3;border-color:#ecedf5}.trustPanel{background:#f3f4fa;border-color:#f3f4fa}.trustPanel span{color:#abaccc}.profileName{font-family:var(--font-sans),Arial,sans-serif;font-weight:800;font-size:clamp(32px,4vw,48px);line-height:1.15}.profileCard{border-radius:18px}.profileTopline{background:radial-gradient(ellipse at right top,#cecfe224,transparent 60%),linear-gradient(135deg,#f5f6fb,#f6f7fb)}.profileSection,.profileSplit{background:white}.card,.panel,.profileCard{transition:box-shadow .3s var(--ease),border-color .3s var(--ease)}.card:hover{box-shadow:var(--shadow-sm);border-color:#ebecf5}.lede{font-size:14px;line-height:1.85}.statement h2{font-weight:750;line-height:1.2}
 @media(prefers-reduced-motion:no-preference){main h1{animation:headingArrival .65s var(--ease) both}.primaryButton:disabled{animation:pendingPulse 1.5s ease-in-out infinite}@keyframes headingArrival{from{opacity:.3;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}@keyframes pendingPulse{50%{opacity:.6}}}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -27,7 +27,7 @@ button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,trans
 .primaryButton, .primary {
   background: var(--accent-strong);
   border-color: var(--accent-strong);
-  box-shadow: 0 4px 12px #0002;
+  box-shadow: 0 4px 12px #14183a22;
 }
 .primaryButton:hover, .primary:hover {
   background: var(--accent);
@@ -38,32 +38,32 @@ button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,trans
 html::-webkit-scrollbar {
   width: 12px;
   height: 12px;
-  background: #242424;
+  background: #252951;
 }
 html::-webkit-scrollbar-track {
-  background: #242424;
+  background: #252951;
   box-shadow: inset 1px 0 #ffffff14;
 }
 html::-webkit-scrollbar-thumb {
   min-height: 48px;
-  border: 3px solid #242424;
+  border: 3px solid #252951;
   border-radius: 999px;
-  background: linear-gradient(180deg, #e4e4e4, #b6b6b6);
+  background: linear-gradient(180deg, #e2e3ef, #b6b7d3);
 }
 html::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #ececec, #cdcdcd);
+  background: linear-gradient(180deg, #e9eaf4, #cccde1);
 }
 html::-webkit-scrollbar-button {
   display: none;
   width: 0;
   height: 0;
 }
-html::-webkit-scrollbar-corner { background: #242424; }
+html::-webkit-scrollbar-corner { background: #252951; }
 
 @supports (-moz-appearance: none) {
   html {
     scrollbar-width: thin;
-    scrollbar-color: #d4d4d4 #242424;
+    scrollbar-color: #d2d3e5 #252951;
   }
 }
 
@@ -73,25 +73,25 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #a6a6a6;
+  outline: 2px solid #a7a8ca;
   outline-offset: 2px;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: #8c8c8c;
+  border-color: #7e7da6;
   box-shadow: 0 0 0 3px rgba(136, 136, 136, .14);
 }
 
 /* Native selects keep their form and keyboard behavior in the site palette. */
 :root {
   --select-menu-bg: #ffffff;
-  --select-menu-border: #eaeaea;
-  --select-menu-text: #464646;
-  --select-menu-hover: #fbfbfb;
-  --select-menu-selected: #f7f7f7;
-  --select-menu-selected-text: #888888;
+  --select-menu-border: #e7e8f2;
+  --select-menu-text: #3f4171;
+  --select-menu-hover: #f7f8fd;
+  --select-menu-selected: #f4f5fa;
+  --select-menu-selected-text: #7a7aa3;
 }
 
 @supports (appearance: base-select) and selector(::picker(select)) {

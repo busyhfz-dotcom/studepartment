@@ -1,4 +1,5 @@
 import type { OpportunityResult } from '@/lib/api-contracts';
+import { opportunityRegion } from '@/lib/opportunity-filters';
 export type EntryKind = 'position' | 'grant' | 'masters-scholarship' | 'phd-scholarship' | 'md-phd-scholarship' | 'md-scholarship';
 export function entryDeadlineLabel(item:Pick<OpportunityResult,'deadline'|'deadlinePrecision'>,locale?:string):string {
   if(!item.deadline)return item.deadlinePrecision==='rolling'?'Rolling deadline':'Deadline on the listing';
@@ -16,7 +17,7 @@ export const entryLabels: Record<EntryKind, string> = {
 export function entryKind(value: string | null): EntryKind {
   return value && Object.hasOwn(entryLabels,value) ? value as EntryKind : 'position';
 }
-export function entrySearchParams(kind: EntryKind, query: string, country: string, page: number) {
+export function entrySearchParams(kind: EntryKind, query: string, country: string, page: number, subject = "", role = "") {
   const params=new URLSearchParams({limit:'24',page:String(page)});
   const types=kind==='position'?['phd','postdoc','fellowship','research-assistantship','collaboration']:
     kind==='md-phd-scholarship'?['phd','phd-scholarship','fellowship']:[kind];
@@ -24,7 +25,9 @@ export function entrySearchParams(kind: EntryKind, query: string, country: strin
   if(kind==='md-phd-scholarship')params.set('audience','md-phd');
   if(kind==='grant')params.set('career','faculty');
   if(query.trim())params.set('q',query.trim());
-  if(country.trim())params.set('country',country.trim());
+  if(country.trim())params.set(opportunityRegion(country) ? 'region' : 'country',country.trim());
+  if(subject)params.set(subject === "machine-learning" ? "method" : "topic",subject);
+  if(role&&kind==='position')params.set("role",role);
   return params;
 }
 export const entryCategories: Array<{kind:Exclude<EntryKind,'md-phd-scholarship'>; title:string; audience:string; description:string}> = [

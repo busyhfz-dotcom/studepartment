@@ -1,5 +1,6 @@
 // Canonical choices shared by profile forms, discovery and the seed.
 export const researchTopics = [
+  ["endocrinology-diabetes", "Endocrinology and diabetes"],
   [
     "oncology",
     "Oncology"

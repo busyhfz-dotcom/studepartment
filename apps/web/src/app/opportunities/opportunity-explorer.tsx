@@ -1,4 +1,7 @@
 "use client";
+import { Competition, DueDate, ListingEligibility } from "@/components/opportunities/listing-facts";
+import { OpportunitySignals } from "@/components/opportunities/opportunity-signals";
+import { featuredCountries, positionRoles } from "@/lib/opportunity-filters";
 
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
@@ -47,7 +50,7 @@ const careerStageOptions: Array<{ value: "" | OpportunityCareerStage; label: str
 
 const topicOptions = [{ value: "", label: "All research topics" }, ...researchTopics.map(([value, label]) => ({ value, label }))];
 
-const filterKeys = ["q", "type", "topic", "country", "deadlineWithinDays", "career", "funder", "sourceRecordId", "eligibilityCountry", "audience"] as const;
+const filterKeys = ["q", "type", "topic", "country", "deadlineWithinDays", "career", "funder", "sourceRecordId", "eligibilityCountry", "audience", "role"] as const;
 type FilterKey = (typeof filterKeys)[number] | "sort";
 type SearchFilters = Record<FilterKey, string>;
 
@@ -62,6 +65,7 @@ function readFilters(params: URLSearchParams): SearchFilters {
     funder: params.get("funder") ?? "",
     sourceRecordId: params.get("sourceRecordId") ?? "",
     eligibilityCountry: params.get("eligibilityCountry") ?? "",
+    role: params.get("role") ?? "",
     audience: params.get("audience") === "md-phd" ? "md-phd" : "",
     sort: readOpportunitySort(params.get("sort")),
   };
@@ -88,7 +92,7 @@ function typeLabel(value: OpportunityTypeValue) {
   return typeOptions.find((option) => option.value === value)?.label.replace(/s$/, "") ?? value;
 }
 
-export function OpportunityExplorer({ countryCodes }: { countryCodes: string[] }) {
+export function OpportunityExplorer(_options: { countryCodes: string[] }) {
   const urlParams = new URLSearchParams(useSearchParams().toString());
   const rememberedCountry = useOpportunityCountry();
   if (!urlParams.has("country") && rememberedCountry) urlParams.set("country", rememberedCountry);
@@ -220,7 +224,7 @@ export function OpportunityExplorer({ countryCodes }: { countryCodes: string[] }
             </label>
             <label>
               <span>Country</span>
-              <CountrySelect name="country" ariaLabel="Country" availableCodes={countryCodes} onChange={(value) => changeFilter("country", value)} value={filters.country} />
+              <CountrySelect name="country" ariaLabel="Location" availableCodes={featuredCountries} groupRegions onChange={(value) => changeFilter("country", value)} value={filters.country} />
             </label>
             <label>
               <span>Career stage</span>
@@ -247,7 +251,8 @@ export function OpportunityExplorer({ countryCodes }: { countryCodes: string[] }
             </label>
           </div>
           <details className={styles.advancedFilters} open={filters.funder || filters.sourceRecordId || filters.eligibilityCountry ? true : undefined}>
-            <summary>More funding and eligibility filters</summary>
+            <summary>More funding, role and eligibility filters</summary>
+            <label>Position role <select name="role" value={filters.role} onChange={event=>changeFilter("role",event.target.value)}><option value="">Any role</option>{Object.entries(positionRoles).map(([key,role])=><option value={key} key={key}>{role.label}</option>)}</select></label>
             <div className={styles.filterGrid}>
               <label>
                 <span>Funder or institution</span>
@@ -329,13 +334,16 @@ export function OpportunityExplorer({ countryCodes }: { countryCodes: string[] }
                   <div className={styles.metaGrid}>
                     <div>
                       <span>Deadline</span>
-                      <strong>{opportunity.deadlinePrecision === "rolling" ? "Rolling" : formatDate(opportunity.deadline)}</strong>
+                      <DueDate item={opportunity} />
                     </div>
                     <div>
                       <span>Last verified</span>
                       <strong>{formatDate(opportunity.lastVerifiedAt)}</strong>
                     </div>
                   </div>
+                  <p><strong>Eligibility</strong> · <ListingEligibility item={opportunity} /></p>
+                  <p><strong>Competition</strong> · <Competition item={opportunity} /></p>
+                  <OpportunitySignals item={opportunity} />
                   <div className={styles.tagRow}>
                     {opportunity.researchInterests.slice(0, 4).map((item) => <span key={item}>{item}</span>)}
                     {opportunity.methods.slice(0, 2).map((item) => <span key={item}>{item}</span>)}
@@ -407,7 +415,7 @@ export function OpportunityExplorer({ countryCodes }: { countryCodes: string[] }
                   </div>
                   <SaveOpportunityButton className={styles.secondaryAction} opportunityId={opportunity.id} />
                   <a className={styles.secondaryAction} href={"/assistant?opportunity=" + opportunity.id}>Ask assistant</a>
-                  <a className={styles.primaryAction} href={opportunity.applicationUrl ?? opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application</a>
+                  <a className={styles.primaryAction} href={opportunity.applicationUrl ?? opportunity.sourceUrl} rel="noreferrer" target="_blank">Apply now ↗</a>
                 </aside>
               </article>
             ))}

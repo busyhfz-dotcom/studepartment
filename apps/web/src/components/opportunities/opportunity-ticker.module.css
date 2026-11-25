@@ -1,9 +1,9 @@
 .heroDesk {
   position: relative;
   isolation: isolate;
-  color: #f5f5f5;
-  background: #0f0f0f;
-  border: 1px solid #505050;
+  color: #f2f3f9;
+  background: #23253d;
+  border: 1px solid #484a79;
   border-radius: 16px;
   overflow: hidden;
 }
@@ -15,35 +15,35 @@
   align-items: center;
   gap: 10px 20px;
   padding: 12px clamp(14px, 2vw, 24px);
-  background: #1c1c1c;
-  color: #d4d4d4;
+  background: #2c2f48;
+  color: #d2d3e5;
   font-size: 12px;
 }
 
-.deskHeading { border-bottom: 1px solid #444; }
-.deskFooter { border-top: 1px solid #444; }
+.deskHeading { border-bottom: 1px solid #3d3f70; }
+.deskFooter { border-top: 1px solid #3d3f70; }
 .deskFooter a, .latestLoading a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .liveLabel { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; color: #fff; }
 .liveDot { width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px #ffffff21, 0 0 14px #ffffff70; }
 .tickerMotionToggle, .detailTop button {
   padding: 7px 11px;
-  border: 1px solid #777;
+  border: 1px solid #6b6b96;
   border-radius: 7px;
   background: transparent;
   color: #fff;
   cursor: pointer;
 }
 .tickerMotionToggle { min-height: 40px; }
-.tickerMotionToggle:hover, .detailTop button:hover { background: #363636; }
-.latestLoading { margin: 0; padding: 24px; color: #d1d1d1; font-size: 13px; }
+.tickerMotionToggle:hover, .detailTop button:hover { background: #3e4260; }
+.latestLoading { margin: 0; padding: 24px; color: #d0d1e3; font-size: 13px; }
 .latestList { overflow-x: auto; direction: ltr; overscroll-behavior-x: contain; scrollbar-width: none; }
 .latestList::-webkit-scrollbar { display: none; }
-.latestList:focus-visible { outline: 2px solid #eee; outline-offset: -2px; }
+.latestList:focus-visible { outline: 2px solid #ebecf5; outline-offset: -2px; }
 .latestList[data-manual="true"], .latestList[data-manual="true"] .latestRow { cursor: grab; }
 .latestList[data-dragging="true"], .latestList[data-dragging="true"] * { cursor: grabbing; user-select: none; }
 .latestTrack { display: flex; width: max-content; }
 .latestGroup { display: flex; }
-.tickerItem { position: relative; width: clamp(235px, 31vw, 330px); border-inline-end: 1px solid #3e3e3e; }
+.tickerItem { position: relative; width: clamp(235px, 31vw, 330px); border-inline-end: 1px solid #383a6b; }
 .latestRow {
   display: flex;
   flex-direction: column;
@@ -59,34 +59,34 @@
   text-align: start;
   cursor: pointer;
 }
-.latestRow:hover, .latestRow:focus-visible { background: #282828; }
-.latestRow:focus-visible { outline: 2px solid #eee; outline-offset: -2px; }
+.latestRow:hover, .latestRow:focus-visible { background: #343853; }
+.latestRow:focus-visible { outline: 2px solid #ebecf5; outline-offset: -2px; }
 .latestRow strong, .latestRow small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .latestRow strong { font-size: 14px; line-height: 1.4; }
-.latestRow small { margin-top: 4px; color: #c4c4c4; font-size: 11px; }
-.kind { display: block; margin-bottom: 5px; color: #ddd; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
-.newChip, .badge { display: inline-block; border-radius: 4px; padding: 2px 6px; background: #363636; color: #f5f5f5; font-size: 10px; font-weight: 750; }
-.newChip { margin-inline-start: 6px; background: #ececec; color: #171717; letter-spacing: normal; }
-.deadline { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 9px; font-size: 11px; color: #c4c4c4; }
-.urgent .badge { background: #eee; color: #171717; }
-.soon .badge { background: #545454; }
-.open .badge { background: #303030; }
+.latestRow small { margin-top: 4px; color: #c3c4dc; font-size: 11px; }
+.kind { display: block; margin-bottom: 5px; color: #dbdceb; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.newChip, .badge { display: inline-block; border-radius: 4px; padding: 2px 6px; background: #3e4260; color: #f2f3f9; font-size: 10px; font-weight: 750; }
+.newChip { margin-inline-start: 6px; background: #e9eaf4; color: #282b44; letter-spacing: normal; }
+.deadline { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 9px; font-size: 11px; color: #c3c4dc; }
+.urgent .badge { background: #ebecf5; color: #282b44; }
+.soon .badge { background: #4c4d7c; }
+.open .badge { background: #3a3e5b; }
 .tickerShare { position: absolute; inset-block-end: 7px; inset-inline-start: 16px; }
-.opportunityDetail { position: absolute; inset: 0; z-index: 2; overflow: auto; padding: 16px 20px; background: #202020; }
-.detailTop { display: flex; justify-content: space-between; align-items: center; color: #ddd; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
+.opportunityDetail { position: absolute; inset: 0; z-index: 2; overflow: auto; padding: 16px 20px; background: #2d315e; }
+.detailTop { display: flex; justify-content: space-between; align-items: center; color: #dbdceb; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
 .detailTop button { width: 44px; height: 44px; padding: 0; font-size: 22px; }
 .opportunityDetail h3 { margin: 4px 0; font-size: clamp(17px, 2.2vw, 27px); }
-.opportunityDetail p, .detailDeadline { margin: 0 0 7px; color: #ccc; font-size: 12px; }
+.opportunityDetail p, .detailDeadline { margin: 0 0 7px; color: #cbcce0; font-size: 12px; }
 .detailActions { inline-size: min(100%, 280px); margin-block-start: 12px; }
 .desktopControl { display: none; }
 
 @media (min-width: 1024px) {
   .heroDesk {
-    border-color: #515151;
+    border-color: #494b7a;
     border-radius: 19px;
-    box-shadow: 0 18px 44px #0005, inset 0 1px 0 #ffffff0b;
+    box-shadow: 0 18px 44px #14183a55, inset 0 1px 0 #ffffff0b;
   }
-  .deskHeading { background: linear-gradient(110deg, #222, #191919 68%); }
+  .deskHeading { background: linear-gradient(110deg, #303469, #2a2d46 68%); }
   .mobileControl { display: none; }
   .desktopControl { display: inline-flex; align-items: center; gap: 8px; }
   .tickerMotionToggle {
@@ -96,51 +96,57 @@
     min-inline-size: 105px;
     min-block-size: 43px;
     padding: 5px 11px 5px 6px;
-    border-color: #626262;
+    border-color: #585986;
     border-radius: 12px;
-    background: #232323;
-    color: #f1f1f1;
+    background: #31344f;
+    color: #eeeff7;
     font: 700 12px/1.3 var(--font-sans), Arial, sans-serif;
     transition: border-color .18s, background-color .18s, box-shadow .18s;
   }
-  .tickerMotionToggle:hover { border-color: #8c8c8c; background: #303030; }
+  .tickerMotionToggle:hover { border-color: #7e7da6; background: #3a3e5b; }
   .controlBadge {
     display: grid;
     place-items: center;
     inline-size: 27px;
     block-size: 27px;
     border-radius: 7px;
-    background: #eeeeee;
-    color: #181818;
+    background: #ebecf5;
+    color: #292c45;
   }
   .controlBadge svg { inline-size: 17px; block-size: 17px; }
   .tickerMotionToggle:focus-visible, .detailTop button:focus-visible {
-    outline: 2px solid #eee;
+    outline: 2px solid #ebecf5;
     outline-offset: 3px;
   }
   .tickerItem {
-    background: linear-gradient(155deg, #191919, #131313 78%);
-    border-inline-end-color: #333;
+    background: linear-gradient(155deg, #2a2d46, #252840 78%);
+    border-inline-end-color: #3c405d;
   }
   .latestRow { transition: background-color .18s; }
   .latestRow:hover, .latestRow:focus-visible { background: #ffffff0b; }
   .opportunityDetail {
-    background: radial-gradient(ellipse at 5% 0%, #2c2c2c, #191919 68%);
+    background: radial-gradient(ellipse at 5% 0%, #373b57, #2a2d46 68%);
     padding: 18px 24px;
     animation: detailReveal .2s ease-out both;
   }
   .detailTop button {
     display: grid;
     place-items: center;
-    border-color: #626262;
+    border-color: #585986;
     border-radius: 12px;
-    background: #232323;
+    background: #31344f;
     transition: border-color .18s, background-color .18s, color .18s;
   }
-  .detailTop button:hover { background: #ededed; border-color: #ededed; color: #181818; }
+  .detailTop button:hover { background: #eaecff; border-color: #eaecff; color: #292c45; }
   @keyframes detailReveal { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) {
     .tickerMotionToggle, .latestRow, .detailTop button { transition: none; }
     .opportunityDetail { animation: none; }
   }
 }
+.personalize { display:flex; flex-wrap:wrap; gap:8px; padding:8px 14px 12px; }
+.personalize select { border:1px solid #8b94c5; border-radius:8px; background:#303760; color:#f0f1ff; padding:6px 10px; max-width:100%; min-height:38px; }
+.urgent .badge { color:#ffe0e8; background:#72264a; }
+.urgent .badge::before { content:""; display:inline-block; inline-size:6px; block-size:6px; background:#ffa6bb; border-radius:50%; margin-inline-end:5px; animation:tickerDuePulse 1.5s ease-in-out 3; }
+@keyframes tickerDuePulse { 50% { opacity:.28; } }
+@media(prefers-reduced-motion:reduce) { .urgent .badge::before { animation:none; } }

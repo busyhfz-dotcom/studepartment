@@ -113,7 +113,7 @@ export function toGrantsGovRecord(hit: SearchHit, synopsis: Synopsis | undefined
     methodSlugs: methodSlugsFor(searchable),
     status: "ACTIVE",
     metadata: { number: hit.number, agencyCode: hit.agencyCode, agencyName: decodeEntities(hit.agency), oppStatus: hit.oppStatus,
-      openingDate: forecast?.opening, awardMin: synopsis?.awardFloor, awardMax: synopsis?.awardCeiling, awardCurrency: 'USD', fundingRegion: 'United States' },
+      openingDate: forecast?.opening, awardMin: synopsis?.awardFloor, awardMax: synopsis?.awardCeiling, awardCurrency: 'USD', fundingRegion: 'United States', eligibilitySummary: cleanDescription(synopsis?.applicantEligibilityDesc, 320) || undefined },
   };
 }
 

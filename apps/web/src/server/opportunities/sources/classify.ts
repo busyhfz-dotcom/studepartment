@@ -39,6 +39,7 @@ export function isMedicalText(...parts: Array<string | null | undefined>): boole
 export function classifyPositionTitle(title: string): PositionType | null {
   const value = title.toLowerCase();
   if (/\bpostdoktor\b/.test(value)) return "POSTDOC";
+  if (/\b(?:tenure[- ]track|(?:assistant|associate|full) professor|professorship|group leader|head of research group|clinical researcher)\b/i.test(value)) return "RESEARCH_ASSISTANTSHIP";
   if (/\bdoktorand\b/.test(value)) return "PHD";
   if (/\b(?:forskningsassistent|forskningssjuksköterska)\b/u.test(value)) return "RESEARCH_ASSISTANTSHIP";
   if (/\b(consultant|matron|nurse practitioner|physician assistant|secretary|accountant)\b/.test(value)) return null;
@@ -67,6 +68,7 @@ export function classifyPositionTitle(title: string): PositionType | null {
 /** Career stages a position is aimed at, using the slugs the career filter understands. */
 export function careerStagesForPosition(type: PositionType, text: string): string[] {
   const value = text.toLowerCase();
+  if (/\b(?:tenure[- ]track|profess(?:or|orship)|group leader|head of research group)\b/i.test(value)) return ["faculty"];
   if (type === "PHD") return ["phd"];
   if (type === "POSTDOC") return ["postdoc"];
   if (type === "FELLOWSHIP") {
@@ -78,6 +80,7 @@ export function careerStagesForPosition(type: PositionType, text: string): strin
 }
 
 const TOPIC_RULES: Array<[string, RegExp]> = [
+  ["endocrinology-diabetes", /\b(?:diabet\w*|endocrin\w*|insulin|metabolic syndrome|thyroid\w*)\b/i],
   ["parasitology", /\b(parasitol\w*|parasiti\w*|medical entomology|malaria|leishmani\w*|helminth\w*)\b/i],
   ["microbiology", /\b(microbi\w*|bacteri\w*|mycolog\w*)\b/i],
   ["biochemistry", /\b(biochem\w*|proteom\w*|enzymolog\w*)\b/i],

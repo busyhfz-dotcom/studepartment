@@ -1,5 +1,7 @@
 import type { OpportunityCareerStage, OpportunityQuery, OpportunityTypeValue } from "@/lib/api-contracts";
 import { readOpportunityPage, readOpportunitySort } from "@/lib/opportunity-pagination";
+import { isCountryCode } from "@/lib/countries";
+import { opportunityRegion, positionRole } from "@/lib/opportunity-filters";
 
 const allowedCareerStages = new Set<OpportunityCareerStage>([
   "student",
@@ -53,7 +55,11 @@ export function parseOpportunityQuery(searchParams: URLSearchParams): Opportunit
   const funder = searchParams.get("funder")?.trim().slice(0, 120);
   const sourceRecordId = searchParams.get("sourceRecordId")?.trim().slice(0, 128);
   const eligibilityCountry = searchParams.get("eligibilityCountry")?.trim().toUpperCase();
+  const region = opportunityRegion(searchParams.get("region") ?? searchParams.get("country"));
+  const role = positionRole(searchParams.get("role"));
   return {
+    ...(region ? { region } : {}),
+    ...(role ? { role } : {}),
     ...(searchParams.get('audience') === 'md-phd' ? {audience:'md-phd' as const} : {}),
     ...(searchParams.get("id") ? { id: searchParams.get("id")!.trim().slice(0, 128) } : {}),
     text: (searchParams.get("q") ?? "").trim().slice(0, 240),
@@ -62,7 +68,7 @@ export function parseOpportunityQuery(searchParams: URLSearchParams): Opportunit
     ),
     topicSlugs: readList(searchParams, "topic"),
     methodSlugs: readList(searchParams, "method"),
-    countryCodes: readList(searchParams, "country").map((value) => value.toUpperCase().slice(0, 2)),
+    countryCodes: readList(searchParams, "country").map((value) => value.toUpperCase()).filter(isCountryCode),
     deadlineWithinDays: readDeadlineWindow(searchParams),
     includeStale: searchParams.get("includeStale") === "true",
     limit: readLimit(searchParams),

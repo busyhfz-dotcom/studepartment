@@ -22,6 +22,7 @@ import { lifeArcSource } from "./lifearc";
 import { maxPlanckSource } from "./max-planck";
 import { mayoClinicResearchSource } from "./mayo-clinic-research";
 import { nhsJobsSource } from "./nhs-jobs";
+import { nkiResearchCareersSource } from "./nki-research-careers";
 import { northernUniversityCareerSources } from "./northern-university-careers";
 import { neurologicalFoundationSource } from "./nz-neurological-foundation";
 import { oriseResearchFellowshipsSource } from "./orise-research-fellowships";
@@ -42,6 +43,7 @@ import { ukriBioscienceSource, ukriMedicalResearchSource, ukriRelatedMedicalSour
 import { californiaResearchCareerSources } from "./university-california-research";
 import { usaJobsSource } from "./usajobs";
 import { verifiedCancerFundingSource } from "./verified-cancer-funding";
+import { verifiedWorkbookCallsSource } from "./verified-workbook-calls";
 import { wellcomeSource } from "./wellcome";
 import { workdayResearchSources } from "./workday-research-careers";
 import { westlakeResearchCareersSource } from "./westlake-research-careers";
@@ -50,7 +52,9 @@ import { westlakeResearchCareersSource } from "./westlake-research-careers";
 export const opportunitySources: OpportunitySourceConnector[] = [
   daadScholarshipsSource, daadDoctoralSource,
   verifiedCancerFundingSource,
+  verifiedWorkbookCallsSource,
   programmeRegistrySource,
+  nkiResearchCareersSource,
   commonwealthMedicalMastersSource,
   universityDegreeFundingSource,
   queenslandFundedProjectsSource,

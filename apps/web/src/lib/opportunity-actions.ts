@@ -1,5 +1,5 @@
 import type { OpportunityResult } from './api-contracts';
-export type ShareableOpportunity = {id:string;title:string;type?:string;deadline?:string|null;deadlinePrecision?:string};
+export type ShareableOpportunity = {id:string;title:string;type?:string;deadline?:string|null;deadlinePrecision?:string; views?:number; likes?:number; liked?:boolean};
 export function opportunityPath(item:Pick<ShareableOpportunity,'id'|'type'>) {
   const type=(item.type||'position').toLowerCase().replace(/[ _]+/g,'-');
   const kind=['grant','masters-scholarship','phd-scholarship','md-scholarship'].includes(type)?type:'position';
@@ -7,6 +7,27 @@ export function opportunityPath(item:Pick<ShareableOpportunity,'id'|'type'>) {
 }
 function icsEscape(value:string){return value.replace(/\\/g,'\\\\').replace(/\r?\n/g,'\\n').replace(/;/g,'\\;').replace(/,/g,'\\,');}
 const utcStamp=(date:Date)=>date.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+export function calendarLinks(item:ShareableOpportunity,origin:string) {
+  const deadline = new Date(item.deadline ?? "");
+  if (!Number.isFinite(deadline.getTime()) || item.deadlinePrecision === "month-only") return null;
+  const allDay = item.deadlinePrecision === "date-only";
+  const nextDay = new Date(deadline.getTime() + 86_400_000);
+  const end = allDay ? nextDay : new Date(deadline.getTime() + 15 * 60_000);
+  const day = (date: Date) => date.toISOString().slice(0, 10);
+  const title = 'Application deadline: ' + item.title;
+  const details = new URL(opportunityPath(item), origin).href;
+  const range = allDay ? day(deadline).replaceAll('-', '') + '/' + day(end).replaceAll('-', '') : utcStamp(deadline) + '/' + utcStamp(end);
+  const outlook = new URLSearchParams({
+    rru:'addevent', subject:title, body:details, allday:String(allDay),
+    startdt:allDay ? day(deadline) : deadline.toISOString(),
+    enddt:allDay ? day(end) : end.toISOString(),
+  });
+  return {
+    google:'https://calendar.google.com/calendar/render?' + new URLSearchParams({action:'TEMPLATE', text:title, dates:range, details}),
+    outlook:'https://outlook.office.com/calendar/action/compose?' + outlook,
+    outlookPersonal:'https://outlook.live.com/calendar/0/deeplink/compose?' + outlook,
+  };
+}
 export function reminderCalendar(items:ShareableOpportunity[],days:number,origin:string,now=new Date()) {
   if(!Number.isInteger(days)||days<1||days>90)throw new Error('Choose a reminder between 1 and 90 days.');
   const events=items.filter(item=>item.deadline&&!Number.isNaN(Date.parse(item.deadline))).map(item=>{
@@ -31,6 +52,6 @@ export function csvCell(value:unknown) {
   return '"'+text.replaceAll('"','""')+'"';
 }
 export function opportunityCsv(rows:OpportunityResult[],origin:string){
-  const headings=['Close date','Status','Title','Agency','Region','Award min','Award max','Currency','Region context','Source URL','Provenant URL'];
-  return '\uFEFF'+[headings,...rows.map(item=>[item.deadline?.slice(0,10)||'',item.grant?.status||'Open',item.title,item.grant?.agency||item.organization,item.grant?.region||'Not specified',item.grant?.awardMin??'',item.grant?.awardMax??'',item.grant?.currency||'',item.grant?.regionContext||'See source eligibility',item.sourceUrl,new URL(opportunityPath(item),origin).href])].map(row=>row.map(csvCell).join(',')).join('\r\n')+'\r\n';
+  const headings=['Close date','Status','Title','Agency','Region','Award min','Award max','Currency','Eligibility','Competition rate','Competition basis','Region context','Source URL','Provenant URL'];
+  return '\uFEFF'+[headings,...rows.map(item=>[item.deadline?.slice(0,10)||'',item.grant?.status||'Open',item.title,item.grant?.agency||item.organization,item.grant?.region||'Not specified',item.grant?.awardMin??'',item.grant?.awardMax??'',item.grant?.currency||'',item.publishedEligibility||'',item.competition?.rate??'',item.competition?.basis||'',item.grant?.regionContext||'See source eligibility',item.sourceUrl,new URL(opportunityPath(item),origin).href])].map(row=>row.map(csvCell).join(',')).join('\r\n')+'\r\n';
 }

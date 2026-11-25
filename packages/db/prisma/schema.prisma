@@ -234,6 +234,7 @@ model User {
   accounts        Account[]
   evidenceActions EvidenceRecord[] @relation("EvidenceActor")
   savedOpportunities SavedOpportunity[]
+  opportunityLikes   OpportunityLike[]
   discoveryFeedback DiscoveryFeedback[]
   productEvents ProductEvent[]
   ownedOrganization Organization?      @relation("OrganizationOwner")
@@ -598,6 +599,8 @@ model Opportunity {
   methods                OpportunityMethod[]
   provenance             OpportunityProvenance[]
   savedBy                SavedOpportunity[]
+  likes                  OpportunityLike[]
+  viewCount              Int                          @default(0)
 
   @@index([organizationId, type])
   @@index([status, deadline])
@@ -751,6 +754,17 @@ model SavedOpportunity {
   @@index([deadlineAlert, lastAlertedAt])
 }
 
+
+model OpportunityLike {
+  userId        String
+  opportunityId String
+  createdAt     DateTime    @default(now())
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@id([userId, opportunityId])
+  @@index([opportunityId])
+}
 
 model DiscoveryFeedback {
   id         String             @id @default(cuid())

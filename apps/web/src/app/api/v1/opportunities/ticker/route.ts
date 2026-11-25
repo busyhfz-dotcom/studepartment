@@ -7,7 +7,7 @@ import { consumeClientRateLimit, RateLimitExceededError, rateLimitErrorResponse 
 export async function GET(request: NextRequest) {
   try {
     await consumeClientRateLimit(request, "opportunities:ticker", { windowSeconds: 60, max: 30 });
-    const data = await getPublicOpportunityTicker();
+    const data = await getPublicOpportunityTicker({ location:request.nextUrl.searchParams.get("location"), subject:request.nextUrl.searchParams.get("subject") });
     const body: ApiSuccess<PublicOpportunityTicker> = { success: true, data };
     return NextResponse.json(body, { headers: { "Cache-Control": "public, max-age=60" } });
   } catch (error) {
