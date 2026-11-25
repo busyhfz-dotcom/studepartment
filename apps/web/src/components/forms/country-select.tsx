@@ -2,7 +2,6 @@
 
 import type { ChangeEvent } from "react";
 import { countries, isCountryCode } from "@/lib/countries";
-import { opportunityRegion, opportunityRegions } from "@/lib/opportunity-filters";
 
 function makeRoomForCountryPicker(select: HTMLSelectElement) {
   const pickerHeight = Math.min(320, window.innerHeight * .55, select.options.length * 38 + 14);
@@ -24,7 +23,6 @@ export function CountrySelect({
   anyLabel = "Any country",
   ariaLabel,
   availableCodes,
-  groupRegions = false,
 }: {
   value?: string;
   defaultValue?: string;
@@ -33,13 +31,12 @@ export function CountrySelect({
   anyLabel?: string;
   ariaLabel?: string;
   availableCodes?: readonly string[];
-  groupRegions?: boolean;
 }) {
   const controlled = value !== undefined;
   // Keep an existing stored code selectable even if it is not in the list, so
   // saving a form never silently clears it.
   const current = (controlled ? value : defaultValue ?? "").toUpperCase();
-  const unknownCurrent = current && !isCountryCode(current) && !(groupRegions && opportunityRegion(current)) ? current : null;
+  const unknownCurrent = current && !isCountryCode(current) ? current : null;
   return (
     <select
       aria-label={ariaLabel}
@@ -53,9 +50,6 @@ export function CountrySelect({
       onChange={onChange ? (event: ChangeEvent<HTMLSelectElement>) => onChange(event.target.value) : undefined}
     >
       <option value="">{anyLabel}</option>
-      {groupRegions ? <optgroup label="Regions">
-        {Object.entries(opportunityRegions).map(([key, region]) => <option key={key} value={key}>{region.label}</option>)}
-      </optgroup> : null}
       {unknownCurrent ? <option value={unknownCurrent}>{unknownCurrent}</option> : null}
       {countries.filter(([code]) => !availableCodes || code === current || availableCodes.includes(code)).map(([code, label]) => (
         <option key={code} value={code}>{label}</option>

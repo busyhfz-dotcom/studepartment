@@ -3,10 +3,10 @@ import type {OpportunityResult} from '@/lib/api-contracts';
 import {opportunityPath} from '@/lib/opportunity-actions';
 import {ListingActions} from './listing-actions';
 import {DeadlineReminder} from './deadline-reminder';
-import {Competition, DueDate, ListingEligibility} from './listing-facts';
+import {AwardBasis, Competition, DueDate, formatAward, ListingEligibility} from './listing-facts';
 import {OpportunitySignals} from './opportunity-signals';
+import { Institution } from './brand-mark';
 import styles from './grant-table.module.css';
-function award(value:string|undefined,currency:string|undefined){return value===undefined?'Not specified':(currency?currency+' ':'')+Number(value).toLocaleString('en',{maximumFractionDigits:2});}
 export function GrantTable({items,params,onReview}:{items:OpportunityResult[];params:string;onReview?:(item:OpportunityResult)=>void}){
   return <section className={styles.section} aria-label="Grant comparison">
     <div className={styles.toolbar}><div><strong>Compare grants</strong><p>Published amounts only. Programme region and applicant eligibility are distinguished below.</p></div>
@@ -19,10 +19,16 @@ export function GrantTable({items,params,onReview}:{items:OpportunityResult[];pa
         <td data-label="Close date"><DueDate item={item}/></td>
         <td data-label="Status"><span className={styles.status}>{item.grant?.status||'Check source'}</span></td>
         <td data-label="Title" className={styles.title}>{onReview?<button data-original-content type="button" onClick={()=>onReview(item)}>{item.title}</button>:<a data-original-content href={opportunityPath(item)}>{item.title}</a>}<small data-original-content>{item.source.recordId}</small></td>
-        <td data-label="Agency" data-original-content>{item.grant?.agency||item.organization}</td>
+        <td data-label="Agency"><Institution name={item.grant?.agency || item.organization} website={item.organizationWebsite} /></td>
         <td data-label="Region"><span data-original-content>{item.grant?.region||'Not specified'}</span><small>{item.grant?.regionContext||'See source eligibility'}</small></td>
-        <td data-label="Award min">{award(item.grant?.awardMin,item.grant?.currency)}</td>
-        <td data-label="Award max">{award(item.grant?.awardMax,item.grant?.currency)}</td>
+        <td data-label="Award min" className={styles.amount}>
+          {formatAward(item.grant?.awardMin,item.grant?.currency)}
+          {item.grant?.awardMin && !item.grant.awardMax ? <AwardBasis grant={item.grant} /> : null}
+        </td>
+        <td data-label="Award max" className={styles.amount}>
+          {formatAward(item.grant?.awardMax,item.grant?.currency)}
+          {item.grant?.awardMax || item.grant?.awardNote ? <AwardBasis grant={item.grant} /> : null}
+        </td>
         <td data-label="Eligibility"><ListingEligibility item={item}/></td>
         <td data-label="Competition"><Competition item={item}/></td>
         <td data-label="Actions"><div className={styles.rowActions}>

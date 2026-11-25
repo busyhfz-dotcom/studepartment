@@ -3,6 +3,7 @@ import { isMedicalText, methodSlugsFor, topicSlugsFor } from "./classify";
 import { mapWithConcurrency, requestJson } from "./http";
 import { cleanDescription, decodeEntities } from "./text";
 import type { FetchLike, OpportunitySourceConnector } from "./types";
+import { euAwardsFromDetails, euTopicDetailsUrl, type EuAward } from "./eu-awards";
 
 // The portal's own public search service. "SEDIA" is the published key the
 // portal itself uses; no account is needed. EU content is reusable under the
@@ -19,6 +20,33 @@ type SearchResponse = { totalResults: number; results?: SearchResult[] };
 const HEALTH_PROGRAMMES = /^(HORIZON-HLTH|HORIZON-JU-IHI|HORIZON-JU-GH-EDCTP3|EU4H|HORIZON-MSCA|ERC-|HORIZON-MISS-[\d-]*CANCER|HORIZON-MISS-\d{4}-\d{2}-CANCER)/;
 
 const first = (metadata: Metadata, key: string) => metadata[key]?.[0]?.trim() ?? "";
+const awardCache = new Map<string, { checkedAt: number; awards: Record<string, EuAward> }>();
+
+async function refreshEuAwardData(rows: SearchResult[], fetch: FetchLike, now: Date) {
+  const groups = new Map<string, string>();
+  for (const row of rows) {
+    const id = first(row.metadata, "identifier");
+    const group = first(row.metadata, "callIdentifier") || id;
+    if (id && !groups.has(group)) groups.set(group, id);
+  }
+  for (const group of awardCache.keys()) {
+    if (!groups.has(group)) awardCache.delete(group);
+  }
+  const refresh = [...groups].filter(([group]) =>
+    now.getTime() - (awardCache.get(group)?.checkedAt ?? 0) > 24 * 3_600_000).slice(0, 18);
+  await mapWithConcurrency(refresh, 3, async ([group, id]) => {
+    const url = euTopicDetailsUrl(id);
+    if (!url) return;
+    try {
+      const payload = await requestJson<Parameters<typeof euAwardsFromDetails>[0]>(fetch, url);
+      if (!payload.TopicDetails?.identifier) return;
+      awardCache.set(group, { checkedAt: now.getTime(), awards: euAwardsFromDetails(payload) });
+    } catch {
+      // Keep the last published values when the secondary detail endpoint is unavailable.
+    }
+  });
+  return Object.assign({}, ...Array.from(awardCache.values(), item => item.awards)) as Record<string, EuAward>;
+}
 
 export function euFunder(identifier: string): { name: string; website: string } {
   if (identifier.startsWith("ERC-")) return { name: "European Research Council", website: "https://erc.europa.eu" };
@@ -60,7 +88,7 @@ export function isHealthTopic(metadata: Metadata): boolean {
   return isMedicalText(first(metadata, "title"));
 }
 
-export function toEuRecord(result: SearchResult, now: Date): OpportunityIngestionRecord | null {
+export function toEuRecord(result: SearchResult, now: Date, award?: EuAward): OpportunityIngestionRecord | null {
   const metadata = result.metadata;
   const identifier = first(metadata, "identifier");
   const title = decodeEntities(first(metadata, "title"));
@@ -97,7 +125,7 @@ export function toEuRecord(result: SearchResult, now: Date): OpportunityIngestio
     topicSlugs: topicSlugsFor(searchable),
     methodSlugs: methodSlugsFor(searchable),
     status: "ACTIVE",
-    metadata: { identifier, callIdentifier: first(metadata, "callIdentifier"), status: status === STATUS_OPEN ? "open" : "forthcoming", fundingRegion: 'Europe', agencyName: funder.name },
+    metadata: { identifier, callIdentifier: first(metadata, "callIdentifier"), status: status === STATUS_OPEN ? "open" : "forthcoming", fundingRegion: 'Europe', agencyName: funder.name, ...award },
   };
 }
 
@@ -148,9 +176,13 @@ export const euFundingTendersSource: OpportunitySourceConnector = {
     const pageNumbers = Array.from({ length: Math.max(pageCount - 1, 0) }, (_, index) => index + 2);
     const following = await mapWithConcurrency(pageNumbers, 3, readPage);
     const results = [firstPage, ...following].flatMap((page) => page.results);
-    const records = results
-      .filter((result) => isHealthTopic(result.metadata))
-      .map((result) => toEuRecord(result, context.now))
+    const health = results.filter((result) => isHealthTopic(result.metadata));
+    const awardBudget = AbortSignal.timeout(22_000);
+    const awards = await refreshEuAwardData(health, (input, init) => context.fetch(input, {
+      ...init, signal: init?.signal ? AbortSignal.any([init.signal, awardBudget]) : awardBudget,
+    }), context.now);
+    const records = health
+      .map((result) => toEuRecord(result, context.now, awards[first(result.metadata, "identifier").toUpperCase()]))
       .filter((record): record is OpportunityIngestionRecord => Boolean(record));
     context.log(`EU Funding & Tenders: ${records.length} health topics of ${results.length} open or forthcoming`);
     return records;

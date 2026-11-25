@@ -24,3 +24,18 @@ export function Competition({ item }: { item: OpportunityResult }) {
 export function ListingEligibility({ item }: { item: OpportunityResult }) {
   return <span className={styles.eligibility}>{item.publishedEligibility || "Check official eligibility"}</span>;
 }
+
+export function formatAward(value?: string, currency?: string) {
+  return value ? [currency, Number(value).toLocaleString("en", { maximumFractionDigits: 2 })].filter(Boolean).join(" ") : "Not published";
+}
+
+export function AwardBasis({ grant }: { grant?: OpportunityResult["grant"] }) {
+  if (!grant || !grant.awardMin && !grant.awardMax && !grant.awardNote) return null;
+  const text = grant.awardBasis === "indicative" ? "Indicative per project" : "Published amount";
+  return <small className={styles.awardBasis}>
+    {grant.awardSource
+      ? <a href={grant.awardSource} target="_blank" rel="noopener noreferrer">{text} ↗</a>
+      : text}
+    {grant.awardNote ? <span>{grant.awardNote}</span> : null}
+  </small>;
+}

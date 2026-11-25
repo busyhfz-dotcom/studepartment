@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
-import { CountrySelect } from "@/components/forms/country-select";
-import { featuredCountries, opportunitySubjects } from "@/lib/opportunity-filters";
+import { OpportunityLocationPicker } from "@/components/forms/opportunity-location-picker";
+import { deadlineClosingSoon, opportunitySubjects } from "@/lib/opportunity-filters";
 import { ControlIcon } from "@/components/design/control-icon";
 import { ShareOpportunity } from "./share-opportunity";
 import { ListingActions } from "./listing-actions";
+import { Institution } from "./brand-mark";
 import { setMotion, useMotionPreference } from "@/lib/motion-preference";
 import { useTickerScroll } from "./use-ticker-scroll";
 import styles from "./opportunity-ticker.module.css";
@@ -17,6 +18,7 @@ type TickerEntry = {
   kind: "Position" | "Grant";
   title: string;
   organization: string;
+  organizationWebsite?: string | null;
   deadline: string | null;
   deadlinePrecision?: string;
   deadlineLabel: string;
@@ -29,6 +31,7 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     kind: "Position",
     title: item.title,
     organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
+    organizationWebsite: item.organizationWebsite,
     deadline: item.deadline,
     deadlinePrecision: item.deadlinePrecision,
     deadlineLabel: item.deadlineLabel,
@@ -39,6 +42,7 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     kind: "Grant",
     title: item.title,
     organization: item.countryCode ? `${item.organization} · ${item.countryCode}` : item.organization,
+    organizationWebsite: item.organizationWebsite,
     deadline: item.deadline,
     deadlinePrecision: item.deadlinePrecision,
     deadlineLabel: item.deadlineLabel,
@@ -82,6 +86,7 @@ function updatedLabel(value: string | null, now: number) {
 function useLiveTicker(initial: PublicOpportunityTicker, location: string, subject: string) {
   const requestParams = new URLSearchParams({ location, subject }).toString();
   const [shown, setShown] = useState("");
+  const [failed, setFailed] = useState("");
   const [ticker, setTicker] = useState(initial);
   const [now, setNow] = useState<number | null>(null);
   const lastFetch = useRef(0);
@@ -94,9 +99,11 @@ function useLiveTicker(initial: PublicOpportunityTicker, location: string, subje
       lastFetch.current = Date.now();
       try {
         const response = await fetch("/api/v1/opportunities/ticker?" + requestParams, { cache: "no-store" });
-        if (!response.ok) return;
+        if (!response.ok) throw new Error("The opportunity feed is unavailable.");
         const body = await response.json() as { success: boolean; data?: PublicOpportunityTicker };
-        if (cancelled || !body.success || !body.data?.available) return;
+        if (cancelled) return;
+        if (!body.success || !body.data?.available) throw new Error("The opportunity feed is unavailable.");
+        setFailed("");
         setShown(requestParams);
         const next = requestParams + tickerSignature(body.data);
         if (next !== signature.current) {
@@ -106,7 +113,7 @@ function useLiveTicker(initial: PublicOpportunityTicker, location: string, subje
           setTicker((current) => ({ ...current, lastCollectedAt: body.data!.lastCollectedAt }));
         }
       } catch {
-        // Keep showing the current feed; the next refresh will try again.
+        if (!cancelled && shown !== requestParams) setFailed(requestParams);
       } finally {
         if (!cancelled) setNow(Date.now());
       }
@@ -130,7 +137,12 @@ function useLiveTicker(initial: PublicOpportunityTicker, location: string, subje
     };
   }, [requestParams, location, subject]);
 
-  return { ticker, filtering:(Boolean(location || subject) || Boolean(shown)) && shown !== requestParams, updated: now === null ? null : updatedLabel(ticker.lastCollectedAt, now) };
+  const unavailable = failed === requestParams;
+  return {
+    ticker: unavailable ? { ...ticker, available: false } : ticker,
+    filtering: !unavailable && (Boolean(location || subject) || Boolean(shown)) && shown !== requestParams,
+    updated: now === null ? null : updatedLabel(ticker.lastCollectedAt, now),
+  };
 }
 
 /**
@@ -150,13 +162,12 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
   const location = preferences?.location ?? country;
   const activeSubject = preferences?.subject ?? subject;
   const { ticker, updated, filtering } = useLiveTicker(initialTicker, location, activeSubject);
-  const entries = filtering ? [] : buildEntries(ticker);
+  const entries = filtering || !ticker.available ? [] : buildEntries(ticker);
   const [selected, setSelected] = useState<TickerEntry | null>(null);
   const [paused, setPaused] = useState(false);
   const motionEnabled = useMotionPreference("opportunities");
   const playing = motionEnabled && !paused && !selected;
   const scroll = useTickerScroll(playing, entries.length);
-  const motionLabel = playing ? "Pause" : motionEnabled ? "Resume" : "Play";
 
   const countryQuery = location ? "&country=" + encodeURIComponent(location) : "";
   function setFeedFilter(key:"location"|"subject", value:string) {
@@ -171,7 +182,8 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
       <div className={styles.deskHeading}>
         <span className={styles.liveLabel}>{ticker.available ? <i className={styles.liveDot} aria-hidden="true" /> : null}Latest opportunities</span>
         <span>{filtering ? "Updating feed…" : ticker.available ? `${ticker.stats.totalPositions} positions · ${ticker.stats.totalGrants} grants` : "Feed unavailable"}</span>
-        <button type="button" className={styles.tickerMotionToggle} aria-expanded={personalize} onClick={()=>setPersonalize(!personalize)}>Personalize</button>
+        <div className={styles.headingControls}>
+        <button type="button" className={styles.personalizeButton} aria-expanded={personalize} onClick={()=>setPersonalize(!personalize)}>Personalize</button>
         {scroll.overflowing ? <button
           type="button"
           className={styles.tickerMotionToggle}
@@ -186,15 +198,12 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
             }
           }}
         >
-          <span className={styles.mobileControl} aria-hidden="true">{playing ? "Ⅱ" : "▶"} {motionLabel}</span>
-          <span className={styles.desktopControl} aria-hidden="true">
-            <span className={styles.controlBadge}><ControlIcon name={playing ? "pause" : "play"} /></span>
-            {motionLabel}
-          </span>
+          <ControlIcon name={playing ? "pause" : "play"} />
         </button> : null}
+        </div>
       </div>
       {personalize ? <div className={styles.personalize}>
-        <CountrySelect groupRegions availableCodes={featuredCountries} anyLabel="All locations" ariaLabel="Latest opportunities location" value={location} onChange={value=>setFeedFilter("location",value)} />
+        <OpportunityLocationPicker label="Latest opportunities location" value={location} onChange={value=>setFeedFilter("location",value)} />
         <select aria-label="Latest opportunities subject" value={activeSubject} onChange={event=>setFeedFilter("subject",event.target.value)}>
           <option value="">All subjects</option>{opportunitySubjects.map(([id,label])=><option key={id} value={id}>{label}</option>)}
         </select>
@@ -246,10 +255,10 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
                       <span>
                         <span className={styles.kind}>{entry.kind}{entry.isNew ? <b className={styles.newChip}>New</b> : null}</span>
                         <strong data-original-content>{entry.title}</strong>
-                        <small data-original-content>{entry.organization}</small>
+                        <small><Institution name={entry.organization} website={entry.organizationWebsite} /></small>
                       </span>
                       <span className={`${styles.deadline} ${styles[status]}`}>
-                        <span className={styles.badge}>{label}</span>
+                        <span className={styles.badge} data-urgent={deadlineClosingSoon(entry.deadline, entry.deadlinePrecision)}>{label}</span>
                         <time>{entry.deadlineLabel}</time>
                       </span>
                     </button>
@@ -275,7 +284,7 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
             </button>
           </div>
           <h3>{selected.title}</h3>
-          <p>{selected.organization}</p>
+          <p><Institution name={selected.organization} website={selected.organizationWebsite} /></p>
           <div className={styles.detailDeadline}>{selected.deadlineLabel}</div>
           <div className={styles.detailActions}>
             <ListingActions
@@ -293,4 +302,3 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
     </aside>
   );
 }
-

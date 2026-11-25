@@ -663,10 +663,31 @@
   .filterRow .searchbox { grid-column:1 / -1; }
 }
 
-.locationFeature { position:relative; isolation:isolate; overflow:hidden; display:flex; justify-content:space-between; align-items:flex-end; gap:12px; min-height:140px; padding:20px 24px; margin-top:16px; border:1px solid #777db0; border-radius:14px; color:#fff; background:#353b70; }
-.locationFeature::before { content:""; position:absolute; z-index:-1; inset:0; background:linear-gradient(90deg,#2a2c5b 0%,#2a2c5bf7 35%,#28295360 72%,#252a5b22), url("/images/amsterdam-prinsengracht.webp") right 48% / 58% auto no-repeat; }
-.locationFeature strong { font-size:20px; }
-.locationFeature p { margin:5px 0; color:#e5e4ff; }
-.photoCredit { font-size:10px; text-shadow:0 1px 4px #1e2252; }
-@media(max-width:580px) { .locationFeature { flex-direction:column; align-items:flex-start; } .locationFeature::before { background-size:cover; } }
-.page .routeTile.active { color:#242956; background:linear-gradient(135deg,#eadfff,#c0ceff); border-color:#efe8ff; }
+.page .filterRow > div {
+  --picker-fill: #182a4e;
+  --picker-text: #f0f4ff;
+  --picker-border: #5e76ae;
+  --picker-hover: #2b4275;
+  --picker-active: #becdff;
+}
+.filterRow:has(select[aria-label="Position role"]) { grid-template-columns:minmax(0, 2fr) minmax(0, 165px) minmax(0, 1.1fr) minmax(0, .9fr); }
+.filterRow:not(:has(select[aria-label="Position role"])) { grid-template-columns:minmax(0, 2fr) minmax(0, 165px) minmax(0, 1.1fr); }
+.page .filterRow select, .page .searchbox { background:#182a4e; border-color:#5e76ae; color:#f0f4ff; min-block-size:44px; }
+.page .routeTile, .page .result, .page .sourceGuidance, .page .empty { background:linear-gradient(150deg,#192c51,#142443); border-color:#405583; }
+.page .routeTile.active { color:#19264d; background:linear-gradient(135deg,#eee4ff,#b9caff); border-color:#d5caff; }
+.page .gatewayPost { color:#f7f5ff; background:radial-gradient(ellipse at top right,#665ba9,transparent 72%),linear-gradient(145deg,#3c407d,#243563); border-color:#8983d4; }
+.page {
+  --select-menu-bg: #192949;
+  --select-menu-border: #5872ad;
+  --select-menu-hover: #2c4375;
+  --select-menu-selected: #314982;
+  background: radial-gradient(ellipse at 79% 0%, #7260cf33 0%, transparent 42rem),
+    radial-gradient(ellipse at 4% 82%, #263f8455 0%, transparent 38rem), #0c142d;
+}
+@media(max-width:900px) {
+  .filterRow:has(select[aria-label="Position role"]), .filterRow:not(:has(select[aria-label="Position role"])) { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+.fundingAmounts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-block: 18px 9px; }
+.fundingAmounts > div { display: grid; gap: 4px; padding: 12px; border: 1px solid #4c6097; border-radius: 9px; background: #203359; }
+.fundingAmounts strong { color: #cbd8fa; font-size: 12px; }
+.fundingAmounts span { color: #f0f3ff; font-size: 15px; font-variant-numeric: tabular-nums; }

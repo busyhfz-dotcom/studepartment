@@ -1,7 +1,7 @@
 "use client";
 import { Competition, DueDate, ListingEligibility } from "@/components/opportunities/listing-facts";
 import { OpportunitySignals } from "@/components/opportunities/opportunity-signals";
-import { featuredCountries, positionRoles } from "@/lib/opportunity-filters";
+import { positionRoles } from "@/lib/opportunity-filters";
 
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
@@ -19,6 +19,9 @@ import { researchTopics } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
 import { SaveOpportunityButton } from "./save-opportunity-button";
 import { CountrySelect } from "@/components/forms/country-select";
+import { OpportunityLocationPicker } from "@/components/forms/opportunity-location-picker";
+import { LocationFeature } from "@/components/opportunities/location-feature";
+import { Institution } from "@/components/opportunities/brand-mark";
 import { rememberOpportunityCountry, useOpportunityCountry } from "@/lib/opportunity-location";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
 import { ListingActions } from '@/components/opportunities/listing-actions';
@@ -222,10 +225,10 @@ export function OpportunityExplorer(_options: { countryCodes: string[] }) {
                 {topicOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
             </label>
-            <label>
-              <span>Country</span>
-              <CountrySelect name="country" ariaLabel="Location" availableCodes={featuredCountries} groupRegions onChange={(value) => changeFilter("country", value)} value={filters.country} />
-            </label>
+            <div className={styles.locationField}>
+              <span>Location</span>
+              <OpportunityLocationPicker name="country" value={filters.country} onChange={(value) => changeFilter("country", value)} />
+            </div>
             <label>
               <span>Career stage</span>
               <select name="career" onChange={(event) => changeFilter("career", event.target.value)} value={filters.career}>
@@ -270,6 +273,7 @@ export function OpportunityExplorer(_options: { countryCodes: string[] }) {
             <p>The eligible-country filter includes records that explicitly list that country. Location and eligibility are separate.</p>
           </details>
         </form>
+          <LocationFeature value={filters.country} />
       </section>
 
       {error ? <div className={styles.errorBanner} role="alert">{error} <button type="button" onClick={() => setAttempt((previous) => previous + 1)}>Retry search</button></div> : null}
@@ -329,7 +333,7 @@ export function OpportunityExplorer(_options: { countryCodes: string[] }) {
                   </div>
                   <h3 data-original-content><Link href={`/opportunities/${opportunity.id}`}>{opportunity.title}</Link></h3>
                   {titleDistinction(opportunity.title) ? <p style={{ margin: "0 0 6px", fontWeight: 700, color: "#565656" }}>{titleDistinction(opportunity.title)}</p> : null}
-                  <strong data-original-content>{opportunity.organization}</strong>
+                  <strong><Institution name={opportunity.organization} website={opportunity.organizationWebsite} /></strong>
                   <p data-original-content>{opportunity.location}</p>
                   <div className={styles.metaGrid}>
                     <div>

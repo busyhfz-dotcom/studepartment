@@ -1,0 +1,74 @@
+.root {
+  --picker-fill: var(--surface, #fff);
+  --picker-text: var(--text, #263656);
+  --picker-border: var(--line-strong, #d5def1);
+  --picker-hover: var(--accent-soft, #eef2ff);
+  --picker-active: var(--accent-strong, #3c5ed2);
+  position: relative;
+  min-inline-size: 0;
+}
+
+.trigger {
+  display: grid;
+  grid-template-columns: 17px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 9px;
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding: 8px 12px;
+  color: var(--picker-text);
+  background: var(--picker-fill);
+  border: 1px solid var(--picker-border);
+  border-radius: 10px;
+  text-align: start;
+  font: 650 13px/1.25 var(--font-sans), sans-serif;
+  cursor: pointer;
+}
+.trigger span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trigger:hover, .trigger[aria-expanded="true"] { border-color: var(--picker-active); }
+.root svg { inline-size: 16px; block-size: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.trigger .pin { inline-size: 17px; block-size: 17px; color: var(--picker-active); }
+.root [aria-expanded="true"] > svg:last-child { rotate: 180deg; }
+.trigger > svg:last-child, .region svg { transition: rotate .18s ease; }
+
+.panel {
+  position: absolute;
+  z-index: 8;
+  inset-block-start: calc(100% + 6px);
+  inset-inline-start: 0;
+  inline-size: max(100%, min(235px, calc(100vw - 44px)));
+  max-block-size: min(50vh, 330px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 5px;
+  background: var(--picker-fill);
+  color: var(--picker-text);
+  border: 1px solid var(--picker-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px #111a3d40;
+  animation: pickerIn .16s var(--ease, ease-out) both;
+}
+@keyframes pickerIn { from { opacity: 0; translate: 0 -3px; } to { opacity: 1; translate: 0 0; } }
+.panel button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  inline-size: 100%;
+  min-block-size: 37px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.panel button:hover, .panel button:focus-visible, .panel button[aria-pressed="true"] { background: var(--picker-hover); }
+.panel button[aria-pressed="true"] { color: var(--picker-active); font-weight: 750; }
+.panel .region { font-weight: 720; }
+.panel .reset { margin-block-end: 3px; }
+.countries { border-inline-start: 1px solid var(--picker-border); margin: 0 0 4px 10px; padding-inline-start: 4px; }
+@media(max-width: 480px) { .panel { inline-size: max(100%, min(180px, calc(100vw - 44px))); } }
+@media(prefers-reduced-motion: reduce) { .panel, .trigger > svg:last-child, .region svg { animation: none; transition: none; } }

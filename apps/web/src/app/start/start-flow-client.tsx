@@ -16,11 +16,13 @@ import { PathIllustration } from './path-illustration';
 import { entryKind, entryDeadlineLabel as deadlineLabel, entryLabels as kindLabels, entrySearchParams, type EntryKind as Kind } from './entry-paths';
 import { BrandSymbol } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
-import { CountrySelect } from "@/components/forms/country-select";
+import { OpportunityLocationPicker } from "@/components/forms/opportunity-location-picker";
+import { LocationFeature } from "@/components/opportunities/location-feature";
+import { Institution } from "@/components/opportunities/brand-mark";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
 import { ListingActions } from '@/components/opportunities/listing-actions';
-import { featuredCountries, opportunitySubjects, positionRoleLabel, positionRoles } from "@/lib/opportunity-filters";
-import { Competition, DueDate, ListingEligibility } from "@/components/opportunities/listing-facts";
+import { opportunitySubjects, positionRoleLabel, positionRoles } from "@/lib/opportunity-filters";
+import { AwardBasis, Competition, DueDate, formatAward, ListingEligibility } from "@/components/opportunities/listing-facts";
 import { OpportunitySignals } from "@/components/opportunities/opportunity-signals";
 import { GrantTable } from '@/components/opportunities/grant-table';
 
@@ -331,7 +333,7 @@ function StartJourney({ ticker }: StartOptions) {
                 setFilter("q", event.target.value);
               }}
             />
-            <CountrySelect ariaLabel="Location" anyLabel="Any location" availableCodes={featuredCountries} groupRegions value={country}
+            <OpportunityLocationPicker value={country}
               onChange={(value) => setFilter("country", value)} />
             <select aria-label="Subject" value={subject} onChange={event => setFilter("subject", event.target.value)}>
               <option value="">Any subject</option>
@@ -343,12 +345,7 @@ function StartJourney({ ticker }: StartOptions) {
             </select> : null}
           </div>
 
-          {country === "NL" ? <aside className={styles.locationFeature}>
-            <div><strong>Research in the Netherlands</strong><p>Explore current listings and official programme routes.</p>
-              <Link href="/opportunities/directory?q=Netherlands">Netherlands directory ↗</Link>
-            </div>
-            <a className={styles.photoCredit} href="https://commons.wikimedia.org/wiki/File:Amsterdam_city,_wit_a_view_over_old_canal_street_Prinsengracht_in_the_city-center,_photo_by_Fons_Heijnsbroek,_jan._2022.jpg" target="_blank" rel="noopener noreferrer">Amsterdam · Fons Heijnsbroek, CC0</a>
-          </aside> : null}
+          <LocationFeature value={country} />
 
           <div className={styles.listHead}>
             <div>
@@ -373,7 +370,7 @@ function StartJourney({ ticker }: StartOptions) {
                       <span data-original-content>{item.location}</span>
                     </div>
                     <h3 data-original-content>{item.title}</h3>
-                    <p data-original-content>{item.organization}</p>
+                    <p><Institution name={item.organization} website={item.organizationWebsite} /></p>
                   </div>
                   <div className={styles.resultSide}>
                     <DueDate item={item} />
@@ -410,7 +407,7 @@ function StartJourney({ ticker }: StartOptions) {
               ← Back to {kindLabels[kind]}
             </button>
             <h1 data-original-content className={styles.serif}>{selected.title}</h1>
-            <p data-original-content>{[selected.organization, selected.location, deadlineLabel(selected)].filter(Boolean).join(" · ")}</p>
+            <p><Institution name={selected.organization} website={selected.organizationWebsite} /> <span data-original-content>{[selected.location, deadlineLabel(selected)].filter(Boolean).join(" · ")}</span></p>
           </div>
         </section>
         <main className={`${styles.wrap} ${styles.detail} ${styles.fade}`}>
@@ -427,6 +424,13 @@ function StartJourney({ ticker }: StartOptions) {
               ) : null}
               <p><strong>Eligibility</strong> · <ListingEligibility item={selected} /></p>
               <p><strong>Competition</strong> · <Competition item={selected} /></p>
+              {selected.grant ? <>
+                <div className={styles.fundingAmounts}>
+                  <div><strong>Award min</strong><span>{formatAward(selected.grant.awardMin, selected.grant.currency)}</span></div>
+                  <div><strong>Award max</strong><span>{formatAward(selected.grant.awardMax, selected.grant.currency)}</span></div>
+                </div>
+                <AwardBasis grant={selected.grant} />
+              </> : null}
               {selected.eligibilityReasons.length ? (
                 <>
                   <h2>Eligibility at a glance</h2>

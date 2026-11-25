@@ -2,6 +2,7 @@
 import {useState} from 'react';
 import {calendarLinks,type ShareableOpportunity} from '@/lib/opportunity-actions';
 import {ActionDialog} from './action-dialog';
+import { AppMark } from "./brand-mark";
 import styles from './opportunity-actions.module.css';
 export function ShareOpportunity({item,tabIndex}:{item:ShareableOpportunity;tabIndex?:number}){
   const [url,setUrl]=useState(''),[message,setMessage]=useState('');
@@ -25,16 +26,16 @@ export function ShareOpportunity({item,tabIndex}:{item:ShareableOpportunity;tabI
       <div className={styles.choices}>
         <button type="button" onClick={()=>void copy()}>Copy link</button>
         <a href={'mailto:?'+emailQuery}>Email</a>
-        <a href={'https://mail.google.com/mail/?'+gmailQuery} target="_blank" rel="noopener noreferrer">Gmail</a>
-        <a href={'https://outlook.live.com/mail/0/deeplink/compose?'+emailQuery} target="_blank" rel="noopener noreferrer">Outlook</a>
-        <a href={'https://www.linkedin.com/sharing/share-offsite/?'+new URLSearchParams({url})} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href={'https://twitter.com/intent/tweet?'+new URLSearchParams({url,text:item.title})} target="_blank" rel="noopener noreferrer">X</a>
-        <button type="button" onClick={()=>void slack()}>Copy for Slack</button>
-        <a href="https://app.slack.com/" target="_blank" rel="noopener noreferrer">Open Slack</a>
+        <a href={'https://mail.google.com/mail/?'+gmailQuery} target="_blank" rel="noopener noreferrer"><AppMark app="Gmail" />Gmail</a>
+        <a href={'https://outlook.live.com/mail/0/deeplink/compose?'+emailQuery} target="_blank" rel="noopener noreferrer"><AppMark app="Outlook" />Outlook</a>
+        <a href={'https://www.linkedin.com/sharing/share-offsite/?'+new URLSearchParams({url})} target="_blank" rel="noopener noreferrer"><AppMark app="LinkedIn" />LinkedIn</a>
+        <a href={'https://twitter.com/intent/tweet?'+new URLSearchParams({url,text:item.title})} target="_blank" rel="noopener noreferrer"><AppMark app="X" />X</a>
+        <button type="button" onClick={()=>void slack()}><AppMark app="Slack" />Copy for Slack</button>
+        <a href="https://app.slack.com/" target="_blank" rel="noopener noreferrer"><AppMark app="Slack" />Open Slack</a>
       </div>
       {calendars?<div className={styles.choices}>
-        <a href={calendars.google} target="_blank" rel="noopener noreferrer">Google Calendar</a>
-        <a href={calendars.outlook} target="_blank" rel="noopener noreferrer">Outlook Calendar</a>
+        <a href={calendars.google} target="_blank" rel="noopener noreferrer"><AppMark app="GoogleCalendar" />Google Calendar</a>
+        <a href={calendars.outlook} target="_blank" rel="noopener noreferrer"><AppMark app="Outlook" />Outlook Calendar</a>
       </div>:null}
       <p className={styles.hint}>Only the public listing link is shared. Your notes and application documents stay private.</p>
       {message?<p role="status">{message}</p>:null}

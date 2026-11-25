@@ -400,12 +400,16 @@ export type OpportunityResult = {
     awardMin?: string;
     awardMax?: string;
     currency?: string;
+    awardBasis?: "indicative";
+    awardSource?: string;
+    awardNote?: string;
   };
   id: string;
   type: OpportunityTypeValue;
   title: string;
   description?: string;
   organization: string;
+  organizationWebsite?: string | null;
   location: string;
   countryCode?: string;
   deadline?: string;

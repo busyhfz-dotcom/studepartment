@@ -1,0 +1,225 @@
+{
+  "ERC-2027-COG": {
+    "awardMax": 2000000,
+    "awardCurrency": "EUR",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/ERC-2027-COG",
+    "awardNote": "Base grant. Additional funding has separate conditions."
+  },
+  "ERC-2027-POC": {
+    "awardMin": 150000,
+    "awardMax": 150000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/ERC-2027-POC"
+  },
+  "HORIZON-CL2-2027-01-HERITAGE-04": {
+    "awardMin": 3000000,
+    "awardMax": 4000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-CL2-2027-01-HERITAGE-04"
+  },
+  "HORIZON-CL3-2027-01-DRS-01": {
+    "awardMin": 3835000,
+    "awardMax": 3835000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-CL3-2027-01-DRS-01"
+  },
+  "HORIZON-CL3-2027-01-FCT-05": {
+    "awardMin": 4000000,
+    "awardMax": 4000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-CL3-2027-01-FCT-05"
+  },
+  "HORIZON-CL6-2027-01-BIODIV-07": {
+    "awardMin": 7000000,
+    "awardMax": 7000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-CL6-2027-01-BIODIV-07"
+  },
+  "HORIZON-CL6-2027-02-FARM2FORK-03": {
+    "awardMin": 5000000,
+    "awardMax": 6000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-CL6-2027-02-FARM2FORK-03"
+  },
+  "HORIZON-CL6-2027-02-FARM2FORK-07": {
+    "awardMin": 7000000,
+    "awardMax": 8000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-CL6-2027-02-FARM2FORK-07"
+  },
+  "HORIZON-HLTH-2026-03-DISEASE-13": {
+    "awardMin": 63000000,
+    "awardMax": 63000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2026-03-DISEASE-13"
+  },
+  "HORIZON-HLTH-2027-01-CARE-02": {
+    "awardMin": 8000000,
+    "awardMax": 10000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-CARE-02"
+  },
+  "HORIZON-HLTH-2027-01-DISEASE-05": {
+    "awardMin": 9000000,
+    "awardMax": 11000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-DISEASE-05"
+  },
+  "HORIZON-HLTH-2027-01-DISEASE-06": {
+    "awardMin": 9000000,
+    "awardMax": 10000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-DISEASE-06"
+  },
+  "HORIZON-HLTH-2027-01-DISEASE-07": {
+    "awardMin": 9000000,
+    "awardMax": 10000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-DISEASE-07"
+  },
+  "HORIZON-HLTH-2027-01-DISEASE-08": {
+    "awardMin": 8000000,
+    "awardMax": 10000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-DISEASE-08"
+  },
+  "HORIZON-HLTH-2027-01-DISEASE-10": {
+    "awardMin": 3000000,
+    "awardMax": 4000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-DISEASE-10"
+  },
+  "HORIZON-HLTH-2027-01-ENVHLTH-02": {
+    "awardMin": 10000000,
+    "awardMax": 11000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-ENVHLTH-02"
+  },
+  "HORIZON-HLTH-2027-01-ENVHLTH-MISSCLIMA-03": {
+    "awardMin": 4000000,
+    "awardMax": 5000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-ENVHLTH-MISSCLIMA-03"
+  },
+  "HORIZON-HLTH-2027-01-IND-01": {
+    "awardMin": 6000000,
+    "awardMax": 8000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-IND-01"
+  },
+  "HORIZON-HLTH-2027-01-STAYHLTH-01": {
+    "awardMin": 6000000,
+    "awardMax": 8000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-01-STAYHLTH-01"
+  },
+  "HORIZON-HLTH-2027-03-TOOL-02": {
+    "awardMin": 7000000,
+    "awardMax": 10000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-03-TOOL-02"
+  },
+  "HORIZON-HLTH-2027-03-TOOL-04": {
+    "awardMin": 10000000,
+    "awardMax": 12000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-03-TOOL-04"
+  },
+  "HORIZON-HLTH-2027-03-TOOL-08": {
+    "awardMin": 2900000,
+    "awardMax": 2900000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-HLTH-2027-03-TOOL-08"
+  },
+  "HORIZON-MISS-2027-02-CANCER-01": {
+    "awardMin": 7000000,
+    "awardMax": 8000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-MISS-2027-02-CANCER-01"
+  },
+  "HORIZON-MISS-2027-02-CANCER-02": {
+    "awardMin": 7000000,
+    "awardMax": 10000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-MISS-2027-02-CANCER-02"
+  },
+  "HORIZON-MISS-2027-02-CANCER-03": {
+    "awardMin": 7000000,
+    "awardMax": 9000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-MISS-2027-02-CANCER-03"
+  },
+  "HORIZON-MISS-2027-02-CANCER-04": {
+    "awardMin": 5000000,
+    "awardMax": 7000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-MISS-2027-02-CANCER-04"
+  },
+  "HORIZON-MISS-2027-02-CANCER-05": {
+    "awardMin": 8000000,
+    "awardMax": 10000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-MISS-2027-02-CANCER-05"
+  },
+  "HORIZON-MISS-2027-02-CANCER-06": {
+    "awardMin": 3000000,
+    "awardMax": 3000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-MISS-2027-02-CANCER-06"
+  },
+  "HORIZON-MISS-2027-06-SOIL-CANCER": {
+    "awardMin": 12000000,
+    "awardMax": 12000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-MISS-2027-06-SOIL-CANCER"
+  },
+  "HORIZON-MSCA-2027-CITIZENS-01-01": {
+    "awardMin": 100000,
+    "awardMax": 350000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-MSCA-2027-CITIZENS-01-01"
+  },
+  "HORIZON-NATURE-2027-03-01": {
+    "awardMin": 20000000,
+    "awardMax": 20000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-NATURE-2027-03-01"
+  },
+  "HORIZON-NEB-2026-01-PARTICIPATION-03": {
+    "awardMin": 5000000,
+    "awardMax": 5000000,
+    "awardCurrency": "EUR",
+    "awardBasis": "indicative",
+    "awardSource": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-NEB-2026-01-PARTICIPATION-03"
+  }
+}

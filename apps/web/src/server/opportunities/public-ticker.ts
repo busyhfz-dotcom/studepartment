@@ -8,6 +8,7 @@ export type PublicTickerItem = {
   id: string;
   title: string;
   organization: string;
+  organizationWebsite?: string | null;
   countryCode: string | null;
   deadline: string | null;
   deadlinePrecision?: string;
@@ -94,7 +95,7 @@ export async function loadPublicOpportunityTicker(
         deadlinePrecision: true,
         firstSeenAt: true,
         publishedAt: true,
-        organization: { select: { name: true } },
+        organization: { select: { name: true, website: true } },
       },
     }),
     db.opportunity.findMany({
@@ -109,7 +110,7 @@ export async function loadPublicOpportunityTicker(
         deadlinePrecision: true,
         firstSeenAt: true,
         publishedAt: true,
-        organization: { select: { name: true } },
+        organization: { select: { name: true, website: true } },
       },
     }),
     db.opportunity.count({ where: { ...activeUpcoming, type: { notIn: ["GRANT", "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP", "MD_SCHOLARSHIP"] } } }),
@@ -128,6 +129,7 @@ export async function loadPublicOpportunityTicker(
       id: row.id,
       title: row.title,
       organization: row.organization.name,
+      organizationWebsite: row.organization.website,
       countryCode: row.countryCode,
       deadline: row.deadline?.toISOString() ?? null,
       deadlinePrecision: row.deadlinePrecision.toLowerCase().replaceAll("_", "-"),

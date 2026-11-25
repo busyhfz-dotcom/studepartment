@@ -4,6 +4,7 @@ import {useState} from 'react';
 import {calendarLinks,reminderCalendar,type ShareableOpportunity} from '@/lib/opportunity-actions';
 import { deadlineReminderOptions } from "@/lib/deadline-reminder-options";
 import {ActionDialog} from './action-dialog';
+import { AppMark } from "./brand-mark";
 import styles from './opportunity-actions.module.css';
 const available=(items:ShareableOpportunity[],now:number)=>items.filter(item=>item.deadline&&Date.parse(item.deadline)>now&&item.deadlinePrecision!=='month-only');
 export function DeadlineReminder({items}:{items:ShareableOpportunity[]}){
@@ -46,9 +47,9 @@ export function DeadlineReminder({items}:{items:ShareableOpportunity[]}){
       {dated.length>1?<div className={styles.checklist} role="group" aria-label="Choose opportunities">{dated.map(item=><label key={item.id}><input type="checkbox" checked={selected.includes(item.id)} onChange={event=>setSelected(value=>event.target.checked?[...value,item.id]:value.filter(id=>id!==item.id))}/><span data-original-content>{item.title}</span></label>)}</div>:dated[0]?<p data-original-content>{dated[0].title}</p>:<p>A future, day-specific deadline is required. Check the original source for this opportunity.</p>}
       <div className={styles.choices}><button type="button" disabled={!chosen.length||busy} onClick={()=>void save()}>{busy?'Saving…':'Save workspace reminder'}</button><button type="button" disabled={!chosen.length||busy} onClick={calendar}>Download calendar (.ics)</button></div>
       {calendars?<div className={styles.choices}>
-        <a href={calendars.google} target="_blank" rel="noopener noreferrer">Google Calendar</a>
-        <a href={calendars.outlook} target="_blank" rel="noopener noreferrer">Outlook (work or university)</a>
-        <a href={calendars.outlookPersonal} target="_blank" rel="noopener noreferrer">Outlook.com</a>
+        <a href={calendars.google} target="_blank" rel="noopener noreferrer"><AppMark app="GoogleCalendar" />Google Calendar</a>
+        <a href={calendars.outlook} target="_blank" rel="noopener noreferrer"><AppMark app="Outlook" />Outlook (work or university)</a>
+        <a href={calendars.outlookPersonal} target="_blank" rel="noopener noreferrer"><AppMark app="Outlook" />Outlook.com</a>
       </div>:null}
       <p className={styles.hint}>The calendar file includes the selected alert time. For events added directly, check the reminder setting before saving.</p>
       {status?<p role="status">{status}</p>:null}{signIn?<Link href={'/auth/sign-in?callbackUrl='+encodeURIComponent('/opportunities/saved')}>Sign in</Link>:null}

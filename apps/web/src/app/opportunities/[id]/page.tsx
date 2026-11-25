@@ -5,10 +5,14 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@studepartment/db";
 import { ProductShell } from "@/components/shell/product-shell";
+import { Institution } from "@/components/opportunities/brand-mark";
+import { AwardBasis, formatAward } from "@/components/opportunities/listing-facts";
 import { ListingActions } from "@/components/opportunities/listing-actions";
 import { OpportunitySignals } from "@/components/opportunities/opportunity-signals";
 import { getSiteUrl } from "@/lib/site";
 import { getShellViewer } from "@/server/auth/shell-viewer";
+import { grantDetails } from "@/server/opportunities/grant-details";
+import { publishedFacts } from "@/server/opportunities/published-facts";
 import { SaveOpportunityButton } from "../save-opportunity-button";
 import styles from "./detail.module.css";
 
@@ -36,9 +40,11 @@ const loadOpportunity = cache(async (id: string) => {
     select: {
       id: true, type: true, title: true, description: true, city: true, countryCode: true,
       deadline: true, deadlinePrecision: true, sourceUrl: true, applicationUrl: true, sourceName: true,
+      sourceRecordId: true, eligibleCountryCodes: true,
       publishedAt: true, firstSeenAt: true, lastSeenAt: true, lastVerifiedAt: true,
       organization: { select: { name: true, website: true } },
       topics: { select: { topic: { select: { name: true } } }, take: 8 },
+      provenance: { select: { metadata: true }, orderBy: { observedAt: "desc" }, take: 1 },
     },
   });
 });
@@ -79,6 +85,13 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
   const checked = opportunity.lastVerifiedAt ?? opportunity.lastSeenAt;
   const applyUrl = opportunity.applicationUrl ?? opportunity.sourceUrl;
   const description = (opportunity.description ?? "").trim();
+  const metadata = opportunity.provenance[0]?.metadata;
+  const { publishedEligibility, swiss, competition } = publishedFacts(opportunity.sourceUrl, metadata, opportunity.eligibleCountryCodes);
+  const grant = opportunity.type === "GRANT" ? grantDetails({
+    sourceName: opportunity.sourceName, sourceRecordId: opportunity.sourceRecordId, sourceUrl: opportunity.sourceUrl,
+    description, organization: opportunity.organization.name, eligibleCountryCodes: opportunity.eligibleCountryCodes,
+    metadata: swiss ? { ...(metadata && typeof metadata === "object" ? metadata : {}), awardMax: 375000, awardCurrency: "CHF" } : metadata,
+  }) : undefined;
   const organization = {
     "@type": "Organization",
     name: opportunity.organization.name,
@@ -124,14 +137,14 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
         <header className={styles.header}>
           <span className="eyebrow">{label}</span>
           <h1 data-original-content>{opportunity.title}</h1>
-          <p className={styles.organization} data-original-content>
-            {opportunity.organization.name}{location ? ` · ${location}` : ""}
+          <p className={styles.organization}>
+            <Institution name={opportunity.organization.name} website={opportunity.organization.website} />{location ? ` · ${location}` : ""}
           </p>
         </header>
 
         <dl className={styles.facts}>
           <div>
-            <dt>Deadline</dt>
+            <dt>Due</dt>
             <dd>{opportunity.deadlinePrecision === "ROLLING" ? "Rolling" : opportunity.deadline ? formatDate(opportunity.deadline) : "Not published"}</dd>
           </div>
           <div>
@@ -142,13 +155,19 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
             <dt>Source</dt>
             <dd data-original-content>{opportunity.sourceName}</dd>
           </div>
+          {grant ? <>
+            <div><dt>Award min</dt><dd>{formatAward(grant.awardMin, grant.currency)}</dd></div>
+            <div><dt>Award max</dt><dd>{formatAward(grant.awardMax, grant.currency)}<AwardBasis grant={grant} /></dd></div>
+          </> : null}
+          <div><dt>Eligibility</dt><dd>{publishedEligibility ?? "Check official eligibility"}</dd></div>
+          {competition ? <div><dt>Historical competition</dt><dd><a href={competition.url}>{competition.rate}% · {competition.basis}</a></dd></div> : null}
         </dl>
 
         <div className={styles.actions}>
           <div className={styles.listingActionGroup}>
             <OpportunitySignals item={{ id: opportunity.id, title: opportunity.title, type: opportunity.type }} recordView />
             <ListingActions item={{ id: opportunity.id, title: opportunity.title, type: opportunity.type, deadline: opportunity.deadline?.toISOString() ?? null, deadlinePrecision: opportunity.deadlinePrecision.toLowerCase().replaceAll("_", "-") }}
-              primary={<a href={applyUrl} rel="noreferrer" target="_blank">Open application ↗</a>} />
+              primary={<a href={applyUrl} rel="noreferrer" target="_blank">Apply now ↗</a>} />
           </div>
           <a className={styles.secondary} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review original source ↗</a>
           <SaveOpportunityButton className={styles.secondary} opportunityId={opportunity.id} />

@@ -31,7 +31,7 @@ function londonDate(field: string | undefined) {
 }
 
 function amount(field: string | undefined) {
-  return htmlToText(field?.replace(/&pound;/gi, "£")).match(/^£([\d,]+)(?:\.\d{2})?$/)?.[1]?.replaceAll(",", "");
+  return htmlToText(field?.replace(/&pound;/gi, "£")).match(/^£([\d,]+(?:\.\d{2})?)$/)?.[1]?.replaceAll(",", "");
 }
 
 export function mrcFundingPage(html: string, now: Date, council = mrc) {
@@ -62,6 +62,8 @@ export function mrcFundingPage(html: string, now: Date, council = mrc) {
     if (!deadline && !rolling) return [];
     if (deadline && Date.parse(deadline) + (deadline.length === 10 ? 86_400_000 : 0) < now.getTime()) return [];
     const published = htmlToText(fields.get("Publication date"));
+    const range = htmlToText(fields.get("Award range")?.replace(/&pound;/gi, "£"))
+      .match(/^(£[\d,]+(?:\.\d{2})?)\s*[-–—]\s*(£[\d,]+(?:\.\d{2})?)$/);
     return [{
       sourceRecordId: id,
       sourceUrl,
@@ -79,8 +81,8 @@ export function mrcFundingPage(html: string, now: Date, council = mrc) {
         status: status === "Upcoming" ? "forthcoming" : "open",
         fundingRegion: "United Kingdom",
         openingDate: opening,
-        awardMin: amount(fields.get("Minimum award")) ?? null,
-        awardMax: amount(fields.get("Maximum award")) ?? null,
+        awardMin: amount(fields.get("Minimum award")) ?? amount(range?.[1]) ?? null,
+        awardMax: amount(fields.get("Maximum award")) ?? amount(range?.[2]) ?? null,
         awardCurrency: "GBP",
       },
     }];

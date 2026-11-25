@@ -14,9 +14,12 @@ export function publishedFacts(sourceUrl: string, metadata: unknown, countries: 
   const isProgramme = sourceUrl.includes(cruk + "early-detection-diagnosis-programme-award");
   const isPrimer = sourceUrl.includes(cruk + "early-detection-diagnosis-primer-award");
   const starting = /^https:\/\/(?:[^/]+\.)?(?:ec\.europa\.eu|erc\.europa\.eu)\//.test(sourceUrl) && /(?:erc-20\d\d-stg|\/starting-grant)(?:[/?#]|$)/i.test(sourceUrl);
+  const consolidator = /^https:\/\/(?:[^/]+\.)?(?:ec\.europa\.eu|erc\.europa\.eu)\//.test(sourceUrl) && /(?:erc-20\d\d-cog|\/consolidator-grant)(?:[/?#]|$)/i.test(sourceUrl);
   const report = isProgramme ? { rate: 20, basis: "Five-year funding rate, 2021–2026", url: sourceUrl }
     : isPrimer ? { rate: 42, basis: "Five-year funding rate, 2020–2025", url: sourceUrl }
-    : starting ? { rate: 12.2, basis: "2025 ERC Starting Grant selection rate", url: erc } : undefined;
+    : starting ? { rate: 12.2, basis: "2025 ERC Starting Grant selection rate", url: erc }
+    : consolidator ? { rate: 11.2, basis: "2025 ERC Consolidator Grant selection rate", url: "https://erc.europa.eu/system/files/2025-12/erc-2025-cog-statistics.pdf" }
+    : undefined;
   const competition = report ? {
     ...report,
     label: report.rate < 15 ? "Very competitive" : report.rate < 35 ? "Competitive" : "Less selective",
