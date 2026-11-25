@@ -61,7 +61,7 @@
 .dueDot { inline-size:8px; block-size:8px; border-radius:50%; background:#ff98ae; flex:none; animation:deadlinePulse 1.55s ease-in-out 3; }
 @keyframes deadlinePulse { 50% { opacity:.3; box-shadow:0 0 0 4px #f596b32f; } }
 .signals { display:flex; flex-wrap:wrap; align-items:center; gap:5px 9px; font-size:12px; }
-.signals .trigger { min-block-size:36px; padding:5px 9px; white-space:nowrap; }
+.signals .trigger { display:inline-flex; gap:5px; align-items:center; min-block-size:36px; padding:5px 9px; white-space:nowrap; border:1px solid var(--line-strong); background:#333964; color:#f1f1ff; border-radius:8px; cursor:pointer; }
 .signals .trigger[aria-pressed="true"] { color:#faadce; border-color:#e68bad; }
 .signals > a { text-decoration:underline; text-underline-offset:3px; }
 .competition { display:inline-grid; gap:3px; font-weight:750; text-underline-offset:3px; }

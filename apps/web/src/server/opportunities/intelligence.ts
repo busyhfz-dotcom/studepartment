@@ -326,6 +326,8 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
     orderBy,
     include: {
       organization: true,
+      _count: { select: { likes: true } },
+      ...(currentUser ? { likes: { where: { userId: currentUser.id }, select: { userId: true }, take: 1 } } : {}),
       provenance: { orderBy: { observedAt: 'desc' }, take: 1, select: { metadata: true } },
       topics: { include: { topic: true }, orderBy: { weight: "desc" } },
       methods: { include: { method: true } },
@@ -386,9 +388,17 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
       profile,
     );
 
+    const metadata = opportunity.provenance[0]?.metadata;
+    const { publishedEligibility, competition, swiss } = publishedFacts(opportunity.sourceUrl, metadata, opportunity.eligibleCountryCodes);
+    const grantMetadata = swiss ? { ...(metadata && typeof metadata === "object" ? metadata : {}), awardMax: 375000, awardCurrency: "CHF" } : metadata;
     return {
       id: opportunity.id,
-      ...(opportunity.type === 'GRANT' ? { grant: grantDetails({sourceName:opportunity.sourceName,organization:opportunity.organization.name,description:opportunity.description,eligibleCountryCodes:opportunity.eligibleCountryCodes,metadata:opportunity.provenance[0]?.metadata}) } : {}),
+      views: opportunity.viewCount,
+      likes: opportunity._count.likes,
+      liked: currentUser ? Boolean(opportunity.likes?.length) : false,
+      publishedEligibility,
+      competition,
+      ...(opportunity.type === 'GRANT' ? { grant: grantDetails({sourceName:opportunity.sourceName,organization:opportunity.organization.name,description:opportunity.description,eligibleCountryCodes:opportunity.eligibleCountryCodes,metadata:grantMetadata}) } : {}),
       type: typeFromDb[opportunity.type],
       title: opportunity.title,
       description: opportunity.description ?? undefined,
