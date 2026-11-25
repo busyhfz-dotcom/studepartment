@@ -656,3 +656,28 @@
 .navSubItemActive .navSubDot{background:#e7e7e7;box-shadow:0 0 0 3px #292929,0 0 10px #dedede88}
 @media(max-width:940px){.navSubItem{min-height:46px}}
 @media(prefers-reduced-motion:reduce){.navSubList,.navSubListOpen,.navChevron{transition:none}}
+
+.frame { background: #f2f5fc; }
+.sidebar {
+  color: #dbe5ff;
+  border-color: #334575;
+  background: radial-gradient(ellipse at 12% 0%, #253c75, transparent 64%), linear-gradient(155deg, #152548, #121b36);
+}
+.brandMark { color: #fff; background: linear-gradient(135deg, #779cff, #705adf); box-shadow: 0 5px 18px #6883ff54; }
+.brandCopy strong, .navItemActive, .navItem:hover { color: #f5f7ff; }
+.brandCopy small, .navLabel, .navCopy small, .trustSummary small, .version, .version strong { color: #a8b9de; }
+.navItem, .navSubItem, .trustSummary { color: #dbe5ff; }
+.iconWrap, .trustGlyph, .navArrow, .navChevron { color: #a0b6f2; }
+.navItem:hover, .navSubItem:hover { background: #263d71; border-color: #829be433; }
+.navItemActive, .navSubItemActive { background: #6885e63b; border-color: #91a3ed55; }
+.navItemActive .iconWrap, .navItemActive .navCopy small, .navItemActive .navArrow { color: #e0eaff; }
+.navSubInner::before { background: #a0b6ef53; }
+.navSubDot { background: #819fe8; box-shadow: 0 0 0 3px #1d2b52; }
+.navSubItemActive .navSubDot { background: #ddd2ff; box-shadow: 0 0 0 3px #334981; }
+.topbar { color: #25395e; border-color: #dce5f7; background: #ffffffed; }
+.topbarEyebrow { color: #5e7197; }
+.pageName { color: #182a52; }
+.quickSearch, .avatar, .menuButton { color: #4e6391; background: #f1f5ff; border-color: #dce4f8; }
+.quickSearch:hover { background: #e8efff; border-color: #adbee9; }
+.quickSearch svg, .quickSearch kbd { color: #5e75a9; }
+.mobileClose { color: #f3f6ff; background: #2a4073; border-color: #657db4; }
