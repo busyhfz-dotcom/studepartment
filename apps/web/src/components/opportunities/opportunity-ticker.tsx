@@ -303,4 +303,3 @@ export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpp
     </aside>
   );
 }
-

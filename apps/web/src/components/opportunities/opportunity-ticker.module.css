@@ -25,7 +25,7 @@
 .deskFooter a, .latestLoading a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .liveLabel { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; color: #fff; }
 .liveDot { width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px #ffffff21, 0 0 14px #ffffff70; }
-.tickerMotionToggle, .detailTop button {
+.detailTop button {
   padding: 7px 11px;
   border: 1px solid #6b6b96;
   border-radius: 7px;
@@ -33,8 +33,7 @@
   color: #fff;
   cursor: pointer;
 }
-.tickerMotionToggle { min-height: 40px; }
-.tickerMotionToggle:hover, .detailTop button:hover { background: #3e4260; }
+.detailTop button:hover { background: #3e4260; }
 .latestLoading { margin: 0; padding: 24px; color: #d0d1e3; font-size: 13px; }
 .latestList { overflow-x: auto; direction: ltr; overscroll-behavior-x: contain; scrollbar-width: none; }
 .latestList::-webkit-scrollbar { display: none; }
@@ -89,32 +88,7 @@
   .deskHeading { background: linear-gradient(110deg, #303469, #2a2d46 68%); }
   .mobileControl { display: none; }
   .desktopControl { display: inline-flex; align-items: center; gap: 8px; }
-  .tickerMotionToggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-start;
-    min-inline-size: 105px;
-    min-block-size: 43px;
-    padding: 5px 11px 5px 6px;
-    border-color: #585986;
-    border-radius: 12px;
-    background: #31344f;
-    color: #eeeff7;
-    font: 700 12px/1.3 var(--font-sans), Arial, sans-serif;
-    transition: border-color .18s, background-color .18s, box-shadow .18s;
-  }
-  .tickerMotionToggle:hover { border-color: #7e7da6; background: #3a3e5b; }
-  .controlBadge {
-    display: grid;
-    place-items: center;
-    inline-size: 27px;
-    block-size: 27px;
-    border-radius: 7px;
-    background: #ebecf5;
-    color: #292c45;
-  }
-  .controlBadge svg { inline-size: 17px; block-size: 17px; }
-  .tickerMotionToggle:focus-visible, .detailTop button:focus-visible {
+  .detailTop button:focus-visible {
     outline: 2px solid #ebecf5;
     outline-offset: 3px;
   }
@@ -153,6 +127,7 @@
 .headingControls .tickerMotionToggle, .headingControls .personalizeButton {
   position: relative;
   display: inline-grid;
+  place-content: center;
   place-items: center;
   box-sizing: border-box;
   inline-size: 42px;
@@ -171,7 +146,7 @@
 .headingControls .tickerMotionToggle::before { content: ""; position: absolute; inset-inline-start: 0; inset-block: 8px; inline-size: 1px; background: #596eae; }
 .headingControls:has(.tickerMotionToggle) .personalizeButton { border-start-end-radius: 0; border-end-end-radius: 0; }
 .headingControls button:hover, .headingControls button[aria-expanded="true"] { background: #354d87; }
-.headingControls button:focus-visible { outline-offset: -3px; }
+.headingControls button:focus-visible { outline: 2px solid #ebecf5; outline-offset: -3px; }
 @media(max-width: 530px) {
   .deskHeading { column-gap: 7px; }
   .deskHeading > span:nth-child(2) { order: 3; flex-basis: 100%; }

@@ -1,11 +1,15 @@
 import marks from "@/lib/institution-marks.json";
 import additionalMarks from "@/lib/additional-institution-marks.json";
+import confirmedMarks from "@/lib/additional-verified-marks.json";
 import styles from "./brand-mark.module.css";
 
 const institutionMarks: Record<string, number> = marks.slots;
 const extraSlots: Record<string, number> = additionalMarks.slots;
 const nameAliases: Record<string, string> = additionalMarks.aliases;
-const markDomains = [...Object.keys(institutionMarks), ...Object.keys(extraSlots)].sort((a,b) => b.length - a.length);
+const verifiedSlots: Record<string, { slot: number; name: string }> = confirmedMarks.marks;
+const markDomains = [...new Set([...Object.keys(institutionMarks), ...Object.keys(extraSlots), ...Object.keys(verifiedSlots)])].sort((a,b) => b.length - a.length);
+const normalizeName = (name: string) => name.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+const verifiedNames = new Map(Object.entries(verifiedSlots).map(([domain, record]) => [normalizeName(record.name), domain]));
 const institutionAliases: readonly [RegExp, string][] = [
   [/Netherlands Cancer Institute|Antoni van Leeuwenhoek/i, "nki.nl"],
   [/Agency for Science, Technology and Research|\bA\*STAR\b/i, "a-star.edu.sg"],
@@ -25,14 +29,16 @@ const institutionAliases: readonly [RegExp, string][] = [
   [/\bGreat Ormond Street\b/i, "gosh.nhs.uk"],
   [/\bUniversity College London Hospitals\b/i, "uclh.nhs.uk"],
   [/\bOxford University Hospitals\b/i, "ouh.nhs.uk"],
+  [/Universidade de São Paulo/i, "usp.br"],
 ];
 
 function findMark(name: string, website: string | null | undefined) {
   const domain = host(website);
   const known = markDomains.find(key => domain === key || domain.endsWith("." + key));
-  const nameKey = name.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
-  const alias = nameAliases[nameKey] ?? institutionAliases.find(([pattern]) => pattern.test(name))?.[1];
+  const nameKey = normalizeName(name);
+  const alias = nameAliases[nameKey] ?? verifiedNames.get(nameKey) ?? institutionAliases.find(([pattern]) => pattern.test(name))?.[1];
   const key = known ?? alias ?? "";
+  if (Object.hasOwn(verifiedSlots, key)) return { columns: confirmedMarks.columns, rows: confirmedMarks.rows, slot: verifiedSlots[key].slot, src: "/images/institutions/additional-verified.webp" };
   if (Object.hasOwn(extraSlots, key)) return { columns: additionalMarks.columns, rows: additionalMarks.rows, slot: extraSlots[key], src: "/images/institutions/additional-marks.webp" };
   if (Object.hasOwn(institutionMarks, key)) return { columns: marks.columns, rows: marks.rows, slot: institutionMarks[key], src: "/images/institutions/marks.webp" };
 }

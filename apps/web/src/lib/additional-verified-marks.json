@@ -1,0 +1,76 @@
+{
+  "columns": 4,
+  "rows": 3,
+  "marks": {
+    "southampton.ac.uk": {
+      "name": "University of Southampton",
+      "source": "https://commons.wikimedia.org/wiki/File:University_of_Southampton_Logo.svg",
+      "license": "Public domain",
+      "artist": "University of Southampton",
+      "slot": 0
+    },
+    "ucl.ac.uk": {
+      "name": "University College London",
+      "source": "https://commons.wikimedia.org/wiki/File:UCL_Crest.svg",
+      "license": "Public domain",
+      "artist": "AlexD , new version by Gnesener1900",
+      "slot": 1
+    },
+    "fda.gov": {
+      "name": "Food and Drug Administration",
+      "source": "https://commons.wikimedia.org/wiki/File:Food_and_Drug_Administration_201x_logo.svg",
+      "license": "Public domain",
+      "artist": "Unknown author Unknown author",
+      "slot": 2
+    },
+    "ox.ac.uk": {
+      "name": "University of Oxford",
+      "source": "https://commons.wikimedia.org/wiki/File:University_of_Oxford.svg",
+      "license": "Public domain",
+      "artist": "University of Oxford",
+      "slot": 3
+    },
+    "ucsf.edu": {
+      "name": "University of California, San Francisco",
+      "source": "https://commons.wikimedia.org/wiki/File:University_of_California,_San_Francisco_logo.svg",
+      "license": "Public domain",
+      "artist": "UCSF",
+      "slot": 4
+    },
+    "usp.br": {
+      "name": "University of São Paulo",
+      "source": "https://commons.wikimedia.org/wiki/File:Webysther_20160310_-_Logo_USP.svg",
+      "license": "Public domain",
+      "artist": "José Carlos de Araújo, João Delbucio Filho e Geny Yoshico Uehara.",
+      "slot": 5
+    },
+    "ihs.gov": {
+      "name": "Indian Health Service",
+      "source": "https://commons.wikimedia.org/wiki/File:Indian_Health_Service_Logo.svg",
+      "license": "Public domain",
+      "artist": "IHS",
+      "slot": 6
+    },
+    "irb.hr": {
+      "name": "Ruđer Bošković Institute",
+      "source": "https://commons.wikimedia.org/wiki/File:InstitutRuderBoskovic.png",
+      "license": "Public domain",
+      "artist": "Institut Ruđer Bošković",
+      "slot": 7
+    },
+    "uminho.pt": {
+      "name": "University of Minho",
+      "source": "https://commons.wikimedia.org/wiki/File:Universidade_do_Minho_logo.png",
+      "license": "Public domain",
+      "artist": "Universidade do Minho",
+      "slot": 8
+    },
+    "ibs.re.kr": {
+      "name": "Institute for Basic Science",
+      "source": "https://commons.wikimedia.org/wiki/File:Institute_for_Basic_Science_logo.svg",
+      "license": "Public domain",
+      "artist": "Institute for Basic Science",
+      "slot": 9
+    }
+  }
+}
