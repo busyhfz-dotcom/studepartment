@@ -10,4 +10,10 @@
 .remove{justify-self:start;min-height:44px;padding:7px 0;border:0;background:transparent;color:#9e9e9e;font:inherit;font-size:13px;cursor:pointer}
 .field .error{color:#4e4e4e}
 .field:disabled{opacity:.7}
+.choose { background: linear-gradient(115deg, #3d5ebd, #664abd); border-color: #5365b9; }
+.choose:hover { background: #4053a9; }
+.choose:focus-visible, .remove:focus-visible { outline-color: #778ad9; }
+.field small, .field p { color: #526488; }
+.remove { color: #4c55af; }
+.field .error { color: #a73460; }
 @media(max-width:600px){.choose{width:100%}}

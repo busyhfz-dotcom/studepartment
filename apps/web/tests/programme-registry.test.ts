@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { opportunityRegions, opportunityScanIncludes } from "../src/lib/opportunity-filters";
+import { ibsGenomicIntegrityRecords } from "../src/server/opportunities/sources/ibs-genomic-integrity";
 import { PROGRAMMES } from "../src/server/opportunities/sources/programme-registry-data";
 import {
   PROGRAMME_SOURCE_NAME,
@@ -12,6 +14,32 @@ import { INSTITUTION_FEEDS } from "../src/server/opportunities/sources/instituti
 import { mdPhdAudienceWhere } from "../src/server/opportunities/audience";
 
 const page = (status: number, body: string) => new Response(body, { status });
+
+test("Asia exposes only the six requested countries and scans other continents normally", () => {
+  assert.deepEqual([...opportunityRegions.ASIA.countries], ["SG", "JP", "KR", "CN", "TW", "HK"]);
+  for (const code of [...opportunityRegions.ASIA.countries, "GB", "CA", "AU", "BR", null]) {
+    assert.equal(opportunityScanIncludes(code), true, code ?? "global");
+  }
+  for (const code of ["IN", "PK", "ID", "IL", "SA", "TH", "VN", "MY"]) {
+    assert.equal(opportunityScanIncludes(code), false, code);
+  }
+});
+
+test("the Korean research board only returns open positions before the Korean closing time", () => {
+  const center = "Center for Genomic Integrity";
+  const row = (id: number, status: string, department: string) => `<tr>
+    <td>${id}</td><td>${status}</td>
+    <td><a href="/_prog/jobopenings/index.php?mode=V&amp;mng_no=${id}">Postdoctoral Research Associate</a></td>
+    <td>${department}</td><td>2027-02-11 18:00</td>
+  </tr>`;
+  const board = `<table><tr><th>Department</th><th>Closing Date</th></tr>
+    ${row(1, "Open", center)}${row(2, "Closed", center)}${row(3, "Open", "Chemistry")}</table>`;
+
+  const records = ibsGenomicIntegrityRecords(board, new Date("2027-02-11T08:59:00Z"));
+  assert.deepEqual(records.map(({ sourceRecordId, countryCode, type, deadline }) =>
+    [sourceRecordId, countryCode, type, deadline]), [["1", "KR", "POSTDOC", "2027-02-11T09:00:00.000Z"]]);
+  assert.equal(ibsGenomicIntegrityRecords(board, new Date("2027-02-11T09:01:00Z")).length, 0);
+});
 
 test("every registry entry has a permanent unique id and an https page on the provider's site", () => {
   assert.equal(new Set(PROGRAMMES.map((programme) => programme.id)).size, PROGRAMMES.length);

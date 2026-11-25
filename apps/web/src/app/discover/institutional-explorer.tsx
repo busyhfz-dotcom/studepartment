@@ -1,5 +1,7 @@
 "use client";
 
+import { Institution } from "@/components/opportunities/brand-mark";
+
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import type {
@@ -185,7 +187,7 @@ export function InstitutionalExplorer({ entityType }: { entityType: Institutiona
                     <span className={styles.entityType}>{laboratory ? "Laboratory" : title(result.organizationType)}</span>
                     <span className={styles.score}>{Math.round(result.score * 100)}% match</span>
                   </div>
-                  <h3>{result.name}</h3>
+                  <h3>{result.verified && !laboratory ? <Institution name={result.name} website={result.website} /> : result.name}</h3>
                   {result.organizationName ? <strong>{result.organizationName}</strong> : null}
                   <p>{result.location}{result.verified ? " · Verified record" : ""}</p>
                   <div className={styles.tags}>

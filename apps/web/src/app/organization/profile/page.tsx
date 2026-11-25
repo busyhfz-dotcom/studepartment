@@ -26,7 +26,7 @@ export default async function OrganizationProfilePage() {
       <div className={`${styles.shell} ${workspace.workspace}`}>
         <header className={`${styles.header} ${workspace.hero}`}>
           <div className={styles.identityHead}>
-            <IdentityAvatar name={organization.name} src={organization.logoUrl} kind="organization" size="large" />
+            <IdentityAvatar name={organization.name} src={organization.logoUrl} website={organization.website} verified={organization.verified} kind="organization" size="large" />
             <div>
               <div className={styles.headerMeta}>
                 <span className="eyebrow">{typeLabel} Identity</span>

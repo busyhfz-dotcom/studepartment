@@ -79,7 +79,7 @@ function FootBar() {
       <span>Provenant · medical research, worldwide</span>
       <Link href="/opportunities">Open the full opportunity search</Link>
       <span>
-        <Link href="/about">About</Link> · <Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link> ·{" "}
+        <Link href="/about">About</Link> · <Link href="/opportunities/photo-credits">Photo credits</Link> · <Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link> ·{" "}
         <button className={styles.backgroundMotion} type="button"
           aria-label={moving ? "Pause background motion" : "Play background motion"}
           onClick={() => setMotion("background", !moving)}>

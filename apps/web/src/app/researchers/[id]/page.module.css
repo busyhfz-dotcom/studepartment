@@ -53,11 +53,11 @@
   position: relative;
   overflow: hidden;
   padding: 18px;
-  border: 1px solid rgba(52, 52, 52,.13);
+  border: 1px solid #c4d1f5;
   border-radius: var(--radius-md);
   background:
-    radial-gradient(circle at 110% -10%, rgba(85, 85, 85,.11), transparent 14rem),
-    linear-gradient(150deg, rgba(241, 241, 241,.98), rgba(255,255,255,.96));
+    radial-gradient(circle at 110% -10%, #d8ccfa, transparent 14rem),
+    linear-gradient(150deg, #e9efff, #fcfdff);
   box-shadow: var(--shadow-xs);
 }
 
@@ -108,15 +108,15 @@
 }
 
 .trustOn {
-  color: #5f5f5f;
-  border-color: rgba(73, 73, 73,.08);
-  background: var(--success-soft);
+  color: #276753;
+  border-color: #a8d4c7;
+  background: #e1f3ed;
 }
 
 .trustOff {
   color: var(--muted);
-  border-color: rgba(27, 27, 27,.04);
-  background: rgba(27, 27, 27,.035);
+  border-color: #d2dcf6;
+  background: #ebf0ff;
 }
 
 .grid {
@@ -441,4 +441,7 @@
 
 /* Shared electric-blue interaction treatment. */
 .trustCard,.publicationCard{transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
+.panel, .publicationPanel, .actionBar { border-color: #ccd9f4; background: linear-gradient(145deg, #fff, #eef2ff); }
+.publicationCard, .emptyPublications { border-color: #d1dbf5; background: #f6f8ff; }
+.graphPanel { background: linear-gradient(125deg, #315797, #51418e); border-color: #778ec6; }
 @media(hover:hover) and (prefers-reduced-motion:no-preference){.trustCard:hover,.publicationCard:hover{transform:translateY(-3px);box-shadow:0 16px 36px #3c3c3c0c;border-color:#eaeaea}}

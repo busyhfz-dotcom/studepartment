@@ -89,7 +89,7 @@ export function OrganizationProfileEditor({ organization }: { organization: Orga
       </p>
 
       <div className={styles.logoEditor}>
-        <IdentityAvatar name={draft.name || organization.name} src={draft.logoUrl} kind="organization" size="large" />
+        <IdentityAvatar name={draft.name || organization.name} src={draft.logoUrl} website={organization.website} verified={organization.verified} kind="organization" size="large" />
         <ProfileImageUpload kind="organization" value={draft.logoUrl} onChange={(url) => setDraft((current) => ({ ...current, logoUrl: url }))} onBusyChange={setUploading} disabled={saving} />
       </div>
 

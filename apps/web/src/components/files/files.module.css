@@ -52,6 +52,18 @@
 .inlineFile { display: grid; gap: 8px; grid-column: 1 / -1; min-width: 0; max-width: 100%; padding-block: 8px; }
 .inlineFile a { display: inline-flex; align-items: center; min-height: 44px; color: #a1a1a1; font-size: 14px; overflow-wrap: anywhere; }
 .inlineFile small { color: #8b8b8b; font-size: 12px; line-height: 1.5; }
+.manager, .attachmentPicker { color: #273b70; border-color: #cbd8f2; background: linear-gradient(145deg, #fbfdff, #edf1ff); }
+.manager p, .quota, .visibility, .attachmentPicker p, .inlineFile small, .fileCopy small, .publicFile small { color: #526488; }
+.eyebrow, .controls label > span, .search > span { color: #445c9a; }
+.manager select, .manager input:not([type=checkbox]), .inlineFile select, .fileRow, .publicFile { border-color: #d0dcf5; color: #253b72; }
+.uploadButton { border-color: #5365b9; background: linear-gradient(115deg, #3d5ebd, #654abc); }
+.uploadButton:hover { background: #4053a9; }
+.upload button:focus-visible, .manager button:focus-visible, .manager a:focus-visible, .inlineFile :focus-visible, .attachmentOption input:focus-visible { outline-color: #778ad9; }
+.fileIcon { color: #4b59ba; background: #e5eaff; }
+.rowActions a, .rowActions button, .textButton, .inlineActions button, .publicFile a, .inlineFile a { color: #4353a7; }
+.quota progress, .progress, .visibility input, .attachmentOption input { accent-color: #6059c4; }
+.empty, .confirm { background: #eef1ff; border-color: #bdccef; }
+.error { color: #a73460 !important; }
 @media (min-width: 601px) and (max-width: 1100px) {
   .controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; }
   .controls > .upload { grid-column: 1 / -1; justify-self: start; }

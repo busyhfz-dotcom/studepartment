@@ -1,8 +1,15 @@
-export const featuredCountries = ["US", "CA", "GB", "CH", "NL", "BE", "DE", "FR", "AT", "DK", "SE", "IT", "FI", "SG", "JP"] as const;
+export const asiaOpportunityCountries = ["SG", "JP", "KR", "CN", "TW", "HK"] as const;
+export const featuredCountries = ["US", "CA", "GB", "CH", "NL", "BE", "DE", "FR", "AT", "DK", "SE", "IT", "FI", ...asiaOpportunityCountries] as const;
+
+const excludedAsianScanCountries = new Set("AF AM AZ BH BD BT BN KH GE IN ID IR IQ IL JO KZ KW KG LA LB MO MY MV MN MM NP KP OM PK PS PH QA RU SA LK SY TJ TH TL TR TM AE UZ VN YE".split(" "));
+
+export function opportunityScanIncludes(country?: string | null) {
+  return !country || !excludedAsianScanCountries.has(country.toUpperCase());
+}
 
 export const opportunityRegions = {
   EUROPE: { label: "Europe", countries: "AL AD AT BY BE BA BG HR CY CZ DK EE FI FR DE GR HU IS IE IT XK LV LI LT LU MT MD MC ME NL MK NO PL PT RO SM RS SK SI ES SE CH TR UA GB VA".split(" ") },
-  ASIA: { label: "Asia", countries: "AF AM AZ BH BD BT BN KH CN GE HK IN ID IR IQ IL JP JO KZ KW KG LA LB MO MY MV MN MM NP KP OM PK PS PH QA SA SG KR LK SY TW TJ TH TL TR TM AE UZ VN YE".split(" ") },
+  ASIA: { label: "Asia", countries: asiaOpportunityCountries },
   US_CA: { label: "US & Canada", countries: ["US", "CA"] },
 } as const;
 

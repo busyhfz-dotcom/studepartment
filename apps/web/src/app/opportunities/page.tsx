@@ -32,6 +32,7 @@ export default async function OpportunitiesPage() {
         <Suspense fallback={<p role="status">Loading opportunity search…</p>}>
           <OpportunityExplorer countryCodes={countryCodes} />
         </Suspense>
+        <p><Link href="/opportunities/photo-credits">Location photo credits</Link></p>
       </div>
     </ProductShell>
   );

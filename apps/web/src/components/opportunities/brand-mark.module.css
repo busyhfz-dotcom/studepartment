@@ -1,7 +1,7 @@
 .institution { display: inline-flex; align-items: center; gap: 8px; min-inline-size: 0; max-inline-size: 100%; vertical-align: middle; }
-.mark, .initials { inline-size: 27px; block-size: 27px; flex: 0 0 27px; border-radius: 7px; border: 1px solid #aebfe56b; background: #f9faff; }
-.mark { display: grid; place-items: center; }
-.mark > span { inline-size: 21px; block-size: 21px; background-image: url("/images/institutions/marks.webp"); background-repeat: no-repeat; }
-.initials { display: inline-grid; place-items: center; color: #364c8c; background: #e9eefc; font-size: 10px; font-weight: 750; }
+.mark { position: relative; display: grid; place-items: center; inline-size: 28px; block-size: 28px; flex: 0 0 28px; border-radius: 7px; border: 1px solid #aebfe56b; background: #f9faff; }
+.tile { position: absolute; inline-size: 22px; block-size: 22px; background-color: #f9faff; background-repeat: no-repeat; border-radius: 3px; }
+.initials { color: #364c8c; font-size: 10px; font-weight: 750; }
+.mark:has(.tile) .initials { visibility: hidden; }
 .name { min-inline-size: 0; overflow-wrap: anywhere; }
 .app { display: block; object-fit: contain; padding: 2px; background: #fff; border-radius: 4px; flex: 0 0 19px; }

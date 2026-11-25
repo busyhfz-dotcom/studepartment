@@ -101,7 +101,7 @@ export const countries: ReadonlyArray<readonly [code: string, name: string]> = [
   ["HT", "Haiti"],
   ["HM", "Heard & McDonald Islands"],
   ["HN", "Honduras"],
-  ["HK", "Hong Kong SAR China"],
+  ["HK", "Hong Kong"],
   ["HU", "Hungary"],
   ["IS", "Iceland"],
   ["IN", "India"],

@@ -1,7 +1,11 @@
 import marks from "@/lib/institution-marks.json";
+import additionalMarks from "@/lib/additional-institution-marks.json";
 import styles from "./brand-mark.module.css";
 
 const institutionMarks: Record<string, number> = marks.slots;
+const extraSlots: Record<string, number> = additionalMarks.slots;
+const nameAliases: Record<string, string> = additionalMarks.aliases;
+const markDomains = [...Object.keys(institutionMarks), ...Object.keys(extraSlots)].sort((a,b) => b.length - a.length);
 const institutionAliases: readonly [RegExp, string][] = [
   [/Netherlands Cancer Institute|Antoni van Leeuwenhoek/i, "nki.nl"],
   [/Agency for Science, Technology and Research|\bA\*STAR\b/i, "a-star.edu.sg"],
@@ -11,29 +15,52 @@ const institutionAliases: readonly [RegExp, string][] = [
   [/University of Oxford/i, "ox.ac.uk"], [/University of Cambridge/i, "cam.ac.uk"],
   [/Harvard/i, "harvard.edu"], [/Stanford/i, "stanford.edu"],
   [/National University of Singapore/i, "nus.edu.sg"],
+  [/\bKAIST\b/i, "kaist.ac.kr"],
+  [/\bMersey Care\b/i, "merseycare.nhs.uk"],
+  [/\bNorthern Care Alliance\b/i, "northerncarealliance.nhs.uk"],
+  [/\bLiverpool University Hospitals\b/i, "liverpoolft.nhs.uk"],
+  [/\bThe Royal Marsden\b/i, "royalmarsden.nhs.uk"],
+  [/\bManchester University NHS\b/i, "mft.nhs.uk"],
+  [/\bUniversity Hospitals Bristol\b/i, "uhbristol.nhs.uk"],
+  [/\bGreat Ormond Street\b/i, "gosh.nhs.uk"],
+  [/\bUniversity College London Hospitals\b/i, "uclh.nhs.uk"],
+  [/\bOxford University Hospitals\b/i, "ouh.nhs.uk"],
 ];
 
-export function Institution({ name, website }: { name: string; website?: string | null }) {
+function findMark(name: string, website: string | null | undefined) {
   const domain = host(website);
-  const known = Object.keys(institutionMarks).find(key => domain === key || domain.endsWith("." + key));
-  const alias = institutionAliases.find(([pattern]) => pattern.test(name))?.[1];
-  const slot = institutionMarks[known ?? alias ?? ""];
+  const known = markDomains.find(key => domain === key || domain.endsWith("." + key));
+  const nameKey = name.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+  const alias = nameAliases[nameKey] ?? institutionAliases.find(([pattern]) => pattern.test(name))?.[1];
+  const key = known ?? alias ?? "";
+  if (Object.hasOwn(extraSlots, key)) return { columns: additionalMarks.columns, rows: additionalMarks.rows, slot: extraSlots[key], src: "/images/institutions/additional-marks.webp" };
+  if (Object.hasOwn(institutionMarks, key)) return { columns: marks.columns, rows: marks.rows, slot: institutionMarks[key], src: "/images/institutions/marks.webp" };
+}
+
+export function InstitutionalMark({ name, website, className }: { name: string; website?: string | null; className?: string }) {
+  const mark = findMark(name, website);
+  if (!mark) return null;
+  return <span className={className ?? styles.tile} aria-hidden="true" style={{
+    backgroundImage: `url("${mark.src}")`,
+    backgroundSize: `${mark.columns * 100}% ${mark.rows * 100}%`,
+    backgroundPosition: `${mark.slot % mark.columns * 100 / (mark.columns - 1)}% ${Math.floor(mark.slot / mark.columns) * 100 / (mark.rows - 1)}%`,
+  }} />;
+}
+
+export function Institution({ name, website }: { name: string; website?: string | null }) {
   const initials = name.trim().split(/[\s–,&-]+/).filter(Boolean).slice(0, 2).map(word => Array.from(word)[0]).join("").toUpperCase();
   return <span className={styles.institution} data-original-content>
-    {typeof slot === "number"
-      ? <span className={styles.mark} aria-hidden="true"><span style={{
-        backgroundSize: marks.columns * 100 + "% " + marks.rows * 100 + "%",
-        backgroundPosition: (slot % marks.columns) * 100 / (marks.columns - 1) + "% "
-          + Math.floor(slot / marks.columns) * 100 / (marks.rows - 1) + "%",
-      }} /></span>
-      : <span className={styles.initials} aria-hidden="true">{initials}</span>}
+    <span className={styles.mark}>
+      <span className={styles.initials} aria-hidden="true">{initials}</span>
+      <InstitutionalMark name={name} website={website} />
+    </span>
     <span className={styles.name}>{name}</span>
   </span>;
 }
 
 function host(website?: string | null) {
   if (!website) return "";
-  try { return new URL(website).hostname.toLowerCase(); } catch { return ""; }
+  try { return new URL(website).hostname.toLowerCase().replace(/^www\./, ""); } catch { return ""; }
 }
 
 const appMarks = ["Gmail", "Outlook", "LinkedIn", "X", "Slack", "GoogleCalendar"] as const;

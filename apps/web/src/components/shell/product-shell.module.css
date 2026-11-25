@@ -657,27 +657,35 @@
 @media(max-width:940px){.navSubItem{min-height:46px}}
 @media(prefers-reduced-motion:reduce){.navSubList,.navSubListOpen,.navChevron{transition:none}}
 
-.frame { background: #f2f5fc; }
+.frame { background: linear-gradient(145deg, #e9f0ff, #f6f3ff 75%); }
 .sidebar {
-  color: #dbe5ff;
-  border-color: #334575;
-  background: radial-gradient(ellipse at 12% 0%, #253c75, transparent 64%), linear-gradient(155deg, #152548, #121b36);
+  color: #edf2ff;
+  border-color: #6d7cbd;
+  background-color: #354982;
+  background-image: radial-gradient(ellipse at 8% 0%, #5469b14d, transparent 64%), linear-gradient(165deg, #304f90, #414282 64%, #394876);
 }
+.sidebarBody { scrollbar-color: #929ed8 transparent; }
+.sidebarFooter { border-color: #bac9ff45; }
 .brandMark { color: #fff; background: linear-gradient(135deg, #779cff, #705adf); box-shadow: 0 5px 18px #6883ff54; }
 .brandCopy strong, .navItemActive, .navItem:hover { color: #f5f7ff; }
-.brandCopy small, .navLabel, .navCopy small, .trustSummary small, .version, .version strong { color: #a8b9de; }
+.brandCopy small, .navLabel, .navCopy small, .trustSummary small, .version, .version strong { color: #d2deff; }
 .navItem, .navSubItem, .trustSummary { color: #dbe5ff; }
-.iconWrap, .trustGlyph, .navArrow, .navChevron { color: #a0b6f2; }
-.navItem:hover, .navSubItem:hover { background: #263d71; border-color: #829be433; }
-.navItemActive, .navSubItemActive { background: #6885e63b; border-color: #91a3ed55; }
-.navItemActive .iconWrap, .navItemActive .navCopy small, .navItemActive .navArrow { color: #e0eaff; }
+.iconWrap, .trustGlyph { width: 29px; height: 29px; color: #e0e9ff; background: #b7c7ff22; border: 1px solid #bbcbff40; }
+.navArrow, .navChevron { color: #c5d3ff; }
+.navItem:hover, .navSubItem:hover { background: #8096ea36; border-color: #aec1ff62; }
+.navItemActive, .navSubItemActive { background: linear-gradient(120deg, #7089d262, #b097f54d); border-color: #c0b5fa85; }
+.navItem:hover .iconWrap, .navItemActive .iconWrap { color: #fff; background: #a6a2fa58; border: 1px solid #b6c5ff70; }
+.navItemActive .navCopy small, .navItemActive .navArrow { color: #f3f1ff; }
 .navSubInner::before { background: #a0b6ef53; }
-.navSubDot { background: #819fe8; box-shadow: 0 0 0 3px #1d2b52; }
+.navSubDot { background: #b7cafc; box-shadow: 0 0 0 3px #6577b8; }
 .navSubItemActive .navSubDot { background: #ddd2ff; box-shadow: 0 0 0 3px #334981; }
 .topbar { color: #25395e; border-color: #dce5f7; background: #ffffffed; }
 .topbarEyebrow { color: #5e7197; }
 .pageName { color: #182a52; }
+.workspaceBrand { color: #465ca4; }
+.workspaceBrand:hover { color: #624fc1; }
 .quickSearch, .avatar, .menuButton { color: #4e6391; background: #f1f5ff; border-color: #dce4f8; }
 .quickSearch:hover { background: #e8efff; border-color: #adbee9; }
 .quickSearch svg, .quickSearch kbd { color: #5e75a9; }
-.mobileClose { color: #f3f6ff; background: #2a4073; border-color: #657db4; }
+.mobileClose { color: #f3f6ff; background: #5d6eb0; border-color: #aab8ef; }
+.scrim { background: #2336688c; }

@@ -1,4 +1,5 @@
 import type { OpportunityIngestionRecord } from "../ingestion";
+import { opportunityScanIncludes } from "@/lib/opportunity-filters";
 import { topicSlugsFor } from "./classify";
 import { indexerUserAgent, mapWithConcurrency } from "./http";
 import { PROGRAMMES, type Programme } from "./programme-registry-data";
@@ -131,11 +132,12 @@ export const programmeRegistrySource: OpportunitySourceConnector = {
   isEnabled: () => true,
   async collect(context) {
     const robotsCache = new Map<string, Promise<string | null>>();
-    const published = await mapWithConcurrency(PROGRAMMES, 6, (programme) => programmePagePublished(context.fetch, programme, robotsCache));
-    const confirmed = PROGRAMMES.filter((_, index) => published[index]);
-    context.log(`Programme pages: ${confirmed.length} of ${PROGRAMMES.length} confirmed at their provider`);
+    const scoped = PROGRAMMES.filter((programme) => opportunityScanIncludes(programme.country));
+    const published = await mapWithConcurrency(scoped, 6, (programme) => programmePagePublished(context.fetch, programme, robotsCache));
+    const confirmed = scoped.filter((_, index) => published[index]);
+    context.log(`Programme pages: ${confirmed.length} of ${scoped.length} confirmed at their provider`);
     // Almost nothing reachable means our own network failed, not that every programme closed.
-    if (confirmed.length < PROGRAMMES.length / 5) throw new Error("Too few programme pages were reachable to trust this run");
+    if (confirmed.length < scoped.length / 5) throw new Error("Too few programme pages were reachable to trust this run");
     return confirmed.flatMap(toProgrammeRecords);
   },
 };

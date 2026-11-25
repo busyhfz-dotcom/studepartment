@@ -30,7 +30,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
         <Link className="backLink" href="/discover/institutions">← Back to institution discovery</Link>
         <header className={styles.hero}>
           <div className={styles.identityBlock}>
-            <IdentityAvatar name={institution.name} src={institution.logoUrl} kind="organization" size="large" />
+            <IdentityAvatar name={institution.name} src={institution.logoUrl} website={institution.website} verified={institution.verified} kind="organization" size="large" />
             <div>
               <span className="eyebrow">Institution profile</span>
               <h1>{institution.name}</h1>

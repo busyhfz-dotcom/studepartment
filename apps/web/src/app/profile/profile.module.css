@@ -417,7 +417,11 @@
 /* Shared electric-blue interaction treatment. */
 .publicationCard{transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
 @media(hover:hover) and (prefers-reduced-motion:no-preference){.publicationCard:hover{transform:translateY(-3px);box-shadow:0 16px 36px #3c3c3c0c;border-color:#eaeaea}}
-.roleProfile, .guidance, .publicationCard { border-color: #d5ddf2; }
-.roleDetails div, .item { color: #334778; background: #f0f4ff; }
+.roleProfile, .guidance, .publications { border-color: #cbd6f0; background: linear-gradient(140deg, #fff, #f0f2ff); }
+.publicationCard { border-color: #d2dcf5; background: #fafdff; }
+.notice { border-color: #cfd9f6; background: #edf1ff; }
+.noticeError { color: #953259; border-color: #ecc3d4; background: #fff0f7; }
+.roleDetails div, .item { color: #334778; background: #eaf0ff; }
+.identifierRow span { background: #e4eaff; color: #435792; }
 .bar span { background: linear-gradient(90deg, #4569d2, #7562cf); }
 @media (max-width: 650px) { .roleProfile { grid-template-columns: minmax(0,1fr); } }

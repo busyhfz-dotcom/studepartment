@@ -9,6 +9,9 @@ import styles from './language.module.css';
 type LanguageState = { locale:string; setLocale:(locale:string)=>void; status:'ready'|'loading'|'unavailable' };
 const LanguageContext = createContext<LanguageState>({locale:'en',setLocale:()=>{},status:'ready'});
 const storageKey = 'provenant-language';
+const flagSlots: Record<string, number> = Object.fromEntries(
+  'en fr de es zh ru hi fa ar ja ko pt it tr ur bn id ms vi th nl pl uk sv el'.split(' ').map((code, index) => [code, index]),
+);
 const catalog = () => import('@/lib/i18n/ui-catalog.json').then(module => module.default);
 const changeNotice = {
   fa: { title: 'زبان رابط کاربری', search: 'جست‌وجوی زبان', noResults: 'زبانی با این نام پیدا نشد.', close: 'بستن', active: 'انتخاب فعلی' },
@@ -154,7 +157,14 @@ export function LanguagePicker({floating=false}:{floating?:boolean}) {
         <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5"/><path d="m12 12 4 4"/></svg>
         <input ref={search} aria-label={copy.search} placeholder={copy.search} value={query} onChange={event=>setQuery(event.target.value)}/>
       </div>
-      <div className={styles.options}>{choices.map(code=><button type="button" key={code} aria-pressed={locale===code} onClick={()=>{setLocale(code);close();}}><b aria-hidden="true">{code.toUpperCase()}</b><span lang="en">{languageName(code,false)}<small lang={code} dir="auto">{languageName(code)}</small></span>{locale===code?<span className={styles.selected} aria-label={copy.active}>✓</span>:null}</button>)}
+      <div className={styles.options}>{choices.map(code=>{
+        const flagSlot=flagSlots[code];
+        return <button type="button" key={code} aria-pressed={locale===code} onClick={()=>{setLocale(code);close();}}>
+          <span aria-hidden="true" className={styles.flag} style={{backgroundPosition: `${flagSlot % 5 * 25}% ${Math.floor(flagSlot / 5) * 25}%`}} />
+          <span lang="en">{languageName(code,false)}<small lang={code} dir="auto">{languageName(code)}</small></span>
+          {locale===code?<span className={styles.selected} aria-label={copy.active}>✓</span>:<span aria-hidden="true" className={styles.code}>{code.toUpperCase()}</span>}
+        </button>;
+      })}
         {!choices.length ? <p>{copy.noResults}</p> : null}
       </div>
     </div>,document.body)}

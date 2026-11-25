@@ -474,6 +474,10 @@
 .editorCard{transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
 @media(hover:hover) and (prefers-reduced-motion:no-preference){.editorCard:hover{transform:translateY(-3px);box-shadow:0 16px 36px #3c3c3c0c;border-color:#eaeaea}}
 .checkRow[hidden] { display: none; }
-.editorCard { border-color: #d6dff3; background: #fcfdff; }
-.editorSection { border-color: #dbe4fa; }
+.editorCard { border-color: #cbd8f2; background: linear-gradient(145deg, #fdfeff, #eff2ff); }
+.editorSection { border-color: #d2def6; }
 .editorSection :is(input, textarea, select):focus-visible { outline-color: #778ad9; }
+.editorActions { background: #edf1ff; border-color: #cbd8f2; }
+.verifiedState, .freeBadge { color: #424eaa; background: #e8ebff; border-color: #bbc7ee; }
+.assertedState { color: #694f8e; background: #f2e9ff; border-color: #dac9ee; }
+.provenanceEvidence, .collectionRow, .controlNote { background: #f2f4ff; border-color: #d5dff8; }

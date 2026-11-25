@@ -77,3 +77,9 @@
   line-height: 1.5;
 }
 .button{padding:10px 12px;color:#dadada;border:1px solid #ffffff0d;background:#333333;border-radius:9px;min-height:54px;transition:background .25s,transform .25s}.button:hover{background:#4a4a4a;border-color:#85858533;transform:translateX(2px)}.button:focus-visible{outline-color:#8f8f8f}.icon{height:22px;width:22px;background:none;border:0;color:#c8c8c8}.copy strong{font-size:11px}.copy small{font-size:8px;color:#acacac}.error{color:#cbcbcb;font-size:11px}
+.button { color: #f1f4ff; background: #a9baff20; border-color: #a9baff57; }
+.button:hover { background: #a9baff3d; border-color: #d0d9ff80; }
+.button:focus-visible { outline-color: #d5d0ff; }
+.icon { width: 29px; height: 29px; color: #dbd9ff; background: #b4b2ff28; border: 1px solid #d2ceff53; }
+.copy small { color: #d3dcff; }
+.error { color: #ffd9ee; }

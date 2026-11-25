@@ -9,4 +9,6 @@
 .card h2 { margin-top: 0; font-size: clamp(21px, 3vw, 28px); }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 22px; }
 .actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; max-width: 100%; font-size: 14px; text-align: center; }
+.header h1, .card h2 { color: #243c78; }
+.card { border-color: #cbd8f2; background: linear-gradient(145deg, #fff, #eef1ff); }
 @media (max-width: 600px) { .grid, .actions { display: grid; grid-template-columns: minmax(0, 1fr); } }

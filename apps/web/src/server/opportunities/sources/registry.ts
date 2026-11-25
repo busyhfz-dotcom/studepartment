@@ -16,6 +16,7 @@ import { grantsGovSource } from "./grants-gov";
 import { greenhouseSources } from "./greenhouse";
 import { hkuResearchCareersSource } from "./hong-kong-research-careers";
 import { hospitalResearchSources } from "./hospital-research-careers";
+import { ibsGenomicIntegritySource } from "./ibs-genomic-integrity";
 import { ianPotterMedicalResearchSource } from "./ian-potter-medical-research";
 import { institutionFeedSources } from "./institution-feeds";
 import { lifeArcSource } from "./lifearc";
@@ -85,6 +86,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   ...extendedResearchSources,
   cnrsResearchCareersSource,
   ...pacificResearchCareerSources,
+  ibsGenomicIntegritySource,
   hkuResearchCareersSource,
   westlakeResearchCareersSource,
   ...smartRecruitersSources,

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getDb } from "@studepartment/db";
 import { researchMethods, researchTopics } from "@studepartment/db/taxonomy";
+import { opportunityScanIncludes } from "@/lib/opportunity-filters";
 import { ingestOpportunityBatch, type OpportunityIngestionRecord } from "../ingestion";
 import { opportunitySources } from "./registry";
 import type { FetchLike, OpportunitySourceConnector } from "./types";
@@ -124,7 +125,8 @@ export async function runSource(
 
   let run: SourceRunResult;
   try {
-    const records = dedupe(await connector.collect({ fetch: fetchImpl, now, env: process.env, log }));
+    const collected = await connector.collect({ fetch: fetchImpl, now, env: process.env, log });
+    const records = dedupe(collected.filter(record => opportunityScanIncludes(record.countryCode ?? record.organization.countryCode)));
     // A collector must explicitly distinguish verified empty results from outages.
     const completeSnapshot = connector.completeSnapshot && (records.length > 0 || connector.allowEmptySnapshot === true);
     const staleBefore = new Date(now.getTime() - (connector.staleGraceHours ?? DEFAULT_STALE_GRACE_HOURS) * 3_600_000);

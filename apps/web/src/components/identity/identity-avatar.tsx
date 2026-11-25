@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { InstitutionalMark } from "@/components/opportunities/brand-mark";
 import styles from "./identity-avatar.module.css";
 
 function initials(name: string) {
@@ -15,11 +16,15 @@ function initials(name: string) {
 export function IdentityAvatar({
   name,
   src,
+  website,
+  verified = false,
   kind = "person",
   size = "large",
 }: {
   name: string;
   src?: string | null;
+  website?: string | null;
+  verified?: boolean;
   kind?: "person" | "organization";
   size?: "small" | "medium" | "large";
 }) {
@@ -30,6 +35,7 @@ export function IdentityAvatar({
   return (
     <span className={`${styles.avatar} ${styles[size]} ${styles[kind]}`} aria-label={`${name} ${kind === "person" ? "profile photo" : "logo"}`}>
       <span className={styles.fallback} aria-hidden="true">{initials(name)}</span>
+      {kind === "organization" && verified ? <InstitutionalMark name={name} website={website} className={styles.mark} /> : null}
       {safeSrc && failedSrc !== safeSrc ? <img alt="" src={safeSrc} onError={() => setFailedSrc(safeSrc)} /> : null}
     </span>
   );
