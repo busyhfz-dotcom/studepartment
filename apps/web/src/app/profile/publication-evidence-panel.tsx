@@ -102,7 +102,7 @@ export function PublicationEvidencePanel() {
                 <div className={styles.publicationFooter}>
                   <span>Evidence: {publication.evidenceSources.join(" + ") || "Recorded source"}</span>
                   {publication.sourceUrl ? (
-                    <a href={publication.sourceUrl} rel="noreferrer" target="_blank">Open source ↗</a>
+                    <a href={publication.sourceUrl} rel="noreferrer" target="_blank">Open source</a>
                   ) : null}
                 </div>
               </article>

@@ -8,6 +8,7 @@ import { getOwnedOrganization } from "@/server/repositories/organization-reposit
 import { OrganizationProfileEditor } from "./organization-profile-editor";
 import { OrganizationOpportunities } from "./organization-opportunities";
 import styles from "./organization-profile.module.css";
+import workspace from "../../profile/workspace.module.css";
 
 export default async function OrganizationProfilePage() {
   const user = await getCurrentUser();
@@ -22,8 +23,8 @@ export default async function OrganizationProfilePage() {
 
   return (
     <ProductShell accountKind="institution">
-      <div className={styles.shell}>
-        <header className={styles.header}>
+      <div className={`${styles.shell} ${workspace.workspace}`}>
+        <header className={`${styles.header} ${workspace.hero}`}>
           <div className={styles.identityHead}>
             <IdentityAvatar name={organization.name} src={organization.logoUrl} kind="organization" size="large" />
             <div>
@@ -40,9 +41,9 @@ export default async function OrganizationProfilePage() {
             This is your organization&apos;s official record on Provenant, separate from any individual&apos;s
             profile. Researchers see it when they look at your postings and affiliations.
           </p>
-          <div className={styles.headerActions}>
-            <Link className="secondary" href={`/institutions/${organization.id}`}>View public institutional page ↗</Link>
-          </div>
+          <nav className={workspace.actions} aria-label="Institutional profile actions">
+            <Link href={`/institutions/${organization.id}`}>View public institutional page</Link>
+          </nav>
         </header>
 
         {visibleDetails.length ? <section className={styles.detailGrid}>{visibleDetails.map(([key, value]) => <div className={styles.statCard} key={key}><span>{detailLabels[key as keyof typeof detailLabels]}</span><strong>{value}</strong></div>)}</section> : null}

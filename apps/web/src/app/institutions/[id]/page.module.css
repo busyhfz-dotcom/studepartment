@@ -332,14 +332,6 @@
   background: #fff;
 }
 
-.people a::after {
-  content: "↗";
-  position: absolute;
-  right: 10px;
-  top: 9px;
-  color: var(--accent-strong);
-  font-size: 11px;
-}
 
 .people strong {
   padding-right: 18px;

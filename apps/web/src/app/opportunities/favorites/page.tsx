@@ -27,7 +27,7 @@ export default async function FavoritesPage() {
       <header className={styles.header}>
         <h1>My Favorites</h1>
         <p>Return to opportunities you liked from any device. Export your list or move a listing into your application workspace.</p>
-        <Link href="/opportunities/saved">Application workspace ↗</Link>
+        <Link href="/opportunities/saved">Application workspace</Link>
       </header>
       <Favorites initial={favorites} />
     </div>

@@ -5,7 +5,7 @@ export function ResearchProfileActions({ sourceKey, value }: { sourceKey: Resear
   const source = researchProfileSources.find((item) => item.key === sourceKey)!;
   const href = researchProfileUrl(sourceKey, value);
   return <div className={styles.actions}>
-    <a href={source.entryUrl} target="_blank" rel="noopener noreferrer">Open {source.name} ↗</a>
-    {href ? <a href={href} target="_blank" rel="noopener noreferrer">View saved {source.name} profile ↗</a> : null}
+    <a href={source.entryUrl} target="_blank" rel="noopener noreferrer">Open {source.name}</a>
+    {href ? <a href={href} target="_blank" rel="noopener noreferrer">View saved {source.name} profile</a> : null}
   </div>;
 }

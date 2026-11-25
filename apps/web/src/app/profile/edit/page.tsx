@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import { listOrganizationOptions } from "@/server/repositories/organization-repository";
 import { researcherRepository } from "@/server/repositories/researcher-repository";
 import { ProfileEditor } from "./profile-editor";
+import workspace from "../workspace.module.css";
 
 export default async function EditProfilePage() {
   const user = await getCurrentUser();
@@ -18,17 +19,15 @@ export default async function EditProfilePage() {
   if (!profile) redirect("/onboarding");
 
   return (
-    <main className="shell onboardingShell">
+    <main className={`shell onboardingShell ${workspace.workspace}`}>
       <ScientificBackdrop tone="light" />
       <Link className="backLink" href="/profile">← Back to Scientific Identity</Link>
 
-      <header className="onboardingHeader">
-        <span className="eyebrow">Edit Scientific Identity</span>
-        <h1>Keep your profile accurate.</h1>
-        <p className="lede">
-          Your research focus, collaboration preferences and visibility settings decide how you appear in search
-          and which opportunities we suggest. None of it becomes a public score.
-        </p>
+      <header className={workspace.hero}>
+        <div>
+          <h1>Edit research profile</h1>
+          <p>Update what you study, what you are open to, and who can see your profile.</p>
+        </div>
       </header>
 
       <ProfileEditor profile={profile} organizations={organizations} />

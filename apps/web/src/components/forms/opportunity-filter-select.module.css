@@ -1,0 +1,3 @@
+.field { position: relative; display: block; min-inline-size: 0; color: inherit; }
+.field select { inline-size: 100%; padding-inline-start: 36px; min-block-size: 44px; }
+.icon { position: absolute; inset-inline-start: 11px; inset-block-start: 50%; translate: 0 -50%; inline-size: 17px; block-size: 17px; pointer-events: none; z-index: 1; }

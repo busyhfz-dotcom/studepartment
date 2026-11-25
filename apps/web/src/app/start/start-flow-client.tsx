@@ -17,6 +17,7 @@ import { entryKind, entryDeadlineLabel as deadlineLabel, entryLabels as kindLabe
 import { BrandSymbol } from "@/components/design/research-art";
 import { ScientificBackdrop } from "@/components/design/scientific-backdrop";
 import { OpportunityLocationPicker } from "@/components/forms/opportunity-location-picker";
+import { OpportunityFilterSelect } from "@/components/forms/opportunity-filter-select";
 import { LocationFeature } from "@/components/opportunities/location-feature";
 import { Institution } from "@/components/opportunities/brand-mark";
 import { OpportunityPager } from "@/components/forms/opportunity-pager";
@@ -76,7 +77,7 @@ function FootBar() {
   return (
     <footer className={styles.footbar}>
       <span>Provenant · medical research, worldwide</span>
-      <Link href="/opportunities">Open the full opportunity search ↗</Link>
+      <Link href="/opportunities">Open the full opportunity search</Link>
       <span>
         <Link href="/about">About</Link> · <Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link> ·{" "}
         <button className={styles.backgroundMotion} type="button"
@@ -89,7 +90,7 @@ function FootBar() {
   );
 }
 
-type StartOptions = { ticker?: PublicOpportunityTicker; countryCodes?: string[] };
+type StartOptions = { ticker?: PublicOpportunityTicker };
 export function StartFlow(options: StartOptions) {
   return <Suspense fallback={<div className={styles.page}><TopBar /><main className={styles.wrap}><p role="status">Loading your page…</p></main></div>}><StartJourney {...options} /></Suspense>;
 }
@@ -209,7 +210,7 @@ function StartJourney({ ticker }: StartOptions) {
               <span className={styles.gatewayArt}><PathIllustration /></span>
               <h2>Find grant &amp; position</h2>
               <p>Explore scholarships, research funding and roles for every stage of your research career.</p>
-              <span className={styles.gatewayAction}>Explore opportunities <span aria-hidden="true">↗</span></span>
+              <span className={styles.gatewayAction}>Explore opportunities</span>
             </Link>
             <IntroductionVideo />
             <Link href="/start?step=institutions" className={`${styles.gatewayCard} ${styles.gatewayPost}`}>
@@ -217,7 +218,7 @@ function StartJourney({ ticker }: StartOptions) {
               <span className={styles.gatewayArt}><PathIllustration posting /></span>
               <h2>Post a position</h2>
               <p>Introduce your research team and invite qualified researchers to become part of its next chapter.</p>
-              <span className={styles.gatewayAction}>Share an opportunity <span aria-hidden="true">↗</span></span>
+              <span className={styles.gatewayAction}>Share an opportunity</span>
             </Link>
           </div>
           <p className={styles.gatewayReassurance}>Explore freely. Create an account when you are ready to save an opportunity or publish a position.</p>
@@ -244,9 +245,9 @@ function StartJourney({ ticker }: StartOptions) {
             their positions from one workspace.
           </p>
           <Link className={styles.primary} href="/auth/sign-in?kind=institution&callbackUrl=%2Forganization%2Fprofile">
-            Continue to the institutional workspace ↗
+            Continue to the institutional workspace
           </Link>
-          <Link className={styles.postingExisting} href="/organization/profile">Already have an institutional account? Open your posting workspace ↗</Link>
+          <Link className={styles.postingExisting} href="/organization/profile">Already have an institutional account? Open your posting workspace</Link>
           <ul className={styles.postingNotes}><li>Introduce your institution and research focus.</li><li>Provide a clear role description, deadline and application route.</li><li>Review and publish positions from your organization profile.</li></ul>
         </main>
         <FootBar />
@@ -263,7 +264,7 @@ function StartJourney({ ticker }: StartOptions) {
         <ScientificBackdrop className={styles.scienceBackdrop} />
         <TopBar />
         <main className={`${styles.wrap} ${styles.browse}`}>
-          {ticker ? <OpportunityTicker ticker={ticker} country={country} subject={subject} /> : null}
+          {ticker ? <OpportunityTicker ticker={ticker} /> : null}
           <h1 className={styles.srOnly}>Browse research opportunities</h1>
           <nav className={styles.routeSwitch} data-doctoral-open={doctoralFunding} aria-label="Opportunity type">
             <button
@@ -320,8 +321,8 @@ function StartJourney({ ticker }: StartOptions) {
           </nav>
           <div className={styles.routeLinks}><Link href="/opportunities/favorites">♡ My Favorites</Link><Link href="/opportunities/directory">Programme & conference directory</Link></div>
 
-          {kind==='masters-scholarship' && <aside className={styles.sourceGuidance}><strong>Consider the programme as well as the award.</strong><p>DAAD programmes are included in these results. Erasmus Mundus funding is offered through individual consortia; check each programme’s current scholarship availability.</p><a href="https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en" target="_blank" rel="noopener noreferrer">Explore the official Erasmus Mundus catalogue ↗</a></aside>}
-          {kind==='md-phd-scholarship' && <aside className={styles.sourceGuidance}><strong>Support for the physician-scientist route.</strong><p>NIH F30 fellowships support students already enrolled in eligible dual-degree programmes. Check citizenship or residency, enrolment and sponsor requirements. T32 awards fund institutions; trainee places are offered by the participating programmes.</p><a href="https://www.cancer.gov/grants-training/training/funding/f30" target="_blank" rel="noopener noreferrer">Understand the F30 route ↗</a><a href="https://grants.nih.gov/funding/activity-codes/T32" target="_blank" rel="noopener noreferrer">Explore institutional training through T32 ↗</a></aside>}
+          {kind==='masters-scholarship' && <aside className={styles.sourceGuidance}><strong>Consider the programme as well as the award.</strong><p>DAAD programmes are included in these results. Erasmus Mundus funding is offered through individual consortia; check each programme’s current scholarship availability.</p><a href="https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en" target="_blank" rel="noopener noreferrer">Explore the official Erasmus Mundus catalogue</a></aside>}
+          {kind==='md-phd-scholarship' && <aside className={styles.sourceGuidance}><strong>Support for the physician-scientist route.</strong><p>NIH F30 fellowships support students already enrolled in eligible dual-degree programmes. Check citizenship or residency, enrolment and sponsor requirements. T32 awards fund institutions; trainee places are offered by the participating programmes.</p><a href="https://www.cancer.gov/grants-training/training/funding/f30" target="_blank" rel="noopener noreferrer">Understand the F30 route</a><a href="https://grants.nih.gov/funding/activity-codes/T32" target="_blank" rel="noopener noreferrer">Explore institutional training through T32</a></aside>}
 
           <div className={styles.filterRow}>
             <input
@@ -335,14 +336,14 @@ function StartJourney({ ticker }: StartOptions) {
             />
             <OpportunityLocationPicker value={country}
               onChange={(value) => setFilter("country", value)} />
-            <select aria-label="Subject" value={subject} onChange={event => setFilter("subject", event.target.value)}>
+            <OpportunityFilterSelect icon="subject" aria-label="Subject" value={subject} onChange={event => setFilter("subject", event.target.value)}>
               <option value="">Any subject</option>
               {opportunitySubjects.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
-            </select>
-            {isPosition ? <select aria-label="Position role" value={role} onChange={event => setFilter("role", event.target.value)}>
+            </OpportunityFilterSelect>
+            {isPosition ? <OpportunityFilterSelect icon="role" aria-label="Position role" value={role} onChange={event => setFilter("role", event.target.value)}>
               <option value="">Any role</option>
               {Object.entries(positionRoles).map(([id, data]) => <option key={id} value={id}>{data.label}</option>)}
-            </select> : null}
+            </OpportunityFilterSelect> : null}
           </div>
 
           <LocationFeature value={country} />
@@ -364,20 +365,26 @@ function StartJourney({ ticker }: StartOptions) {
             ) : (
               kind === 'grant' ? (!loading&&!searchError?<GrantTable items={results} params={entrySearchParams(kind,query,country,page,subject,role).toString()} onReview={openDetail}/>:null) : results.map((item) => (
                 <article className={styles.result} key={item.id}>
-                  <div>
+                  <div className={styles.resultMain}>
                     <div className={styles.tags}>
                       <span>{(isPosition && positionRoleLabel(item.title)) || typeLabel(item.type)}</span>
                       <span data-original-content>{item.location}</span>
                     </div>
                     <h3 data-original-content>{item.title}</h3>
                     <p><Institution name={item.organization} website={item.organizationWebsite} /></p>
+                    {item.researchInterests.length ? <p className={styles.subjects} data-original-content>{item.researchInterests.slice(0, 4).join(" · ")}</p> : null}
+                    {item.publishedEligibility ? <p className={styles.subjects}><strong>Eligibility</strong> · <ListingEligibility item={item} /></p> : null}
+                    {item.competition ? <p className={styles.subjects}><Competition item={item} /></p> : null}
+                    <a className={styles.applyNow} href={item.applicationUrl || item.sourceUrl} target="_blank" rel="noopener noreferrer">Apply now</a>
                   </div>
+                  <div className={styles.resultSignals}><OpportunitySignals item={item} /></div>
                   <div className={styles.resultSide}>
-                    <DueDate item={item} />
-                    <OpportunitySignals key={item.id} item={item} />
+                    <div className={styles.resultDue}><DueDate item={item} /></div>
+                    <div className={styles.resultControls}>
                     <ListingActions item={item} primary={<button type="button" onClick={() => openDetail(item)} aria-label={`Review ${item.title}`}>
-                      Review details ↗
+                      Review details
                     </button>} />
+                    </div>
                   </div>
                 </article>
               ))
@@ -452,7 +459,7 @@ function StartJourney({ ticker }: StartOptions) {
                 </>
               ) : null}
               <a className={styles.official} href={applyHref} target="_blank" rel="noopener noreferrer">
-                Apply now ↗
+                Apply now
               </a>
               <p className={styles.smallprint}>
                 Source: {selected.source.name} · last verified {new Date(selected.lastVerifiedAt).toLocaleDateString()}
@@ -469,9 +476,9 @@ function StartJourney({ ticker }: StartOptions) {
                 <DueDate item={selected} />
                 <OpportunitySignals key={selected.id} item={selected} recordView />
                 <ListingActions item={selected} primary={<button type="button" onClick={() => setStep("next")}>
-                  Track this {recordLabel} ↗
+                  Track this {recordLabel}
                 </button>} />
-                <a className={styles.sub} href={applyHref} target="_blank" rel="noopener noreferrer">View contact details at source <span>↗</span></a>
+                <a className={styles.sub} href={applyHref} target="_blank" rel="noopener noreferrer">View contact details at source</a>
               </div>
               <p className={styles.smallprint}>
                 We only show contact details when the original listing includes them. Applications always go through
@@ -542,7 +549,7 @@ function StartJourney({ ticker }: StartOptions) {
               <div className={styles.big}>Profile and application tracking</div>
               <small>Save opportunities, track application stages and keep your research experience ready.</small>
               <Link className={styles.primary} href={trackingHref}>
-                Continue with Free ↗
+                Continue with Free
               </Link>
             </section>
             <section className={`${styles.plan} ${styles.premium}`}>
@@ -550,7 +557,7 @@ function StartJourney({ ticker }: StartOptions) {
               <strong>Deeper research tools</strong>
               <div className={styles.big}>Assistant, Evidence Graph and introductions</div>
               <small>Ask the Research Assistant, see how a researcher&apos;s work connects and request introductions.</small>
-              <Link className={styles.primary} href="/billing">View Pro plans ↗</Link>
+              <Link className={styles.primary} href="/billing">View Pro plans</Link>
             </section>
           </div>
         </main>
@@ -568,7 +575,7 @@ function StartJourney({ ticker }: StartOptions) {
         {opportunityId && detailFailure !== opportunityId ? <p role="status">Loading opportunity details…</p> : (
           <>
             <p role="alert">This opportunity is unavailable. You can return to your search or retry this page.</p>
-            <button type="button" className={styles.primary} onClick={() => setStep("browse")}>Back to results ↗</button>
+            <button type="button" className={styles.primary} onClick={() => setStep("browse")}>Back to results</button>
           </>
         )}
       </main>

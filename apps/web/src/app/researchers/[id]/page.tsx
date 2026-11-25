@@ -88,7 +88,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
               <span className="sectionLabel">Publication evidence</span>
               <h2>Recent source-backed outputs</h2>
             </div>
-            <Link href={"/graph?researcher=" + researcher.id}>Open evidence graph ↗</Link>
+            <Link href={"/graph?researcher=" + researcher.id}>Open evidence graph</Link>
           </div>
 
           {researcher.publications.length ? (
@@ -105,7 +105,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ id:
                     {publication.pmid ? <span>PMID {publication.pmid}</span> : null}
                     {publication.doi ? <span>DOI {publication.doi}</span> : null}
                   </div>
-                  {publication.sourceUrl ? <a href={publication.sourceUrl} rel="noreferrer" target="_blank">Open source ↗</a> : null}
+                  {publication.sourceUrl ? <a href={publication.sourceUrl} rel="noreferrer" target="_blank">Open source</a> : null}
                 </article>
               ))}
             </div>

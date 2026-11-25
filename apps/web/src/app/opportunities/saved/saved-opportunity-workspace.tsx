@@ -208,9 +208,9 @@ export function SavedOpportunityWorkspace({ pendingOpportunityId }: { pendingOpp
               <div className={styles.actions}>
                 <ListingActions
                   item={{id:item.opportunityId,title:item.opportunity.title,type:item.opportunity.type,deadline:item.opportunity.deadline,deadlinePrecision:item.opportunity.deadlinePrecision}}
-                  primary={<a href={item.opportunity.applicationUrl ?? item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application ↗</a>}
+                  primary={<a href={item.opportunity.applicationUrl ?? item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open application</a>}
                 />
-                <a href={item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open source ↗</a>
+                <a href={item.opportunity.sourceUrl} rel="noreferrer" target="_blank">Open source</a>
                 <button onClick={() => void remove(item.opportunityId)} type="button">Remove from workspace</button>
               </div>
               <ApplicationDocuments opportunityId={item.opportunityId} />

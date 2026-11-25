@@ -166,7 +166,7 @@ export function ResearchAssistantWorkspace({ target, aiAvailable = false, aiProv
                     <span>{citation.type}</span>
                     {citation.href ? (
                       <a href={citation.href} rel={citation.href.startsWith("/") ? undefined : "noreferrer"} target={citation.href.startsWith("/") ? undefined : "_blank"}>
-                        Open source ↗
+                        Open source
                       </a>
                     ) : null}
                   </footer>

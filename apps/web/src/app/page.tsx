@@ -170,7 +170,7 @@ export default async function HomePage() {
               <small>Search Provenant</small>
               <strong>e.g. spatial transcriptomics collaborators in pancreatic cancer</strong>
             </span>
-            <span className={styles.searchCommand}>Open Discovery <b>↗</b></span>
+            <span className={styles.searchCommand}>Open Discovery</span>
           </Link>
 
           <div className={styles.commandSignals}>
@@ -205,7 +205,7 @@ export default async function HomePage() {
                   <h3>{surface.title}</h3>
                   <p>{surface.copy}</p>
                 </div>
-                <strong className={styles.surfaceAction}>{surface.action} <span>↗</span></strong>
+                <strong className={styles.surfaceAction}>{surface.action}</strong>
               </Link>
             ))}
           </div>
@@ -229,7 +229,7 @@ export default async function HomePage() {
                     <strong>{item.title}</strong>
                     <p>{item.copy}</p>
                   </div>
-                  <Link href={item.href}>{item.action} <span>↗</span></Link>
+                  <Link href={item.href}>{item.action}</Link>
                 </div>
               ))}
             </div>
@@ -255,7 +255,7 @@ export default async function HomePage() {
                 </div>
               ))}
             </div>
-            <Link href="/graph">Open the Evidence Graph <span>↗</span></Link>
+            <Link href="/graph">Open the Evidence Graph</Link>
           </aside>
         </section>
 
@@ -268,7 +268,7 @@ export default async function HomePage() {
             <span className="sectionLabel">Fit vs. eligibility</span>
             <strong>We show relevance and formal requirements separately, on purpose.</strong>
           </div>
-          <Link href="/settings/privacy">Privacy & data controls <span>↗</span></Link>
+          <Link href="/settings/privacy">Privacy & data controls</Link>
         </section>
       </div>
     </ProductShell>

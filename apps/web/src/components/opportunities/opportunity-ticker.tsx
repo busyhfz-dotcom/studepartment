@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { PublicOpportunityTicker } from "@/server/opportunities/public-ticker";
 import { OpportunityLocationPicker } from "@/components/forms/opportunity-location-picker";
+import { OpportunityFilterSelect } from "@/components/forms/opportunity-filter-select";
 import { deadlineClosingSoon, opportunitySubjects } from "@/lib/opportunity-filters";
 import { ControlIcon } from "@/components/design/control-icon";
 import { ShareOpportunity } from "./share-opportunity";
@@ -151,7 +152,7 @@ function useLiveTicker(initial: PublicOpportunityTicker, location: string, subje
  * detail panel — same interaction as the design concept, real data instead
  * of the concept's illustrative sample rows.
  */
-export function OpportunityTicker({ ticker: initialTicker, country, subject = "" }: { ticker: PublicOpportunityTicker; country: string; subject?: string }) {
+export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpportunityTicker }) {
   const [personalize, setPersonalize] = useState(false);
   const [preferences, setPreferences] = useState<{ location:string; subject:string }>();
   useEffect(() => { try {
@@ -159,8 +160,8 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
     const saved=raw?JSON.parse(raw):null;
     if(typeof saved?.location==="string"&&typeof saved?.subject==="string") setPreferences(saved);
   } catch {} }, []);
-  const location = preferences?.location ?? country;
-  const activeSubject = preferences?.subject ?? subject;
+  const location = preferences?.location ?? "";
+  const activeSubject = preferences?.subject ?? "";
   const { ticker, updated, filtering } = useLiveTicker(initialTicker, location, activeSubject);
   const entries = filtering || !ticker.available ? [] : buildEntries(ticker);
   const [selected, setSelected] = useState<TickerEntry | null>(null);
@@ -182,7 +183,7 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
       <div className={styles.deskHeading}>
         <span className={styles.liveLabel}>{ticker.available ? <i className={styles.liveDot} aria-hidden="true" /> : null}Latest opportunities</span>
         <span>{filtering ? "Updating feed…" : ticker.available ? `${ticker.stats.totalPositions} positions · ${ticker.stats.totalGrants} grants` : "Feed unavailable"}</span>
-        <div className={styles.headingControls}>
+        <div className={styles.headingControls} role="group" aria-label="Latest opportunities controls">
         <button type="button" className={styles.personalizeButton} aria-expanded={personalize} onClick={()=>setPersonalize(!personalize)}>Personalize</button>
         {scroll.overflowing ? <button
           type="button"
@@ -204,9 +205,9 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
       </div>
       {personalize ? <div className={styles.personalize}>
         <OpportunityLocationPicker label="Latest opportunities location" value={location} onChange={value=>setFeedFilter("location",value)} />
-        <select aria-label="Latest opportunities subject" value={activeSubject} onChange={event=>setFeedFilter("subject",event.target.value)}>
+        <OpportunityFilterSelect icon="subject" aria-label="Latest opportunities subject" value={activeSubject} onChange={event=>setFeedFilter("subject",event.target.value)}>
           <option value="">All subjects</option>{opportunitySubjects.map(([id,label])=><option key={id} value={id}>{label}</option>)}
-        </select>
+        </OpportunityFilterSelect>
       </div> : null}
       {entries.length ? (
         <div
@@ -271,7 +272,7 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
           </div>
         </div>
       ) : (
-        <p className={styles.latestLoading}>{filtering ? "Loading your feed…" : ticker.available ? "No recent opportunities match this feed." : "The opportunity feed is unavailable right now."} <Link href="/scanner">Explore official sources in Scanner ↗</Link></p>
+        <p className={styles.latestLoading}>{filtering ? "Loading your feed…" : ticker.available ? "No recent opportunities match this feed." : "The opportunity feed is unavailable right now."} <Link href="/scanner">Explore official sources in Scanner</Link></p>
       )}
 
       {selected ? (
@@ -289,7 +290,7 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
           <div className={styles.detailActions}>
             <ListingActions
               item={{id:selected.id,title:selected.title,type:selected.kind==='Grant'?'grant':'position',deadline:selected.deadline,deadlinePrecision:selected.deadlinePrecision}}
-              primary={<Link href={`/start?step=detail&kind=${selected.kind === "Grant" ? "grant" : "position"}&opportunity=${encodeURIComponent(selected.id)}${countryQuery}`}>Review this opportunity ↗</Link>}
+              primary={<Link href={`/start?step=detail&kind=${selected.kind === "Grant" ? "grant" : "position"}&opportunity=${encodeURIComponent(selected.id)}${countryQuery}`}>Review this opportunity</Link>}
             />
           </div>
         </div>
@@ -297,7 +298,7 @@ export function OpportunityTicker({ ticker: initialTicker, country, subject = ""
 
       <div className={styles.deskFooter}>
         <span>Published in the past 30 days{updated ? `, ${updated}` : ""}. <Link href="/sources">See sources</Link></span>
-        <Link href="/opportunities">Full search ↗</Link>
+        <Link href="/opportunities">Full search</Link>
       </div>
     </aside>
   );

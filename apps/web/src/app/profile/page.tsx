@@ -8,6 +8,7 @@ import { PublicationEvidencePanel } from "./publication-evidence-panel";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { researcherRepository } from "@/server/repositories/researcher-repository";
 import styles from "./profile.module.css";
+import workspace from "./workspace.module.css";
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();
@@ -41,21 +42,22 @@ export default async function ProfilePage() {
 
   return (
     <ProductShell>
-      <div className="profileShell">
-        <div className={styles.toolbar}>
+      <div className={`profileShell ${workspace.workspace}`}>
+        <header className={workspace.hero}>
           <div>
-            <span className="eyebrow">Scientific identity</span>
-            <p className={styles.toolbarCopy}>Manage the canonical profile and evidence used by discovery, matching, and introductions.</p>
+            <span className="eyebrow">Your workspace</span>
+            <h1>Research profile</h1>
+            <p>Update your research interests, publications and collaboration preferences.</p>
           </div>
-          <div className={styles.toolbarActions}>
-            <Link className="secondary" href="/opportunities/favorites">My Favorites</Link>
-            <Link className="secondary" href="/settings/privacy">Privacy & data</Link>
-            <Link className="secondary" href={"/graph?researcher=" + profile.id}>Open evidence graph</Link>
-              <Link className="primaryButton" href="/profile/edit">Edit scientific identity</Link>
-          </div>
-        </div>
+          <nav className={workspace.actions} aria-label="Profile actions">
+            <Link href="/profile/edit">Edit profile</Link>
+            <Link href="/opportunities/favorites">My Favorites</Link>
+            <Link href="/settings/privacy">Privacy & data</Link>
+            <Link href={"/graph?researcher=" + profile.id}>Evidence graph</Link>
+          </nav>
+        </header>
 
-        <ScientificProfileCard identity={identity} />
+        <ScientificProfileCard identity={identity} nameHeading="h2" />
         <section className={styles.roleProfile}>
           <div><span className="sectionLabel">Personalized identity</span><h2>{roleLabel}</h2></div>
           <div className={styles.roleDetails}>

@@ -60,7 +60,7 @@ export default async function LaboratoryPage({ params }: { params: Promise<{ id:
             <h1>{lab.name}</h1>
             <p><Link href={"/institutions/" + lab.organization.id}>{lab.organization.name}</Link>{lab.organization.countryCode ? " · " + lab.organization.countryCode : ""}</p>
           </div>
-          {website ? <a href={website} rel="noreferrer" target="_blank">Official laboratory website ↗</a> : null}
+          {website ? <a href={website} rel="noreferrer" target="_blank">Official laboratory website</a> : null}
         </header>
         {lab.description ? <section className={styles.panel}><h2>About the laboratory</h2><p>{lab.description}</p></section> : null}
         <section className={styles.grid}>

@@ -25,7 +25,7 @@ export default async function ResearchProfilesPage() {
           <h2>{source.name}</h2>
           <p>{source.description}</p>
           <ResearchProfileActions sourceKey={source.key} value={source.key === "orcid" ? profile?.orcid : profile?.profileDetails?.links?.[source.key]} />
-          {source.key === "orcid" ? <a className={styles.register} href="https://orcid.org/register" target="_blank" rel="noopener noreferrer">Create an ORCID iD ↗</a> : null}
+          {source.key === "orcid" ? <a className={styles.register} href="https://orcid.org/register" target="_blank" rel="noopener noreferrer">Create an ORCID iD</a> : null}
         </section>)}
       </div>
       <section className={styles.card}>

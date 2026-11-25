@@ -59,7 +59,7 @@ export function OpportunitySignals({ item, recordView = false }: { item: Shareab
       </svg>
       {likes.toLocaleString()} {likes === 1 ? "like" : "likes"}
     </button>
-    {notice === "favorited" ? <Link href="/opportunities/favorites">My Favorites ↗</Link> : null}
+    {notice === "favorited" ? <Link href="/opportunities/favorites">My Favorites</Link> : null}
     {notice === "signin" ? <Link href={"/auth/sign-in?callbackUrl=" + encodeURIComponent(opportunityPath(item))}>Sign in to like</Link> : null}
     {notice === "removed" ? <span role="status">Removed from My Favorites</span> : null}
     {notice === "error" ? <span role="status">Try again in a moment</span> : null}

@@ -167,9 +167,9 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           <div className={styles.listingActionGroup}>
             <OpportunitySignals item={{ id: opportunity.id, title: opportunity.title, type: opportunity.type }} recordView />
             <ListingActions item={{ id: opportunity.id, title: opportunity.title, type: opportunity.type, deadline: opportunity.deadline?.toISOString() ?? null, deadlinePrecision: opportunity.deadlinePrecision.toLowerCase().replaceAll("_", "-") }}
-              primary={<a href={applyUrl} rel="noreferrer" target="_blank">Apply now ↗</a>} />
+              primary={<a href={applyUrl} rel="noreferrer" target="_blank">Apply now</a>} />
           </div>
-          <a className={styles.secondary} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review original source ↗</a>
+          <a className={styles.secondary} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review original source</a>
           <SaveOpportunityButton className={styles.secondary} opportunityId={opportunity.id} />
         </div>
 

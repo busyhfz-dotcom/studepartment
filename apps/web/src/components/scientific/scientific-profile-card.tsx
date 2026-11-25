@@ -1,7 +1,7 @@
 import type { ScientificIdentity } from "@/features/scientific-identity/types";
 import { IdentityAvatar } from "@/components/identity/identity-avatar";
 
-export function ScientificProfileCard({ identity }: { identity: ScientificIdentity }) {
+export function ScientificProfileCard({ identity, nameHeading: NameHeading = "h1" }: { identity: ScientificIdentity; nameHeading?: "h1" | "h2" }) {
   const verifiedCount = identity.verification.filter((item) => item.verified).length;
 
   return (
@@ -11,9 +11,9 @@ export function ScientificProfileCard({ identity }: { identity: ScientificIdenti
           <IdentityAvatar name={identity.fullName} src={identity.imageUrl} />
           <div>
             <span className="eyebrow">Scientific identity</span>
-            <h1 className="profileName">{identity.fullName}</h1>
-            <p className="profileHeadline">{identity.headline}</p>
-            <p className="profileMeta">
+            <NameHeading className="profileName" data-original-content>{identity.fullName}</NameHeading>
+            <p className="profileHeadline" data-original-content>{identity.headline}</p>
+            <p className="profileMeta" data-original-content>
               {identity.institution}{identity.location ? ` · ${identity.location}` : ""}
             </p>
           </div>
@@ -26,7 +26,7 @@ export function ScientificProfileCard({ identity }: { identity: ScientificIdenti
 
       <div className="profileSection">
         <span className="sectionLabel">Research summary</span>
-        <p className="summaryText">{identity.summary}</p>
+        <p className="summaryText" data-original-content>{identity.summary}</p>
       </div>
 
       <div className="profileSplit">

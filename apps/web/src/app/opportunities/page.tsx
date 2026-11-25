@@ -27,7 +27,7 @@ export default async function OpportunitiesPage() {
           <p className="lede">
             Check how recent each listing is, how well it fits, who can apply and when it closes, before you put work into an application.
           </p>
-          <Link href="/opportunities/saved">Your saved opportunities ↗</Link>
+          <Link href="/opportunities/saved">Your saved opportunities</Link>
         </header>
         <Suspense fallback={<p role="status">Loading opportunity search…</p>}>
           <OpportunityExplorer countryCodes={countryCodes} />

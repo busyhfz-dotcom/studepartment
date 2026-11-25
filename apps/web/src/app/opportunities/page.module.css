@@ -45,3 +45,4 @@
 .listingActionRail { grid-column: 1 / -1; min-inline-size: 0; }
 .locationField { display: grid; align-content: start; gap: 6px; min-inline-size: 0; }
 .locationField > span { color: var(--muted); font-size: 12px; font-weight: 700; }
+.searchForm [data-opportunity-filter] select { padding-inline-start: 36px; }

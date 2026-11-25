@@ -31,7 +31,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
           Four short steps: your background, your research focus, the collaborations you are open to and what others can see.
         </p>
         <Link className="secondary" href={"/onboarding/organization?callbackUrl=" + encodeURIComponent(safeReturnPath(callbackUrl, "/organization/profile"))}>
-          Setting up a lab, hospital, or institution instead? Switch to an institutional profile ↗
+          Setting up a lab, hospital, or institution instead? Switch to an institutional profile
         </Link>
       </header>
       <OnboardingWizard profile={profile} organizations={organizations} callbackUrl={safeReturnPath(callbackUrl)} initialRole={role === "student" || role === "professor" ? role : role === "researcher" ? role : undefined} />

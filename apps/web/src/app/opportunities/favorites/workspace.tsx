@@ -36,7 +36,7 @@ export function Favorites({ initial }: { initial: Favorite[] }) {
       setPending(undefined);
     }
   }
-  if (!items.length) return <section className={styles.empty}><p>Like an opportunity to add it here.</p><Link href="/start?step=browse">Browse opportunities ↗</Link></section>;
+  if (!items.length) return <section className={styles.empty}><p>Like an opportunity to add it here.</p><Link href="/start?step=browse">Browse opportunities</Link></section>;
   return <section className={styles.list} aria-label="My favorite opportunities">
     <button type="button" className="secondary" onClick={exportList}>Export CSV for Excel</button>
     {error ? <p role="alert">{error}</p> : null}
@@ -44,8 +44,8 @@ export function Favorites({ initial }: { initial: Favorite[] }) {
       <h2>{item.title}</h2>
       <p>{item.organization} · {item.open ? "Open" : "Closed"}{item.deadline ? " · Due " + item.deadline.slice(0,10) : ""}</p>
       <div className={styles.actions}>
-        {item.open ? <Link href={opportunityPath(item)}>Review details ↗</Link> : null}
-        <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">Official source ↗</a>
+        {item.open ? <Link href={opportunityPath(item)}>Review details</Link> : null}
+        <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">Official source</a>
         <button type="button" disabled={pending === item.id} onClick={() => void remove(item.id)}>Remove favorite</button>
       </div>
     </article>)}

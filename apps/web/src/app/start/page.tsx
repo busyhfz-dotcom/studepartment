@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getPublicOpportunityTicker } from "@/server/opportunities/public-ticker";
-import { getOpportunityCountries } from "@/server/opportunities/countries";
 import { StartFlow } from "./start-flow-client";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +27,5 @@ export default async function StartPage({
     redirect(`/start?${query}`);
   }
   if (params.step !== "browse") return <StartFlow />;
-  const [ticker, countryCodes] = await Promise.all([getPublicOpportunityTicker(), getOpportunityCountries()]);
-  return <StartFlow ticker={ticker} countryCodes={countryCodes} />;
+  return <StartFlow ticker={await getPublicOpportunityTicker()} />;
 }

@@ -31,7 +31,7 @@ export default async function OrganizationOnboardingPage({ searchParams }: { sea
         </p>
         {user.accountKind !== "INSTITUTION" ? (
           <Link className="secondary" href={"/onboarding?callbackUrl=" + encodeURIComponent(safeReturnPath(callbackUrl))}>
-            Applying as an individual researcher instead? Go back to the researcher path ↗
+            Applying as an individual researcher instead? Go back to the researcher path
           </Link>
         ) : null}
       </header>

@@ -38,10 +38,10 @@ export function GrantTable({items,params,onReview}:{items:OpportunityResult[];pa
         <td data-label="Competition"><Competition item={item}/></td>
         <td data-label="Actions"><div className={styles.rowActions}>
           <ListingActions item={item} primary={onReview
-            ? <button type="button" onClick={()=>onReview(item)} aria-label={`Review ${item.title}`}>Review details ↗</button>
-            : <a href={opportunityPath(item)}>Review details ↗</a>} />
+            ? <button type="button" onClick={()=>onReview(item)} aria-label={`Review ${item.title}`}>Review details</button>
+            : <a href={opportunityPath(item)}>Review details</a>} />
           <OpportunitySignals item={item}/>
-          <a href={item.applicationUrl || item.sourceUrl} target="_blank" rel="noopener noreferrer">Apply now ↗</a>
+          <a href={item.applicationUrl || item.sourceUrl} target="_blank" rel="noopener noreferrer">Apply now</a>
         </div></td>
       </tr>)}</tbody>
     </table></div>

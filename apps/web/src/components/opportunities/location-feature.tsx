@@ -16,7 +16,7 @@ export function LocationFeature({ value }: { value: string }) {
     <img className={styles.photo} src={photo.src} alt="" loading="lazy" decoding="async" />
     <div className={styles.copy}>
       <strong>Research in {place}</strong>
-      <a href={"/opportunities/directory?" + new URLSearchParams({ country: value })}>Explore institutions and programmes <span aria-hidden="true">↗</span></a>
+      <a href={"/opportunities/directory?" + new URLSearchParams({ country: value })}>Explore institutions and programmes</a>
     </div>
     <span className={styles.credit}>
       <a href={photo.url} target="_blank" rel="noreferrer">Photo: {photo.credit}</a>

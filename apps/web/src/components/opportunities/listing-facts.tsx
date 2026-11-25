@@ -34,7 +34,7 @@ export function AwardBasis({ grant }: { grant?: OpportunityResult["grant"] }) {
   const text = grant.awardBasis === "indicative" ? "Indicative per project" : "Published amount";
   return <small className={styles.awardBasis}>
     {grant.awardSource
-      ? <a href={grant.awardSource} target="_blank" rel="noopener noreferrer">{text} ↗</a>
+      ? <a href={grant.awardSource} target="_blank" rel="noopener noreferrer">{text}</a>
       : text}
     {grant.awardNote ? <span>{grant.awardNote}</span> : null}
   </small>;

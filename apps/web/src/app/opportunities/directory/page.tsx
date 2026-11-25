@@ -52,7 +52,7 @@ export default async function OpportunityDirectory({ searchParams }: { searchPar
       <header className={styles.header}>
         <h1>Medicine and research directory</h1>
         <p className="lede">Find graduate programmes, research groups, scientific meetings and funding schemes. Check the publisher for the current cycle, application dates and eligibility.</p>
-        <Link href="/start?step=browse">Browse open opportunities ↗</Link>
+        <Link href="/start?step=browse">Browse open opportunities</Link>
       </header>
       <form action="/opportunities/directory" method="get" className={styles.directoryFilters}>
         {country ? <input type="hidden" name="country" value={code} /> : null}
@@ -73,7 +73,7 @@ export default async function OpportunityDirectory({ searchParams }: { searchPar
           {item.provider ? <p><Institution name={item.provider} website={item.url} /></p> : null}
           {item.subjects.length ? <p><strong>Subject</strong> · {item.subjects.join(" · ")}</p> : null}
           {item.detail ? <p>{item.detail}</p> : null}
-          <a href={item.url} target="_blank" rel="noopener noreferrer">Check official source ↗</a>
+          <a href={item.url} target="_blank" rel="noopener noreferrer">Check official source</a>
         </article>)}
       </div>
       {totalPages > 1 ? <nav className={styles.directoryPager} aria-label="Directory pages">

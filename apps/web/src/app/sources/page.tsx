@@ -79,7 +79,7 @@ export default async function SourcesPage() {
                 <a className={styles.sourceCard} href={source.homepage} key={source.id} rel="noreferrer noopener" target="_blank">
                   <div className={styles.sourceTop}>
                     <strong>{source.name}</strong>
-                    <span>↗</span>
+
                   </div>
                   <p>{source.description}</p>
                   <div className={styles.sourceMeta}>

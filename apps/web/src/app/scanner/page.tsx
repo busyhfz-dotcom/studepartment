@@ -44,7 +44,7 @@ export default async function ScannerPage() {
                 <a className={styles.sourceCard} href={source.href} key={source.name} rel="noreferrer noopener" target="_blank">
                   <div className={styles.sourceTop}>
                     <strong>{source.name}</strong>
-                    <span>↗</span>
+
                   </div>
                   <p>{source.description}</p>
                   <div className={styles.sourceMeta}>

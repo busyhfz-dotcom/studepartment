@@ -24,7 +24,7 @@ export default async function ConferencesPage() {
             Credibility checks for venues and journals, the societies behind the major specialty congresses, and
             the registries clinicians use to track CME/CPD credit.
           </p>
-          <Link href="/opportunities/directory?group=conferences">Browse conferences, travel awards and prizes ↗</Link>
+          <Link href="/opportunities/directory?group=conferences">Browse conferences, travel awards and prizes</Link>
         </header>
 
         {conferenceCategories.map((category) => (
@@ -38,7 +38,7 @@ export default async function ConferencesPage() {
                 <a className={styles.sourceCard} href={source.href} key={source.name} rel="noreferrer noopener" target="_blank">
                   <div className={styles.sourceTop}>
                     <strong>{source.name}</strong>
-                    <span>↗</span>
+
                   </div>
                   <p>{source.description}</p>
                   <div className={styles.sourceMeta}>

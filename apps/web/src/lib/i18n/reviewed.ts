@@ -141,6 +141,33 @@ const spanish: Record<string, string> = {
   'Find a Master’s scholarship': 'Encontrar una beca de máster',
   'Find a PhD scholarship': 'Encontrar una beca de doctorado',
 };
+const coreInterface: Record<string, [string, string, string, string]> = {
+  "Any location": ["همهٔ موقعیت‌ها", "Cualquier ubicación", "Tous les lieux", "Alle Standorte"],
+  "Any subject": ["همهٔ رشته‌ها", "Cualquier área", "Tous les domaines", "Alle Fachgebiete"],
+  "Any role": ["همهٔ نقش‌ها", "Cualquier puesto", "Tous les postes", "Alle Stellenarten"],
+  "All subjects": ["همهٔ رشته‌ها", "Todas las áreas", "Tous les domaines", "Alle Fachgebiete"],
+  "Latest opportunities": ["تازه‌ترین فرصت‌ها", "Últimas oportunidades", "Dernières offres", "Neueste Angebote"],
+  "Personalize": ["شخصی‌سازی", "Personalizar", "Personnaliser", "Anpassen"],
+  "Positions": ["موقعیت‌های پژوهشی", "Puestos", "Postes", "Stellen"],
+  "Review details": ["جزئیات", "Ver detalles", "Voir les détails", "Details ansehen"],
+  "Apply now": ["ارسال درخواست", "Solicitar ahora", "Postuler", "Jetzt bewerben"],
+  "Search a topic, role or institution": ["جست‌وجوی موضوع، نقش یا مؤسسه", "Buscar área, puesto o institución", "Rechercher un domaine, un poste ou un établissement", "Nach Thema, Stelle oder Einrichtung suchen"],
+  "My Favorites": ["علاقه‌مندی‌ها", "Mis favoritos", "Mes favoris", "Meine Favoriten"],
+  "Research profile": ["پروفایل پژوهشی", "Perfil de investigación", "Profil de recherche", "Forschungsprofil"],
+  "Edit profile": ["ویرایش پروفایل", "Editar perfil", "Modifier le profil", "Profil bearbeiten"],
+  "Your workspace": ["فضای کاری شما", "Tu espacio de trabajo", "Votre espace de travail", "Dein Arbeitsbereich"],
+  "Privacy & data": ["حریم خصوصی و داده‌ها", "Privacidad y datos", "Confidentialité et données", "Datenschutz und Daten"],
+  "Welcome back": ["خوش برگشتید", "Qué gusto verte de nuevo", "Bon retour", "Willkommen zurück"],
+  "Sign in": ["ورود", "Iniciar sesión", "Se connecter", "Anmelden"],
+  "How to use": ["راهنمای استفاده", "Cómo usar la plataforma", "Guide d’utilisation", "So funktioniert’s"],
+  "Research careers & funding": ["مسیرهای پژوهشی و تأمین مالی", "Carreras de investigación y financiación", "Carrières scientifiques et financements", "Forschungskarrieren und Förderung"],
+  "Find grant & position": ["گرنت و موقعیت پژوهشی", "Encontrar financiación y puestos", "Trouver des financements et des postes", "Fördermittel und Stellen finden"],
+  "Post a position": ["انتشار موقعیت پژوهشی", "Publicar un puesto", "Publier un poste", "Eine Stelle veröffentlichen"],
+};
+const coreLanguages = ["fa", "es", "fr", "de"];
+
 export function reviewedTranslation(locale: string, original: string): string | undefined {
-  return (locale === 'fa' ? persian : locale === 'es' ? spanish : undefined)?.[original];
+  const exact = (locale === "fa" ? persian : locale === "es" ? spanish : undefined);
+  const core = coreInterface[original]?.[coreLanguages.indexOf(locale)];
+  return core || exact?.[original] || exact?.[original + " ↗"]?.replace(/\s*↗/g, "");
 }

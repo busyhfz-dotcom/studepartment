@@ -210,9 +210,9 @@ export function ScientificGraphExplorer({ researcherId }: { researcherId?: strin
                         <span>{node.evidence.source}</span>
                         {node.href ? (
                           node.href.startsWith("/") ? (
-                            <Link href={node.href}>Open ↗</Link>
+                            <Link href={node.href}>Open</Link>
                           ) : (
-                            <a href={node.href} rel="noreferrer" target="_blank">Source ↗</a>
+                            <a href={node.href} rel="noreferrer" target="_blank">Source</a>
                           )
                         ) : null}
                       </footer>

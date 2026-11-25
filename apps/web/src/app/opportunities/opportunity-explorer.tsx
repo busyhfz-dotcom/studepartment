@@ -20,6 +20,7 @@ import styles from "./page.module.css";
 import { SaveOpportunityButton } from "./save-opportunity-button";
 import { CountrySelect } from "@/components/forms/country-select";
 import { OpportunityLocationPicker } from "@/components/forms/opportunity-location-picker";
+import { OpportunityFilterSelect } from "@/components/forms/opportunity-filter-select";
 import { LocationFeature } from "@/components/opportunities/location-feature";
 import { Institution } from "@/components/opportunities/brand-mark";
 import { rememberOpportunityCountry, useOpportunityCountry } from "@/lib/opportunity-location";
@@ -221,9 +222,9 @@ export function OpportunityExplorer(_options: { countryCodes: string[] }) {
             </label>
             <label>
               <span>Research topic</span>
-              <select name="topic" onChange={(event) => changeFilter("topic", event.target.value)} value={filters.topic}>
+              <OpportunityFilterSelect icon="subject" name="topic" onChange={(event) => changeFilter("topic", event.target.value)} value={filters.topic}>
                 {topicOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-              </select>
+              </OpportunityFilterSelect>
             </label>
             <div className={styles.locationField}>
               <span>Location</span>
@@ -255,7 +256,7 @@ export function OpportunityExplorer(_options: { countryCodes: string[] }) {
           </div>
           <details className={styles.advancedFilters} open={filters.funder || filters.sourceRecordId || filters.eligibilityCountry ? true : undefined}>
             <summary>More funding, role and eligibility filters</summary>
-            <label>Position role <select name="role" value={filters.role} onChange={event=>changeFilter("role",event.target.value)}><option value="">Any role</option>{Object.entries(positionRoles).map(([key,role])=><option value={key} key={key}>{role.label}</option>)}</select></label>
+            <label>Position role <OpportunityFilterSelect icon="role" name="role" value={filters.role} onChange={event=>changeFilter("role",event.target.value)}><option value="">Any role</option>{Object.entries(positionRoles).map(([key,role])=><option value={key} key={key}>{role.label}</option>)}</OpportunityFilterSelect></label>
             <div className={styles.filterGrid}>
               <label>
                 <span>Funder or institution</span>
@@ -282,8 +283,8 @@ export function OpportunityExplorer(_options: { countryCodes: string[] }) {
         <aside className={styles.networkSources}>
           <strong>Explore recruitment networks</strong>
           <p>LinkedIn and ResearchGate open on their own websites. Their listings are not automatically imported here.</p>
-          <a href="https://www.linkedin.com/jobs/" target="_blank" rel="noopener noreferrer">LinkedIn Jobs ↗</a>
-          <a href="https://www.researchgate.net/jobs" target="_blank" rel="noopener noreferrer">ResearchGate Jobs ↗</a>
+          <a href="https://www.linkedin.com/jobs/" target="_blank" rel="noopener noreferrer">LinkedIn Jobs</a>
+          <a href="https://www.researchgate.net/jobs" target="_blank" rel="noopener noreferrer">ResearchGate Jobs</a>
         </aside>
         <div className={styles.resultsHeader}>
           <div>
@@ -415,11 +416,11 @@ export function OpportunityExplorer(_options: { countryCodes: string[] }) {
                   </div>
                   <FeedbackControls entityId={opportunity.id} entityType="opportunity" />
                   <div className={styles.listingActionRail}>
-                    <ListingActions item={opportunity} primary={<a href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source ↗</a>} />
+                    <ListingActions item={opportunity} primary={<a href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source</a>} />
                   </div>
                   <SaveOpportunityButton className={styles.secondaryAction} opportunityId={opportunity.id} />
                   <a className={styles.secondaryAction} href={"/assistant?opportunity=" + opportunity.id}>Ask assistant</a>
-                  <a className={styles.primaryAction} href={opportunity.applicationUrl ?? opportunity.sourceUrl} rel="noreferrer" target="_blank">Apply now ↗</a>
+                  <a className={styles.primaryAction} href={opportunity.applicationUrl ?? opportunity.sourceUrl} rel="noreferrer" target="_blank">Apply now</a>
                 </aside>
               </article>
             ))}

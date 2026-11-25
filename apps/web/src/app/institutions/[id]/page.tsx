@@ -37,7 +37,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
               <p>{institution.type}{institution.countryCode ? " · " + institution.countryCode : ""}{institution.verified ? " · Verified organization" : ""}</p>
             </div>
           </div>
-          {institution.website ? <a href={institution.website} rel="noreferrer" target="_blank">Official website ↗</a> : null}
+          {institution.website ? <a href={institution.website} rel="noreferrer" target="_blank">Official website</a> : null}
         </header>
 
         {institution.description || publicDetails.length ? <section className={styles.organizationStory}><div><span className="sectionLabel">Institutional profile · organization supplied</span><h2>About this organization</h2>{institution.description ? <p>{institution.description}</p> : null}</div>{publicDetails.length ? <div className={styles.organizationDetails}>{publicDetails.map(([key, value]) => <article key={key}><span>{detailLabels[key as keyof typeof detailLabels] ?? key}</span><p>{value}</p></article>)}</div> : null}</section> : null}
@@ -66,7 +66,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
               {fit.reasons.map((reason) => <p key={reason}>✓ {reason}</p>)}
               {fit.gaps.map((gap) => <p className={styles.fitGap} key={gap}>Review: {gap}</p>)}
             </div>
-            <Link className={styles.assistantAction} href={"/assistant?institution=" + institution.id}>Interrogate this institution with Research Assistant ↗</Link>
+            <Link className={styles.assistantAction} href={"/assistant?institution=" + institution.id}>Interrogate this institution with Research Assistant</Link>
           </section>
         ) : null}
 
@@ -119,7 +119,7 @@ export default async function InstitutionPage({ params }: { params: Promise<{ id
               {institution.opportunities.map((opportunity) => <div key={opportunity.id}>
                 <strong>{opportunity.title}</strong>
                 <span>{opportunity.type} · {opportunity.deadlinePrecision === "rolling" ? "Rolling" : date(opportunity.deadline)}</span>
-                <ListingActions item={opportunity} primary={<a href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source ↗</a>} />
+                <ListingActions item={opportunity} primary={<a href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source</a>} />
               </div>)}
               {!institution.opportunities.length ? <p>No current opportunities are connected.</p> : null}
             </div>
