@@ -351,7 +351,7 @@ function StartJourney({ ticker }: StartOptions) {
             <div>
               <span className={styles.eyebrow}>{isGrant ? "Funding calls" : isPosition ? "Research roles" : "Degree scholarships"}</span>
               <h2>
-                {loading ? "Searching…" : <>{total.toLocaleString("en")} <span>opportunities</span></>}
+                {loading ? "Searching…" : <>{total.toLocaleString("en")} <span>{total === 1 ? "opportunity" : "opportunities"}</span></>}
               </h2>
             </div>
             <p>{kind.includes("scholarship") ? "Funding programmes: confirm country-specific eligibility and application windows at the original source." : "Current listings, each linked to its original source."}</p>

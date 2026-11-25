@@ -52,6 +52,21 @@ export function csvCell(value:unknown) {
   return '"'+text.replaceAll('"','""')+'"';
 }
 export function opportunityCsv(rows:OpportunityResult[],origin:string){
-  const headings=['Close date','Status','Title','Agency','Region','Award min','Award max','Currency','Eligibility','Competition rate','Competition basis','Region context','Source URL','Provenant URL'];
-  return '\uFEFF'+[headings,...rows.map(item=>[item.deadline?.slice(0,10)||'',item.grant?.status||'Open',item.title,item.grant?.agency||item.organization,item.grant?.region||'Not specified',item.grant?.awardMin??'',item.grant?.awardMax??'',item.grant?.currency||'',item.publishedEligibility||'',item.competition?.rate??'',item.competition?.basis||'',item.grant?.regionContext||'See source eligibility',item.sourceUrl,new URL(opportunityPath(item),origin).href])].map(row=>row.map(csvCell).join(',')).join('\r\n')+'\r\n';
+  const headings = [
+    "Close date", "Status", "Title", "Agency", "Region", "Award min", "Award max", "Currency",
+    "Eligibility", "Competition rate", "Competition basis", "Region context", "Source URL", "Provenant URL",
+    "Award basis", "Award notes", "Award source",
+  ];
+  const values = rows.map(item => {
+    const grant = item.grant;
+    return [
+      item.deadline?.slice(0, 10), grant?.status || "Open", item.title, grant?.agency || item.organization,
+      grant?.region || "Not specified", grant?.awardMin, grant?.awardMax, grant?.currency,
+      item.publishedEligibility, item.competition?.rate, item.competition?.basis,
+      grant?.regionContext || "See source eligibility", item.sourceUrl, new URL(opportunityPath(item), origin).href,
+      grant?.awardBasis === "indicative" ? "Indicative per project" : grant?.awardMin || grant?.awardMax ? "Published amount" : "",
+      grant?.awardNote, grant?.awardSource,
+    ];
+  });
+  return "\uFEFF" + [headings, ...values].map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
 }

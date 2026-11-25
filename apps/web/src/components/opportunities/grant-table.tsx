@@ -19,14 +19,19 @@ export function GrantTable({items,params,onReview}:{items:OpportunityResult[];pa
         <td data-label="Close date"><DueDate item={item}/></td>
         <td data-label="Status"><span className={styles.status}>{item.grant?.status||'Check source'}</span></td>
         <td data-label="Title" className={styles.title}>{onReview?<button data-original-content type="button" onClick={()=>onReview(item)}>{item.title}</button>:<a data-original-content href={opportunityPath(item)}>{item.title}</a>}<small data-original-content>{item.source.recordId}</small></td>
-        <td data-label="Agency"><Institution name={item.grant?.agency || item.organization} website={item.organizationWebsite} /></td>
-        <td data-label="Region"><span data-original-content>{item.grant?.region||'Not specified'}</span><small>{item.grant?.regionContext||'See source eligibility'}</small></td>
+        <td data-label="Agency" className={styles.agency}><Institution name={item.grant?.agency || item.organization} website={item.organizationWebsite} /></td>
+        <td data-label="Region">
+          <span data-original-content>{item.grant?.region || "Not specified"}</span>
+          {item.grant?.regionContext ? <small title={item.grant.regionContext}>
+            {item.grant.regionContext === "Published applicant geography" ? "Applicant geography" : "Programme region"}
+          </small> : null}
+        </td>
         <td data-label="Award min" className={styles.amount}>
-          {formatAward(item.grant?.awardMin,item.grant?.currency)}
+          <span className={styles.amountValue}>{formatAward(item.grant?.awardMin,item.grant?.currency)}</span>
           {item.grant?.awardMin && !item.grant.awardMax ? <AwardBasis grant={item.grant} /> : null}
         </td>
         <td data-label="Award max" className={styles.amount}>
-          {formatAward(item.grant?.awardMax,item.grant?.currency)}
+          <span className={styles.amountValue}>{formatAward(item.grant?.awardMax,item.grant?.currency)}</span>
           {item.grant?.awardMax || item.grant?.awardNote ? <AwardBasis grant={item.grant} /> : null}
         </td>
         <td data-label="Eligibility"><ListingEligibility item={item}/></td>
