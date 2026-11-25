@@ -407,9 +407,9 @@
 
 @media (max-width: 700px) {
   .page { background: linear-gradient(150deg,#f1f4ff,#fff 65%); }
-  .panel > .brand { display: inline-flex; margin-block-end: 20px; }
+  .panel > .brand { display: flex; inline-size: fit-content; max-inline-size: calc(100% - 64px); margin-block-end: 20px; }
   .contextBrand { display: none; }
-  .context { min-height: auto; padding-block: 30px; }
+  .context { flex: 1; min-height: auto; padding-block: 30px; }
 }
 
 /* Inline checkbox rows (show password, terms consent). Declared last so they

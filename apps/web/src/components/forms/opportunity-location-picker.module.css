@@ -69,6 +69,6 @@
 .panel button[aria-pressed="true"] { color: var(--picker-active); font-weight: 750; }
 .panel .region { font-weight: 720; }
 .panel .reset { margin-block-end: 3px; }
-.countries { border-inline-start: 1px solid var(--picker-border); margin: 0 0 4px 10px; padding-inline-start: 4px; }
+.countries { max-block-size: 168px; overflow-y: auto; scrollbar-width: thin; border-inline-start: 1px solid var(--picker-border); margin: 0 0 4px 10px; padding-inline-start: 4px; }
 @media(max-width: 480px) { .panel { inline-size: max(100%, min(180px, calc(100vw - 44px))); } }
 @media(prefers-reduced-motion: reduce) { .panel, .trigger > svg:last-child, .region svg { animation: none; transition: none; } }

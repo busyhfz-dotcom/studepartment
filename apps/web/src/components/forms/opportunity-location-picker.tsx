@@ -42,7 +42,7 @@ export function OpportunityLocationPicker({ value, onChange, name, label = "Loca
     trigger.current?.focus();
   }
 
-  return <div ref={root} className={styles.root}
+  return <div ref={root} className={styles.root} data-location-open={open || undefined}
     onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}
     onKeyDown={event => {
       if (event.key !== "Escape" || !open) return;

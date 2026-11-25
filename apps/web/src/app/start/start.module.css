@@ -415,6 +415,7 @@
 }
 
 .scienceBackdrop { position: absolute; }
+.page > .browse:has([data-location-open="true"]) { z-index: 2; }
 
 .page select {
   color-scheme: dark;
