@@ -14,12 +14,15 @@ test('audience-specific entry routes preserve filters and pagination on direct e
   assert.equal(query.limit,24);
   assert.equal(parseOpportunityQuery(new URLSearchParams('audience=unknown')).audience,undefined);
 });
-test('research leaders use the published faculty filter while degree funding remains separate',()=>{
-  assert.equal(parseOpportunityQuery(entrySearchParams('grant','','',1)).careerStage,'faculty');
+test('all grants are visible by default and the faculty filter is opt-in',()=>{
+  assert.equal(parseOpportunityQuery(entrySearchParams('grant','','',1)).careerStage,undefined);
+  assert.deepEqual(parseOpportunityQuery(entrySearchParams('grant','','',1)).types,['grant']);
+  assert.equal(parseOpportunityQuery(entrySearchParams('grant','','',1,'','','faculty')).careerStage,'faculty');
+  assert.equal(parseOpportunityQuery(entrySearchParams('position','','',1,'','','faculty')).careerStage,undefined);
   assert.deepEqual(parseOpportunityQuery(entrySearchParams('masters-scholarship','','',1)).types,['masters-scholarship']);
   assert.equal(entryKind('__proto__'),'position');
   assert.equal(entryKind('md-phd-scholarship'),'md-phd-scholarship');
-  assert.equal(entryCategories.length,4);
+  assert.equal(entryCategories.length,5);
 });
 test('the new entrance invitations have reviewed Persian and Spanish copy',()=>{
   for(const locale of ['fa','es'])for(const text of ['Find grant & position','Post a position','Your next chapter in research.']){

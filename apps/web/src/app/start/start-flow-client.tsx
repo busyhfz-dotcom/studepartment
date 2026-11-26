@@ -107,6 +107,8 @@ function StartJourney({ ticker }: StartOptions) {
   const country = searchParams.get("country") ?? rememberedCountry;
   const subject = searchParams.get("subject") ?? "";
   const role = searchParams.get("role") ?? "";
+  const grantAudience = kind === "grant" && searchParams.get("career") === "faculty" ? "faculty" : undefined;
+  const hasFilters = Boolean(query.trim() || country || subject || (kind === "position" && role) || grantAudience);
   const page = readOpportunityPage(searchParams.get("page"));
   const opportunityId = searchParams.get("opportunity");
   const [browseResult, setBrowseResult] = useState<{ key: string; data?: OpportunityIntelligenceResponse; error?: string }>();
@@ -114,7 +116,7 @@ function StartJourney({ ticker }: StartOptions) {
   const selected = selectedRecord?.id === opportunityId ? selectedRecord : null;
   const [detailFailure, setDetailFailure] = useState<string | null>(null);
   const [searchAttempt, setSearchAttempt] = useState(0);
-  const browseKey = JSON.stringify([kind, query, country, subject, role, page, searchAttempt]);
+  const browseKey = JSON.stringify([kind, query, country, subject, role, grantAudience, page, searchAttempt]);
   const loading = step === "browse" && browseResult?.key !== browseKey;
   const results = loading ? [] : browseResult?.data?.results ?? [];
   const total = loading ? 0 : browseResult?.data?.totalMatching ?? 0;
@@ -128,12 +130,19 @@ function StartJourney({ ticker }: StartOptions) {
     router.push(`/start${params.size ? `?${params}` : ""}`, { scroll: true });
   }
 
-  function setFilter(key: "q" | "country" | "subject" | "role", value: string) {
+  function setFilter(key: "q" | "country" | "subject" | "role" | "career", value: string) {
     const params = new URLSearchParams(searchParams.toString());
     value ? params.set(key, value) : params.delete(key);
     params.delete("page");
     if (key === "country") rememberOpportunityCountry(value);
     else if (country) params.set("country", country);
+    window.history.replaceState(null, "", `/start?${params}`);
+  }
+
+  function clearFilters() {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const key of ["q", "country", "subject", "role", "career", "page"]) params.delete(key);
+    rememberOpportunityCountry("");
     window.history.replaceState(null, "", `/start?${params}`);
   }
 
@@ -164,7 +173,7 @@ function StartJourney({ ticker }: StartOptions) {
   useEffect(() => {
     if (step !== "browse") return;
     const controller = new AbortController();
-    const params = entrySearchParams(kind, query, country, page, subject, role);
+    const params = entrySearchParams(kind, query, country, page, subject, role, grantAudience);
 
     const timeout = window.setTimeout(() => {
       fetch(`/api/v1/opportunities?${params.toString()}`, { signal: controller.signal })
@@ -183,7 +192,7 @@ function StartJourney({ ticker }: StartOptions) {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [step, kind, query, country, subject, role, page, browseKey]);
+  }, [step, kind, query, country, subject, role, grantAudience, page, browseKey]);
 
   function openBrowse(nextKind: Kind) {
     setStep("browse", { kind: nextKind, q: "", country, opportunity: "", page: "" });
@@ -285,7 +294,7 @@ function StartJourney({ ticker }: StartOptions) {
               onClick={() => openBrowse("grant")}
             >
               <span>
-                <b>Grants for group leaders &amp; PIs</b>
+                <b>Grants</b>
                 <small>Research funding</small>
               </span>
             </button>
@@ -344,6 +353,10 @@ function StartJourney({ ticker }: StartOptions) {
               <option value="">Any role</option>
               {Object.entries(positionRoles).map(([id, data]) => <option key={id} value={id}>{data.label}</option>)}
             </OpportunityFilterSelect> : null}
+            {isGrant ? <OpportunityFilterSelect icon="role" aria-label="Grant audience" value={grantAudience ?? ""} onChange={event => setFilter("career", event.target.value)}>
+              <option value="">All grants</option>
+              <option value="faculty">Group leaders &amp; PIs</option>
+            </OpportunityFilterSelect> : null}
           </div>
 
           <LocationFeature value={country} />
@@ -352,18 +365,19 @@ function StartJourney({ ticker }: StartOptions) {
             <div>
               <span className={styles.eyebrow}>{isGrant ? "Funding calls" : isPosition ? "Research roles" : "Degree scholarships"}</span>
               <h2>
-                {loading ? "Searching…" : <>{total.toLocaleString("en")} <span>{total === 1 ? "opportunity" : "opportunities"}</span></>}
+                {loading ? "Searching…" : searchError ? "Results unavailable" : <>{total.toLocaleString("en")} <span>{total === 1 ? "opportunity" : "opportunities"}</span></>}
               </h2>
             </div>
-            <p>{kind.includes("scholarship") ? "Funding programmes: confirm country-specific eligibility and application windows at the original source." : "Current listings, each linked to its original source."}</p>
+            {hasFilters ? <button type="button" className={styles.clearFilters} onClick={clearFilters}>Clear search filters</button>
+              : <p>{kind.includes("scholarship") ? "Funding programmes: confirm country-specific eligibility and application windows at the original source." : "Current listings, each linked to its original source."}</p>}
           </div>
 
           <div className={styles.results} id="browse-results" aria-busy={loading}>
             {searchError ? <div className={styles.empty} role="alert">{searchError} <button type="button" className={styles.primary} onClick={() => setSearchAttempt((value) => value + 1)}>Retry search</button></div> : null}
             {!loading && !searchError && results.length === 0 ? (
-              <div className={styles.empty}><p>{query.trim() || country.trim() || subject || role ? "No opportunities match these filters. Try fewer filters or browse original sources." : `No current ${kindLabels[kind]} are listed.`}</p><Link href="/scanner">Explore official sources in Scanner →</Link></div>
+              <div className={styles.empty}><p>{hasFilters ? "No opportunities match these filters. Try fewer filters or browse original sources." : `No current ${kindLabels[kind]} are listed.`}</p><Link href="/scanner">Explore official sources in Scanner →</Link></div>
             ) : (
-              kind === 'grant' ? (!loading&&!searchError?<GrantTable items={results} params={entrySearchParams(kind,query,country,page,subject,role).toString()} onReview={openDetail}/>:null) : results.map((item) => (
+              kind === 'grant' ? (!loading&&!searchError?<GrantTable items={results} params={entrySearchParams(kind,query,country,page,subject,role,grantAudience).toString()} onReview={openDetail}/>:null) : results.map((item) => (
                 <article className={styles.result} key={item.id}>
                   <div className={styles.resultMain}>
                     <div className={styles.tags}>

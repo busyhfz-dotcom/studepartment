@@ -190,7 +190,7 @@ export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpp
     <aside className={styles.heroDesk} aria-label="Latest position and grant preview">
       <div className={styles.deskHeading}>
         <span className={styles.liveLabel}>{ticker.available ? <i className={styles.liveDot} aria-hidden="true" /> : null}Latest opportunities</span>
-        <span>{filtering ? "Updating feed…" : ticker.available ? `${ticker.stats.totalPositions} positions · ${ticker.stats.totalGrants} grants` : "Feed unavailable"}</span>
+        <span>{filtering ? "Updating feed…" : ticker.available ? `Past 30 days · ${ticker.stats.totalPositions.toLocaleString("en")} positions · ${ticker.stats.totalGrants.toLocaleString("en")} grants` : "Feed unavailable"}</span>
         <div className={styles.headingControls} role="group" aria-label="Latest opportunities controls">
         <button type="button" className={styles.personalizeButton} aria-label="Personalize latest opportunities" title="Personalize latest opportunities" aria-expanded={personalize} onClick={()=>setPersonalize(!personalize)}><ControlIcon name="filter" /></button>
         {scroll.overflowing ? <button
