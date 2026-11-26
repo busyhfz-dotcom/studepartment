@@ -57,7 +57,7 @@ export function classifyPositionTitle(title: string): PositionType | null {
   if (/\bclinical research fellows?\b/.test(value)) return "FELLOWSHIP";
   if (/\bresearch fellows?\b/.test(value)) return "POSTDOC";
   if (/\bfellowships?\b/.test(value)) return "FELLOWSHIP";
-  if (/\b(?:scientists?|researchers?)\b/.test(value) && /\b(?:bioanalytical|(?:synthetic|computational|structural|cell|molecular) biology|molecular virology|translational medicine|bioinformatics|clinical pharmacology|pharmacometric\w*|medicinal chemistry)\b/.test(value)) return "RESEARCH_ASSISTANTSHIP";
+  if (/\b(?:scientists?|researchers?)\b/.test(value) && /\b(?:bioanalyti\w*|bioanaly[sz]is|(?:synthetic|computational|structural|cell|molecular|discovery) biology|molecular virology|translational (?:medicine|research)|biomolecular discovery|immunolog\w*|bioinformatics|(?:clinical|in[- ]vivo) pharmacology|pharmacometric\w*|medicinal chemistry|drug discovery)\b/.test(value)) return "RESEARCH_ASSISTANTSHIP";
   // Research staff appear under the same research-position category.
   if (/\b(research (assistants?|associates?|technicians?|scientists?|engineers?|technologists?)|(?:staff|project|laboratory|biomedical|clinical research|translational) scientists?|biostatisticians?|clinical trial associates?|lab(oratory)? (technician|research assistant))\b/.test(value)) {
     return "RESEARCH_ASSISTANTSHIP";

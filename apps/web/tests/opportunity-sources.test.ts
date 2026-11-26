@@ -54,6 +54,9 @@ test("only research positions are classified, by title", () => {
   assert.equal(classifyPositionTitle("Senior Scientist, Mass Spectrometry"), null);
   assert.equal(classifyPositionTitle("Research Nurse"), "RESEARCH_ASSISTANTSHIP");
   assert.equal(classifyPositionTitle("Senior Scientist I, Molecular Virology"), "RESEARCH_ASSISTANTSHIP");
+  assert.equal(classifyPositionTitle("Scientist II/Sr. Scientist I, Immunology"), "RESEARCH_ASSISTANTSHIP");
+  assert.equal(classifyPositionTitle("Senior Scientist, Discovery Biology"), "RESEARCH_ASSISTANTSHIP");
+  assert.equal(classifyPositionTitle("Marketing Manager, Discovery Biology"), null);
   assert.equal(classifyPositionTitle("Director, US GI Market Research"), null);
   assert.equal(classifyPositionTitle("Wellcome Early-Career Fellowship"), "FELLOWSHIP");
   assert.equal(classifyPositionTitle("Research Assistant, Infectious Disease Lab"), "RESEARCH_ASSISTANTSHIP");
@@ -183,6 +186,13 @@ test("Max Planck, NHS, university feeds and Greenhouse keep only biomedical rese
   assert.equal(postdoc?.type, "POSTDOC");
   assert.equal(postdoc?.city, "Palo Alto");
   assert.equal(postdoc?.description, "Study & model neurodegeneration.");
+  const datedPostdoc = toGreenhouseRecord({
+    id: 3,
+    title: "Postdoctoral Fellow, Neuroscience",
+    absolute_url: "https://job-boards.greenhouse.io/arcinstitute/jobs/3",
+    content: "&lt;p&gt;Application deadline: 5 December 2026.&lt;/p&gt;",
+  }, board, now);
+  assert.equal(datedPostdoc?.deadline, "2026-12-05");
 });
 
 test("deadlines in free text are read only when plausible", () => {

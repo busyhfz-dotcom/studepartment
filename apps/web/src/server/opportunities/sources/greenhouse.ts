@@ -1,7 +1,8 @@
 import type { OpportunityIngestionRecord } from "../ingestion";
 import { countryCodeFromText } from "./classify";
 import { requestJson } from "./http";
-import { toPositionRecord } from "./positions";
+import { deadlineFromText, toPositionRecord } from "./positions";
+import { htmlToText } from "./text";
 import type { OpportunitySourceConnector } from "./types";
 
 type GreenhouseJob = {
@@ -40,9 +41,14 @@ export const GREENHOUSE_BOARDS: Board[] = [
   { token: "chanzuckerberginitiative", name: "Chan Zuckerberg Initiative", website: "https://chanzuckerberg.com", countryCode: "US" },
   { token: "beamtherapeutics", name: "Beam Therapeutics", website: "https://beamtx.com", countryCode: "US", employerType: "COMPANY" },
   { token: "abcellera", name: "AbCellera", website: "https://www.abcellera.com", countryCode: "CA", employerType: "COMPANY" },
+  { token: "antaresrx", name: "Antares Therapeutics", website: "https://antaresrx.com", countryCode: "US", employerType: "COMPANY" },
+  { token: "magnetbiomedicine", name: "Magnet Biomedicine", website: "https://www.magnetbiomedicine.com", countryCode: "US", employerType: "COMPANY" },
+  { token: "citytherapeutics", name: "City Therapeutics", website: "https://citytherapeutics.com", countryCode: "US", employerType: "COMPANY" },
+  { token: "superluminalrx", name: "Superluminal Medicines", website: "https://www.superluminalrx.com", countryCode: "US", employerType: "COMPANY" },
+  { token: "serif", name: "Serif Biomedicines", website: "https://serif.bio", countryCode: "US", employerType: "COMPANY" },
 ];
 
-export function toGreenhouseRecord(job: GreenhouseJob, board: Board): OpportunityIngestionRecord | null {
+export function toGreenhouseRecord(job: GreenhouseJob, board: Board, now = new Date()): OpportunityIngestionRecord | null {
   const location = job.location?.name ?? null;
   if (/(?:talent community|general application|expression of interest)/i.test(job.title)) return null;
   const record = toPositionRecord({
@@ -55,6 +61,7 @@ export function toGreenhouseRecord(job: GreenhouseJob, board: Board): Opportunit
     city: location?.split(",")[0]?.trim() || null,
     countryCode: countryCodeFromText(location) ?? board.countryCode,
     location,
+    deadline: job.content ? deadlineFromText(htmlToText(job.content), now) : null,
     publishedAt: job.first_published ?? job.updated_at ?? null,
     subjects: job.departments?.map((department) => department.name),
     biomedicalPublisher: !board.employerType,
@@ -80,7 +87,7 @@ export const greenhouseSources: OpportunitySourceConnector[] = GREENHOUSE_BOARDS
     if (!Array.isArray(response.jobs)) throw new Error("Unrecognized Greenhouse jobs response");
     const jobs = response.jobs;
     const records = jobs
-      .map((job) => toGreenhouseRecord(job, board))
+      .map((job) => toGreenhouseRecord(job, board, context.now))
       .filter((record): record is OpportunityIngestionRecord => Boolean(record));
     context.log(`${board.name}: ${records.length} research positions of ${jobs.length} openings`);
     return records;

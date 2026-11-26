@@ -81,6 +81,9 @@ export const UNIVERSITY_AWARDS: Programme[] = [
   universityAward("cruk-scotland-black-leaders-2027", "CRUK Scotland Black Leaders in Cancer PhD Studentship", "Cancer Research UK Scotland Centre", "GB",
     "https://www.crukscotlandcentre.ac.uk/training/phd-studentships",
     "Closing Date: 30th November 2026", doctorate, "The Black Leaders in Cancer programme funds a doctoral studentship in cancer research. The provider sets eligibility and requires an application through the Windsor Fellowship and the university.", "2026-11-30"),
+  universityAward("cambridge-biosciences-dtp-2027", "Cambridge Biosciences DTP PhD Studentships", "University of Cambridge", "GB",
+    "https://bbsrcdtp.lifesci.cam.ac.uk/how-apply",
+    "Tuesday 8 December 2026", doctorate, "Funded doctoral studentships in the biosciences. The call covers university fees and a stipend and accepts UK and international applicants. Review the advertised projects before applying.", "2026-12-08"),
 ];
 
 export const universityDegreeFundingSource: OpportunitySourceConnector = {
