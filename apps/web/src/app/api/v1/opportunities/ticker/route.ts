@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     await consumeClientRateLimit(request, "opportunities:ticker", { windowSeconds: 60, max: 30 });
     const data = await getPublicOpportunityTicker({ location:request.nextUrl.searchParams.get("location"), subject:request.nextUrl.searchParams.get("subject") });
     const body: ApiSuccess<PublicOpportunityTicker> = { success: true, data };
-    return NextResponse.json(body, { headers: { "Cache-Control": "public, max-age=60" } });
+    return NextResponse.json(body, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     if (error instanceof RateLimitExceededError) return rateLimitErrorResponse(error);
     console.error("Opportunity ticker failed", error);

@@ -70,6 +70,7 @@
 .soon .badge { background: #4c4d7c; }
 .open .badge { background: #3a3e5b; }
 .tickerShare { position: absolute; inset-block-end: 7px; inset-inline-start: 16px; }
+.tickerBookmark { position: absolute; inset-block-end: 7px; inset-inline-end: 12px; color: #e7dfff; }
 .opportunityDetail { position: absolute; inset: 0; z-index: 2; overflow: auto; padding: 16px 20px; background: #2d315e; border-radius: inherit; }
 .detailTop { display: flex; justify-content: space-between; align-items: center; color: #dbdceb; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
 .detailTop button { width: 44px; height: 44px; padding: 0; font-size: 22px; }

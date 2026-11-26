@@ -18,7 +18,11 @@ export function IntroductionVideo() {
   return (
     <>
       <button className={styles.trigger} type="button" aria-haspopup="dialog" onClick={showVideo}>
-        <span className={styles.play} aria-hidden="true"><ControlIcon name="play" /></span>
+        <picture className={styles.play} aria-hidden="true">
+          <source media="(prefers-reduced-motion: reduce)" srcSet="/images/how-to-use-film-still.webp" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/how-to-use-film.webp" alt="" width={144} height={126} />
+        </picture>
         <span>How to use</span>
       </button>
       <dialog ref={dialog} className={styles.dialog} aria-label="How to use" onClose={() => setOpen(false)}

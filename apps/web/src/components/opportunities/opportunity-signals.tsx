@@ -20,7 +20,11 @@ async function engagement(id: string, payload: { action: "view" } | { action: "s
   return body.data;
 }
 
-export function OpportunitySignals({ item, recordView = false }: { item: ShareableOpportunity; recordView?: boolean }) {
+export function OpportunitySignals({ item, recordView = false, tabIndex }: {
+  item: ShareableOpportunity;
+  recordView?: boolean;
+  tabIndex?: number;
+}) {
   const router = useRouter();
   const [latest, setLatest] = useState<BookmarkUpdate>();
   const [busy, setBusy] = useState(false);
@@ -74,10 +78,12 @@ export function OpportunitySignals({ item, recordView = false }: { item: Shareab
 
   const countLabel = saves + (saves === 1 ? " save" : " saves");
   return <div className={styles.signals}>
-    {views !== undefined ? <span aria-label={views + " total listing views"}>{views.toLocaleString("en")} views</span> : null}
+    {(recordView || item.views !== undefined) && views !== undefined ? (
+      <span title="Total opens of the full opportunity details" aria-label={views + " total listing views"}>{views.toLocaleString("en")} views</span>
+    ) : null}
     <button type="button" className={styles.bookmark} aria-pressed={saved} aria-label="Save opportunity"
       title={error || (saved ? "Remove from Saved" : "Save opportunity") + " · " + countLabel}
-      aria-busy={busy} disabled={busy} onClick={() => void toggle()}>
+      aria-busy={busy} disabled={busy} tabIndex={tabIndex} onClick={() => void toggle()}>
       <svg viewBox="0 0 24 24" aria-hidden="true" fill={saved ? "currentColor" : "none"}
         stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round">
         <path d="M6.5 5.5a1.5 1.5 0 0 1 1.5-1.5h8a1.5 1.5 0 0 1 1.5 1.5v14l-5.5-3.7-5.5 3.7Z" />

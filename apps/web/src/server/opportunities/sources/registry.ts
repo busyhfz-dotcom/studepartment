@@ -47,6 +47,7 @@ import { californiaResearchCareerSources } from "./university-california-researc
 import { usaJobsSource } from "./usajobs";
 import { verifiedCancerFundingSource } from "./verified-cancer-funding";
 import { verifiedWorkbookCallsSource } from "./verified-workbook-calls";
+import { verifiedPublisherRoundsSource } from "./verified-publisher-rounds";
 import { wellcomeSource } from "./wellcome";
 import { workdayResearchSources } from "./workday-research-careers";
 import { westlakeResearchCareersSource } from "./westlake-research-careers";
@@ -56,6 +57,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   daadScholarshipsSource, daadDoctoralSource,
   verifiedCancerFundingSource,
   verifiedWorkbookCallsSource,
+  verifiedPublisherRoundsSource,
   programmeRegistrySource,
   nkiResearchCareersSource,
   commonwealthMedicalMastersSource,

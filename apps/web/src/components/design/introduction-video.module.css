@@ -21,13 +21,16 @@
 .trigger:hover { color: #efe5ff; }
 .trigger:focus-visible, .close:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
-.play { display: grid; place-items: center; color: #cfbcff; }
-.play svg { inline-size: 35px; block-size: 35px; filter: drop-shadow(0 0 12px #ac87ff65); transition: transform .22s var(--ease), color .22s; }
-.trigger:hover .play svg, .trigger:focus-visible .play svg { color: #f3e7ff; transform: scale(1.15) translateX(2px); }
-.trigger:not(:disabled):active .play svg { transform: scale(.91); }
+.play img {
+  display: block;
+  inline-size: 44px;
+  block-size: auto;
+  filter: drop-shadow(0 2px 8px #ad91ff54);
+}
 @media (prefers-reduced-motion: no-preference) {
-  .play svg { animation: playGlow 2.8s ease-in-out 2; }
-  @keyframes playGlow { 50% { filter: drop-shadow(0 0 19px #bb95ffc0); } }
+  .play img { transition: transform .22s var(--ease); }
+  .trigger:hover .play img, .trigger:focus-visible .play img { transform: translateY(-2px) scale(1.08); }
+  .trigger:active .play img { transform: scale(.94); }
 }
 
 .dialog {
@@ -77,7 +80,7 @@
 
 @media (max-width: 700px) {
   .trigger { min-inline-size: 58px; font-size: 10px; }
-  .play svg { inline-size: 30px; block-size: 30px; }
+  .play img { inline-size: 36px; }
 }
 
 .desktopGlyph { display: none; }
@@ -87,7 +90,7 @@
   .mobileGlyph { display: none; }
 
   .trigger { font-size: 13px; }
-  .play svg { inline-size: 40px; block-size: 40px; }
+  .play img { inline-size: 49px; }
   .dialog {
     border-radius: 17px;
     box-shadow: 0 22px 80px #000b, 0 0 0 1px #ffffff26;

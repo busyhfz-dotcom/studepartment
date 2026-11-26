@@ -2,6 +2,7 @@ import type { Prisma } from "@studepartment/db";
 import { isCountryCode } from "@/lib/countries";
 import { opportunityRegion, opportunityRegions, opportunitySubjects } from "@/lib/opportunity-filters";
 import { getDb } from "@studepartment/db";
+import { getCurrentUser } from "@/server/auth/current-user";
 import { activeOpportunityWhere } from "./countries";
 
 export type PublicTickerItem = {
@@ -15,6 +16,8 @@ export type PublicTickerItem = {
   deadlineLabel: string;
   /** First collected in the last 24 hours. */
   isNew: boolean;
+  saves: number;
+  saved: boolean;
 };
 
 export type PublicOpportunityTicker = {
@@ -48,7 +51,8 @@ export async function getPublicOpportunityTicker(filters?: TickerFilters): Promi
   };
   if (!process.env.DATABASE_URL) return unavailable;
   try {
-    return await loadPublicOpportunityTicker(getDb(), new Date(), filters);
+    const user = await getCurrentUser().catch(() => null);
+    return await loadPublicOpportunityTicker(getDb(), new Date(), filters, user?.id);
   } catch (error) {
     console.error("[opportunities] public ticker unavailable", error);
     return unavailable;
@@ -59,6 +63,7 @@ export async function loadPublicOpportunityTicker(
   db: Pick<ReturnType<typeof getDb>, "opportunity">,
   now = new Date(),
   filters: TickerFilters = {},
+  userId?: string,
 ): Promise<PublicOpportunityTicker> {
   const windowMs = 30 * 86_400_000;
   const cutoff = new Date(now.getTime() - windowMs);
@@ -81,37 +86,31 @@ export async function loadPublicOpportunityTicker(
     AND: conditions,
   };
   const newestFirst = [{ publishedAt: { sort: "desc" as const, nulls: "last" as const } }, { firstSeenAt: "desc" as const }];
+  const itemSelection = {
+    id: true,
+    title: true,
+    countryCode: true,
+    deadline: true,
+    deadlinePrecision: true,
+    firstSeenAt: true,
+    publishedAt: true,
+    organization: { select: { name: true, website: true } },
+    _count: { select: { savedBy: true } },
+    ...(userId ? { savedBy: { where: { userId }, select: { userId: true }, take: 1 } } : {}),
+  } satisfies Prisma.OpportunitySelect;
 
   const [positions, grants, totalPositions, totalGrants, countries, latest] = await Promise.all([
     db.opportunity.findMany({
       where: { ...activeUpcoming, type: { notIn: ["GRANT", "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP", "MD_SCHOLARSHIP"] } },
       orderBy: newestFirst,
       take: 8,
-      select: {
-        id: true,
-        title: true,
-        countryCode: true,
-        deadline: true,
-        deadlinePrecision: true,
-        firstSeenAt: true,
-        publishedAt: true,
-        organization: { select: { name: true, website: true } },
-      },
+      select: itemSelection,
     }),
     db.opportunity.findMany({
       where: { ...activeUpcoming, type: "GRANT" },
       orderBy: newestFirst,
       take: 8,
-      select: {
-        id: true,
-        title: true,
-        countryCode: true,
-        deadline: true,
-        deadlinePrecision: true,
-        firstSeenAt: true,
-        publishedAt: true,
-        organization: { select: { name: true, website: true } },
-      },
+      select: itemSelection,
     }),
     db.opportunity.count({ where: { ...activeUpcoming, type: { notIn: ["GRANT", "MASTERS_SCHOLARSHIP", "PHD_SCHOLARSHIP", "MD_SCHOLARSHIP"] } } }),
     db.opportunity.count({ where: { ...activeUpcoming, type: "GRANT" } }),
@@ -135,6 +134,8 @@ export async function loadPublicOpportunityTicker(
       deadlinePrecision: row.deadlinePrecision.toLowerCase().replaceAll("_", "-"),
       deadlineLabel: formatDeadline(row.deadline, row.deadlinePrecision),
       isNew: (row.publishedAt ?? row.firstSeenAt).getTime() >= newSince,
+      saves: row._count?.savedBy ?? 0,
+      saved: Boolean(userId && row.savedBy?.length),
     }));
 
   return {

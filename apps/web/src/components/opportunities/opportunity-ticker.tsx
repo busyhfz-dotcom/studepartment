@@ -8,6 +8,7 @@ import { OpportunityFilterSelect } from "@/components/forms/opportunity-filter-s
 import { deadlineClosingSoon, opportunitySubjects } from "@/lib/opportunity-filters";
 import { ControlIcon } from "@/components/design/control-icon";
 import { ShareOpportunity } from "./share-opportunity";
+import { OpportunitySignals } from "./opportunity-signals";
 import { ListingActions } from "./listing-actions";
 import { Institution } from "./brand-mark";
 import { setMotion, useMotionPreference } from "@/lib/motion-preference";
@@ -24,6 +25,8 @@ type TickerEntry = {
   deadlinePrecision?: string;
   deadlineLabel: string;
   isNew: boolean;
+  saves: number;
+  saved: boolean;
 };
 
 function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
@@ -37,6 +40,8 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     deadlinePrecision: item.deadlinePrecision,
     deadlineLabel: item.deadlineLabel,
     isNew: Boolean(item.isNew),
+    saves: item.saves,
+    saved: item.saved,
   }));
   const grants: TickerEntry[] = ticker.grants.map((item) => ({
     id: item.id,
@@ -48,6 +53,8 @@ function buildEntries(ticker: PublicOpportunityTicker): TickerEntry[] {
     deadlinePrecision: item.deadlinePrecision,
     deadlineLabel: item.deadlineLabel,
     isNew: Boolean(item.isNew),
+    saves: item.saves,
+    saved: item.saved,
   }));
   const merged: TickerEntry[] = [];
   const max = Math.max(positions.length, grants.length);
@@ -69,7 +76,8 @@ function badgeStatus(deadline: string | null): "urgent" | "soon" | "open" {
 const REFRESH_MS = 3 * 60_000;
 
 function tickerSignature(ticker: PublicOpportunityTicker) {
-  return [ticker.stats.totalPositions, ticker.stats.totalGrants, ...ticker.positions.map((item) => item.id), ...ticker.grants.map((item) => item.id)].join("|");
+  const entries = [...ticker.positions, ...ticker.grants].map(({ id, saves, saved }) => `${id}:${saves}:${saved}`);
+  return [ticker.stats.totalPositions, ticker.stats.totalGrants, ...entries].join("|");
 }
 
 function updatedLabel(value: string | null, now: number) {
@@ -244,6 +252,10 @@ export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpp
                 {entries.map((entry, index) => {
                   const status = badgeStatus(entry.deadline);
                   const label = status === "urgent" ? "Closing soon" : status === "soon" ? "Plan ahead" : "Time to prepare";
+                  const item = {
+                    id: entry.id, title: entry.title, type: entry.kind === "Grant" ? "grant" : "position",
+                    saves: entry.saves, saved: entry.saved,
+                  };
                   return (
                     <div className={styles.tickerItem} key={`${duplicate ? "dup-" : ""}${entry.id}-${index}`}>
                     <button
@@ -263,7 +275,8 @@ export function OpportunityTicker({ ticker: initialTicker }: { ticker: PublicOpp
                         <time>{entry.deadlineLabel}</time>
                       </span>
                     </button>
-                    <span className={styles.tickerShare}><ShareOpportunity item={{id:entry.id,title:entry.title,type:entry.kind==='Grant'?'grant':'position'}} tabIndex={duplicate?-1:0}/></span>
+                    <div className={styles.tickerShare}><ShareOpportunity item={item} tabIndex={duplicate ? -1 : undefined} /></div>
+                    <div className={styles.tickerBookmark}><OpportunitySignals item={item} tabIndex={duplicate ? -1 : undefined} /></div>
                     </div>
                   );
                 })}
