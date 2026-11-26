@@ -19,8 +19,8 @@ test("an empty ticker retains real zero counts and never supplies demo opportuni
 test("a real position does not fabricate a grant feed or overwrite zero totals", async () => {
   const row = { id: "test-position", title: "Synthetic nursing research position", countryCode: "IR", deadline: null, deadlinePrecision: "ROLLING", firstSeenAt: new Date(), organization: { name: "Synthetic Medical Unit" } };
   const db = { opportunity: {
-    findMany: async ({ where }: { where: { status: string; type?: unknown; countryCode?: unknown } }) => {
-      assert.equal(where.status, "ACTIVE");
+    findMany: async ({ where }: { where: { OR: unknown[]; type?: unknown; countryCode?: unknown } }) => {
+      assert.equal(where.OR.length, 2);
       if (where.countryCode) return [{ countryCode: "IR" }];
       return where.type === "GRANT" ? [] : [row];
     },
@@ -52,8 +52,41 @@ test("ticker listings and counts use recent publication dates and a 30-day deadl
     const filter = query as { publishedAt: unknown; AND: unknown; OR: unknown };
     assert.deepEqual(filter.publishedAt, { gte: since, lte: now });
     assert.deepEqual(filter.AND, [{ OR: [{ deadline: null }, { deadline: { lte: through } }] }]);
-    assert.deepEqual(filter.OR, [{ deadline: null }, { deadline: { gte: now } }]);
+    assert.deepEqual(filter.OR, [
+      { status: { in: ["ACTIVE", "STALE"] }, deadline: { gte: now } },
+      { status: "ACTIVE", deadline: null, lastSeenAt: { gte: new Date("2026-10-07T12:00:00Z") } },
+    ]);
   }
+});
+
+test("ticker always returns aggregate saves and returns a bookmark only for the current viewer", async () => {
+  const now = new Date("2026-11-26T13:00:00Z");
+  const row = {
+    id: "test-position", title: "Synthetic research role", countryCode: "GB",
+    deadline: null, deadlinePrecision: "UNKNOWN", firstSeenAt: now, publishedAt: now,
+    organization: { name: "Synthetic Research Group" }, _count: { savedBy: 3 },
+  };
+  const savedUser = "fixture-saved-user";
+  const db = { opportunity: {
+    findMany: async ({ where, select }: {
+      where: { type?: unknown }; select: { savedBy?: { where: { userId: string } } };
+    }) => {
+      if (!where.type || where.type === "GRANT") return [];
+      const userId = select.savedBy?.where.userId;
+      return [{ ...row, ...(userId === savedUser ? { savedBy: [{ userId }] } : {}) }];
+    },
+    count: async () => 1,
+    aggregate: async () => ({ _max: { lastSeenAt: now } }),
+  } } as unknown as Parameters<typeof loadPublicOpportunityTicker>[0];
+
+  const [anonymous, bookmarked, other] = await Promise.all([
+    loadPublicOpportunityTicker(db, now),
+    loadPublicOpportunityTicker(db, now, {}, savedUser),
+    loadPublicOpportunityTicker(db, now, {}, "another-fixture-user"),
+  ]);
+  assert.deepEqual([anonymous, bookmarked, other].map(ticker => ticker.positions[0].saves), [3, 3, 3]);
+  assert.deepEqual([anonymous, bookmarked, other].map(ticker => ticker.positions[0].saved), [false, true, false]);
+  assert.ok(!JSON.stringify(bookmarked).includes(savedUser));
 });
 
 test("Retry-After accepts seconds, dates, vendor header and invalid values", () => {
