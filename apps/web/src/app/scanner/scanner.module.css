@@ -153,4 +153,9 @@
 .directoryFilters label { display:grid; gap:5px; font-weight:650; color:var(--text-strong); min-width:0; }
 .directoryFilters :is(input,select) { min-width:0; min-height:44px; padding:8px 12px; border-radius:9px; border:1px solid var(--line-strong); background:var(--surface); color:var(--text); }
 .directoryPager { display:flex; justify-content:center; align-items:center; gap:20px; padding:24px 0; }
+.directoryFacts { margin-block: 8px 12px; font-size: .875rem; }
+.directoryFacts summary { cursor: pointer; font-weight: 650; }
+.directoryFacts dl { display: grid; gap: 8px; margin-block: 10px 0; overflow-wrap: anywhere; }
+.directoryFacts dt { font-weight: 650; }
+.directoryFacts dd { margin: 0; }
 @media(max-width:720px) { .directoryFilters { grid-template-columns:repeat(2,minmax(0,1fr)); } }
