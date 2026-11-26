@@ -573,7 +573,14 @@
 .gatewayCard:focus-visible{outline:3px solid #bfc0d9;outline-offset:5px}
 .gatewayAudience{font-size:11px;font-weight:750;line-height:1.5;letter-spacing:.04em}
 .gatewayArt{width:160px;height:98px;align-self:flex-end;margin:0 4px -16px 0;pointer-events:none}
-.gatewayArt svg{display:block;width:100%;height:100%}
+.gatewayArt img {
+  display: block;
+  inline-size: 100%;
+  block-size: calc(100% - 22px);
+  object-fit: contain;
+  object-position: right top;
+}
+.gatewayArt:dir(rtl) img { object-position: left top; }
 .gatewayCard h2{font-size:clamp(28px,2.7vw,37px);line-height:1.15;letter-spacing:-.045em;margin:0 0 14px;color:inherit}
 .gatewayCard p{font-size:14px;line-height:1.7;margin:0;max-width:390px;color:inherit;opacity:.85}
 .gatewayAction{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:13px;font-weight:750;margin-top:auto;padding-top:22px}
@@ -591,6 +598,7 @@
  .gatewayWelcome{padding:14px 20px 20px;min-height:0}.gatewayIntro h1{font-size:34px;margin:10px 0 12px}.gatewayIntro p{font-size:13px;line-height:1.7}
  .gatewayGrid{grid-template-columns:1fr;gap:12px;margin-top:14px}.gatewayCard{min-height:205px;padding:20px;border-radius:18px}
  .gatewayAudience{max-width:calc(100% - 85px);font-size:10px}.gatewayArt{position:absolute;inset-inline-end:15px;top:12px;width:100px;height:65px;margin:0}
+ .gatewayArt img { block-size: 41px; }
  .gatewayCard h2{font-size:29px;margin:24px 0 10px}.gatewayCard p{font-size:13px;max-width:330px}.gatewayAction{font-size:12px;padding-top:12px}
  .gatewayReassurance{font-size:10px;margin-top:16px}
  :global(html[lang="fa"]) .gatewayCard h2{font-size:30px;line-height:1.2;letter-spacing:normal}
@@ -637,11 +645,6 @@
     overflow: hidden;
   }
   .gatewayArt {
-    box-sizing: border-box;
-    padding: 7px 10px;
-    border: 1px solid color-mix(in srgb, currentColor 13%, transparent);
-    border-radius: 16px;
-    background: color-mix(in srgb, currentColor 4%, transparent);
     transition: transform .24s cubic-bezier(.2,.7,.3,1);
   }
   .gatewayCard:hover .gatewayArt { transform: translateY(-2px); }
