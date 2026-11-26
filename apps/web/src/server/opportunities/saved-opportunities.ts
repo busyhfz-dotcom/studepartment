@@ -31,7 +31,7 @@ function statusValue(value: string): SavedOpportunityRecord["opportunity"]["stat
   return value.toLowerCase() as SavedOpportunityRecord["opportunity"]["status"];
 }
 
-export async function saveOpportunity(input: SaveOpportunityInput) {
+export async function saveOpportunity(input: SaveOpportunityInput, defaultDeadlineAlert = true) {
   const user = await requireCurrentUser();
   const db = getDb();
   const opportunityId = input.opportunityId?.trim();
@@ -56,7 +56,7 @@ export async function saveOpportunity(input: SaveOpportunityInput) {
     create: {
       userId: user.id,
       opportunityId,
-      deadlineAlert: input.deadlineAlert ?? true,
+      deadlineAlert: input.deadlineAlert ?? defaultDeadlineAlert,
       alertLeadDays,
       notes,
     },

@@ -136,7 +136,7 @@
 
 /* Browse */
 .browse { padding-block: 32px 100px; }
-.routeSwitch { display: flex; flex-wrap: nowrap; align-items: stretch; gap: 10px; overflow-x: auto; scrollbar-width: thin; padding: 3px 3px 8px; }
+.routeSwitch { display: flex; flex-wrap: nowrap; align-items: stretch; gap: 10px; overflow-x: auto; padding-block: 3px 8px; }
 .routeSwitch > .routeTile, .routeBranch, .routeBranch > .routeTile, .routeChildren > .routeTile { flex: 1 0 138px; width: auto; }
 .routeBranch { display: flex; gap: 8px; }
 .routeSwitch[data-doctoral-open="true"] .routeBranch { flex: 3 0 430px; }

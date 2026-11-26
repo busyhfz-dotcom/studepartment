@@ -15,8 +15,7 @@ export default async function SavedOpportunitiesPage({ searchParams }: { searchP
     <ProductShell accountKind={user.accountKind === "INSTITUTION" ? "institution" : "individual"}>
       <div className={styles.shell}>
         <header className={styles.header}>
-          <span className="eyebrow">Saved opportunities</span>
-          <h1>Track every application from saved to decided.</h1>
+          <h1>Saved</h1>
           <p>
             Keep the deadline, source, reminders and your private notes together for each opportunity.
             Saving something never changes how relevant it is or whether you are eligible.

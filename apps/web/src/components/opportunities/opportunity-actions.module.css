@@ -61,9 +61,33 @@
 .dueDot { inline-size:8px; block-size:8px; border-radius:50%; background:#ff98ae; flex:none; animation:deadlinePulse 1.55s ease-in-out 3; }
 @keyframes deadlinePulse { 50% { opacity:.3; box-shadow:0 0 0 4px #f596b32f; } }
 .signals { display:flex; flex-wrap:wrap; align-items:center; gap:5px 9px; font-size:12px; }
-.signals .trigger { display:inline-flex; gap:5px; align-items:center; min-block-size:36px; padding:5px 9px; white-space:nowrap; border:1px solid var(--line-strong); background:#333964; color:#f1f1ff; border-radius:8px; cursor:pointer; }
-.signals .trigger[aria-pressed="true"] { color:#faadce; border-color:#e68bad; }
-.signals > a { text-decoration:underline; text-underline-offset:3px; }
+.bookmark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.bookmark svg { inline-size: 19px; block-size: 19px; flex: none; }
+.bookmark:hover { background: #9c89e822; }
+.bookmark[aria-pressed="true"] svg { color: #bba8ff; animation: bookmark-set .32s var(--ease); }
+.bookmark:not(:disabled):active svg { transform: scale(.85); }
+@keyframes bookmark-set {
+  from { transform: scale(.82); }
+  60% { transform: scale(1.18); }
+  to { transform: scale(1); }
+}
+.signalAnnouncement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .competition { display:inline-grid; gap:3px; font-weight:750; text-underline-offset:3px; }
 .competition small { font-size:11px; font-weight:500; }
 .eligibility { line-height:1.55; }

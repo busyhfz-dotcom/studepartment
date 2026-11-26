@@ -388,8 +388,8 @@ export type OpportunityCareerStage = "student" | "phd" | "postdoc" | "early-care
 
 export type OpportunityResult = {
   views?: number;
-  likes?: number;
-  liked?: boolean;
+  saves?: number;
+  saved?: boolean;
   publishedEligibility?: string;
   competition?: { label: string; rate: number; basis: string; url: string };
   grant?: {

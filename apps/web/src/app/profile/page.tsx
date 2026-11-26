@@ -51,7 +51,7 @@ export default async function ProfilePage() {
           </div>
           <nav className={workspace.actions} aria-label="Profile actions">
             <Link href="/profile/edit">Edit profile</Link>
-            <Link href="/opportunities/favorites">My Favorites</Link>
+            <Link href="/opportunities/saved">Saved</Link>
             <Link href="/settings/privacy">Privacy & data</Link>
             <Link href={"/graph?researcher=" + profile.id}>Evidence graph</Link>
           </nav>

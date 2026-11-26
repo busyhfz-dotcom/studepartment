@@ -42,6 +42,7 @@ export default async function OrganizationProfilePage() {
             profile. Researchers see it when they look at your postings and affiliations.
           </p>
           <nav className={workspace.actions} aria-label="Institutional profile actions">
+            <Link href="/opportunities/saved">Saved</Link>
             <Link href={`/institutions/${organization.id}`}>View public institutional page</Link>
           </nav>
         </header>

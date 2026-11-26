@@ -22,7 +22,7 @@
 .search svg { position: absolute; inline-size: 16px; block-size: 16px; inset-inline-start: 11px; inset-block-start: 50%; translate: 0 -50%; fill: none; stroke: #b5c7f7; stroke-width: 1.6; pointer-events: none; }
 .search input { inline-size:100%; min-block-size:44px; padding: 7px 10px; padding-inline-start: 35px; border:1px solid #8399ce; border-radius: 9px; background: #1021439c; color: #fff; font: inherit; font-size: 16px; }
 .search input::placeholder { color: #c3cef0; }
-.options { max-block-size: min(365px,calc(100dvh - 203px)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; margin-block-start: 9px; padding: 2px; }
+.options { max-block-size: min(365px,calc(100dvh - 203px)); overflow-y: auto; overscroll-behavior: contain; margin-block-start: 9px; padding: 2px; }
 .options button { display: grid; grid-template-columns: 36px minmax(0, 1fr) 21px; align-items: center; gap: 9px; inline-size: 100%; min-block-size: 47px; padding: 6px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: inherit; text-align: start; font: inherit; font-size: 13px; cursor: pointer; transition: background-color .16s, border-color .16s; }
 .options button:hover { background: #c5ceff24; }
 .options button[aria-pressed="true"] { background: #c5ceff38; border-color: #a4aaf1a8; }

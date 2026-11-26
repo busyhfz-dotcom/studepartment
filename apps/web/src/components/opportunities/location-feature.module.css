@@ -1,8 +1,10 @@
 .feature {
   position: relative;
   isolation: isolate;
-  aspect-ratio: 3.3 / 1;
-  max-block-size: 350px;
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: clamp(116px, 14vw, 190px);
   margin: 18px 0;
   overflow: hidden;
   border: 1px solid #899fd38a;
@@ -11,19 +13,29 @@
   box-shadow: 0 17px 35px -17px #090f2ad9, 0 3px 9px #171b492d;
 }
 
-.feature::after {
+.feature::before, .feature::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg,#131e4661,transparent 30%,transparent 81%,#20274820);
   pointer-events: none;
 }
 
-.photo { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: center; }
+.feature::before {
+  z-index: 1;
+  background: radial-gradient(ellipse at 12% 105%, #c5c2f1d9, #a1a2d864 40%, transparent 70%),
+    radial-gradient(ellipse at 92% 84%, #acbaf1ba, #8688ca43 40%, transparent 68%);
+}
+
+.feature::after {
+  z-index: 1;
+  background: linear-gradient(0deg, #101a3fbd, transparent 48%, #161f491c 85%, #131a456b);
+}
+
+.photo { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: center; filter: saturate(.82); }
 
 @media (max-width: 850px) {
-  .feature { aspect-ratio: 3 / 1; margin-block: 14px; }
+  .feature { margin-block: 14px; }
 }
 @media (max-width: 520px) {
-  .feature { aspect-ratio: 2.4 / 1; border-radius: 12px; }
+  .feature { block-size: 112px; border-radius: 12px; }
 }

@@ -1,5 +1,6 @@
 import type { OpportunityResult } from './api-contracts';
-export type ShareableOpportunity = {id:string;title:string;type?:string;deadline?:string|null;deadlinePrecision?:string; views?:number; likes?:number; liked?:boolean};
+export type ShareableOpportunity = {id:string;title:string;type?:string;deadline?:string|null;deadlinePrecision?:string; views?:number; saves?:number; saved?:boolean};
+export const pendingOpportunityBookmark = "provenant:pending-opportunity-bookmark";
 export function opportunityPath(item:Pick<ShareableOpportunity,'id'|'type'>) {
   const type=(item.type||'position').toLowerCase().replace(/[ _]+/g,'-');
   const kind=['grant','masters-scholarship','phd-scholarship','md-scholarship'].includes(type)?type:'position';

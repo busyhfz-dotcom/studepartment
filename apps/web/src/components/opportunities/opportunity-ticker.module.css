@@ -5,7 +5,7 @@
   background: #23253d;
   border: 1px solid #484a79;
   border-radius: 16px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .deskHeading, .deskFooter {
@@ -20,8 +20,8 @@
   font-size: 12px;
 }
 
-.deskHeading { border-bottom: 1px solid #3d3f70; }
-.deskFooter { border-top: 1px solid #3d3f70; }
+.deskHeading { border-bottom: 1px solid #3d3f70; border-start-start-radius: inherit; border-start-end-radius: inherit; }
+.deskFooter { border-top: 1px solid #3d3f70; border-end-start-radius: inherit; border-end-end-radius: inherit; }
 .deskFooter a, .latestLoading a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .liveLabel { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; color: #fff; }
 .liveDot { width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px #ffffff21, 0 0 14px #ffffff70; }
@@ -35,8 +35,7 @@
 }
 .detailTop button:hover { background: #3e4260; }
 .latestLoading { margin: 0; padding: 24px; color: #d0d1e3; font-size: 13px; }
-.latestList { overflow-x: auto; direction: ltr; overscroll-behavior-x: contain; scrollbar-width: none; }
-.latestList::-webkit-scrollbar { display: none; }
+.latestList { overflow-x: auto; direction: ltr; overscroll-behavior-x: contain; }
 .latestList:focus-visible { outline: 2px solid #ebecf5; outline-offset: -2px; }
 .latestList[data-manual="true"], .latestList[data-manual="true"] .latestRow { cursor: grab; }
 .latestList[data-dragging="true"], .latestList[data-dragging="true"] * { cursor: grabbing; user-select: none; }
@@ -71,7 +70,7 @@
 .soon .badge { background: #4c4d7c; }
 .open .badge { background: #3a3e5b; }
 .tickerShare { position: absolute; inset-block-end: 7px; inset-inline-start: 16px; }
-.opportunityDetail { position: absolute; inset: 0; z-index: 2; overflow: auto; padding: 16px 20px; background: #2d315e; }
+.opportunityDetail { position: absolute; inset: 0; z-index: 2; overflow: auto; padding: 16px 20px; background: #2d315e; border-radius: inherit; }
 .detailTop { display: flex; justify-content: space-between; align-items: center; color: #dbdceb; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
 .detailTop button { width: 44px; height: 44px; padding: 0; font-size: 22px; }
 .opportunityDetail h3 { margin: 4px 0; font-size: clamp(17px, 2.2vw, 27px); }
@@ -118,8 +117,8 @@
     .opportunityDetail { animation: none; }
   }
 }
-.heroDesk:has(.personalize) { overflow: visible; }
 .deskHeading { column-gap: 14px; }
+.heroDesk:has(.personalize) { z-index: 3; }
 .headingControls {
   display: inline-flex; align-items: stretch; margin-inline-start: auto; flex-shrink: 0;
   border: 1px solid #596eae; border-radius: 10px; background: #243763;

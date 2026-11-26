@@ -17,7 +17,6 @@ import { readOpportunityPage, readOpportunitySort } from "@/lib/opportunity-pagi
 import { FeedbackControls } from "@/components/feedback/feedback-controls";
 import { researchTopics } from "@studepartment/db/taxonomy";
 import styles from "./page.module.css";
-import { SaveOpportunityButton } from "./save-opportunity-button";
 import { CountrySelect } from "@/components/forms/country-select";
 import { OpportunityLocationPicker } from "@/components/forms/opportunity-location-picker";
 import { OpportunityFilterSelect } from "@/components/forms/opportunity-filter-select";
@@ -418,7 +417,6 @@ export function OpportunityExplorer(_options: { countryCodes: string[] }) {
                   <div className={styles.listingActionRail}>
                     <ListingActions item={opportunity} primary={<a href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review source</a>} />
                   </div>
-                  <SaveOpportunityButton className={styles.secondaryAction} opportunityId={opportunity.id} />
                   <a className={styles.secondaryAction} href={"/assistant?opportunity=" + opportunity.id}>Ask assistant</a>
                   <a className={styles.primaryAction} href={opportunity.applicationUrl ?? opportunity.sourceUrl} rel="noreferrer" target="_blank">Apply now</a>
                 </aside>

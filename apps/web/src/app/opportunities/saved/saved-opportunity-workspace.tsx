@@ -4,7 +4,8 @@ import { ListingActions } from '@/components/opportunities/listing-actions';
 
 import { DocumentManager } from "@/components/files/document-manager";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { pendingOpportunityBookmark } from "@/lib/opportunity-actions";
 import Link from "next/link";
 import { SaveOpportunityButton } from "../save-opportunity-button";
 import type { ApiError, ApiSuccess, SavedOpportunityListResponse, SavedOpportunityRecord } from "@/lib/api-contracts";
@@ -95,6 +96,7 @@ function ApplicationDocuments({ opportunityId }: { opportunityId: string }) {
 export function SavedOpportunityWorkspace({ pendingOpportunityId }: { pendingOpportunityId?: string }) {
   const [data, setData] = useState<SavedOpportunityListResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const pendingSave = useRef<{ id: string; request: Promise<void> } | null>(null);
 
   async function load() {
     const response = await fetch("/api/v1/opportunities/saved", { cache: "no-store" });
@@ -105,7 +107,22 @@ export function SavedOpportunityWorkspace({ pendingOpportunityId }: { pendingOpp
 
   useEffect(() => {
     let active = true;
-    void fetch("/api/v1/opportunities/saved", { cache: "no-store" })
+    try {
+      if (pendingOpportunityId && sessionStorage.getItem(pendingOpportunityBookmark) === pendingOpportunityId
+          && pendingSave.current?.id !== pendingOpportunityId) {
+        const request = fetch("/api/v1/opportunities/" + encodeURIComponent(pendingOpportunityId) + "/engagement", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "save", saved: true }),
+        }).then(response => {
+          if (response.ok && sessionStorage.getItem(pendingOpportunityBookmark) === pendingOpportunityId) {
+            sessionStorage.removeItem(pendingOpportunityBookmark);
+          }
+        }).catch(() => { /* The confirmation below remains available. */ });
+        pendingSave.current = { id: pendingOpportunityId, request };
+      }
+    } catch { /* Session storage is optional. */ }
+    const pending = pendingSave.current?.id === pendingOpportunityId ? pendingSave.current?.request : undefined;
+    void Promise.resolve(pending).then(() => fetch("/api/v1/opportunities/saved", { cache: "no-store" }))
       .then(async (response) => {
         const body = (await response.json()) as Response;
         if (!response.ok || !body.success) {
@@ -122,7 +139,7 @@ export function SavedOpportunityWorkspace({ pendingOpportunityId }: { pendingOpp
     return () => {
       active = false;
     };
-  }, []);
+  }, [pendingOpportunityId]);
 
   async function remove(opportunityId: string) {
     try {

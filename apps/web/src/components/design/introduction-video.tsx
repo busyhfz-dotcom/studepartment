@@ -18,7 +18,7 @@ export function IntroductionVideo() {
   return (
     <>
       <button className={styles.trigger} type="button" aria-haspopup="dialog" onClick={showVideo}>
-        <span className={styles.play} aria-hidden="true"><ControlIcon name="play" className={styles.desktopGlyph} /></span>
+        <span className={styles.play} aria-hidden="true"><ControlIcon name="play" /></span>
         <span>How to use</span>
       </button>
       <dialog ref={dialog} className={styles.dialog} aria-label="How to use" onClose={() => setOpen(false)}

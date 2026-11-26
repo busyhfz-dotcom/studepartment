@@ -319,7 +319,7 @@ function StartJourney({ ticker }: StartOptions) {
               </div>
             </div>
           </nav>
-          <div className={styles.routeLinks}><Link href="/opportunities/favorites">♡ My Favorites</Link><Link href="/opportunities/directory">Programme & conference directory</Link></div>
+          <div className={styles.routeLinks}><Link href="/opportunities/directory">Programme & conference directory</Link></div>
 
           {kind==='masters-scholarship' && <aside className={styles.sourceGuidance}><strong>Consider the programme as well as the award.</strong><p>DAAD programmes are included in these results. Erasmus Mundus funding is offered through individual consortia; check each programme’s current scholarship availability.</p><a href="https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en" target="_blank" rel="noopener noreferrer">Explore the official Erasmus Mundus catalogue</a></aside>}
           {kind==='md-phd-scholarship' && <aside className={styles.sourceGuidance}><strong>Support for the physician-scientist route.</strong><p>NIH F30 fellowships support students already enrolled in eligible dual-degree programmes. Check citizenship or residency, enrolment and sponsor requirements. T32 awards fund institutions; trainee places are offered by the participating programmes.</p><a href="https://www.cancer.gov/grants-training/training/funding/f30" target="_blank" rel="noopener noreferrer">Understand the F30 route</a><a href="https://grants.nih.gov/funding/activity-codes/T32" target="_blank" rel="noopener noreferrer">Explore institutional training through T32</a></aside>}

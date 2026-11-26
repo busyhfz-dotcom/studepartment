@@ -14,7 +14,6 @@ import { getShellViewer } from "@/server/auth/shell-viewer";
 import { grantDetails } from "@/server/opportunities/grant-details";
 import { activeOpportunityWhere } from "@/server/opportunities/countries";
 import { publishedFacts } from "@/server/opportunities/published-facts";
-import { SaveOpportunityButton } from "../save-opportunity-button";
 import styles from "./detail.module.css";
 
 export const dynamic = "force-dynamic";
@@ -171,7 +170,6 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               primary={<a href={applyUrl} rel="noreferrer" target="_blank">Apply now</a>} />
           </div>
           <a className={styles.secondary} href={opportunity.sourceUrl} rel="noreferrer" target="_blank">Review original source</a>
-          <SaveOpportunityButton className={styles.secondary} opportunityId={opportunity.id} />
         </div>
 
         <section className={styles.body}>

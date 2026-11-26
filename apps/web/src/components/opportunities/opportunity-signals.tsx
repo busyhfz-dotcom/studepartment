@@ -1,67 +1,89 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { opportunityPath, type ShareableOpportunity } from "@/lib/opportunity-actions";
+import { pendingOpportunityBookmark, type ShareableOpportunity } from "@/lib/opportunity-actions";
 import styles from "./opportunity-actions.module.css";
 
-type Counts = { views: number; likes: number; liked: boolean };
+type Counts = { views: number; saves: number; saved: boolean };
+type BookmarkUpdate = { id: string; counts: Counts };
+const bookmarkChanged = "provenant:opportunity-bookmark-changed";
+const compactCount = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
 
-async function engagement(id: string, payload: object) {
+async function engagement(id: string, payload: { action: "view" } | { action: "save"; saved: boolean }) {
   const response = await fetch("/api/v1/opportunities/" + encodeURIComponent(id) + "/engagement", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
   });
   if (response.status === 401) return null;
   const body = await response.json() as { success: boolean; data?: Counts };
-  if (!response.ok || !body.success || !body.data) throw new Error("Could not update this opportunity.");
+  if (!response.ok || !body.success || !body.data) throw new Error("Bookmark could not be updated.");
   return body.data;
 }
 
 export function OpportunitySignals({ item, recordView = false }: { item: ShareableOpportunity; recordView?: boolean }) {
-  const [latest, setLatest] = useState<Counts>();
+  const router = useRouter();
+  const [latest, setLatest] = useState<BookmarkUpdate>();
   const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState("");
-  const seen = useRef<string | null>(null);
-  const liked = latest?.liked ?? item.liked ?? false;
-  const views = latest?.views ?? item.views;
-  const likes = latest?.likes ?? item.likes ?? 0;
+  const [error, setError] = useState("");
+  const viewRequest = useRef<{ id: string; result: ReturnType<typeof engagement> } | null>(null);
+  const counts = latest?.id === item.id ? latest.counts : undefined;
+  const saved = counts?.saved ?? item.saved ?? false;
+  const views = counts?.views ?? item.views;
+  const saves = counts?.saves ?? item.saves ?? 0;
 
   useEffect(() => {
-    if (!recordView) { seen.current = null; return; }
-    if (seen.current === item.id) return;
-    seen.current = item.id;
-    let current = true;
-    void engagement(item.id, { action: "view" }).then(data => {
-      if (current && data) setLatest(previous => previous ? { ...previous, views: data.views } : data);
+    function sync(event: Event) {
+      const update = (event as CustomEvent<BookmarkUpdate>).detail;
+      if (update.id === item.id) setLatest(update);
+    }
+    window.addEventListener(bookmarkChanged, sync);
+    return () => window.removeEventListener(bookmarkChanged, sync);
+  }, [item.id]);
+
+  useEffect(() => {
+    if (!recordView) { viewRequest.current = null; return; }
+    if (viewRequest.current?.id !== item.id) viewRequest.current = { id: item.id, result: engagement(item.id, { action: "view" }) };
+    let active = true;
+    void viewRequest.current.result.then(data => {
+      if (active && data) setLatest(previous => ({
+        id: item.id,
+        counts: previous?.id === item.id ? { ...previous.counts, views: data.views } : data,
+      }));
     }).catch(() => {});
-    return () => { current = false; };
+    return () => { active = false; };
   }, [item.id, recordView]);
 
   async function toggle() {
     setBusy(true);
-    setNotice("");
+    setError("");
     try {
-      const data = await engagement(item.id, { action: "like", liked: !liked });
-      if (data) setLatest(data);
-      setNotice(data ? data.liked ? "favorited" : "removed" : "signin");
+      const data = await engagement(item.id, { action: "save", saved: !saved });
+      if (data) {
+        window.dispatchEvent(new CustomEvent<BookmarkUpdate>(bookmarkChanged, { detail: { id: item.id, counts: data } }));
+        return;
+      }
+      try { sessionStorage.setItem(pendingOpportunityBookmark, item.id); } catch { /* The Saved page can ask for confirmation. */ }
+      const destination = "/opportunities/saved?" + new URLSearchParams({ save: item.id });
+      router.push("/auth/sign-in?" + new URLSearchParams({ callbackUrl: destination }));
     } catch {
-      setNotice("error");
+      setError("Could not update the bookmark. Try again.");
     } finally {
       setBusy(false);
     }
   }
 
+  const countLabel = saves + (saves === 1 ? " save" : " saves");
   return <div className={styles.signals}>
-    {views !== undefined ? <span aria-label={views + " total listing views"}>{views.toLocaleString()} views</span> : null}
-    <button type="button" className={styles.trigger} aria-pressed={liked} aria-label={liked ? "Unlike opportunity" : "Like opportunity"} disabled={busy} onClick={() => void toggle()}>
-      <svg viewBox="0 0 24 24" aria-hidden="true" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.7">
-        <path d="M20.8 8.6c0 4.1-8.8 9.8-8.8 9.8S3.2 12.7 3.2 8.6a4.5 4.5 0 0 1 8.8-1.3 4.5 4.5 0 0 1 8.8 1.3Z" />
+    {views !== undefined ? <span aria-label={views + " total listing views"}>{views.toLocaleString("en")} views</span> : null}
+    <button type="button" className={styles.bookmark} aria-pressed={saved} aria-label="Save opportunity"
+      title={error || (saved ? "Remove from Saved" : "Save opportunity") + " · " + countLabel}
+      aria-busy={busy} disabled={busy} onClick={() => void toggle()}>
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill={saved ? "currentColor" : "none"}
+        stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round">
+        <path d="M6.5 5.5a1.5 1.5 0 0 1 1.5-1.5h8a1.5 1.5 0 0 1 1.5 1.5v14l-5.5-3.7-5.5 3.7Z" />
       </svg>
-      {likes.toLocaleString()} {likes === 1 ? "like" : "likes"}
+      <span aria-hidden="true">{compactCount.format(saves)}</span>
     </button>
-    {notice === "favorited" ? <Link href="/opportunities/favorites">My Favorites</Link> : null}
-    {notice === "signin" ? <Link href={"/auth/sign-in?callbackUrl=" + encodeURIComponent(opportunityPath(item))}>Sign in to like</Link> : null}
-    {notice === "removed" ? <span role="status">Removed from My Favorites</span> : null}
-    {notice === "error" ? <span role="status">Try again in a moment</span> : null}
+    <span className={styles.signalAnnouncement} role="status">{error || countLabel}</span>
   </div>;
 }

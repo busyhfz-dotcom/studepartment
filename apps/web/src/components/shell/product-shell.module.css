@@ -134,9 +134,7 @@
   overflow-x:hidden;
   overflow-y:auto;
   scroll-padding-block:12px;
-  scrollbar-width:none;
 }
-.sidebarBody::-webkit-scrollbar{display:none}
 
 .navGroup + .navGroup{margin-top:28px}
 
@@ -664,7 +662,6 @@
   background-color: #354982;
   background-image: radial-gradient(ellipse at 8% 0%, #5469b14d, transparent 64%), linear-gradient(165deg, #304f90, #414282 64%, #394876);
 }
-.sidebarBody { scrollbar-color: #929ed8 transparent; }
 .sidebarFooter { border-color: #bac9ff45; }
 .brandMark { color: #fff; background: linear-gradient(135deg, #779cff, #705adf); box-shadow: 0 5px 18px #6883ff54; }
 .brandCopy strong, .navItemActive, .navItem:hover { color: #f5f7ff; }

@@ -16,13 +16,20 @@
   .scroll td.agency { min-inline-size: 138px; }
   .scroll td.title { min-inline-size: 208px; }
   .rowActions { min-inline-size: 168px; }
+  .rowActions [data-listing-actions] > span > button {
+    font-size: 12px;
+    gap: 5px;
+  }
+  :global(html[lang="en"]) .rowActions [data-listing-actions] > span > button {
+    white-space: nowrap;
+    overflow-wrap: normal;
+  }
 }
 @media (max-width: 360px) { .amountValue { white-space: normal; } }
 .scroll .engagementCell { border-top: 0; padding-block-start: 0; vertical-align: bottom; }
 .grantRows:hover td { background: #414665; }
 .engagement { display: grid; gap: 8px; max-inline-size: 220px; }
 .engagement > div { justify-content: space-between; gap: 5px; }
-.engagement > div > button { min-block-size: 35px; padding: 4px 9px; }
 .apply { display: flex; justify-content: center; align-items: center; min-block-size: 40px; padding: 6px 10px; border-radius: 8px; background: #e8edff; color: #223765; font-size: 13px; font-weight: 750; text-decoration: none; }
 .apply:hover { background: #fff; }
 .apply:focus-visible { outline: 2px solid #d7c7ff; outline-offset: 2px; }
