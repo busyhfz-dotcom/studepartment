@@ -12,6 +12,7 @@ import { OpportunitySignals } from "@/components/opportunities/opportunity-signa
 import { getSiteUrl } from "@/lib/site";
 import { getShellViewer } from "@/server/auth/shell-viewer";
 import { grantDetails } from "@/server/opportunities/grant-details";
+import { activeOpportunityWhere } from "@/server/opportunities/countries";
 import { publishedFacts } from "@/server/opportunities/published-facts";
 import { SaveOpportunityButton } from "../save-opportunity-button";
 import styles from "./detail.module.css";
@@ -36,7 +37,7 @@ const loadOpportunity = cache(async (id: string) => {
   if (!/^[a-zA-Z0-9_-]{8,64}$/.test(id)) return null;
   const now = new Date();
   return getDb().opportunity.findFirst({
-    where: { id, status: "ACTIVE", OR: [{ deadline: null }, { deadline: { gte: now } }] },
+    where: { ...activeOpportunityWhere(now, true), id },
     select: {
       id: true, type: true, title: true, description: true, city: true, countryCode: true,
       deadline: true, deadlinePrecision: true, sourceUrl: true, applicationUrl: true, sourceName: true,

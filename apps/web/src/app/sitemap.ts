@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getDb } from "@studepartment/db";
 import { getSiteUrl } from "@/lib/site";
+import { activeOpportunityWhere } from "@/server/opportunities/countries";
 
 // Rendered per request so URLs use the runtime BETTER_AUTH_URL, not the
 // placeholder the Docker build stage sets.
@@ -28,11 +29,7 @@ async function listingEntries(base: string): Promise<MetadataRoute.Sitemap> {
   try {
     const now = new Date();
     const rows = await getDb().opportunity.findMany({
-      where: {
-        status: "ACTIVE",
-        lastSeenAt: { gte: new Date(now.getTime() - 45 * 86_400_000) },
-        OR: [{ deadline: null }, { deadline: { gte: now } }],
-      },
+      where: activeOpportunityWhere(now),
       orderBy: { firstSeenAt: "desc" },
       take: MAX_LISTINGS,
       select: { id: true, updatedAt: true },

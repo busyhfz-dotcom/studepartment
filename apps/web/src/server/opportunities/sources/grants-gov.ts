@@ -5,6 +5,7 @@ import { cleanDescription, decodeEntities } from "./text";
 import type { OpportunitySourceConnector, SourceContext } from "./types";
 
 const API = "https://api.grants.gov/v1/api";
+const relatedSearchTerms = ["biomedical", "public health", "clinical research", "health sciences", "nursing", "neuroscience"];
 
 type SearchHit = {
   id: string;
@@ -156,20 +157,23 @@ export const grantsGovSource: OpportunitySourceConnector = {
   source: { type: "FUNDER", name: "Grants.gov", verified: true },
   kind: "grants",
   homepage: "https://www.grants.gov",
-  description: "US federal funding in health and medical sciences, including posted NIH notices and dated upcoming calls.",
+  description: "US federal funding in health, clinical research, public health, nursing and biomedical science, including posted and dated upcoming calls.",
   completeSnapshot: true,
   intervalMinutes: 60,
   isEnabled: () => true,
   async collect(context) {
-    const [health, nih, science, forecasts] = await Promise.all([
+    const [health, nih, science, forecasts, crossCategory] = await Promise.all([
       search(context, { fundingCategories: "HL" }),
       search(context, { agencies: "HHS-NIH11" }),
       search(context, { fundingCategories: "ST" }).catch(() => []),
       search(context, { fundingCategories: "HL", oppStatuses: "forecasted" }).catch(() => []),
+      mapWithConcurrency(relatedSearchTerms, 2, (keyword) => search(context, { keyword }).catch(() => [])),
     ]);
     const today = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(context.now);
     const posted = [...health, ...nih].filter((hit) => hit.agencyCode.startsWith("HHS") || isMedicalText(hit.title));
     const relatedScience = science.filter((hit) => isMedicalText(hit.title) && (grantsGovDate(hit.closeDate) ?? "") >= today);
+    const additional = crossCategory.flat().filter((hit) => hit.oppStatus === "posted" &&
+      isMedicalText(hit.title) && (grantsGovDate(hit.closeDate) ?? "") >= today);
     const recentStart = new Date(context.now.getTime() - 180 * 86_400_000).toISOString().slice(0, 10);
     const recentForecasts = forecasts
       .filter((hit) => hit.oppStatus === "forecasted" && isMedicalText(hit.title) && (grantsGovDate(hit.openDate) ?? "") >= recentStart)
@@ -177,7 +181,7 @@ export const grantsGovSource: OpportunitySourceConnector = {
       .slice(0, 80);
     const unique = new Map<string, SearchHit>();
     const numbers = new Set<string>();
-    for (const hit of [...posted, ...relatedScience, ...recentForecasts]) {
+    for (const hit of [...posted, ...relatedScience, ...additional, ...recentForecasts]) {
       const number = hit.number.trim().toUpperCase();
       if (unique.has(hit.id) || (number && numbers.has(number))) continue;
       unique.set(hit.id, hit);

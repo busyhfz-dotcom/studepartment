@@ -3,6 +3,7 @@ import { getDb } from "@studepartment/db";
 import { researchMethods, researchTopics } from "@studepartment/db/taxonomy";
 import { opportunityScanIncludes } from "@/lib/opportunity-filters";
 import { ingestOpportunityBatch, type OpportunityIngestionRecord } from "../ingestion";
+import { activeOpportunityWhere } from "../countries";
 import { opportunitySources } from "./registry";
 import type { FetchLike, OpportunitySourceConnector } from "./types";
 
@@ -14,9 +15,6 @@ const DUE_SLACK_MS = 2 * 60_000;
 /** A listing missing from a complete snapshot stays up this long before it is taken down. */
 const DEFAULT_STALE_GRACE_HOURS = 6;
 const SOURCE_LEASE_MS = 15 * 60_000;
-/** Listings not seen for this long drop out of search (matches the search cutoff). */
-export const LISTING_STALE_AFTER_DAYS = 45;
-
 export type SourceRunResult = {
   id: string;
   name: string;
@@ -158,7 +156,7 @@ export async function runOpportunitySync(
   state.opportunitySyncRunning = true;
   try {
     await getDb().opportunity.updateMany({
-      where: { status: "ACTIVE", deadline: { lt: new Date() } },
+      where: { status: { in: ["ACTIVE", "STALE"] }, deadline: { lt: new Date() } },
       data: { status: "EXPIRED" },
     });
     await ensureTaxonomy();
@@ -193,9 +191,8 @@ export type PublicSourceStatus = {
 /** What each source currently contributes, for the public sources page. */
 export async function getOpportunitySourceStatus(now = new Date()): Promise<PublicSourceStatus[]> {
   const db = getDb();
-  const cutoff = new Date(now.getTime() - LISTING_STALE_AFTER_DAYS * 86_400_000);
   const dayAgo = new Date(now.getTime() - 86_400_000);
-  const open = { status: "ACTIVE" as const, lastSeenAt: { gte: cutoff }, OR: [{ deadline: null }, { deadline: { gte: now } }] };
+  const open = activeOpportunityWhere(now);
   const [counts, fresh, latest, runs] = await Promise.all([
     db.opportunity.groupBy({
       by: ["sourceName"],

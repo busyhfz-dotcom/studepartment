@@ -1,118 +1,190 @@
 {
   "NL": {
-    "src": "/images/amsterdam-prinsengracht.webp",
+    "src": "/images/locations/nl-landscape.avif",
+    "alt": "Prinsengracht canal, Amsterdam",
+    "width": 1728,
+    "height": 675,
+    "position": "51% 50%",
     "credit": "Fons Heijnsbroek · CC0",
-    "url": "https://commons.wikimedia.org/wiki/File:Amsterdam_city,_wit_a_view_over_old_canal_street_Prinsengracht_in_the_city-center,_photo_by_Fons_Heijnsbroek,_jan._2022.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:Amsterdam_city,_wit_a_view_over_old_canal_street_Prinsengracht_in_the_city-center,_photo_by_Fons_Heijnsbroek,_jan._2022.jpg",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
   },
   "US": {
-    "src": "/images/locations/us.webp",
-    "credit": "Greyfiveys · CC BY-SA 4.0",
-    "url": "https://commons.wikimedia.org/wiki/File:Washington_Monument_2022.jpg",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    "src": "/images/locations/us-landscape.avif",
+    "alt": "Washington Monument and the National Mall, Washington, D.C.",
+    "width": 1728,
+    "height": 650,
+    "position": "50% 50%",
+    "credit": "Josh Carolina from Washington, D.C., USA · CC BY 2.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Washington_Monument_Panorama.jpg",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
   },
   "GB": {
-    "src": "/images/locations/gb.webp",
+    "src": "/images/locations/gb-landscape.avif",
+    "alt": "Tower Bridge and the River Thames, London",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 10%",
     "credit": "Fuzzypiggy · CC BY-SA 3.0",
     "url": "https://commons.wikimedia.org/wiki/File:Tower_Bridge_at_Dawn.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
   },
   "CA": {
-    "src": "/images/locations/ca.webp",
+    "src": "/images/locations/ca-landscape.avif",
+    "alt": "Lake Louise, Alberta",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
     "credit": "Chensiyuan · CC BY-SA 4.0",
     "url": "https://commons.wikimedia.org/wiki/File:1_lake_louise_pano_2019.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
   "CH": {
-    "src": "/images/locations/ch.webp",
+    "src": "/images/locations/ch-landscape.avif",
+    "alt": "The Matterhorn, Switzerland",
+    "width": 1610,
+    "height": 628,
+    "position": "52% 0%",
     "credit": "Photo: chil, on Camptocamp.org Derivative work: Zacharie Grossen · CC BY-SA 3.0",
     "url": "https://commons.wikimedia.org/wiki/File:Matterhorn_from_Domh%C3%BCtte_-_2.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
   },
   "BE": {
-    "src": "/images/locations/be.webp",
+    "src": "/images/locations/be-landscape.avif",
+    "alt": "Grand-Place, Brussels",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
     "credit": "Celuici · CC BY-SA 4.0",
     "url": "https://commons.wikimedia.org/wiki/File:Grand-Place,_Brussels_-_panorama,_June_2018.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
   "DE": {
-    "src": "/images/locations/de.webp",
+    "src": "/images/locations/de-landscape.avif",
+    "alt": "Brandenburg Gate, Berlin",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 16%",
     "credit": "Thomas Wolf , www.foto-tw.de · CC BY-SA 3.0",
     "url": "https://commons.wikimedia.org/wiki/File:Brandenburger_Tor_abends.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
   },
   "AT": {
-    "src": "/images/locations/at.webp",
+    "src": "/images/locations/at-landscape.avif",
+    "alt": "Schönbrunn Palace, Vienna",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
     "credit": "C.Stadler/Bwag · CC BY-SA 4.0",
     "url": "https://commons.wikimedia.org/wiki/File:Wien_-_Schloss_Sch%C3%B6nbrunn.JPG",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
   "FR": {
-    "src": "/images/locations/fr.webp",
-    "credit": "Benh LIEU SONG · Public domain",
-    "url": "https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons_(cropped).jpg"
+    "src": "/images/locations/fr-landscape.avif",
+    "alt": "Panoramic Paris skyline from Montparnasse",
+    "width": 1728,
+    "height": 576,
+    "position": "50% 50%",
+    "credit": "Stefan Krause, Germany · CC BY-SA 3.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Panorama_Paris_Montparnasse.jpg",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
   },
   "SE": {
-    "src": "/images/locations/se.webp",
+    "src": "/images/locations/se-landscape.avif",
+    "alt": "Stockholm City Hall",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
     "credit": "ArildV · CC BY-SA 4.0",
     "url": "https://commons.wikimedia.org/wiki/File:Stockholms_stadshus_February_2026_02.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
   "IT": {
-    "src": "/images/locations/it.webp",
-    "credit": "FeaturedPics · CC BY-SA 4.0",
-    "url": "https://commons.wikimedia.org/wiki/File:Colosseo_2020.jpg",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    "src": "/images/locations/it-landscape.avif",
+    "alt": "Colosseum, Rome",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
+    "credit": "Paolo Costa Baldi · CC BY-SA 3.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Colosseo_di_Roma_panoramic.jpg",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
   },
   "DK": {
-    "src": "/images/locations/dk.webp",
+    "src": "/images/locations/dk-landscape.avif",
+    "alt": "Nyhavn waterfront, Copenhagen",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
     "credit": "European Commission · CC BY 4.0",
     "url": "https://commons.wikimedia.org/wiki/File:The_Nyhavn_Canal_3.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
   },
   "FI": {
-    "src": "/images/locations/fi.webp",
+    "src": "/images/locations/fi-landscape.avif",
+    "alt": "Helsinki Cathedral",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
     "credit": "Manster323 · CC0",
     "url": "https://commons.wikimedia.org/wiki/File:Kirkko3.png",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
   },
   "SG": {
-    "src": "/images/locations/sg.webp",
-    "credit": "This Photo was taken by Supanut Arunoprayote . Feel free to use any of my images, but please mention me as the author and may send me a message. (สามารถใช้ภาพได้อิสระ แต่กรุณาใส่เครดิตผู้ถ่ายและอาจส่ง ข้อความบอกกล่าวด้วย ) Please do not upload an updated image here without consultation with the Author. The author would like to make corrections only at his own source. This ensures that the changes are preserved. Please if you think that any changes should be required, please inform the author. Otherwise you can upload a new image with a new name. Please use one of the templates derivative or extract . · CC BY 4.0",
-    "url": "https://commons.wikimedia.org/wiki/File:Marina_Bay_Sands_(I).jpg",
-    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
-    "alt": "Marina Bay Sands, Singapore"
+    "src": "/images/locations/sg-landscape.avif",
+    "alt": "Marina Bay skyline, Singapore",
+    "width": 1728,
+    "height": 623,
+    "position": "53% 50%",
+    "credit": "Eentelijent · CC BY-SA 4.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Marina_Bay_Skyline.png",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
   "JP": {
-    "src": "/images/locations/jp.webp",
-    "credit": "Akonnchiroll · CC BY-SA 4.0",
-    "url": "https://commons.wikimedia.org/wiki/File:Tokyo_Tower_2023.jpg",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "alt": "Tokyo Tower, Japan"
+    "src": "/images/locations/jp-landscape.avif",
+    "alt": "Tokyo Tower and the Tokyo skyline",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
+    "credit": "Prcmise · CC BY-SA 4.0",
+    "url": "https://commons.wikimedia.org/wiki/File:View_from_Roppingi_Hills_Mori_tower_to_Tokyo_tower.jpg",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
   "KR": {
-    "src": "/images/locations/kr.webp",
-    "alt": "Gyeongbokgung",
+    "src": "/images/locations/kr-landscape.avif",
+    "alt": "Gwanghwamun Gate, Seoul",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
     "credit": "kallerna · CC BY-SA 4.0",
     "url": "https://commons.wikimedia.org/wiki/File:Gwanghwamun_from_National_Museum_of_Korean_Contemporary_History.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
   "CN": {
-    "src": "/images/locations/cn.webp",
-    "alt": "Forbidden City",
+    "src": "/images/locations/cn-landscape.avif",
+    "alt": "Forbidden City, Beijing",
+    "width": 1728,
+    "height": 675,
+    "position": "49% 50%",
     "credit": "Pixelflake · CC BY-SA 3.0",
     "url": "https://commons.wikimedia.org/wiki/File:The_Forbidden_City_-_View_from_Coal_Hill.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
   },
   "TW": {
-    "src": "/images/locations/tw.webp",
-    "alt": "Taipei 101",
+    "src": "/images/locations/tw-landscape.avif",
+    "alt": "Taipei 101 and the Taipei skyline",
+    "width": 1728,
+    "height": 626,
+    "position": "35% 50%",
     "credit": "Mondoman712 · CC BY-SA 4.0",
     "url": "https://commons.wikimedia.org/wiki/File:Taipei_skyline_from_Elephant_Mountain.jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
   "HK": {
-    "src": "/images/locations/hk.webp",
-    "alt": "Victoria Harbour",
+    "src": "/images/locations/hk-landscape.avif",
+    "alt": "Victoria Harbour skyline, Hong Kong",
+    "width": 1728,
+    "height": 675,
+    "position": "50% 50%",
     "credit": "Max Bates · CC BY-SA 4.0",
     "url": "https://commons.wikimedia.org/wiki/File:Hong_Kong_Skyline_from_Victoria_Harbour_(54750093251).jpg",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"

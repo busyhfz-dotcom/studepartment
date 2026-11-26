@@ -3,7 +3,8 @@ import Link from "next/link";
 import { ProductShell } from "@/components/shell/product-shell";
 import { getShellViewer } from "@/server/auth/shell-viewer";
 import { opportunitySources } from "@/server/opportunities/sources/registry";
-import { getOpportunitySourceStatus, LISTING_STALE_AFTER_DAYS, type PublicSourceStatus } from "@/server/opportunities/sources/sync";
+import { getOpportunitySourceStatus, type PublicSourceStatus } from "@/server/opportunities/sources/sync";
+import { LISTING_STALE_AFTER_DAYS } from "@/server/opportunities/countries";
 import styles from "../scanner/scanner.module.css";
 
 export const dynamic = "force-dynamic";
@@ -103,7 +104,7 @@ export default async function SourcesPage() {
           <ul className={styles.notes}>
             <li>Each connected source has its own check interval. Use the last-check time above to see how recent that source is.</li>
             <li>If a source cannot be reached, it is tried again within 30 minutes and its listings stay up in the meantime.</li>
-            <li>A listing leaves search when its deadline passes, when the publisher removes it, or when it has not been seen at the source for {LISTING_STALE_AFTER_DAYS} days.</li>
+            <li>Dated listings remain in search until their published deadline or a confirmed closure. Listings without a date are checked for removal or expire from search after {LISTING_STALE_AFTER_DAYS} days without a source update.</li>
             <li>Deadlines, eligibility and funding amounts are taken from the publisher. Always confirm them on the official page before you apply.</li>
             <li>For publishers outside the connected feeds above, use their official listings through <Link href="/scanner">Scanner</Link>.</li>
           </ul>

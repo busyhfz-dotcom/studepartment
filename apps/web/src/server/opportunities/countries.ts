@@ -1,11 +1,16 @@
 import { getDb, type Prisma } from "@studepartment/db";
 import { isCountryCode } from "@/lib/countries";
 
-export function activeOpportunityWhere(now = new Date()): Prisma.OpportunityWhereInput {
+export const LISTING_STALE_AFTER_DAYS = 45;
+
+export function activeOpportunityWhere(now = new Date(), includeStale = false): Prisma.OpportunityWhereInput {
   return {
-    status: "ACTIVE",
-    lastSeenAt: { gte: new Date(now.getTime() - 45 * 86_400_000) },
-    OR: [{ deadline: null }, { deadline: { gte: now } }],
+    OR: [
+      { status: { in: ["ACTIVE", "STALE"] }, deadline: { gte: now } },
+      { status: "ACTIVE", deadline: null, ...(includeStale ? {} : {
+        lastSeenAt: { gte: new Date(now.getTime() - LISTING_STALE_AFTER_DAYS * 86_400_000) },
+      }) },
+    ],
   };
 }
 

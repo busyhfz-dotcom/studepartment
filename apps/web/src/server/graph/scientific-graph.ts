@@ -7,6 +7,7 @@ import type {
   ScientificGraphNodeType,
 } from "@/lib/api-contracts";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { activeOpportunityWhere } from "@/server/opportunities/countries";
 
 const LIMITS = {
   nodes: 80,
@@ -144,8 +145,7 @@ export async function buildScientificGraph(requestedResearcherId?: string): Prom
     ? await db.opportunity.findMany({
         where: {
           organizationId: { in: organizationIds },
-          status: "ACTIVE",
-          OR: [{ deadline: null }, { deadline: { gte: new Date() } }],
+          ...activeOpportunityWhere(new Date(), true),
         },
         orderBy: [{ lastVerifiedAt: "desc" }, { deadline: "asc" }],
         take: LIMITS.opportunities,

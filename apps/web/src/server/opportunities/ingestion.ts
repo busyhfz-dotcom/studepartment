@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { getDb, type Prisma } from "@studepartment/db";
+import { activeOpportunityWhere } from "./countries";
 
 export type OpportunityIngestionSource = {
   type: "INSTITUTIONAL_CAREERS" | "FUNDER" | "LAB_WEBSITE" | "RESEARCH_NETWORK" | "MANUAL" | "IMPORT";
@@ -200,7 +201,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
           ? [{ sourceUrl }, { sourceUrl: { startsWith: sourceUrl + "?" } }]
           : [{ sourceUrl }];
         const candidates = await tx.opportunity.findMany({
-          where: { status: "ACTIVE", type: record.type, sourceKey: { not: key }, OR: alternatives },
+          where: { ...activeOpportunityWhere(observedAt), type: record.type, sourceKey: { not: key }, AND: [{ OR: alternatives }] },
           select: { sourceUrl: true, title: true },
         });
         if (candidates.some((item) => webUrl(item.sourceUrl, true) === sourceUrl
@@ -345,6 +346,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
         sourceName: batch.source.name.trim(),
         sourceRecordId: { notIn: Array.from(seenRecordIds) },
         status: "ACTIVE",
+        OR: [{ deadline: null }, { deadline: { lt: observedAt } }],
         ...(batch.staleBefore ? { lastSeenAt: { lt: batch.staleBefore } } : {}),
       },
       data: { status: "STALE" },

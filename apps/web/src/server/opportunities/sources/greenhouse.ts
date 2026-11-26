@@ -38,6 +38,8 @@ export const GREENHOUSE_BOARDS: Board[] = [
   { token: "tesseratherapeutics", name: "Tessera Therapeutics", website: "https://www.tesseratherapeutics.com", countryCode: "US", employerType: "COMPANY" },
   { token: "relaytherapeutics", name: "Relay Therapeutics", website: "https://relaytx.com", countryCode: "US", employerType: "COMPANY" },
   { token: "chanzuckerberginitiative", name: "Chan Zuckerberg Initiative", website: "https://chanzuckerberg.com", countryCode: "US" },
+  { token: "beamtherapeutics", name: "Beam Therapeutics", website: "https://beamtx.com", countryCode: "US", employerType: "COMPANY" },
+  { token: "abcellera", name: "AbCellera", website: "https://www.abcellera.com", countryCode: "CA", employerType: "COMPANY" },
 ];
 
 export function toGreenhouseRecord(job: GreenhouseJob, board: Board): OpportunityIngestionRecord | null {

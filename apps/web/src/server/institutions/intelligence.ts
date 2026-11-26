@@ -2,6 +2,7 @@ import { getDb } from "@studepartment/db";
 import type { InstitutionFitSnapshot, OrganizationProfileDetails } from "@/lib/api-contracts";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { publicFiles } from "@/server/files/repository";
+import { activeOpportunityWhere } from "@/server/opportunities/countries";
 
 export async function getInstitutionalIntelligence(organizationId: string) {
   const db = getDb();
@@ -38,8 +39,7 @@ export async function getInstitutionalIntelligence(organizationId: string) {
       },
       opportunities: {
         where: {
-          status: "ACTIVE",
-          OR: [{ deadline: null }, { deadline: { gte: new Date() } }],
+          ...activeOpportunityWhere(new Date(), true),
         },
         orderBy: [{ lastVerifiedAt: "desc" }, { deadline: "asc" }],
         take: 12,
@@ -171,8 +171,7 @@ export async function getInstitutionFitSnapshot(organizationId: string): Promise
     ? await db.opportunity.count({
         where: {
           organizationId,
-          status: "ACTIVE",
-          OR: [{ deadline: null }, { deadline: { gte: new Date() } }],
+          ...activeOpportunityWhere(new Date(), true),
           AND: [{ OR: opportunityOverlap }],
         },
       })

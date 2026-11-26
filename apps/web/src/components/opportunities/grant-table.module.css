@@ -17,3 +17,21 @@
   .scroll td.title { min-inline-size: 208px; }
 }
 @media (max-width: 360px) { .amountValue { white-space: normal; } }
+.scroll .engagementCell { border-top: 0; padding-block-start: 0; vertical-align: bottom; }
+.grantRows:hover td { background: #414665; }
+.engagement { display: grid; gap: 8px; max-inline-size: 220px; }
+.engagement > div { justify-content: space-between; gap: 5px; }
+.engagement > div > button { min-block-size: 35px; padding: 4px 9px; }
+.apply { display: flex; justify-content: center; align-items: center; min-block-size: 40px; padding: 6px 10px; border-radius: 8px; background: #e8edff; color: #223765; font-size: 13px; font-weight: 750; text-decoration: none; }
+.apply:hover { background: #fff; }
+.apply:focus-visible { outline: 2px solid #d7c7ff; outline-offset: 2px; }
+@media (max-width: 700px) {
+  .scroll table { display: block; inline-size: 100%; }
+  .scroll tbody.grantRows { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); padding: 10px 8px; border-top: 1px solid #6d6d98; }
+  .scroll .grantRows tr { display: contents; }
+  .scroll .grantRows .title, .scroll .grantRows .reviewCell, .scroll .grantRows .engagementCell { grid-column: 1 / -1; }
+  .scroll .grantRows .engagementCell { order: -1; padding-top: 10px; }
+  .scroll .grantRows td:nth-child(-n+2):not(.engagementCell) { order: -2; }
+  .engagementCell::before { display: none !important; }
+  .engagement { max-inline-size: 100%; }
+}

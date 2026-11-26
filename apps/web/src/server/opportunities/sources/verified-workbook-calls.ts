@@ -5,12 +5,39 @@ import { programmePagePublished } from "./programme-registry";
 import type { OpportunitySourceConnector } from "./types";
 
 type Call = {
-  id: string; title: string; type: "PHD_SCHOLARSHIP" | "GRANT"; country: string;
+  id: string; title: string; type: "PHD_SCHOLARSHIP" | "GRANT" | "FELLOWSHIP"; country: string;
   institution: string; url: string; match: string; deadline: string;
   description: string; subject: string; eligibility: string; awardMax?: number; currency?: string;
 };
 
 const calls: readonly Call[] = [
+  {
+    id:"mit-computational-systems-biology-2027", type:"PHD_SCHOLARSHIP", country:"US",
+    title:"MIT Computational and Systems Biology funded PhD · Fall 2027", institution:"Massachusetts Institute of Technology",
+    url:"https://oge.mit.edu/programs/computational-and-systems-biology/", match:"December 1 at 11:59 PM Eastern Time",
+    deadline:"2026-12-01T23:59:00-05:00",
+    description:"The programme lists full support through completion for students in computational and systems biology. Research areas include cancer systems biology, precision medicine and computational biology.",
+    subject:"Computational biology, bioengineering, cancer, bioinformatics and machine learning",
+    eligibility:"Check the MIT admissions requirements, including English proficiency for international applicants.",
+  },
+  {
+    id:"nus-pmac-emerging-leaders-2027", type:"FELLOWSHIP", country:"SG",
+    title:"PMAC Academy Emerging Leaders Fellowship · 2027", institution:"National University of Singapore",
+    url:"https://sph.nus.edu.sg/pmac-academy-emerging-leaders-fellowship/", match:"18 February 2027",
+    deadline:"2027-02-18T18:00:00+08:00",
+    description:"Professional development and mentorship in global health. The programme publishes travel support and a stipend for participants in its on-site placement model.",
+    subject:"Public health and health systems",
+    eligibility:"See the publisher for eligibility, the application form and the on-site and off-site options.",
+  },
+  {
+    id:"harvard-biomedical-informatics-2027", type:"PHD_SCHOLARSHIP", country:"US",
+    title:"Harvard Biomedical Informatics PhD · Fall 2027 entry", institution:"Harvard University",
+    url:"https://gsas.harvard.edu/program/bioinformatics-and-integrative-genomics", match:"Dec 01, 2026",
+    deadline:"2026-12-01T17:00:00-05:00",
+    description:"One Harvard doctoral programme with Bioinformatics and Integrative Genomics (BIG) and Artificial Intelligence in Medicine (AIM) tracks. The university publishes admissions and PhD funding information.",
+    subject:"Bioinformatics, integrative genomics and artificial intelligence in medicine",
+    eligibility:"Applicants should confirm the published English-language and admissions requirements for their track.",
+  },
   {
     id:"stanford-biomedical-data-science-2027", type:"PHD_SCHOLARSHIP", country:"US",
     title:"Stanford Biomedical Data Science PhD · 2027 entry", institution:"Stanford University",

@@ -1,5 +1,6 @@
 import { opportunityRegions, positionRoles } from "@/lib/opportunity-filters";
 import { publishedFacts } from "./published-facts";
+import { activeOpportunityWhere } from "./countries";
 import { getDb, type Prisma } from "@studepartment/db";
 import type {
   OpportunityFreshness,
@@ -239,14 +240,10 @@ export async function discoverOpportunities(query: OpportunityQuery): Promise<Op
   const interestTopicSlugs = currentUser ? await getTopInterestTopicSlugs(currentUser.id) : [];
 
   const now = new Date();
-  const staleCutoff = new Date(now.getTime() - 45 * 86_400_000);
   const where: Prisma.OpportunityWhereInput = {
+    ...activeOpportunityWhere(now, query.includeStale),
     ...(query.id ? { id: query.id } : {}),
-    status: "ACTIVE",
-    OR: [{ deadline: null }, { deadline: { gte: now } }],
   };
-
-  if (!query.includeStale) where.lastSeenAt = { gte: staleCutoff };
   if (query.types.length) where.type = { in: query.types.map((type) => typeToDb[type]) };
   if (query.countryCodes.length) where.countryCode = { in: query.countryCodes };
   if (query.funder) where.organization = { name: { contains: query.funder, mode: "insensitive" } };

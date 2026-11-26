@@ -1,10 +1,29 @@
 .feature {
-  block-size: clamp(112px, 15vw, 184px);
-  margin-block: 14px;
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 3.3 / 1;
+  max-block-size: 350px;
+  margin: 18px 0;
   overflow: hidden;
-  border: 1px solid #7390cd;
-  border-radius: 14px;
-  background: #283e75;
+  border: 1px solid #899fd38a;
+  border-radius: 17px;
+  background: #263d70;
+  box-shadow: 0 17px 35px -17px #090f2ad9, 0 3px 9px #171b492d;
 }
 
-.photo { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: center 46%; }
+.feature::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg,#131e4661,transparent 30%,transparent 81%,#20274820);
+  pointer-events: none;
+}
+
+.photo { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: center; }
+
+@media (max-width: 850px) {
+  .feature { aspect-ratio: 3 / 1; margin-block: 14px; }
+}
+@media (max-width: 520px) {
+  .feature { aspect-ratio: 2.4 / 1; border-radius: 12px; }
+}

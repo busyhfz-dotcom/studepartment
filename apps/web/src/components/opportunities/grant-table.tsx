@@ -15,35 +15,38 @@ export function GrantTable({items,params,onReview}:{items:OpportunityResult[];pa
     <p className={styles.note}>CSV includes up to 500 matches with your current filters. Alert lets you choose grants from this page.</p>
     <div className={styles.scroll}><table><caption className={styles.srOnly}>Current grants, published award amounts and source links</caption>
       <thead><tr>{['Close date','Status','Title','Agency','Region','Award min','Award max','Eligibility','Competition','Actions'].map(label=><th scope="col" key={label}>{label}</th>)}</tr></thead>
-      <tbody>{items.map(item=><tr key={item.id}>
+      {items.map(item=><tbody className={styles.grantRows} key={item.id}><tr>
         <td data-label="Close date"><DueDate item={item}/></td>
         <td data-label="Status"><span className={styles.status}>{item.grant?.status||'Check source'}</span></td>
-        <td data-label="Title" className={styles.title}>{onReview?<button data-original-content type="button" onClick={()=>onReview(item)}>{item.title}</button>:<a data-original-content href={opportunityPath(item)}>{item.title}</a>}<small data-original-content>{item.source.recordId}</small></td>
-        <td data-label="Agency" className={styles.agency}><Institution name={item.grant?.agency || item.organization} website={item.organizationWebsite} /></td>
-        <td data-label="Region">
+        <td rowSpan={2} data-label="Title" className={styles.title}>{onReview?<button data-original-content type="button" onClick={()=>onReview(item)}>{item.title}</button>:<a data-original-content href={opportunityPath(item)}>{item.title}</a>}<small data-original-content>{item.source.recordId}</small></td>
+        <td rowSpan={2} data-label="Agency" className={styles.agency}><Institution name={item.grant?.agency || item.organization} website={item.organizationWebsite} /></td>
+        <td rowSpan={2} data-label="Region">
           <span data-original-content>{item.grant?.region || "Not specified"}</span>
           {item.grant?.regionContext ? <small title={item.grant.regionContext}>
             {item.grant.regionContext === "Published applicant geography" ? "Applicant geography" : "Programme region"}
           </small> : null}
         </td>
-        <td data-label="Award min" className={styles.amount}>
+        <td rowSpan={2} data-label="Award min" className={styles.amount}>
           <span className={styles.amountValue}>{formatAward(item.grant?.awardMin,item.grant?.currency)}</span>
           {item.grant?.awardMin && !item.grant.awardMax ? <AwardBasis grant={item.grant} /> : null}
         </td>
-        <td data-label="Award max" className={styles.amount}>
+        <td rowSpan={2} data-label="Award max" className={styles.amount}>
           <span className={styles.amountValue}>{formatAward(item.grant?.awardMax,item.grant?.currency)}</span>
           {item.grant?.awardMax || item.grant?.awardNote ? <AwardBasis grant={item.grant} /> : null}
         </td>
-        <td data-label="Eligibility"><ListingEligibility item={item}/></td>
-        <td data-label="Competition"><Competition item={item}/></td>
-        <td data-label="Actions"><div className={styles.rowActions}>
+        <td rowSpan={2} data-label="Eligibility"><ListingEligibility item={item}/></td>
+        <td rowSpan={2} data-label="Competition"><Competition item={item}/></td>
+        <td rowSpan={2} className={styles.reviewCell} data-label="Actions"><div className={styles.rowActions}>
           <ListingActions item={item} primary={onReview
             ? <button type="button" onClick={()=>onReview(item)} aria-label={`Review ${item.title}`}>Review details</button>
             : <a href={opportunityPath(item)}>Review details</a>} />
-          <OpportunitySignals item={item}/>
-          <a href={item.applicationUrl || item.sourceUrl} target="_blank" rel="noopener noreferrer">Apply now</a>
         </div></td>
-      </tr>)}</tbody>
+      </tr><tr><td colSpan={2} className={styles.engagementCell}>
+        <div className={styles.engagement}>
+          <OpportunitySignals item={item}/>
+          <a className={styles.apply} href={item.applicationUrl || item.sourceUrl} target="_blank" rel="noopener noreferrer">Apply now</a>
+        </div>
+      </td></tr></tbody>)}
     </table></div>
   </section>;
 }

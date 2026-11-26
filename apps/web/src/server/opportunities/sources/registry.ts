@@ -23,6 +23,8 @@ import { lifeArcSource } from "./lifearc";
 import { maxPlanckSource } from "./max-planck";
 import { mayoClinicResearchSource } from "./mayo-clinic-research";
 import { nhsJobsSource } from "./nhs-jobs";
+import { nhsScotlandResearchSource } from "./nhs-scotland-research";
+import { nihrChildHealthSource } from "./nihr-child-health-funding";
 import { nkiResearchCareersSource } from "./nki-research-careers";
 import { northernUniversityCareerSources } from "./northern-university-careers";
 import { neurologicalFoundationSource } from "./nz-neurological-foundation";
@@ -69,6 +71,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   grantsGovSource,
   euFundingTendersSource,
   wellcomeSource,
+  nihrChildHealthSource,
   lifeArcSource,
   ianPotterMedicalResearchSource,
   eitHealthValidationSource,
@@ -98,6 +101,7 @@ export const opportunitySources: OpportunitySourceConnector[] = [
   singHealthResearchSource,
   maxPlanckSource,
   nhsJobsSource,
+  nhsScotlandResearchSource,
   ...institutionFeedSources,
   usaJobsSource,
   ...californiaResearchCareerSources,
