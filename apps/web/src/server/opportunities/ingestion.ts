@@ -148,24 +148,22 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
     seenRecordIds.add(recordId);
     const key = sourceKey(batch.source, recordId);
     const contentFingerprint = fingerprint(record);
-    const deadline = normalizeDeadline(record.deadline);
+    const reportedDeadline = normalizeDeadline(record.deadline);
     const publishedAt = parseDate(record.publishedAt);
     const normalizedOrganizationName = normalizeText(record.organization.name);
     const countryCode = (record.countryCode ?? record.organization.countryCode ?? "").toUpperCase().slice(0, 2) || null;
     const eligibleCareerStages = Array.from(new Set((record.eligibleCareerStages ?? []).map(normalizeSlug).filter(Boolean))).slice(0, 16);
     const eligibleCountryCodes = Array.from(new Set((record.eligibleCountryCodes ?? []).map((value) => value.toUpperCase().slice(0, 2)).filter(Boolean))).slice(0, 32);
-    const derivedStatus = record.status === "CLOSED"
-      ? "CLOSED"
-      : deadline.deadline && deadline.deadline.getTime() < observedAt.getTime()
-        ? "EXPIRED"
-        : "ACTIVE";
-
     await db.$transaction(async (tx) => {
       const existing = await tx.opportunity.findUnique({
         where: { sourceKey: key },
         select: {
           id: true,
           status: true,
+          deadline: true,
+          deadlineRaw: true,
+          deadlinePrecision: true,
+          deadlineTimezone: true,
           provenance: {
             orderBy: [{ observedAt: "desc" }, { id: "desc" }],
             take: 1,
@@ -173,6 +171,20 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
           },
         },
       });
+      // A partial feed response can omit the deadline while still listing the
+      // opportunity. Keep the previous date until the source replaces it.
+      const preserveDeadline = reportedDeadline.precision === "UNKNOWN" && existing?.deadline;
+      const deadline = preserveDeadline ? {
+        deadline: existing.deadline,
+        raw: existing.deadlineRaw,
+        precision: existing.deadlinePrecision,
+        timezone: existing.deadlineTimezone,
+      } : { ...reportedDeadline, timezone: record.deadlineTimezone?.trim() || null };
+      const derivedStatus = record.status === "CLOSED"
+        ? "CLOSED"
+        : deadline.deadline && deadline.deadline.getTime() < observedAt.getTime()
+          ? "EXPIRED"
+          : "ACTIVE";
       const latest = existing?.provenance[0];
       if (existing && existing.status === derivedStatus && latest?.contentFingerprint === contentFingerprint) {
         // Keep observations and funding status fresh without rebuilding identical topics,
@@ -248,7 +260,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
           deadline: deadline.deadline,
           deadlineRaw: deadline.raw,
           deadlinePrecision: deadline.precision,
-          deadlineTimezone: record.deadlineTimezone?.trim() || null,
+          deadlineTimezone: deadline.timezone,
           sourceType: batch.source.type,
           sourceName: batch.source.name.trim(),
           sourceRecordId: recordId,
@@ -271,7 +283,7 @@ export async function ingestOpportunityBatch(batch: OpportunityIngestionBatch) {
           deadline: deadline.deadline,
           deadlineRaw: deadline.raw,
           deadlinePrecision: deadline.precision,
-          deadlineTimezone: record.deadlineTimezone?.trim() || null,
+          deadlineTimezone: deadline.timezone,
           sourceUrl: record.sourceUrl,
           publishedAt,
           lastSeenAt: observedAt,
