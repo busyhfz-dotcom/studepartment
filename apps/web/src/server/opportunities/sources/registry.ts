@@ -40,7 +40,7 @@ import { sydneyRtpSource } from "./sydney-rtp";
 import { singHealthResearchSource } from "./singhealth-research-careers";
 import { smartRecruitersSources } from "./smartrecruiters";
 import { swissTphSource } from "./swiss-tph";
-import { submittedSeedCallsSource } from "./submitted-seed-calls";
+import { submittedSeedCallsSource, submittedSeedRollingGrantsSource } from "./submitted-seed-calls";
 import type { OpportunitySourceConnector } from "./types";
 import { ucasScholarshipsSource } from "./ucas-scholarships";
 import { ukriBioscienceSource, ukriMedicalResearchSource, ukriRelatedMedicalSources } from "./ukri-medical-research";
@@ -57,6 +57,7 @@ import { westlakeResearchCareersSource } from "./westlake-research-careers";
 export const opportunitySources: OpportunitySourceConnector[] = [
   daadScholarshipsSource, daadDoctoralSource,
   submittedSeedCallsSource,
+  submittedSeedRollingGrantsSource,
   verifiedCancerFundingSource,
   verifiedWorkbookCallsSource,
   verifiedPublisherRoundsSource,

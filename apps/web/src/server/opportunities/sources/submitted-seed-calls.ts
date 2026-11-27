@@ -5,8 +5,9 @@ import type { OpportunitySourceConnector } from "./types";
 
 type WorkbookCall = Omit<OpportunityIngestionRecord, "topicSlugs" | "methodSlugs"> & {
   subject: string;
-  review?: { url: string; match: string };
 };
+
+type RollingWorkbookCall = WorkbookCall & { review: { url: string; match: string } };
 
 const foundation = {
   name: "The Michael J. Fox Foundation",
@@ -79,6 +80,14 @@ const calls: readonly WorkbookCall[] = [
     subject: "Parkinson’s disease, neurology and movement disorders",
     metadata: { eligibilitySummary: "Academic centres worldwide apply directly. Check restrictions for recent awardees and centres already training a Safra fellow.", awardMax: 180000, awardCurrency: "USD" },
   },
+];
+
+// The official grant pages were reviewed in a browser. Recheck automatically
+// before publishing beyond this bounded editorial review.
+const rollingReviewedOn = "2026-11-27";
+const rollingReviewedUntil = "2026-12-27";
+
+const rollingCalls: readonly RollingWorkbookCall[] = [
   {
     sourceRecordId: "mjff-therapeutics-pipeline",
     title: "Parkinson’s Disease Therapeutics Pipeline Program",
@@ -89,7 +98,12 @@ const calls: readonly WorkbookCall[] = [
     review: { url: "https://www.michaeljfox.org/grant/parkinsons-disease-therapeutics-pipeline-program", match: "pre-proposals accepted on a rolling basis" },
     description: "Supports eligible Parkinson’s therapy-development projects. A pre-proposal begins the review process.",
     subject: "Parkinson’s disease and therapeutic development",
-    metadata: { eligibilitySummary: "Check the sponsor’s programme scope and pre-proposal requirements." },
+    metadata: {
+      eligibilitySummary: "Industry applicants and academic–industry partnerships are eligible, with exceptions for some academic-led projects.",
+      awardMin: 250000,
+      awardMax: 5000000,
+      awardCurrency: "USD",
+    },
   },
   {
     sourceRecordId: "mjff-biomarker-innovation",
@@ -101,39 +115,59 @@ const calls: readonly WorkbookCall[] = [
     review: { url: "https://www.michaeljfox.org/grant/parkinsons-disease-biomarker-innovation-and-advancement-program", match: "pre-proposals are accepted on a rolling basis" },
     description: "Supports the development and evaluation of Parkinson’s disease biomarker tools. Full proposals are by invitation following review of a pre-proposal.",
     subject: "Parkinson’s disease and biomarkers",
-    metadata: { eligibilitySummary: "Check the funder’s scope, organisational eligibility and staged submission requirements." },
+    metadata: { eligibilitySummary: "Open to eligible companies, contract research organisations and select academic–industry partnerships." },
   },
 ];
+
+function toRecord({ subject, ...call }: WorkbookCall): OpportunityIngestionRecord {
+  return {
+    ...call,
+    applicationUrl: call.applicationUrl ?? call.sourceUrl,
+    status: "ACTIVE",
+    topicSlugs: topicSlugsFor(subject),
+    methodSlugs: methodSlugsFor(subject),
+    metadata: { status: "open", ...call.metadata },
+  };
+}
 
 export const submittedSeedCallsSource: OpportunitySourceConnector = {
   id: "submitted-seed-calls",
   kind: "scholarships",
   source: { name: "Verified Provenant seed calls", type: "FUNDER", verified: true },
   homepage: "https://masterpublichealthdisasters.eu/",
-  description: "Individual application rounds and rolling calls verified from the Provenant opportunities workbook.",
+  description: "Dated application rounds verified from the Provenant opportunities workbook.",
   completeSnapshot: true,
   allowEmptySnapshot: true,
   intervalMinutes: 720,
   staleGraceHours: 48,
   isEnabled: () => true,
+  async collect({ now }) {
+    const today = now.toISOString().slice(0, 10);
+    return calls.filter(({ deadline }) => deadline &&
+      (deadline.length === 10 ? deadline >= today : Date.parse(deadline) > now.getTime())
+    ).map(toRecord);
+  },
+};
+
+export const submittedSeedRollingGrantsSource: OpportunitySourceConnector = {
+  ...submittedSeedCallsSource,
+  id: "submitted-seed-rolling-grants",
+  kind: "grants",
+  source: { name: "Michael J. Fox Foundation rolling grants", type: "FUNDER", verified: true },
+  homepage: "https://www.michaeljfox.org/funding-opportunities",
+  description: "Rolling Parkinson’s research grants verified on the foundation’s published application pages.",
   async collect({ fetch, now }) {
     const today = now.toISOString().slice(0, 10);
+    const withinReviewWindow = today >= rollingReviewedOn && today <= rollingReviewedUntil;
     const robots = new Map<string, Promise<string | null>>();
     const records: OpportunityIngestionRecord[] = [];
-
-    for (const { subject, review, ...call } of calls) {
-      if (review && !await programmePagePublished(fetch, review, robots)) continue;
-      const deadline = call.deadline ?? "";
-      if (deadline !== "Rolling" && (deadline.length === 10 ? deadline < today : Date.parse(deadline) <= now.getTime())) continue;
-
-      records.push({
+    for (const { review, ...call } of rollingCalls) {
+      const verifiedAutomatically = await programmePagePublished(fetch, review, robots);
+      if (verifiedAutomatically) records.push(toRecord(call));
+      else if (withinReviewWindow) records.push(toRecord({
         ...call,
-        applicationUrl: call.applicationUrl ?? call.sourceUrl,
-        status: "ACTIVE",
-        topicSlugs: topicSlugsFor(subject),
-        methodSlugs: methodSlugsFor(subject),
-        metadata: { status: "open", ...call.metadata },
-      });
+        metadata: { ...call.metadata, sourceReviewedOn: rollingReviewedOn, sourceVerification: "editorial" },
+      }));
     }
     return records;
   },
