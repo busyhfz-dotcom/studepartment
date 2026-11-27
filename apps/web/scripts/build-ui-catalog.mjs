@@ -26,7 +26,10 @@ async function walk(dir) {
   }
 }
 await walk(join(root,'app')); await walk(join(root,'components'));
-['Find a Master’s scholarship','Find a PhD scholarship','Master’s scholarships','PhD scholarships','Browse scholarships'].forEach(add);
+[
+  'Find a Master’s scholarship', 'Find a PhD scholarship', 'Master’s scholarships',
+  'PhD scholarships', 'Browse scholarships', 'All grants', 'Upcoming',
+].forEach(add);
 const ordered = [...texts].sort();
 const catalog = Object.fromEntries(ordered.map(text=>[createHash('sha256').update(text).digest('hex').slice(0,16),text]));
 await mkdir(join(root,'lib/i18n'),{recursive:true});

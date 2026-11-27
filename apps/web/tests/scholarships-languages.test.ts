@@ -62,3 +62,24 @@ test('language defaults, ISO language choices and right-to-left scripts are expl
   assert.equal(supportedLanguage('en'),true);
   assert.equal(languageDirection('fa'),'rtl');assert.equal(languageDirection('ar'),'rtl');assert.equal(languageDirection('fr'),'ltr');
 });
+
+test('Bengali through Greek can render primary labels without generated translations', () => {
+  const languages = ['bn', 'id', 'ms', 'vi', 'th', 'nl', 'pl', 'uk', 'sv', 'el'];
+  assert.deepEqual(languageCodes.slice(languageCodes.indexOf('bn')), languages);
+  const labels = [
+    'Research careers & funding', 'Find grant & position', 'Post a position', 'How to use',
+    'Latest opportunities', 'PhD scholarships', 'Search a topic, role or institution',
+    'Compare grants', 'Sign in', 'Welcome back', 'Research profile', 'Saved opportunities',
+  ];
+  const knownLabels = new Set(Object.values(interfaceMessages));
+  for (const label of labels) {
+    assert.ok(knownLabels.has(label), label);
+    for (const locale of languages) {
+      const value = reviewedTranslation(locale, label);
+      assert.ok(value?.trim() && value !== label && !value.includes('\uFFFD'), `${locale}: ${label}`);
+    }
+  }
+  assert.equal(reviewedTranslation('bn', 'Research careers & funding'), 'গবেষণায় কর্মজীবন ও অর্থায়ন');
+  assert.equal(reviewedTranslation('el', 'Research careers & funding'), 'Σταδιοδρομία και χρηματοδότηση στην έρευνα');
+  assert.equal(reviewedTranslation('el', 'Unlisted private text'), undefined);
+});

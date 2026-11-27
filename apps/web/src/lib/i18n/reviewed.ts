@@ -1,3 +1,5 @@
+import { additionalInterfaceTranslation } from './additional-interface-copy';
+
 // Carefully worded entrance labels take precedence over generated translations.
 const persian: Record<string, string> = {
   'How to use': 'راهنمای استفاده',
@@ -169,5 +171,5 @@ const coreLanguages = ["fa", "es", "fr", "de"];
 export function reviewedTranslation(locale: string, original: string): string | undefined {
   const exact = (locale === "fa" ? persian : locale === "es" ? spanish : undefined);
   const core = coreInterface[original]?.[coreLanguages.indexOf(locale)];
-  return core || exact?.[original] || exact?.[original + " ↗"]?.replace(/\s*↗/g, "");
+  return core || exact?.[original] || exact?.[original + " ↗"]?.replace(/\s*↗/g, "") || additionalInterfaceTranslation(locale, original);
 }

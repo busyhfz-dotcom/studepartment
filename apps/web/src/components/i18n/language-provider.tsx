@@ -133,7 +133,13 @@ export function LanguageProvider({children}:{children:ReactNode}) {
 
 export function LanguagePicker({floating=false}:{floating?:boolean}) {
   const {locale,setLocale,status}=useContext(LanguageContext);
-  const copy=changeNotice[locale as keyof typeof changeNotice] ?? changeNotice.en;
+  const copy=changeNotice[locale as keyof typeof changeNotice] ?? {
+    title: reviewedTranslation(locale, changeNotice.en.title) ?? changeNotice.en.title,
+    search: reviewedTranslation(locale, changeNotice.en.search) ?? changeNotice.en.search,
+    noResults: reviewedTranslation(locale, changeNotice.en.noResults) ?? changeNotice.en.noResults,
+    close: reviewedTranslation(locale, changeNotice.en.close) ?? changeNotice.en.close,
+    active: reviewedTranslation(locale, changeNotice.en.active) ?? changeNotice.en.active,
+  };
   const [open,setOpen]=useState(false);
   const [query,setQuery]=useState('');
   const button=useRef<HTMLButtonElement>(null);
