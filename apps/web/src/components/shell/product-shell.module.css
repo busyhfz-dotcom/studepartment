@@ -655,12 +655,13 @@
 @media(max-width:940px){.navSubItem{min-height:46px}}
 @media(prefers-reduced-motion:reduce){.navSubList,.navSubListOpen,.navChevron{transition:none}}
 
+:global(html):has(.frame) { --scrollbar-track: #46464f; }
 .frame { background: linear-gradient(145deg, #e9f0ff, #f6f3ff 75%); }
 .sidebar {
   color: #edf2ff;
-  border-color: #6d7cbd;
-  background-color: #354982;
-  background-image: radial-gradient(ellipse at 8% 0%, #5469b14d, transparent 64%), linear-gradient(165deg, #304f90, #414282 64%, #394876);
+  border-color: #3d486d;
+  background-color: #1b2342;
+  background-image: radial-gradient(ellipse at 8% 0%, #40548d36, transparent 64%), linear-gradient(165deg, #202e55, #202447 64%, #18213c);
 }
 .sidebarFooter { border-color: #bac9ff45; }
 .brandMark { color: #fff; background: linear-gradient(135deg, #779cff, #705adf); box-shadow: 0 5px 18px #6883ff54; }

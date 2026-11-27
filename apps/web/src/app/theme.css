@@ -38,16 +38,16 @@ button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,trans
 *::-webkit-scrollbar {
   width: 12px;
   height: 12px;
-  background: #0d1730;
+  background: var(--scrollbar-track, #0d1730);
 }
 *::-webkit-scrollbar-track {
-  background: #0d1730;
+  background: var(--scrollbar-track, #0d1730);
   box-shadow: inset 1px 0 #ffffff14;
 }
 *::-webkit-scrollbar-thumb {
   min-height: 48px;
   min-width: 48px;
-  border: 3px solid #0d1730;
+  border: 3px solid var(--scrollbar-track, #0d1730);
   border-radius: 999px;
   background: linear-gradient(180deg, #91aeff, #7869df);
 }
@@ -59,12 +59,12 @@ button{transition:background .2s,border-color .2s,color .2s,box-shadow .2s,trans
   width: 0;
   height: 0;
 }
-*::-webkit-scrollbar-corner { background: #0d1730; }
+*::-webkit-scrollbar-corner { background: var(--scrollbar-track, #0d1730); }
 
 @supports (-moz-appearance: none) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: #8298f2 #0d1730;
+    scrollbar-color: #8298f2 var(--scrollbar-track, #0d1730);
   }
 }
 

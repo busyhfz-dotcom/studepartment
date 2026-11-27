@@ -206,7 +206,7 @@ function StartJourney({ ticker }: StartOptions) {
 
   if (step === "welcome") {
     return (
-      <div className={styles.page}>
+      <div className={`${styles.page} ${styles.gatewayPage}`}>
         <ScientificBackdrop className={styles.scienceBackdrop} showTranscript />
         <TopBar />
         <main className={styles.gatewayWelcome}>

@@ -613,6 +613,21 @@
 
 .srOnly { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .gatewayIntro h1 { font-size:clamp(40px, 6vw, 72px); margin:0; color:#fff; text-shadow:0 0 36px #ffffff26; }
+@media (min-width: 1024px) {
+  .gatewayPage { display:flex; flex-direction:column; }
+  .gatewayPage .topbar { inline-size:100%; margin-block:0; }
+  .gatewayPage .gatewayWelcome { flex:1; inline-size:100%; min-height:0; margin-block:0; }
+}
+@media (min-width: 1024px) and (max-height: 740px) {
+  .gatewayPage .topbar { height:clamp(60px, 10vh, 74px); }
+  .gatewayPage .footbar { padding-block:clamp(8px, 2vh, 16px); }
+  .gatewayPage .gatewayWelcome { padding-block:clamp(12px, 3vh, 22px); }
+  .gatewayPage .gatewayIntro h1 { font-size:clamp(36px, 8vh, 58px); }
+  .gatewayPage .gatewayGrid { margin-top:clamp(14px, 3vh, 22px); }
+  .gatewayPage .gatewayCard { min-height:clamp(205px, 35vh, 265px); padding:clamp(16px, 3vh, 24px); }
+  .gatewayPage .gatewayAction { padding-top:clamp(10px, 2vh, 16px); }
+  .gatewayPage .gatewayReassurance { margin-top:12px; }
+}
 .browse > aside:first-child { margin-bottom:24px; }
 .topbar { border-color:#ffffff21; }
 .topbar .mark { color:#252951; background:linear-gradient(150deg,#fff 32%,#b4b7fb); box-shadow:0 0 18px #ffffff27,0 6px 18px #14183a55; }
