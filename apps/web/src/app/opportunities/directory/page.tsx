@@ -9,19 +9,21 @@ import conference from "./data/conferences.json";
 import graduate from "./data/graduate.json";
 import ai from "./data/ai.json";
 import cancer from "./data/cancer.json";
+import seed from "./data/seed.json";
 
 export const metadata: Metadata = {
   title: "Medicine and research directory",
   description: "Browse graduate programmes, department routes, conferences, travel awards, prizes and research funding.",
 };
 
-const items = [...conference, ...graduate, ...ai, ...cancer].sort((a, b) => a.title.localeCompare(b.title));
+const items = [...conference, ...graduate, ...ai, ...cancer, ...seed].sort((a, b) => a.title.localeCompare(b.title));
 const categories = [...new Set(items.flatMap(item => item.kinds))].sort();
 const collections = [
   ["conferences", "Conferences and awards"],
   ["graduate", "Medical graduate study"],
   ["ai", "AI in medicine"],
   ["cancer", "Cancer research funding"],
+  ["seed", "Research programmes and funding"],
 ];
 const pageSize = 30;
 const countryAliases: Record<string, string[]> = { US: ["USA", "US", "United States"], GB: ["UK", "U.K.", "United Kingdom", "England", "Scotland", "Wales", "Northern Ireland"], NL: ["Netherlands", "The Netherlands", "Holland"] };
